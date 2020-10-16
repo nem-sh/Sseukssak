@@ -1,6 +1,10 @@
 <template>
   <v-container fluid>
     <v-btn @click="test">test</v-btn>
+    <h1>{{dir}}</h1>
+    <v-btn icon @click="read()">
+      <v-icon>mdi-read</v-icon>
+    </v-btn>
   </v-container>
 </template>
 <script>
