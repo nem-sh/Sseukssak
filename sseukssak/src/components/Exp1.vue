@@ -5,13 +5,20 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import Component from 'vue-class-component'
 import fs from 'fs'
-export default {
+
+@Component({
     methods:{
         test() {
             console.log(fs)
         }
     }
+})
+
+export default class App extends Vue {
+
 }
 </script>
 
