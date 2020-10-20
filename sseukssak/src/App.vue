@@ -45,17 +45,16 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Home from './views/Home.vue';
+import Component from 'vue-class-component'
+import Home from '@/views/Home.vue';
 
-export default Vue.extend({
-  name: 'App',
-
+@Component({
   components: {
     Home,
-  },
+  }
+})
 
-  data: () => ({
-    //
-  }),
-});
+export default class App extends Vue {
+  
+}
 </script>
