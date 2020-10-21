@@ -1,6 +1,6 @@
 <template>
   <v-btn @click="test">
-      test
+    정리
   </v-btn>
 </template>
 
