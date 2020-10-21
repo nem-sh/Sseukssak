@@ -18,8 +18,8 @@
       <v-card class="text-center">
         <h1 class="my-5">통일한 파일명 변경</h1>
         <div class="text-left">
-            <p class="pl-5">파일명 형식 : 생성 날짜_<strong>아래에 입력한 통일할 파일명</strong>_버전[마지막 수정 날짜 기준]</p>
-            <p class="pl-5">EX) 201021_<strong>sseukssak_발표자료</strong>_v1</p>
+            <p class="pl-10">파일명 형식 : 생성 날짜_<span class="font-italic font-weight-bold">아래에 입력한 통일할 파일명</span>_버전[마지막 수정 날짜 기준]</p>
+            <p class="pl-10">EX) 201021_<span class="font-italic font-weight-bold">sseukssak_발표자료</span>_v1</p>
         </div>
         <div class="d-flex mb-5">
             <v-text-field
@@ -107,12 +107,15 @@ export default class Rename extends Vue {
     }
 
     rename() {
-        if (!this.changeFileName) return
-        this.beforeItems.forEach((item, i) => {
-            const o = path.join(this.dir, item[name])
-            const n = path.join(this.dir, this.afterItems[i][name])
-            fs.renameSync(o, n)
-        })
+        if (!this.changeFileName) {
+          alert("통일할 파일명을 입력해주세요")
+        } else {
+          this.beforeItems.forEach((item, i) => {
+              const o = path.join(this.dir, item[name])
+              const n = path.join(this.dir, this.afterItems[i][name])
+              fs.renameSync(o, n)
+          })
+        }
     }
 
     mounted() {
