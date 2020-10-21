@@ -13,7 +13,9 @@
       </v-col>
     </v-row>
     <v-footer absolute>
-      <v-col>1</v-col>
+      <v-col>
+        <BtnRename/>
+      </v-col>
       <v-col>
         <Exp1/>
       </v-col>
@@ -25,10 +27,12 @@
 import Vue from 'vue';
 import Component from 'vue-class-component'
 import Exp1 from '@/components/Exp1.vue'
+import BtnRename from '@/components/BtnRename.vue'
 
 @Component({
   components: {
-    Exp1
+    Exp1,
+    BtnRename
   }
 })
 
