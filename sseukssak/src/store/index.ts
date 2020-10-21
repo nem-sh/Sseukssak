@@ -19,7 +19,7 @@ export default new Vuex.Store({
     },
     changeFileList (state: DirState, newList){
       state.fileList=newList
-    }
+    },
   },
   actions: {
   },
