@@ -3,7 +3,11 @@
     <v-row>
       <v-col>
         <v-row no-gutters>From <BtnSelectFromDir/>{{fromDir}}</v-row>
-        <v-row no-gutters>Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit iusto dolor quae sunt nobis nulla, nemo laboriosam impedit expedita at eius debitis velit tenetur delectus in. Possimus alias cupiditate reiciendis.</v-row>
+        <v-row no-gutters>
+          <v-list v-for="file in fileList" :key="file">
+            <v-list-item>{{file}}</v-list-item>
+          </v-list>
+        </v-row>
       </v-col>
 
       <v-col>
@@ -40,7 +44,8 @@ import { mapState } from 'vuex';
     BtnSelectFromDir
   },
   computed: mapState([
-    'fromDir'
+    'fromDir',
+    'fileList'
   ]),
 })
 

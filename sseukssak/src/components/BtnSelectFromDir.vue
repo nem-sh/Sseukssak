@@ -16,11 +16,14 @@ const { dialog } = require('electron').remote
     'fromDir'
   ]),
   methods: mapMutations([
-    'changeDir'
+    'changeDir',
+    'changeFileList'
   ])
 })
 export default class BtnSelectFromDir extends Vue {
+    fromDir!: string
     changeDir!: (newDir) => void
+    changeFileList!: (newList) => void
 
     async read () {
       const rs = dialog.showOpenDialogSync({
@@ -28,6 +31,9 @@ export default class BtnSelectFromDir extends Vue {
       })
       if (!rs) return
       this.changeDir(rs[0])
+      const fileList = fs.readdirSync(this.fromDir)
+      this.changeFileList(fileList)
+      
     }
 }
 </script>
