@@ -6,19 +6,27 @@ Vue.use(Vuex)
 interface DirState {
   fromDir: string;
   fileList: string[];
+  fileSortList: object;
 }
+
 
 export default new Vuex.Store({
   state: {
-    fromDir:'None',
-    fileList: []
+    fromDir: 'None',
+    fileList: [],
+    fileSortList: {
+      folder: [], file: []
+    },
   },
   mutations: {
-    changeDir (state: DirState, newDir){
-      state.fromDir=newDir
+    changeDir(state: DirState, newDir) {
+      state.fromDir = newDir
     },
-    changeFileList (state: DirState, newList){
-      state.fileList=newList
+    changeFileList(state: DirState, newList: string[]) {
+      state.fileList = newList
+    },
+    changeFileSortList(state: DirState, newList: object) {
+      state.fileSortList = newList
     },
   },
   actions: {
