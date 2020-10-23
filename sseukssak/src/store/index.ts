@@ -7,6 +7,12 @@ interface DirState {
   fromDir: string;
   fileList: string[];
   fileSortList: object;
+  toLibraryList: ToLibrary[];
+  toLibraryNameList: string[];
+}
+interface ToLibrary {
+  name: string;
+  directroy: object[];
 }
 
 
@@ -17,6 +23,8 @@ export default new Vuex.Store({
     fileSortList: {
       folder: [], file: []
     },
+    toLibraryList: [],
+    toLibraryNameList: []
   },
   mutations: {
     changeDir(state: DirState, newDir) {
@@ -27,6 +35,13 @@ export default new Vuex.Store({
     },
     changeFileSortList(state: DirState, newList: object) {
       state.fileSortList = newList
+    },
+    changeToLibraryList(state: DirState, newList: ToLibrary[]) {
+      state.toLibraryList = newList
+      state.toLibraryNameList = []
+      newList.forEach((from: ToLibrary) => {
+        state.toLibraryNameList.push(from.name);
+      });
     },
   },
   actions: {

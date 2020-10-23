@@ -24,6 +24,7 @@ export default class BtnSelectFromDir extends Vue {
   changeDir!: (newDir: string) => void;
   changeFileList!: (newList: string[]) => void;
   changeFileSortList!: (newList: FromSortList) => void;
+
   async read() {
     const rs = dialog.showOpenDialogSync({
       properties: ["openDirectory"],

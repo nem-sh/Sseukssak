@@ -16,8 +16,9 @@
           >Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum
           veniam libero itaque explicabo iusto, error eveniet culpa quia
           voluptatem quisquam voluptates at odit delectus voluptas molestiae
-          perferendis veritatis vitae incidunt.</v-row
-        >
+          perferendis veritatis vitae incidunt.
+          <ToList />
+        </v-row>
       </v-col>
     </v-row>
     <v-footer absolute>
@@ -34,16 +35,18 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import Exp1 from '@/components/Exp1.vue'
-import BtnRename from '@/components/BtnRename.vue'
-import BtnMoveFile from '@/components/BtnMoveFile.vue'
-import BtnSelectFromDir from '@/components/BtnSelectFromDir.vue'
+import Vue from "vue";
+import Component from "vue-class-component";
+import Exp1 from "@/components/Exp1.vue";
+import BtnRename from "@/components/BtnRename.vue";
+import BtnMoveFile from "@/components/BtnMoveFile.vue";
+import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
 
-import DupCheck from '@/components/DupCheck.vue'
+import ToList from "@/components/ToList.vue";
 
-import { mapState } from 'vuex'
+import DupCheck from "@/components/DupCheck.vue";
+
+import { mapState } from "vuex";
 
 @Component({
   components: {
@@ -51,9 +54,10 @@ import { mapState } from 'vuex'
     BtnRename,
     BtnMoveFile,
     BtnSelectFromDir,
-    DupCheck
+    DupCheck,
+    ToList,
   },
-  computed: mapState(['fromDir', 'fileList'])
+  computed: mapState(["fromDir", "fileList"]),
 })
 export default class Home extends Vue {}
 </script>
