@@ -10,8 +10,8 @@ import { mapMutations, mapState } from "vuex";
 const { dialog } = require("electron").remote;
 
 interface FromSortList {
-  folder: string[];
-  file: object[];
+  directories: string[];
+  files: object[];
 }
 
 @Component({
@@ -33,15 +33,15 @@ export default class BtnSelectFromDir extends Vue {
     this.changeDir(rs[0]);
     const fileList = fs.readdirSync(this.fromDir);
 
-    const fileSortList: FromSortList = { folder: [], file: [] };
+    const fileSortList: FromSortList = { directories: [], files: [] };
     let fileType = "";
     fileList.forEach((file: string) => {
       const fileSplit = file.split(".");
       if (fs.lstatSync(this.fromDir + "/" + file).isDirectory()) {
-        fileSortList.folder.push(file);
+        fileSortList.directories.push(file);
       } else {
         fileType = fileSplit[fileSplit.length - 1].toLowerCase();
-        fileSortList.file.push({ file: file, fileType: fileType });
+        fileSortList.files.push({ file: file, fileType: fileType });
       }
     });
     this.changeFileSortList(fileSortList);
