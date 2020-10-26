@@ -95,30 +95,34 @@
 </template>
 
 <script lang='ts'>
-// import Vue from "vue";
-// import Component from "vue-class-component";
-// import fs from "fs";
 import { Vue, Component, Watch } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
 import fs from "fs";
+
+
 const { dialog } = require("electron").remote;
+
 
 interface ToLibrary {
   name: string;
   directories: object[];
 }
+
+
 interface ToLibraryDirectory {
   path: string;
   typeTags: string[];
   dateTags: string[];
 }
 
+
 @Component({
   computed: mapState(["toLibraryList", "toLibraryNameList"]),
   methods: mapMutations(["changeToLibraryList"]),
 })
+
+
 export default class CreateToLibraryModal extends Vue {
-  dialog: boolean = false;
   typeTags: string[] = [
     "#Image",
     "#Document",
@@ -136,22 +140,27 @@ export default class CreateToLibraryModal extends Vue {
   selectedDateTags: string[] = [];
   totalTags: string[] = [];
   selectedTotalTags: string[] = [];
-  libraryTitle: string = "";
   libraryDirectories: ToLibraryDirectory[] = [];
+  libraryTitle: string = "";
   directoryDir: string = "";
-
+  dialog: boolean = false;
   toLibraryList!: ToLibrary[];
   toLibraryNameList!: string[];
   changeToLibraryList!: (newList: ToLibrary[]) => void;
 
+
   clickAlert() {
     alert("click");
   }
+  
+  
   readDir() {
     this.directoryDir = dialog.showOpenDialogSync({
       properties: ["openDirectory"],
     })[0];
   }
+  
+  
   addDirectory() {
     this.libraryDirectories.push({
       path: this.directoryDir,
@@ -162,6 +171,8 @@ export default class CreateToLibraryModal extends Vue {
     this.selectedTypeTags = [];
     this.selectedDateTags = [];
   }
+  
+  
   createLibrary() {
     const tempLibraryList: ToLibrary[] = this.toLibraryList;
 
@@ -176,6 +187,7 @@ export default class CreateToLibraryModal extends Vue {
       name: this.libraryTitle,
       directories: this.libraryDirectories,
     });
+    
     this.changeToLibraryList(tempLibraryList);
     fs.writeFile(
       "C:/Users/multicampus/Desktop/selectedFromData.txt",
@@ -184,6 +196,7 @@ export default class CreateToLibraryModal extends Vue {
         console.log("File Appended", err);
       }
     );
+    
     this.libraryTitle = "";
     this.libraryDirectories = [];
     this.directoryDir = "";
@@ -191,12 +204,15 @@ export default class CreateToLibraryModal extends Vue {
     this.selectedDateTags = [];
 
     alert("추가되었습니다.");
+    
     this.dialog = false;
   }
+
 
   created() {
     console.log(1);
   }
+
 
   @Watch("selectedTypeTags")
   watchSelectedTypeTags() {
@@ -205,6 +221,8 @@ export default class CreateToLibraryModal extends Vue {
     );
     this.totalTags = this.selectedTypeTags.concat(this.selectedDateTags);
   }
+  
+  
   @Watch("selectedDateTags")
   watchSelectedDateTags() {
     this.selectedTotalTags = this.selectedTypeTags.concat(
@@ -212,6 +230,8 @@ export default class CreateToLibraryModal extends Vue {
     );
     this.totalTags = this.selectedTypeTags.concat(this.selectedDateTags);
   }
+  
+  
   @Watch("selectedTotalTags")
   watchSelectedTotalTags() {
     this.selectedTypeTags.forEach((tag) => {
