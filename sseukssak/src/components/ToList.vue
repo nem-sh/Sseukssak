@@ -2,14 +2,14 @@
   <v-container>
     <v-select
       :items="toLibraryNameList"
-      v-model="selectedFromName"
+      v-model="selectedToName"
       label="Select Library"
       dense
     ></v-select>
 
     <CreateToLibraryModal />
     <div v-for="toLibrary in toLibraryList" :key="toLibrary.name">
-      <div v-if="toLibrary.name == selectedFromName">
+      <div v-if="toLibrary.name == selectedToName">
         {{ toLibrary.name }}
         <div v-for="directory in toLibrary.directories" :key="directory.path">
           {{ directory }}
@@ -20,8 +20,7 @@
 </template>
 
 <script lang='ts'>
-import Vue from "vue";
-import Component from "vue-class-component";
+import { Vue, Component, Watch } from "vue-property-decorator";
 import fs from "fs";
 import { mapMutations, mapState } from "vuex";
 import CreateToLibraryModal from "@/components/CreateToLibraryModal.vue";
@@ -33,7 +32,7 @@ interface ToLibrary {
 @Component({
   components: { CreateToLibraryModal },
   computed: mapState(["toLibraryList", "toLibraryNameList"]),
-  methods: mapMutations(["changeToLibraryList"]),
+  methods: mapMutations(["changeToLibraryList", "changeSelectedToName"]),
 })
 export default class ToList extends Vue {
   created() {
@@ -51,10 +50,16 @@ export default class ToList extends Vue {
     );
     this.changeToLibraryList(tempToLibrary);
   }
-  selectedFromName: string = "";
+  selectedToName: string = "";
   toLibraryList!: object;
   toLibraryNameList!: object;
   changeToLibraryList!: (newList: ToLibrary[]) => void;
+  changeSelectedToName!: (newName: string) => void;
+
+  @Watch("selectedToName")
+  watchSelectedToName() {
+    this.changeSelectedToName(this.selectedToName);
+  }
 }
 </script>
 
