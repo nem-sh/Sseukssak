@@ -12,7 +12,7 @@ interface DirState {
 }
 interface ToLibrary {
   name: string;
-  directroy: object[];
+  directories: object[];
 }
 
 
