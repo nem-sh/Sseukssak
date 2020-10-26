@@ -12,11 +12,7 @@
 
       <v-col>
         <v-row no-gutters>To</v-row>
-        <v-row no-gutters
-          >Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum
-          veniam libero itaque explicabo iusto, error eveniet culpa quia
-          voluptatem quisquam voluptates at odit delectus voluptas molestiae
-          perferendis veritatis vitae incidunt.
+        <v-row no-gutters>
           <ToList />
         </v-row>
       </v-col>
