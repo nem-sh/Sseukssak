@@ -27,6 +27,7 @@
         <v-list-item
           v-for="item in items"
           :key="item.title"
+          :to="item.path == '#' ? '' : item.path"
           link
         >
           <v-list-item-icon>
@@ -41,7 +42,7 @@
     </v-navigation-drawer>
 
     <v-main>
-      <Home/>
+      <router-view></router-view>
     </v-main>
   </v-app>
 </template>
@@ -59,8 +60,8 @@ import Home from '@/views/Home.vue';
     return {
       drawer: true,
       items: [
-        { title: 'Home', icon: 'mdi-home-city' },
-        { title: 'My Account', icon: 'mdi-account' },
+        { title: 'Home', icon: 'mdi-home-city', path: '/' },
+        { title: 'rename', icon: 'mdi-account', path: 'rename' },
         { title: 'Users', icon: 'mdi-account-group-outline' },
       ],
       mini: true,
