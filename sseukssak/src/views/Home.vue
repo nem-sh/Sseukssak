@@ -19,7 +19,6 @@
     </v-row>
     <v-footer absolute>
       <v-col>
-        <BtnRename />
         <BtnMoveFile />
         <DupCheck />
       </v-col>
@@ -34,7 +33,6 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import Exp1 from "@/components/Exp1.vue";
-import BtnRename from "@/components/BtnRename.vue";
 import BtnMoveFile from "@/components/BtnMoveFile.vue";
 import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
 
@@ -47,7 +45,6 @@ import { mapState } from "vuex";
 @Component({
   components: {
     Exp1,
-    BtnRename,
     BtnMoveFile,
     BtnSelectFromDir,
     DupCheck,
