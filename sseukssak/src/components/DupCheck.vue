@@ -2,8 +2,8 @@
   <div>
     <v-btn icon @click="DuplicateCheck(fileList)">
       <v-icon>mdi-shopping-search</v-icon>
+      중복파일체크
     </v-btn>
-    <p>발사</p>
   </div>
 </template>
 <script lang="ts">
@@ -22,9 +22,10 @@ import fs from 'fs'
 // const Datastore = require('nedb-promises')
 // const DBFile = Datastore.create('dbFiles.db')
 import { mapState } from 'vuex'
+// import BtnSelectFromDir from './BtnSelectFromDir.vue'
 
 @Component({
-  computed: mapState(['fromDir', 'fileList'])
+  computed: mapState(['fromDir', 'fileList', 'changeFileList'])
 })
 export default class DupCheck extends Vue {
   dir: string = ''
@@ -77,8 +78,6 @@ export default class DupCheck extends Vue {
     }
   }
   DuplicateCheck(fileList: string[]) {
-    console.log('dup check start')
-    // let checkingFile = null
     const duplist = [[this.fromDir]]
     const dupchecked = Array(fileList.length).fill(1)
     for (let j = 0; j < fileList.length; j++) {
@@ -86,12 +85,18 @@ export default class DupCheck extends Vue {
       if (dupchecked[j] == 1) {
         this.stat(this.fromDir + '\\' + fileList[j], 'j')
         for (let k = j + 1; k < fileList.length; k++) {
-          // console.log(j, k)
           if (dupchecked[k] == 1) {
             this.stat(this.fromDir + '\\' + fileList[k], 'k')
+            // 중복 검증 부분
+
             if (this.checkingQueuej['size'] == this.checkingQueuek['size']) {
-              tmpduplist.push(fileList[k])
-              dupchecked[k] = 0
+              if (
+                this.checkingQueuej['mtimeMs'] == this.checkingQueuek['mtimeMs']
+              ) {
+                // console.log(this.checkingQueuej, this.checkingQueuek)
+                tmpduplist.push(fileList[k])
+                dupchecked[k] = 0
+              }
             }
           }
         }
@@ -102,42 +107,59 @@ export default class DupCheck extends Vue {
     }
     console.log(duplist)
     this.dupedfiles = duplist
-    this.MoveDupedFiles()
+    this.MoveDupedFiles(this.dupedfiles)
   }
-  MoveDupedFiles() {
+  MoveDupedFiles(dupedfilelist: string[][]) {
     if (!fs.existsSync(this.fromDir + '\\' + 'duplicated files')) {
+      // duped files 폴더 생성 부분
       fs.mkdirSync(this.fromDir + '\\' + 'duplicated files')
     }
     let movedfiles = 0
-    for (let f1 = 1; f1 < this.dupedfiles.length; f1++) {
-      // console.log(this.dupedfiles)
-      for (let f2 = 1; f2 < this.dupedfiles[f1].length; f2++) {
-        // fs.renameSync()
-        if (!fs.existsSync(this.fromDir + '\\' + this.dupedfiles[f1][0])) {
-          fs.mkdirSync(
-            this.fromDir + '\\' + 'duplicated files\\this.dupedfiles[f1][0]'
+    let alreadyexistfiles = 0
+    for (let f1 = 1; f1 < dupedfilelist.length; f1++) {
+      for (let f2 = 1; f2 < dupedfilelist[f1].length; f2++) {
+        // 옮기는 폴더에 같은 이름의 파일이 있는 경우는 옮기지 말아야 함.
+        if (
+          !fs.existsSync(
+            this.fromDir +
+              '\\' +
+              'duplicated files' +
+              '\\' +
+              dupedfilelist[f1][f2]
           )
+        ) {
+          fs.renameSync(
+            this.fromDir + '\\' + dupedfilelist[f1][f2],
+            this.fromDir +
+              '\\' +
+              'duplicated files' +
+              '\\' +
+              dupedfilelist[f1][f2]
+          )
+          movedfiles += 1
+        } else {
+          alreadyexistfiles += 1
         }
-
-        fs.renameSync(
-          this.fromDir + '\\' + this.dupedfiles[f1][f2],
-          this.fromDir +
-            '\\' +
-            'duplicated files' +
-            '\\' +
-            this.dupedfiles[f1][f2]
-        )
-        movedfiles += 1
       }
     }
-    if (movedfiles == 0) {
+    // 결과창 출력문
+    if (movedfiles == 0 && alreadyexistfiles == 0) {
       alert('중복된 파일이 없습니다.')
-    } else {
+    } else if (movedfiles != 0) {
       alert(
         movedfiles +
           '개의 복제된 파일을 duplicated files 폴더로 이동시켰습니다.'
       )
     }
+    // 두 문장의 출력문의 조건을 손봐야 함
+    if (alreadyexistfiles != 0) {
+      alert(
+        alreadyexistfiles +
+          '개의 파일이 duplicated files 폴더에 같은 이름이 존재하여, 이동을 실패하였습니다.'
+      )
+    }
+    // 옮긴 디렉토리를 리로드하는 작업이 필요함.
+    // this.files = fs.readdirSync(this.fromDir)
   }
 }
 </script>
