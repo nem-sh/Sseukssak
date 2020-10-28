@@ -34,7 +34,7 @@ interface Directory {
 
 export default new Vuex.Store({
   state: {
-    fromDir: 'None',
+    fromDir: "",
     fileList: [],
     fileSortList: {
       directories: [], files: []
