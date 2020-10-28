@@ -27,12 +27,13 @@ function createWindow() {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
         .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
+      enableRemoteModule: true,
     },
     icon: path.join(__static, "sweeping.png"),
     autoHideMenuBar: true,
     center: true,
     thickFrame: true,
-    // transparent: true,
+    frame: false,
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -48,7 +49,7 @@ function createWindow() {
   let tray = null;
   win.on("minimize", function(event) {
     event.preventDefault();
-    win.setSkipTaskbar(true);
+    // win.setSkipTaskbar(true);
     if (tray !== null) {
       tray.destroy();
     }
@@ -57,7 +58,7 @@ function createWindow() {
 
   win.on("restore", function(event) {
     win.show();
-    win.setSkipTaskbar(false);
+    // win.setSkipTaskbar(false);
     // tray.destroy();
   });
 

@@ -1,9 +1,16 @@
 <template>
   <v-app>
+    <div class="window-operations-container">
+      <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
+      <div class="operations">
+        <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
+        <i class="fas fa-times close" @click="closeWindow"></i>
+      </div>
+    </div>
     <div class="app">
       <div class="menu">
         <div class="menu--icon">
-          <span>SS</span>
+          <img class="app-logo" src="@/assets/sweeping.png" alt="" />
         </div>
         <div class="menu--separator"></div>
         <div
@@ -14,7 +21,7 @@
           @click="goMenu(item.id)"
           :class="{ active: activeTab === item.title }"
         >
-          <span>{{ item.title }}</span>
+          <span><i :class="item.icon"></i></span>
         </div>
       </div>
       <div class="main"><router-view></router-view></div>
@@ -35,9 +42,8 @@ import "./components/styles/main.scss";
   data() {
     return {
       items: [
-        { id: 1, title: "Home", icon: "mdi-home-city", path: "/" },
-        { id: 2, title: "Rename", icon: "mdi-account", path: "rename" },
-        { id: 3, title: "Users", icon: "mdi-account-group-outline" },
+        { id: 1, title: "Home", icon: "fas fa-home fa-lg", path: "/" },
+        { id: 2, title: "Rename", icon: "far fa-edit fa-lg", path: "rename" },
       ],
     };
   },
@@ -52,6 +58,20 @@ export default class App extends Vue {
       this.activeTab = "Rename";
       this.$router.push({ name: "Rename" });
     }
+  }
+
+  closeWindow() {
+    console.log("close window");
+    const remote = window.require ? window.require("electron").remote : null;
+    const WIN = remote.getCurrentWindow();
+    WIN.close();
+  }
+
+  minimizeWindow() {
+    console.log("minimize window");
+    const remote = window.require ? window.require("electron").remote : null;
+    const WIN = remote.getCurrentWindow();
+    WIN.minimize();
   }
 }
 </script>
