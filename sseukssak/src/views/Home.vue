@@ -15,7 +15,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-footer absolute>
+    <v-footer>
       <v-col>
         <BtnMoveFile />
         <DupCheck />

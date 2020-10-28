@@ -1,75 +1,77 @@
 <template>
   <v-app>
-    <v-navigation-drawer
-      v-model="drawer"
-      :mini-variant.sync="mini"
-      permanent
-      app
-    >
-      <v-list-item class="px-2">
-        <v-list-item-avatar>
-          <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
-        </v-list-item-avatar>
-
-        <v-list-item-title>Example</v-list-item-title>
-
-        <v-btn
-          icon
-          @click.stop="mini = !mini"
-        >
-          <v-icon>mdi-chevron-left</v-icon>
-        </v-btn>
-      </v-list-item>
-
-      <v-divider></v-divider>
-
-      <v-list dense>
-        <v-list-item
+    <div class="window-operations-container">
+      <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
+      <div class="operations">
+        <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
+        <i class="fas fa-times close" @click="closeWindow"></i>
+      </div>
+    </div>
+    <div class="app">
+      <div class="menu">
+        <div class="menu--icon">
+          <img class="app-logo" src="@/assets/sweeping.png" alt="" />
+        </div>
+        <div class="menu--separator"></div>
+        <div
+          class="menu--icon"
           v-for="item in items"
           :key="item.title"
           :to="item.path == '#' ? '' : item.path"
-          link
+          @click="goMenu(item.id)"
+          :class="{ active: activeTab === item.title }"
         >
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-main>
-      <router-view></router-view>
-    </v-main>
+          <span><i :class="item.icon"></i></span>
+        </div>
+      </div>
+      <div class="main"><router-view></router-view></div>
+    </div>
   </v-app>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'vue-class-component'
-import Home from '@/views/Home.vue';
+import Vue from "vue";
+import Component from "vue-class-component";
+import Home from "@/views/Home.vue";
+import "./components/styles/main.scss";
 
 @Component({
   components: {
     Home,
   },
-  data () {
+  data() {
     return {
-      drawer: true,
       items: [
-        { title: 'Home', icon: 'mdi-home-city', path: '/' },
-        { title: 'rename', icon: 'mdi-account', path: 'rename' },
-        { title: 'Users', icon: 'mdi-account-group-outline' },
+        { id: 1, title: "Home", icon: "fas fa-home fa-lg", path: "/" },
+        { id: 2, title: "Rename", icon: "far fa-edit fa-lg", path: "rename" },
       ],
-      mini: true,
-    }
+    };
   },
 })
-
 export default class App extends Vue {
-  
+  activeTab: string = "Home";
+  goMenu(idx) {
+    if (idx === 1 && this.$route.name !== "Home") {
+      this.activeTab = "Home";
+      this.$router.push({ name: "Home" });
+    } else if (idx === 2 && this.$route.name !== "Rename") {
+      this.activeTab = "Rename";
+      this.$router.push({ name: "Rename" });
+    }
+  }
+
+  closeWindow() {
+    console.log("close window");
+    const remote = window.require ? window.require("electron").remote : null;
+    const WIN = remote.getCurrentWindow();
+    WIN.close();
+  }
+
+  minimizeWindow() {
+    console.log("minimize window");
+    const remote = window.require ? window.require("electron").remote : null;
+    const WIN = remote.getCurrentWindow();
+    WIN.minimize();
+  }
 }
 </script>
