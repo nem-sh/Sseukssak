@@ -118,7 +118,7 @@ interface ToLibraryDirectory {
   computed: mapState(["toLibraryList", "toLibraryNameList"]),
   methods: mapMutations(["changeToLibraryList"]),
 })
-export default class CreateToLibraryModal extends Vue {
+export default class ModalCreateToLibrary extends Vue {
   // data
   selectedTypeTags: string[] = [];
   selectedDateTags: string[] = [];
@@ -206,7 +206,7 @@ export default class CreateToLibraryModal extends Vue {
       "C:/Users/multicampus/Desktop/selectedFromData.txt",
       JSON.stringify(tempLibraryList),
       function (err) {
-        console.log("File Appended", err);
+        alert("File Appended" + err);
       }
     );
 
@@ -219,10 +219,6 @@ export default class CreateToLibraryModal extends Vue {
     alert("추가되었습니다.");
 
     this.dialog = false;
-  }
-
-  created() {
-    console.log(1);
   }
 
   @Watch("selectedTypeTags")
