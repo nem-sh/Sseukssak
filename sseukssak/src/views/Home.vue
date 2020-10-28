@@ -4,9 +4,7 @@
       <v-col>
         <v-row no-gutters>From <BtnSelectFromDir />{{ fromDir }}</v-row>
         <v-row no-gutters>
-          <v-list v-for="file in fileList" :key="file">
-            <v-list-item>{{ file }}</v-list-item>
-          </v-list>
+          <FromList />
         </v-row>
       </v-col>
 
@@ -37,6 +35,7 @@ import BtnMoveFile from "@/components/BtnMoveFile.vue";
 import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
 
 import ToList from "@/components/ToList.vue";
+import FromList from "@/components/FromList.vue";
 
 import DupCheck from "@/components/DupCheck.vue";
 
@@ -49,8 +48,9 @@ import { mapState } from "vuex";
     BtnSelectFromDir,
     DupCheck,
     ToList,
+    FromList,
   },
-  computed: mapState(["fromDir", "fileList"]),
+  computed: mapState(["fromDir"]),
 })
 export default class Home extends Vue {}
 </script>

@@ -1,13 +1,17 @@
 <template>
   <v-container>
-    <v-select
-      :items="toLibraryNameList"
-      v-model="selectedToName"
-      label="Select Library"
-      dense
-    ></v-select>
+    <v-row>
+      <v-col cols="10" class="pr-0" style="display: flex; align-items: center">
+        <v-select
+          :items="toLibraryNameList"
+          v-model="selectedToName"
+          label="Select Library"
+          dense
+        ></v-select>
+      </v-col>
+      <v-col cols="2" class="pl-0"><CreateToLibraryModal /></v-col>
+    </v-row>
 
-    <CreateToLibraryModal />
     <div v-for="toLibrary in toLibraryList" :key="toLibrary.name">
       <div v-if="toLibrary.name == selectedToName">
         {{ toLibrary.name }}
