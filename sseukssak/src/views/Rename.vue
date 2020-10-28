@@ -145,6 +145,7 @@ export default class Rename extends Vue {
   filterFront: string = "3";
   filterMiddle: string = "1";
   filterBack: string = "3";
+  dupCheck: Array<string> = [];
 
   async read() {
     const rs = dialog.showOpenDialogSync({
@@ -166,6 +167,7 @@ export default class Rename extends Vue {
         time: stat.mtime,
       };
       await this.fileList.push(item);
+      await this.dupCheck.push(item.name)
     }
   }
 
@@ -192,12 +194,40 @@ export default class Rename extends Vue {
       alert("변경할 파일이 없습니다");
     } else {
       // 예외처리 하기~~(변경할 파일명이 이미 기존 폴더 내에 존재하는 경우)
-      
-      this.beforeItems.forEach((item, i) => {
-        const o = path.join(this.dir, item.name);
-        const n = path.join(this.dir, this.afterItems[i].name);
-        fs.renameSync(o, n);
+      const dupTmp: Array<string> = []
+      const dupTmpChange: Array<string> = []
+      this.afterItems.forEach((item, i) => {
+        const dupIdx = this.dupCheck.indexOf(item.name)
+        const _lastDot = item.name.lastIndexOf(".");
+        const _fileType = item.name.substring(_lastDot, item.name.length);
+        // 자기 자신은 제외
+        if (dupIdx !== -1 && this.fileList[dupIdx].time !== item.time) {
+          dupTmp.push(this.beforeItems[i].name)
+          // 중복되지 않는 파일명 생성
+          let cnt = 1
+          let noDupName = item.name.substring(0, _lastDot) + "(" + cnt + ")" + _fileType
+          do {
+            noDupName = item.name.substring(0, _lastDot) + "(" + cnt++ + ")" + _fileType
+          } while (noDupName in this.dupCheck)
+          dupTmpChange.push(noDupName)
+        } else {
+          const o = path.join(this.dir, this.beforeItems[i].name);
+          const n = path.join(this.dir, item.name);
+          fs.renameSync(o, n);
+        }
       });
+      if (dupTmp.length > 0) {
+        const text = dupTmp.map(function (item, index) {
+            return (index+1) + ". " + item + " => " + dupTmpChange[index];
+        }).join("\n");
+        if (confirm("바꾸려는 파일명이 해당 디렉토리에 이미 존재합니다. 다음과 같이 변경하시겠습니까?" + "\n" + text)) {
+          dupTmp.forEach((item, i) => {
+            const o = path.join(this.dir, item);
+            const n = path.join(this.dir, dupTmpChange[i]);
+            fs.renameSync(o, n);
+          })
+        }
+      }
       alert("파일명이 변경되었습니다");
       this.dialog = false;
       this.changeFileName1 = this.changeFileName2 = this.changeFileName3 = "";
