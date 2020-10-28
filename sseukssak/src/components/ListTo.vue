@@ -9,7 +9,7 @@
           dense
         ></v-select>
       </v-col>
-      <v-col cols="2" class="pl-0"><CreateToLibraryModal /></v-col>
+      <v-col cols="2" class="pl-0"><ModalCreateToLibrary /></v-col>
     </v-row>
 
     <div v-for="toLibrary in toLibraryList" :key="toLibrary.name">
@@ -27,18 +27,18 @@
 import { Vue, Component, Watch } from "vue-property-decorator";
 import fs from "fs";
 import { mapMutations, mapState } from "vuex";
-import CreateToLibraryModal from "@/components/CreateToLibraryModal.vue";
+import ModalCreateToLibrary from "@/components/ModalCreateToLibrary.vue";
 interface ToLibrary {
   name: string;
   directories: object[];
 }
 
 @Component({
-  components: { CreateToLibraryModal },
+  components: { ModalCreateToLibrary },
   computed: mapState(["toLibraryList", "toLibraryNameList"]),
   methods: mapMutations(["changeToLibraryList", "changeSelectedToName"]),
 })
-export default class ToList extends Vue {
+export default class ListTo extends Vue {
   created() {
     if (!fs.existsSync("C:/Users/multicampus/Desktop/selectedFromData.txt")) {
       fs.writeFileSync(

@@ -4,14 +4,14 @@
       <v-col>
         <v-row no-gutters>From <BtnSelectFromDir />{{ fromDir }}</v-row>
         <v-row no-gutters>
-          <FromList />
+          <ListFrom />
         </v-row>
       </v-col>
 
       <v-col>
         <v-row no-gutters>To</v-row>
         <v-row no-gutters>
-          <ToList />
+          <ListTo />
         </v-row>
       </v-col>
     </v-row>
@@ -34,8 +34,8 @@ import Exp1 from "@/components/Exp1.vue";
 import BtnMoveFile from "@/components/BtnMoveFile.vue";
 import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
 
-import ToList from "@/components/ToList.vue";
-import FromList from "@/components/FromList.vue";
+import ListTo from "@/components/ListTo.vue";
+import ListFrom from "@/components/ListFrom.vue";
 
 import DupCheck from "@/components/DupCheck.vue";
 
@@ -47,8 +47,8 @@ import { mapState } from "vuex";
     BtnMoveFile,
     BtnSelectFromDir,
     DupCheck,
-    ToList,
-    FromList,
+    ListTo,
+    ListFrom,
   },
   computed: mapState(["fromDir"]),
 })

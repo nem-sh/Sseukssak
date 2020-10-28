@@ -84,7 +84,7 @@ interface Directory {
   computed: mapState(["fileSortList", "fromDir"]),
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
 })
-export default class FromList extends Vue {
+export default class ListFrom extends Vue {
   now: Date = new Date();
   select: number = 0;
 
