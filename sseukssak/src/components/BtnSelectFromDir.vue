@@ -9,9 +9,20 @@ import fs from "fs";
 import { mapMutations, mapState } from "vuex";
 const { dialog } = require("electron").remote;
 
-interface FromSortList {
-  directories: string[];
-  files: object[];
+interface SortList {
+  directories: Directory[];
+  files: File[];
+}
+interface File {
+  fileType: string;
+  file: string;
+  birthTime: number;
+  updatedTime: number;
+}
+interface Directory {
+  file: string;
+  birthTime: number;
+  updatedTime: number;
 }
 
 @Component({
@@ -23,7 +34,7 @@ export default class BtnSelectFromDir extends Vue {
 
   changeDir!: (newDir: string) => void;
   changeFileList!: (newList: string[]) => void;
-  changeFileSortList!: (newList: FromSortList) => void;
+  changeFileSortList!: (newList: SortList) => void;
 
   async read() {
     const rs = dialog.showOpenDialogSync({
@@ -33,15 +44,34 @@ export default class BtnSelectFromDir extends Vue {
     this.changeDir(rs[0]);
     const fileList = fs.readdirSync(this.fromDir);
 
-    const fileSortList: FromSortList = { directories: [], files: [] };
+    const fileSortList: SortList = { directories: [], files: [] };
     let fileType = "";
     fileList.forEach((file: string) => {
       const fileSplit = file.split(".");
       if (fs.lstatSync(this.fromDir + "/" + file).isDirectory()) {
-        fileSortList.directories.push(file);
+        const birthTime = fs.lstatSync(this.fromDir + "/" + file).birthtimeMs;
+        const updatedTime = Math.max(
+          fs.lstatSync(this.fromDir + "/" + file).mtimeMs,
+          fs.lstatSync(this.fromDir + "/" + file).ctimeMs
+        );
+        fileSortList.directories.push({
+          file: file,
+          birthTime: birthTime,
+          updatedTime: updatedTime,
+        });
       } else {
         fileType = fileSplit[fileSplit.length - 1].toLowerCase();
-        fileSortList.files.push({ file: file, fileType: fileType });
+        const birthTime = fs.lstatSync(this.fromDir + "/" + file).birthtimeMs;
+        const updatedTime = Math.max(
+          fs.lstatSync(this.fromDir + "/" + file).mtimeMs,
+          fs.lstatSync(this.fromDir + "/" + file).ctimeMs
+        );
+        fileSortList.files.push({
+          file: file,
+          fileType: fileType,
+          birthTime: birthTime,
+          updatedTime: updatedTime,
+        });
       }
     });
     this.changeFileSortList(fileSortList);
