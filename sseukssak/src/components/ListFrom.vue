@@ -24,6 +24,7 @@
         </div>
       </h3>
     </div>
+
     <h5>directories</h5>
     <v-list v-if="fromDir">
       <div>
