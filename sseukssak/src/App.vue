@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app class="app-container">
     <div class="window-operations-container">
       <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
       <div class="operations">

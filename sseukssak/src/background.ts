@@ -1,5 +1,5 @@
 "use strict";
-/* global __static */
+declare const __static: string;
 import path from "path";
 
 import { app, protocol, BrowserWindow, Tray, Menu, dialog } from "electron";
@@ -10,12 +10,41 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let win: BrowserWindow | null;
+// 에러 발생하면 아래 값으로 초기화해주세요!
+// let win: BrowserWindow | null;
+let win: BrowserWindow;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
+
+function createTray(window: BrowserWindow) {
+  let appIcon = new Tray(path.join(__static, "sweeping.png"));
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: "Show",
+      click: function() {
+        window.show();
+      },
+    },
+    {
+      label: "Exit",
+      click: function() {
+        app.quit();
+      },
+    },
+  ]);
+
+  appIcon.on("double-click", function(event) {
+    window.show();
+  });
+
+  appIcon.setToolTip("SseukSsak");
+  appIcon.setContextMenu(contextMenu);
+
+  return appIcon;
+}
 
 function createWindow() {
   // Create the browser window.
@@ -47,14 +76,14 @@ function createWindow() {
     win.loadURL("app://./index.html");
   }
 
-  let tray = null;
+  let tray: Tray | null;
+
   win.on("minimize", function(event) {
     event.preventDefault();
     // win.setSkipTaskbar(true);
-    if (tray !== null) {
-      tray.destroy();
+    if (!tray) {
+      tray = createTray(win);
     }
-    tray = createTray();
   });
 
   win.on("restore", function(event) {
@@ -113,30 +142,4 @@ if (isDevelopment) {
       app.quit();
     });
   }
-}
-
-function createTray() {
-  let appIcon = new Tray(path.join(__static, "sweeping.png"));
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: "Show",
-      click: function() {
-        win.show();
-      },
-    },
-    {
-      label: "Exit",
-      click: function() {
-        // app.isQuiting = true;
-        app.quit();
-      },
-    },
-  ]);
-
-  appIcon.on("double-click", function(event) {
-    win.show();
-  });
-  appIcon.setToolTip("SseukSsak");
-  appIcon.setContextMenu(contextMenu);
-  return appIcon;
 }
