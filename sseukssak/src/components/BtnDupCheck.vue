@@ -23,6 +23,7 @@ import fs from 'fs'
 // const DBFile = Datastore.create('dbFiles.db')
 import { mapState } from 'vuex'
 // import BtnSelectFromDir from './BtnSelectFromDir.vue'
+import { BUS } from './EventBus.js'
 
 @Component({
   computed: mapState(['fromDir', 'fileList', 'changeFileList'])
@@ -160,6 +161,7 @@ export default class DupCheck extends Vue {
     }
     // 옮긴 디렉토리를 리로드하는 작업이 필요함.
     // this.files = fs.readdirSync(this.fromDir)
+    BUS.$emit('bus:refreshfile')
   }
 }
 </script>

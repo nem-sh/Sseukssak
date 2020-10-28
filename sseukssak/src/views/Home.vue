@@ -18,7 +18,7 @@
     <v-footer absolute>
       <v-col>
         <BtnMoveFile />
-        <DupCheck />
+        <BtnDupCheck />
       </v-col>
       <v-col>
         <Exp1 />
@@ -28,18 +28,18 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import Exp1 from '@/components/Exp1.vue'
-import BtnMoveFile from '@/components/BtnMoveFile.vue'
-import BtnSelectFromDir from '@/components/BtnSelectFromDir.vue'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import Exp1 from '@/components/Exp1.vue';
+import BtnMoveFile from '@/components/BtnMoveFile.vue';
+import BtnSelectFromDir from '@/components/BtnSelectFromDir.vue';
 
-import ListTo from '@/components/ListTo.vue'
-import ListFrom from '@/components/ListFrom.vue'
+import ListTo from '@/components/ListTo.vue';
+import ListFrom from '@/components/ListFrom.vue';
 
-import BtnDupCheck from '@/components/BtnDupCheck.vue'
+import BtnDupCheck from '@/components/BtnDupCheck.vue';
 
-import { mapState } from 'vuex'
+import { mapState } from 'vuex';
 
 @Component({
   components: {
