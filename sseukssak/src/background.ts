@@ -28,6 +28,7 @@ function createWindow() {
       nodeIntegration: (process.env
         .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
       enableRemoteModule: true,
+      webSecurity: false,
     },
     icon: path.join(__static, "sweeping.png"),
     autoHideMenuBar: true,

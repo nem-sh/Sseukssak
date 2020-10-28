@@ -6,7 +6,7 @@ Vue.use(Vuex)
 interface DirState {
   fromDir: string;
   fileList: string[];
-  fileSortList: object;
+  fileSortList: SortList;
   toLibraryList: ToLibrary[];
   toLibraryNameList: string[];
   selectedToName: string;
@@ -15,11 +15,26 @@ interface ToLibrary {
   name: string;
   directories: object[];
 }
+interface SortList {
+  directories: Directory[];
+  files: File[];
+}
+interface File {
+  fileType: string;
+  file: string;
+  birthTime: number;
+  updatedTime: number;
+}
+interface Directory {
+  file: string;
+  birthTime: number;
+  updatedTime: number;
+}
 
 
 export default new Vuex.Store({
   state: {
-    fromDir: 'None',
+    fromDir: "",
     fileList: [],
     fileSortList: {
       directories: [], files: []
@@ -35,7 +50,7 @@ export default new Vuex.Store({
     changeFileList(state: DirState, newList: string[]) {
       state.fileList = newList
     },
-    changeFileSortList(state: DirState, newList: object) {
+    changeFileSortList(state: DirState, newList: SortList) {
       state.fileSortList = newList
     },
     changeToLibraryList(state: DirState, newList: ToLibrary[]) {

@@ -18,12 +18,14 @@ interface ToLibraryDirectory {
   types: string[];
 }
 interface SortList {
-  directories: [];
-  files: Files[];
+  directories: object[];
+  files: File[];
 }
-interface Files {
+interface File {
   fileType: string;
   file: string;
+  birthTime: number;
+  updatedTime: number;
 }
 @Component({
   computed: mapState([
@@ -122,7 +124,11 @@ export default class BtnMoveFile extends Vue {
     directories.forEach((directory: ToLibraryDirectory) => {
       directory.types = [];
       directory.typeTags.forEach((typeTag) => {
-        directory.types = directory.types.concat(this.tagToType[typeTag]);
+        if (typeTag[0] == "#") {
+          directory.types = directory.types.concat(this.tagToType[typeTag]);
+        } else {
+          directory.types = directory.types.concat(typeTag);
+        }
       });
     });
     console.log(this.fileSortList.files);

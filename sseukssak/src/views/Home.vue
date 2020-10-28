@@ -4,16 +4,14 @@
       <v-col>
         <v-row no-gutters>From <BtnSelectFromDir />{{ fromDir }}</v-row>
         <v-row no-gutters>
-          <v-list v-for="file in fileList" :key="file">
-            <v-list-item>{{ file }}</v-list-item>
-          </v-list>
+          <ListFrom />
         </v-row>
       </v-col>
 
       <v-col>
         <v-row no-gutters>To</v-row>
         <v-row no-gutters>
-          <ToList />
+          <ListTo />
         </v-row>
       </v-col>
     </v-row>
@@ -30,27 +28,29 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import Exp1 from "@/components/Exp1.vue";
-import BtnMoveFile from "@/components/BtnMoveFile.vue";
-import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import Exp1 from '@/components/Exp1.vue'
+import BtnMoveFile from '@/components/BtnMoveFile.vue'
+import BtnSelectFromDir from '@/components/BtnSelectFromDir.vue'
 
-import ToList from "@/components/ToList.vue";
+import ListTo from '@/components/ListTo.vue'
+import ListFrom from '@/components/ListFrom.vue'
 
-import DupCheck from "@/components/DupCheck.vue";
+import BtnDupCheck from '@/components/BtnDupCheck.vue'
 
-import { mapState } from "vuex";
+import { mapState } from 'vuex'
 
 @Component({
   components: {
     Exp1,
     BtnMoveFile,
     BtnSelectFromDir,
-    DupCheck,
-    ToList,
+    BtnDupCheck,
+    ListTo,
+    ListFrom
   },
-  computed: mapState(["fromDir", "fileList"]),
+  computed: mapState(['fromDir'])
 })
 export default class Home extends Vue {}
 </script>

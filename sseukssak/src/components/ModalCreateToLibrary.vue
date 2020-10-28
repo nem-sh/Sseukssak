@@ -1,7 +1,6 @@
 <template>
-  <v-container>
-    <v-btn color="green" dark @click="dialog = true"
-      >라이브러리
+  <v-container class="pl-0">
+    <v-btn icon color="green" dark @click="dialog = true">
       <v-icon>mdi-plus</v-icon>
     </v-btn>
     <v-dialog
@@ -48,8 +47,8 @@
                   outlined
                 ></v-select>
                 <div style="width: 50%; margin-left: auto">
-                  <v-text-field label="확장자 직접입력">
-                    <v-icon slot="append" color="green" @click="clickAlert">
+                  <v-text-field v-model="typeAddName" label="확장자 직접입력">
+                    <v-icon slot="append" color="green" @click="typeAdd">
                       mdi-plus
                     </v-icon>
                   </v-text-field>
@@ -119,21 +118,9 @@ interface ToLibraryDirectory {
   computed: mapState(["toLibraryList", "toLibraryNameList"]),
   methods: mapMutations(["changeToLibraryList"]),
 })
-export default class CreateToLibraryModal extends Vue {
-  typeTags: string[] = [
-    "#Image",
-    "#Document",
-    "#Video",
-    "#Audio",
-    "#Compressed",
-  ];
+export default class ModalCreateToLibrary extends Vue {
+  // data
   selectedTypeTags: string[] = [];
-  dateTags: string[] = [
-    "#Today",
-    "#This week",
-    "#This month",
-    "#Every new file",
-  ];
   selectedDateTags: string[] = [];
   totalTags: string[] = [];
   selectedTotalTags: string[] = [];
@@ -141,12 +128,37 @@ export default class CreateToLibraryModal extends Vue {
   libraryTitle: string = "";
   directoryDir: string = "";
   dialog: boolean = false;
+  typeAddName: string = "";
+  typeTags: string[] = [
+    "#Image",
+    "#Document",
+    "#Video",
+    "#Audio",
+    "#Compressed",
+  ];
+  dateTags: string[] = [
+    "#Today",
+    "#This week",
+    "#This month",
+    "#Every new file",
+  ];
+  //vuex
   toLibraryList!: ToLibrary[];
   toLibraryNameList!: string[];
+
   changeToLibraryList!: (newList: ToLibrary[]) => void;
 
   clickAlert() {
     alert("click");
+  }
+  typeAdd() {
+    let addName = this.typeAddName.toLowerCase();
+    if (addName[0] != ".") {
+      addName = "." + addName;
+    }
+    this.selectedTypeTags.push(addName);
+    this.typeTags.push(addName);
+    this.typeAddName = "";
   }
   closeModal() {
     this.libraryTitle = "";
@@ -194,7 +206,7 @@ export default class CreateToLibraryModal extends Vue {
       "C:/Users/multicampus/Desktop/selectedFromData.txt",
       JSON.stringify(tempLibraryList),
       function (err) {
-        console.log("File Appended", err);
+        alert("File Appended" + err);
       }
     );
 
@@ -207,10 +219,6 @@ export default class CreateToLibraryModal extends Vue {
     alert("추가되었습니다.");
 
     this.dialog = false;
-  }
-
-  created() {
-    console.log(1);
   }
 
   @Watch("selectedTypeTags")
@@ -236,13 +244,13 @@ export default class CreateToLibraryModal extends Vue {
         if (this.selectedTypeTags.indexOf(tag) > -1)
           this.selectedTypeTags.splice(this.selectedTypeTags.indexOf(tag), 1);
       }
-    }),
-      this.selectedDateTags.forEach((tag) => {
-        if (!this.selectedTotalTags.includes(tag)) {
-          if (this.selectedDateTags.indexOf(tag) > -1)
-            this.selectedDateTags.splice(this.selectedDateTags.indexOf(tag), 1);
-        }
-      });
+    });
+    this.selectedDateTags.forEach((tag) => {
+      if (!this.selectedTotalTags.includes(tag)) {
+        if (this.selectedDateTags.indexOf(tag) > -1)
+          this.selectedDateTags.splice(this.selectedDateTags.indexOf(tag), 1);
+      }
+    });
   }
 }
 </script>
