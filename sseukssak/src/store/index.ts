@@ -10,6 +10,7 @@ interface DirState {
   toLibraryList: ToLibrary[];
   toLibraryNameList: string[];
   selectedToName: string;
+  logBackCheck: boolean;
   duplicatedList: string[][];
   dropToDir: string;
 }
@@ -45,6 +46,7 @@ export default new Vuex.Store({
     toLibraryList: [],
     toLibraryNameList: [],
     selectedToName: "",
+    logBackCheck: false,
     duplicatedList: [],
   },
   mutations: {
@@ -73,6 +75,9 @@ export default new Vuex.Store({
     changeDuplicatedList(state: DirState, newList: string[][]) {
       state.duplicatedList = newList;
     },
+    changeLogBackCheck(state: DirState, newCheck) {
+      state.logBackCheck = newCheck
+    }
   },
   actions: {},
   modules: {},
