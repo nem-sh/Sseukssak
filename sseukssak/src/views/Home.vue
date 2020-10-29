@@ -24,6 +24,7 @@
       </v-col>
       <v-col>
         <Exp1 />
+        <BtnUploadGoogleDrive/>
       </v-col>
     </v-footer>
   </v-container>
@@ -35,6 +36,7 @@ import Component from "vue-class-component";
 import Exp1 from "@/components/Exp1.vue";
 import BtnMoveFile from "@/components/BtnMoveFile.vue";
 import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
+import BtnUploadGoogleDrive from '@/components/BtnUploadGoogleDrive.vue'
 
 import ToList from "@/components/ToList.vue";
 
@@ -49,6 +51,7 @@ import { mapState } from "vuex";
     BtnSelectFromDir,
     DupCheck,
     ToList,
+    BtnUploadGoogleDrive,
   },
   computed: mapState(["fromDir", "fileList"]),
 })
