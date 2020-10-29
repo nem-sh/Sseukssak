@@ -4,12 +4,18 @@
       <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
       <div class="operations">
         <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
+        <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i>
+        <i
+          v-if="!mini"
+          class="fas fa-compress-alt"
+          @click="resizeSmallWindow"
+        ></i>
         <i class="fas fa-times close" @click="closeWindow"></i>
       </div>
     </div>
     <div class="app">
-      <div class="menu">
-        <div class="menu--icon">
+      <div v-if="!mini" class="menu">
+        <div class="menu--icon" @click="goInfoPage">
           <img class="app-logo" src="@/assets/sweeping.png" alt="" />
         </div>
         <div class="menu--separator"></div>
@@ -35,6 +41,8 @@ import Component from "vue-class-component";
 import Home from "@/views/Home.vue";
 import "./components/styles/main.scss";
 
+const { ipcRenderer, shell } = window.require("electron");
+
 @Component({
   components: {
     Home,
@@ -50,6 +58,8 @@ import "./components/styles/main.scss";
 })
 export default class App extends Vue {
   activeTab: string = "Home";
+  mini: boolean = false;
+
   goMenu(idx) {
     if (idx === 1 && this.$route.name !== "Home") {
       this.activeTab = "Home";
@@ -61,17 +71,29 @@ export default class App extends Vue {
   }
 
   closeWindow() {
-    console.log("close window");
     const remote = window.require ? window.require("electron").remote : null;
     const WIN = remote.getCurrentWindow();
     WIN.close();
   }
 
   minimizeWindow() {
-    console.log("minimize window");
     const remote = window.require ? window.require("electron").remote : null;
     const WIN = remote.getCurrentWindow();
     WIN.minimize();
+  }
+
+  resizeSmallWindow() {
+    this.mini = true;
+    ipcRenderer.send("resize-me-smaller-please");
+  }
+
+  resizeBigWindow() {
+    this.mini = false;
+    ipcRenderer.send("resize-me-bigger-please");
+  }
+
+  goInfoPage() {
+    shell.openExternal("http://k3b304.p.ssafy.io/");
   }
 }
 </script>

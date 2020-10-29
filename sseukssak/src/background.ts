@@ -2,30 +2,38 @@
 declare const __static: string;
 import path from "path";
 
-import { app, protocol, BrowserWindow, Tray, Menu, dialog } from "electron";
+import {
+  app,
+  protocol,
+  BrowserWindow,
+  Tray,
+  Menu,
+  ipcMain,
+  screen,
+} from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
-
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-// 에러 발생하면 아래 값으로 초기화해주세요!
-// let win: BrowserWindow | null;
-let win: BrowserWindow;
+let win: BrowserWindow | null;
+let tray: Tray | null;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
 
-function createTray(window: BrowserWindow) {
+function createTray() {
   let appIcon = new Tray(path.join(__static, "sweeping.png"));
   const contextMenu = Menu.buildFromTemplate([
     {
       label: "Show",
       click: function() {
-        window.show();
+        if (win !== null) {
+          win.show();
+        }
       },
     },
     {
@@ -37,7 +45,9 @@ function createTray(window: BrowserWindow) {
   ]);
 
   appIcon.on("double-click", function(event) {
-    window.show();
+    if (win !== null) {
+      win.show();
+    }
   });
 
   appIcon.setToolTip("SseukSsak");
@@ -56,10 +66,8 @@ function createWindow() {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
         .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
-      enableRemoteModule: true,
       webSecurity: false,
     },
-    icon: path.join(__static, "sweeping.png"),
     autoHideMenuBar: true,
     center: true,
     thickFrame: true,
@@ -76,20 +84,12 @@ function createWindow() {
     win.loadURL("app://./index.html");
   }
 
-  let tray: Tray | null;
-
   win.on("minimize", function(event) {
     event.preventDefault();
-    win.setSkipTaskbar(true);
+    // win.setSkipTaskbar(true);
     if (!tray) {
-      tray = createTray(win);
+      tray = createTray();
     }
-  });
-
-  win.on("restore", function(event) {
-    win.show();
-    win.setSkipTaskbar(false);
-    tray.destroy();
   });
 
   win.on("closed", () => {
@@ -127,6 +127,21 @@ app.on("ready", async () => {
     }
   }
   createWindow();
+
+  ipcMain.on("resize-me-smaller-please", (event, arg) => {
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+    if (win !== null) {
+      win.setSize(400, 200);
+      win.setPosition(width - 400, height - 200);
+    }
+  });
+
+  ipcMain.on("resize-me-bigger-please", (event, arg) => {
+    if (win !== null) {
+      win.setSize(800, 600);
+      win.center();
+    }
+  });
 });
 
 // Exit cleanly on request from parent process in development mode.

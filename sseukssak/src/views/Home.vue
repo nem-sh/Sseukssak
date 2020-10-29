@@ -15,26 +15,24 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-footer>
+    <v-footer absolute>
       <v-col>
         <BtnMoveFile />
         <BtnDupCheck />
       </v-col>
       <v-col>
         <Exp1 />
-        <BtnUploadGoogleDrive/>
       </v-col>
     </v-footer>
   </v-container>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'vue-class-component';
-import Exp1 from '@/components/Exp1.vue';
-import BtnMoveFile from '@/components/BtnMoveFile.vue';
-import BtnSelectFromDir from '@/components/BtnSelectFromDir.vue';
-import BtnUploadGoogleDrive from '@/components/BtnUploadGoogleDrive.vue'
+import Vue from "vue";
+import Component from "vue-class-component";
+import Exp1 from "@/components/Exp1.vue";
+import BtnMoveFile from "@/components/BtnMoveFile.vue";
+import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
 
 import ListTo from "@/components/ListTo.vue";
 import ListFrom from "@/components/ListFrom.vue";
@@ -51,7 +49,6 @@ import { mapState } from "vuex";
     BtnDupCheck,
     ListTo,
     ListFrom,
-    BtnUploadGoogleDrive
   },
   computed: mapState(["fromDir"]),
 })

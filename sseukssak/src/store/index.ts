@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import Vue from "vue";
+import Vuex from "vuex";
 
 Vue.use(Vuex);
 
@@ -34,16 +34,16 @@ interface Directory {
 
 export default new Vuex.Store({
   state: {
-    fromDir: '',
+    fromDir: "",
     fileList: [],
     fileSortList: {
       directories: [],
-      files: []
+      files: [],
     },
     toLibraryList: [],
     toLibraryNameList: [],
-    selectedToName: '',
-    duplicatedList: []
+    selectedToName: "",
+    duplicatedList: [],
   },
   mutations: {
     changeDir(state: DirState, newDir) {
@@ -67,8 +67,8 @@ export default new Vuex.Store({
     },
     changeDuplicatedList(state: DirState, newList: string[][]) {
       state.duplicatedList = newList;
-    }
+    },
   },
   actions: {},
-  modules: {}
+  modules: {},
 });
