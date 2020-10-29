@@ -15,6 +15,7 @@ interface ToLibraryDirectory {
   path: string;
   typeTags: string[];
   dateTags: string[];
+  titleTags: string[];
   types: string[];
 }
 interface SortList {
@@ -37,6 +38,21 @@ interface File {
   ]),
 })
 export default class BtnMoveFile extends Vue {
+  now: Date = new Date();
+  tagToDate: object = {
+    "#Today": new Date(
+      this.now.getFullYear(),
+      this.now.getMonth(),
+      this.now.getDate()
+    ),
+    "#This week": new Date(
+      this.now.getFullYear(),
+      this.now.getMonth(),
+      this.now.getDate() - this.now.getDay()
+    ),
+    "#This month": new Date(this.now.getFullYear(), this.now.getMonth()),
+    "#Every new file": new Date(0),
+  };
   tagToType: object = {
     "#Document": [
       ".ppt",
@@ -106,7 +122,51 @@ export default class BtnMoveFile extends Vue {
   toLibraryList!: ToLibrary[];
   selectedToName!: string;
   fileSortList!: SortList;
+  compareTitle(file: string, titleTags: string[]) {
+    if (titleTags.length == 0) {
+      return true;
+    }
+    for (let index = 0; index < titleTags.length; index++) {
+      const title = titleTags[index];
+      if (file.includes(title) == true) {
+        return true;
+      }
+    }
+    return false;
+  }
+  compareDate(birthTime: Date, dateTags: string[]) {
+    for (let index = 0; index < dateTags.length; index++) {
+      const date = dateTags[index];
+      if (date[0] == "#") {
+        if (this.tagToDate[date].getTime() < birthTime.getTime()) {
+          return true;
+        }
+      } else {
+        const dateLi = date.split("~");
+        if (
+          new Date(
+            Number(dateLi[0].slice(0, 4)),
+            Number(dateLi[0].slice(0, 4)),
+            Number(dateLi[0].slice(0, 4))
+          ).getTime() < birthTime.getTime() &&
+          new Date(
+            Number(dateLi[1].slice(0, 4)),
+            Number(dateLi[1].slice(0, 4)),
+            Number(dateLi[1].slice(0, 4)),
+            23,
+            59,
+            59
+          ).getTime() > birthTime.getTime()
+        ) {
+          return true;
+        }
+      }
+      return false;
+    }
+    return true;
+  }
   moveFile() {
+    console.log(this.tagToDate);
     console.log(1);
     let selectedFrom: ToLibrary = { name: "", directories: [] };
     for (let index = 0; index < this.toLibraryList.length; index++) {
@@ -131,18 +191,31 @@ export default class BtnMoveFile extends Vue {
         }
       });
     });
-    console.log(this.fileSortList.files);
     for (const idx in this.fileSortList.files) {
       const a: string[][] = [];
 
       directories.forEach((directory: ToLibraryDirectory) => {
         directory.types.forEach((type) => {
-          if (type == "." + this.fileSortList.files[idx].fileType) {
-            a.push([
-              this.fromDir + "\\" + this.fileSortList.files[idx].file,
-              directory.path + "\\" + this.fileSortList.files[idx].file,
-            ]);
-            return;
+          if (
+            this.compareDate(
+              new Date(this.fileSortList.files[idx].birthTime),
+              directory.dateTags
+            )
+          ) {
+            if (
+              this.compareTitle(
+                this.fileSortList.files[idx].file,
+                directory.titleTags
+              )
+            ) {
+              if (type == "." + this.fileSortList.files[idx].fileType) {
+                a.push([
+                  this.fromDir + "\\" + this.fileSortList.files[idx].file,
+                  directory.path + "\\" + this.fileSortList.files[idx].file,
+                ]);
+                return;
+              }
+            }
           }
         });
       });
