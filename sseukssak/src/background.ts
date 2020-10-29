@@ -80,7 +80,7 @@ function createWindow() {
 
   win.on("minimize", function(event) {
     event.preventDefault();
-    win.setSkipTaskbar(true);
+    // win.setSkipTaskbar(true);
     if (!tray) {
       tray = createTray(win);
     }
@@ -88,8 +88,8 @@ function createWindow() {
 
   win.on("restore", function(event) {
     win.show();
-    win.setSkipTaskbar(false);
-    tray.destroy();
+    // win.setSkipTaskbar(false);
+    // tray.destroy();
   });
 
   win.on("closed", () => {

@@ -10,6 +10,7 @@ interface DirState {
   toLibraryList: ToLibrary[];
   toLibraryNameList: string[];
   selectedToName: string;
+  logBackCheck: boolean;
 }
 interface ToLibrary {
   name: string;
@@ -31,7 +32,6 @@ interface Directory {
   updatedTime: number;
 }
 
-
 export default new Vuex.Store({
   state: {
     fromDir: "",
@@ -41,7 +41,8 @@ export default new Vuex.Store({
     },
     toLibraryList: [],
     toLibraryNameList: [],
-    selectedToName: ""
+    selectedToName: "",
+    logBackCheck: false,
   },
   mutations: {
     changeDir(state: DirState, newDir) {
@@ -63,6 +64,9 @@ export default new Vuex.Store({
     changeSelectedToName(state: DirState, newName: string) {
       state.selectedToName = newName
     },
+    changeLogBackCheck(state: DirState, newCheck) {
+      state.logBackCheck = newCheck
+    }
   },
   actions: {
   },
