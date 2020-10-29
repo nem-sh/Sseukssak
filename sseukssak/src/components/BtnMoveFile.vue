@@ -24,7 +24,7 @@ interface SortList {
 }
 interface File {
   fileType: string;
-  file: string;
+  name: string;
   birthTime: number;
   updatedTime: number;
 }
@@ -204,14 +204,14 @@ export default class BtnMoveFile extends Vue {
           ) {
             if (
               this.compareTitle(
-                this.fileSortList.files[idx].file,
+                this.fileSortList.files[idx].name,
                 directory.titleTags
               )
             ) {
               if (type == "." + this.fileSortList.files[idx].fileType) {
                 a.push([
-                  this.fromDir + "\\" + this.fileSortList.files[idx].file,
-                  directory.path + "\\" + this.fileSortList.files[idx].file,
+                  this.fromDir + "\\" + this.fileSortList.files[idx].name,
+                  directory.path + "\\" + this.fileSortList.files[idx].name,
                 ]);
                 return;
               }

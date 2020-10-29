@@ -16,12 +16,12 @@ interface SortList {
 }
 interface File {
   fileType: string;
-  file: string;
+  name: string;
   birthTime: number;
   updatedTime: number;
 }
 interface Directory {
-  file: string;
+  name: string;
   birthTime: number;
   updatedTime: number;
 }
@@ -47,28 +47,28 @@ export default class BtnSelectFromDir extends Vue {
 
     const fileSortList: SortList = { directories: [], files: [] };
     let fileType = "";
-    fileList.forEach((file: string) => {
-      const fileSplit = file.split(".");
-      if (fs.lstatSync(this.fromDir + "/" + file).isDirectory()) {
-        const birthTime = fs.lstatSync(this.fromDir + "/" + file).birthtimeMs;
+    fileList.forEach((name: string) => {
+      const fileSplit = name.split(".");
+      if (fs.lstatSync(this.fromDir + "/" + name).isDirectory()) {
+        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
         const updatedTime = Math.max(
-          fs.lstatSync(this.fromDir + "/" + file).mtimeMs,
-          fs.lstatSync(this.fromDir + "/" + file).ctimeMs
+          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
         );
         fileSortList.directories.push({
-          file: file,
+          name: name,
           birthTime: birthTime,
           updatedTime: updatedTime,
         });
       } else {
         fileType = fileSplit[fileSplit.length - 1].toLowerCase();
-        const birthTime = fs.lstatSync(this.fromDir + "/" + file).birthtimeMs;
+        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
         const updatedTime = Math.max(
-          fs.lstatSync(this.fromDir + "/" + file).mtimeMs,
-          fs.lstatSync(this.fromDir + "/" + file).ctimeMs
+          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
         );
         fileSortList.files.push({
-          file: file,
+          name: name,
           fileType: fileType,
           birthTime: birthTime,
           updatedTime: updatedTime,
