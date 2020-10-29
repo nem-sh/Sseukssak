@@ -1,7 +1,7 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 interface DirState {
   fromDir: string;
@@ -10,6 +10,7 @@ interface DirState {
   toLibraryList: ToLibrary[];
   toLibraryNameList: string[];
   selectedToName: string;
+  duplicatedList: string[][];
 }
 interface ToLibrary {
   name: string;
@@ -31,41 +32,43 @@ interface Directory {
   updatedTime: number;
 }
 
-
 export default new Vuex.Store({
   state: {
-    fromDir: "",
+    fromDir: '',
     fileList: [],
     fileSortList: {
-      directories: [], files: []
+      directories: [],
+      files: []
     },
     toLibraryList: [],
     toLibraryNameList: [],
-    selectedToName: ""
+    selectedToName: '',
+    duplicatedList: []
   },
   mutations: {
     changeDir(state: DirState, newDir) {
-      state.fromDir = newDir
+      state.fromDir = newDir;
     },
     changeFileList(state: DirState, newList: string[]) {
-      state.fileList = newList
+      state.fileList = newList;
     },
     changeFileSortList(state: DirState, newList: SortList) {
-      state.fileSortList = newList
+      state.fileSortList = newList;
     },
     changeToLibraryList(state: DirState, newList: ToLibrary[]) {
-      state.toLibraryList = newList
-      state.toLibraryNameList = []
+      state.toLibraryList = newList;
+      state.toLibraryNameList = [];
       newList.forEach((from: ToLibrary) => {
         state.toLibraryNameList.push(from.name);
       });
     },
     changeSelectedToName(state: DirState, newName: string) {
-      state.selectedToName = newName
+      state.selectedToName = newName;
     },
+    changeDuplicatedList(state: DirState, newList: string[][]) {
+      state.duplicatedList = newList;
+    }
   },
-  actions: {
-  },
-  modules: {
-  }
-})
+  actions: {},
+  modules: {}
+});
