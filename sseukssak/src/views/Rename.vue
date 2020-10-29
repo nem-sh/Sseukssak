@@ -125,7 +125,8 @@ const { dialog } = require("electron").remote;
 interface FileInfo {
   name: string;
   path: string;
-  time: Date;
+  ctime: Date;
+  mtime: Date;
 }
 
 @Component({})
@@ -160,11 +161,12 @@ export default class Rename extends Vue {
     this.afterItems = [];
     for (const v of files) {
       const p = path.join(this.dir, v);
-      const stat = fs.statSync(p);
+      const stat = fs.lstatSync(p);
       const item = {
         name: v,
         path: p,
-        time: stat.mtime,
+        ctime: stat.birthtime,
+        mtime: stat.mtime
       };
       await this.fileList.push(item);
       await this.dupCheck.push(item.name)
@@ -201,7 +203,7 @@ export default class Rename extends Vue {
         const _lastDot = item.name.lastIndexOf(".");
         const _fileType = item.name.substring(_lastDot, item.name.length);
         // 자기 자신은 제외
-        if (dupIdx !== -1 && this.fileList[dupIdx].time !== item.time) {
+        if (dupIdx !== -1 && this.fileList[dupIdx].ctime !== item.ctime) {
           dupTmp.push(this.beforeItems[i].name)
           // 중복되지 않는 파일명 생성
           let cnt = 1
@@ -237,16 +239,16 @@ export default class Rename extends Vue {
 
   sortBeforeItems() {
     this.beforeItems.sort(function (a, b) {
-      return (a.time > b.time) ? 1 : -1
+      return (a.mtime > b.mtime) ? 1 : -1
     })
   }
 
   get front() {
     return (item: FileInfo) => {
       if (this.filterFront == "1") {
-        const sYear = item.time.getFullYear();
-        let sMonth: string | number = item.time.getMonth() + 1;
-        let sDate: string | number = item.time.getDate();
+        const sYear = item.ctime.getFullYear();
+        let sMonth: string | number = item.ctime.getMonth() + 1;
+        let sDate: string | number = item.ctime.getDate();
         sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
         sDate = sDate > 9 ? sDate : "0" + sDate;
         const _date = String(sYear).substring(2, 4) + sMonth + sDate;
