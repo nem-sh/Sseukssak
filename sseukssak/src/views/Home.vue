@@ -36,12 +36,12 @@ import BtnMoveFile from '@/components/BtnMoveFile.vue';
 import BtnSelectFromDir from '@/components/BtnSelectFromDir.vue';
 import BtnUploadGoogleDrive from '@/components/BtnUploadGoogleDrive.vue'
 
-import ListTo from '@/components/ListTo.vue';
-import ListFrom from '@/components/ListFrom.vue';
+import ListTo from "@/components/ListTo.vue";
+import ListFrom from "@/components/ListFrom.vue";
 
-import BtnDupCheck from '@/components/BtnDupCheck.vue';
+import BtnDupCheck from "@/components/BtnDupCheck.vue";
 
-import { mapState } from 'vuex';
+import { mapState } from "vuex";
 
 @Component({
   components: {
@@ -53,7 +53,7 @@ import { mapState } from 'vuex';
     ListFrom,
     BtnUploadGoogleDrive
   },
-  computed: mapState(['fromDir'])
+  computed: mapState(["fromDir"]),
 })
 export default class Home extends Vue {}
 </script>

@@ -202,12 +202,9 @@ export default class ModalCreateToLibrary extends Vue {
     });
 
     this.changeToLibraryList(tempLibraryList);
-    fs.writeFile(
+    fs.writeFileSync(
       "C:/Users/multicampus/Desktop/selectedFromData.txt",
-      JSON.stringify(tempLibraryList),
-      function (err) {
-        alert("File Appended" + err);
-      }
+      JSON.stringify(tempLibraryList)
     );
 
     this.libraryTitle = "";
