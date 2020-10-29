@@ -63,10 +63,42 @@
                   label="날짜"
                   multiple
                   outlined
+                >
+                </v-select>
+                <div style="width: 50%; margin-left: auto">
+                  <v-dialog v-model="dialog2" persistent max-width="290">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="dateRangeText"
+                        label="Date range 직접입력"
+                        prepend-icon="mdi-calendar"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                        @click="dates = []"
+                        ><v-icon slot="append" color="green" @click="dateAdd">
+                          mdi-plus
+                        </v-icon></v-text-field
+                      >
+                    </template>
+                    <v-date-picker v-model="dates" range></v-date-picker>
+                  </v-dialog>
+                </div>
+                <div style="width: 50%; margin-left: auto"></div>
+              </div>
+              <div id="name">
+                <v-select
+                  v-model="selectedTitleTags"
+                  :items="titleTags"
+                  deletable-chips
+                  chips
+                  label="파일 이름"
+                  multiple
+                  outlined
                 ></v-select>
                 <div style="width: 50%; margin-left: auto">
-                  <v-text-field label="날짜 직접입력">
-                    <v-icon slot="append" color="green" @click="clickAlert">
+                  <v-text-field v-model="titleAddName" label="파일 이름 입력">
+                    <v-icon slot="append" color="green" @click="titleAdd">
                       mdi-plus
                     </v-icon>
                   </v-text-field>
@@ -112,6 +144,7 @@ interface ToLibraryDirectory {
   path: string;
   typeTags: string[];
   dateTags: string[];
+  titleTags: string[];
 }
 
 @Component({
@@ -120,6 +153,7 @@ interface ToLibraryDirectory {
 })
 export default class ModalCreateToLibrary extends Vue {
   // data
+  dates: string[] = [];
   selectedTypeTags: string[] = [];
   selectedDateTags: string[] = [];
   totalTags: string[] = [];
@@ -128,7 +162,9 @@ export default class ModalCreateToLibrary extends Vue {
   libraryTitle: string = "";
   directoryDir: string = "";
   dialog: boolean = false;
+  dialog2: boolean = false;
   typeAddName: string = "";
+  titleAddName: string = "";
   typeTags: string[] = [
     "#Image",
     "#Document",
@@ -142,6 +178,9 @@ export default class ModalCreateToLibrary extends Vue {
     "#This month",
     "#Every new file",
   ];
+  titleTags: string[] = [];
+  selectedTitleTags: string[] = [];
+
   //vuex
   toLibraryList!: ToLibrary[];
   toLibraryNameList!: string[];
@@ -150,6 +189,20 @@ export default class ModalCreateToLibrary extends Vue {
 
   clickAlert() {
     alert("click");
+  }
+  titleAdd() {
+    this.selectedTitleTags.push(this.titleAddName);
+    this.titleTags.push(this.titleAddName);
+    this.titleAddName = "";
+  }
+  dateAdd() {
+    if (this.dates.length != 2) {
+      alert("날짜를 먼저 선택하거라");
+      return;
+    }
+    this.selectedDateTags.push(this.dates[0] + "~" + this.dates[1]);
+    this.dateTags.push(this.dates[0] + "~" + this.dates[1]);
+    this.dates = [];
   }
   typeAdd() {
     let addName = this.typeAddName.toLowerCase();
@@ -180,10 +233,12 @@ export default class ModalCreateToLibrary extends Vue {
       path: this.directoryDir,
       typeTags: this.selectedTypeTags,
       dateTags: this.selectedDateTags,
+      titleTags: this.selectedTitleTags,
     });
     this.directoryDir = "";
     this.selectedTypeTags = [];
     this.selectedDateTags = [];
+    this.selectedTitleTags = [];
   }
 
   createLibrary() {
@@ -217,21 +272,42 @@ export default class ModalCreateToLibrary extends Vue {
 
     this.dialog = false;
   }
-
+  get dateRangeText() {
+    return this.dates.join(" ~ ");
+  }
   @Watch("selectedTypeTags")
   watchSelectedTypeTags() {
     this.selectedTotalTags = this.selectedTypeTags.concat(
-      this.selectedDateTags
+      this.selectedDateTags.concat(this.selectedTitleTags)
     );
-    this.totalTags = this.selectedTypeTags.concat(this.selectedDateTags);
+    this.totalTags = this.selectedTypeTags.concat(
+      this.selectedDateTags.concat(this.selectedTitleTags)
+    );
+  }
+  @Watch("selectedTitleTags")
+  watchSelectedTitleTags() {
+    this.selectedTotalTags = this.selectedTypeTags.concat(
+      this.selectedDateTags.concat(this.selectedTitleTags)
+    );
+    this.totalTags = this.selectedTypeTags.concat(
+      this.selectedDateTags.concat(this.selectedTitleTags)
+    );
+  }
+  @Watch("dates")
+  watchDates() {
+    if (this.dates.length == 2) {
+      this.dialog2 = false;
+    }
   }
 
   @Watch("selectedDateTags")
   watchSelectedDateTags() {
     this.selectedTotalTags = this.selectedTypeTags.concat(
-      this.selectedDateTags
+      this.selectedDateTags.concat(this.selectedTitleTags)
     );
-    this.totalTags = this.selectedTypeTags.concat(this.selectedDateTags);
+    this.totalTags = this.selectedTypeTags.concat(
+      this.selectedDateTags.concat(this.selectedTitleTags)
+    );
   }
 
   @Watch("selectedTotalTags")
@@ -246,6 +322,12 @@ export default class ModalCreateToLibrary extends Vue {
       if (!this.selectedTotalTags.includes(tag)) {
         if (this.selectedDateTags.indexOf(tag) > -1)
           this.selectedDateTags.splice(this.selectedDateTags.indexOf(tag), 1);
+      }
+    });
+    this.selectedTitleTags.forEach((tag) => {
+      if (!this.selectedTotalTags.includes(tag)) {
+        if (this.selectedTitleTags.indexOf(tag) > -1)
+          this.selectedTitleTags.splice(this.selectedTitleTags.indexOf(tag), 1);
       }
     });
   }
