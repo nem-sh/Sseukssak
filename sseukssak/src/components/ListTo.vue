@@ -40,7 +40,7 @@ interface ToLibrary {
   methods: mapMutations([
     "changeToLibraryList",
     "changeSelectedToName",
-    "changeDorpToDir",
+    "changeDropToDir",
   ]),
 })
 export default class ListTo extends Vue {
@@ -53,7 +53,7 @@ export default class ListTo extends Vue {
       if (this.selectedToName == "") {
         alert("라이브러리 먼저 선택 ㄱㄱ");
       } else {
-        this.changeDorpToDir(f.path);
+        this.changeDropToDir(f.path);
       }
     }
   }
@@ -91,7 +91,7 @@ export default class ListTo extends Vue {
   changeToLibraryList!: (newList: ToLibrary[]) => void;
   changeSelectedToName!: (newName: string) => void;
 
-  changeDorpToDir!: (dir: string) => void;
+  changeDropToDir!: (dir: string) => void;
 
   @Watch("selectedToName")
   watchSelectedToName() {
