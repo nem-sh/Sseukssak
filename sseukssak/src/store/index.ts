@@ -11,6 +11,7 @@ interface DirState {
   toLibraryNameList: string[];
   selectedToName: string;
   duplicatedList: string[][];
+  dropToDir: string;
 }
 interface ToLibrary {
   name: string;
@@ -22,18 +23,19 @@ interface SortList {
 }
 interface File {
   fileType: string;
-  file: string;
+  name: string;
   birthTime: number;
   updatedTime: number;
 }
 interface Directory {
-  file: string;
+  name: string;
   birthTime: number;
   updatedTime: number;
 }
 
 export default new Vuex.Store({
   state: {
+    dropToDir: "",
     fromDir: "",
     fileList: [],
     fileSortList: {
@@ -46,7 +48,10 @@ export default new Vuex.Store({
     duplicatedList: [],
   },
   mutations: {
-    changeDir(state: DirState, newDir) {
+    changeDropToDir(state: DirState, dropToDir: string) {
+      state.dropToDir = dropToDir
+    },
+    changeDir(state: DirState, newDir: string) {
       state.fromDir = newDir;
     },
     changeFileList(state: DirState, newList: string[]) {

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container @drop="dropFrom" dragenter.prevent @dragover.prevent>
     <div class="ma-5">
       <h3>
         <div @click="select = 0" style="display: inline; cursor: pointer">
@@ -73,12 +73,12 @@ interface SortList {
 }
 interface File {
   fileType: string;
-  file: string;
+  name: string;
   birthTime: number;
   updatedTime: number;
 }
 interface Directory {
-  file: string;
+  name: string;
   birthTime: number;
   updatedTime: number;
 }
@@ -90,7 +90,15 @@ interface Directory {
 export default class ListFrom extends Vue {
   now: Date = new Date();
   select: number = 0;
+  dropFrom(event) {
+    event.preventDefault();
+    event.stopPropagation();
 
+    for (const f of event.dataTransfer.files) {
+      console.log(f);
+      fs.renameSync(f.path, this.fromDir + "/" + f.name);
+    }
+  }
   mounted() {
     BUS.$on('bus:refreshfile', () => {
       this.renewFrom();
@@ -132,29 +140,29 @@ export default class ListFrom extends Vue {
   async getFrom(dir: string) {
     const fileList: string[] = fs.readdirSync(dir);
     const fileSortList: SortList = { directories: [], files: [] };
-    let fileType = '';
-    fileList.forEach((file: string) => {
-      const fileSplit = file.split('.');
-      if (fs.lstatSync(this.fromDir + '/' + file).isDirectory()) {
-        const birthTime = fs.lstatSync(this.fromDir + '/' + file).birthtimeMs;
+    let fileType = "";
+    fileList.forEach((name: string) => {
+      const fileSplit = name.split(".");
+      if (fs.lstatSync(this.fromDir + "/" + name).isDirectory()) {
+        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
         const updatedTime = Math.max(
-          fs.lstatSync(this.fromDir + '/' + file).mtimeMs,
-          fs.lstatSync(this.fromDir + '/' + file).ctimeMs
+          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
         );
         fileSortList.directories.push({
-          file: file,
+          name: name,
           birthTime: birthTime,
           updatedTime: updatedTime
         });
       } else {
         fileType = fileSplit[fileSplit.length - 1].toLowerCase();
-        const birthTime = fs.lstatSync(this.fromDir + '/' + file).birthtimeMs;
+        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
         const updatedTime = Math.max(
-          fs.lstatSync(this.fromDir + '/' + file).mtimeMs,
-          fs.lstatSync(this.fromDir + '/' + file).ctimeMs
+          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
         );
         fileSortList.files.push({
-          file: file,
+          name: name,
           fileType: fileType,
           birthTime: birthTime,
           updatedTime: updatedTime
