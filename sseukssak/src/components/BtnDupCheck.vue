@@ -1,10 +1,5 @@
 <template>
-  <div>
-    <v-btn icon @click="DuplicateCheck(fileList)">
-      <v-icon>mdi-shopping-search</v-icon>
-      중복파일체크
-    </v-btn>
-  </div>
+  <div></div>
 </template>
 <script lang="ts">
 import Vue from 'vue';
@@ -26,6 +21,11 @@ import { BUS } from './EventBus.js';
   ])
 })
 export default class DupCheck extends Vue {
+  mounted() {
+    BUS.$on('bus:dupcheck', () => {
+      this.DuplicateCheck(this.fileList);
+    });
+  }
   dir: string = '';
   fromDir!: string;
   files: string[] = [];
@@ -138,7 +138,6 @@ export default class DupCheck extends Vue {
       }
     }
     this.changeDuplicatedList(dupedhistory);
-    BUS.$emit('bus:refreshfile');
   }
 }
 </script>
