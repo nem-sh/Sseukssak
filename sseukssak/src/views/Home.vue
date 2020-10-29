@@ -15,7 +15,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-footer>
+    <v-footer absolute>
       <v-col>
         <BtnMoveFile />
         <BtnDupCheck />
@@ -28,18 +28,18 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'vue-class-component';
-import Exp1 from '@/components/Exp1.vue';
-import BtnMoveFile from '@/components/BtnMoveFile.vue';
-import BtnSelectFromDir from '@/components/BtnSelectFromDir.vue';
+import Vue from "vue";
+import Component from "vue-class-component";
+import Exp1 from "@/components/Exp1.vue";
+import BtnMoveFile from "@/components/BtnMoveFile.vue";
+import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
 
-import ListTo from '@/components/ListTo.vue';
-import ListFrom from '@/components/ListFrom.vue';
+import ListTo from "@/components/ListTo.vue";
+import ListFrom from "@/components/ListFrom.vue";
 
-import BtnDupCheck from '@/components/BtnDupCheck.vue';
+import BtnDupCheck from "@/components/BtnDupCheck.vue";
 
-import { mapState } from 'vuex';
+import { mapState } from "vuex";
 
 @Component({
   components: {
@@ -48,9 +48,9 @@ import { mapState } from 'vuex';
     BtnSelectFromDir,
     BtnDupCheck,
     ListTo,
-    ListFrom
+    ListFrom,
   },
-  computed: mapState(['fromDir'])
+  computed: mapState(["fromDir"]),
 })
 export default class Home extends Vue {}
 </script>

@@ -1,7 +1,7 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 interface DirState {
   fromDir: string;
@@ -11,6 +11,8 @@ interface DirState {
   toLibraryNameList: string[];
   selectedToName: string;
   logBackCheck: boolean;
+  duplicatedList: string[][];
+  dropToDir: string;
 }
 interface ToLibrary {
   name: string;
@@ -22,54 +24,61 @@ interface SortList {
 }
 interface File {
   fileType: string;
-  file: string;
+  name: string;
   birthTime: number;
   updatedTime: number;
 }
 interface Directory {
-  file: string;
+  name: string;
   birthTime: number;
   updatedTime: number;
 }
 
 export default new Vuex.Store({
   state: {
+    dropToDir: "",
     fromDir: "",
     fileList: [],
     fileSortList: {
-      directories: [], files: []
+      directories: [],
+      files: [],
     },
     toLibraryList: [],
     toLibraryNameList: [],
     selectedToName: "",
     logBackCheck: false,
+    duplicatedList: [],
   },
   mutations: {
-    changeDir(state: DirState, newDir) {
-      state.fromDir = newDir
+    changeDropToDir(state: DirState, dropToDir: string) {
+      state.dropToDir = dropToDir
+    },
+    changeDir(state: DirState, newDir: string) {
+      state.fromDir = newDir;
     },
     changeFileList(state: DirState, newList: string[]) {
-      state.fileList = newList
+      state.fileList = newList;
     },
     changeFileSortList(state: DirState, newList: SortList) {
-      state.fileSortList = newList
+      state.fileSortList = newList;
     },
     changeToLibraryList(state: DirState, newList: ToLibrary[]) {
-      state.toLibraryList = newList
-      state.toLibraryNameList = []
+      state.toLibraryList = newList;
+      state.toLibraryNameList = [];
       newList.forEach((from: ToLibrary) => {
         state.toLibraryNameList.push(from.name);
       });
     },
     changeSelectedToName(state: DirState, newName: string) {
-      state.selectedToName = newName
+      state.selectedToName = newName;
+    },
+    changeDuplicatedList(state: DirState, newList: string[][]) {
+      state.duplicatedList = newList;
     },
     changeLogBackCheck(state: DirState, newCheck) {
       state.logBackCheck = newCheck
     }
   },
-  actions: {
-  },
-  modules: {
-  }
-})
+  actions: {},
+  modules: {},
+});

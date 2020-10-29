@@ -43,7 +43,11 @@
         <span class="font-weight-bold">파일명 뒤</span>
         <v-radio-group v-model="filterBack" @change="change">
           <v-radio label="숫자(수정 날짜 오름차순)" value="1"></v-radio>
-          <v-radio label="사용자 지정" value="2" :disabled="isDisabled"></v-radio>
+          <v-radio
+            label="사용자 지정"
+            value="2"
+            :disabled="isDisabled"
+          ></v-radio>
           <v-text-field
             v-show="filterBack == '2'"
             v-model="changeFileName3"
@@ -185,7 +189,7 @@ export default class Rename extends Vue {
         type: _fileType,
       };
       await this.fileList.push(item);
-      await this.dupCheck.push(item.name)
+      await this.dupCheck.push(item.name);
     }
   }
 
@@ -201,9 +205,17 @@ export default class Rename extends Vue {
   }
 
   rename() {
-    if ((this.filterFront == "2" && !this.changeFileName1) || (this.filterMiddle == "2" && !this.changeFileName2) || (this.filterBack == "2" && !this.changeFileName3)) {
+    if (
+      (this.filterFront == "2" && !this.changeFileName1) ||
+      (this.filterMiddle == "2" && !this.changeFileName2) ||
+      (this.filterBack == "2" && !this.changeFileName3)
+    ) {
       alert("빈칸을 작성해주세요");
-    } else if (this.changeFileName1.length > 10 || this.changeFileName2.length > 20 || this.changeFileName3.length > 10) {
+    } else if (
+      this.changeFileName1.length > 10 ||
+      this.changeFileName2.length > 20 ||
+      this.changeFileName3.length > 10
+    ) {
       alert("지정된 길이에 맞게 입력해주세요");
     } else if (this.beforeItems.length <= 0) {
       alert("변경할 파일이 없습니다");
@@ -222,7 +234,7 @@ export default class Rename extends Vue {
         }
         // 자기 자신은 제외
         if (dupIdx !== -1 && this.fileList[dupIdx].ctime !== item.ctime) {
-          dupTmp.push(this.beforeItems[i].name)
+          dupTmp.push(this.beforeItems[i].name);
           // 중복되지 않는 파일명 생성
           let cnt = 1
           let noDupName = item.name.substring(0, item.name.length - _fileType.length) + "(" + cnt + ")" + _fileType
@@ -238,10 +250,18 @@ export default class Rename extends Vue {
         }
       });
       if (dupTmp.length > 0) {
-        const text = dupTmp.map(function (item, index) {
-            return (index+1) + ". " + item + " => " + dupTmpChange[index];
-        }).join("\n");
-        if (confirm("바꾸려는 파일명이 해당 디렉토리에 이미 존재합니다. 다음과 같이 변경하시겠습니까?" + "\n" + text)) {
+        const text = dupTmp
+          .map(function (item, index) {
+            return index + 1 + ". " + item + " => " + dupTmpChange[index];
+          })
+          .join("\n");
+        if (
+          confirm(
+            "바꾸려는 파일명이 해당 디렉토리에 이미 존재합니다. 다음과 같이 변경하시겠습니까?" +
+              "\n" +
+              text
+          )
+        ) {
           dupTmp.forEach((item, i) => {
             const o = path.join(this.dir, item);
             const n = path.join(this.dir, dupTmpChange[i]);
@@ -261,8 +281,8 @@ export default class Rename extends Vue {
 
   sortBeforeItems() {
     this.beforeItems.sort(function (a, b) {
-      return (a.mtime > b.mtime) ? 1 : -1
-    })
+      return a.mtime > b.mtime ? 1 : -1;
+    });
   }
 
   logSave(data) {
@@ -308,13 +328,13 @@ export default class Rename extends Vue {
         sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
         sDate = sDate > 9 ? sDate : "0" + sDate;
         const _date = String(sYear).substring(2, 4) + sMonth + sDate;
-        return _date + "_"
+        return _date + "_";
       } else if (this.filterFront == "2") {
-        return this.changeFileName1
+        return this.changeFileName1;
       } else {
-        return ""
+        return "";
       }
-    }
+    };
   }
 
   get middle() {
@@ -326,9 +346,9 @@ export default class Rename extends Vue {
           return item.name
         }
       } else {
-        return this.changeFileName2
+        return this.changeFileName2;
       }
-    }
+    };
   }
 
   get back() {
@@ -344,13 +364,13 @@ export default class Rename extends Vue {
       } else {
         return "" + _fileType
       }
-    }
+    };
   }
 
   get isDisabled(): boolean {
-    return this.filterMiddle == "2" ? true : false
+    return this.filterMiddle == "2" ? true : false;
   }
-  
+
   @Watch("filterMiddle")
   watchFilterMiddle() {
     if (this.filterMiddle == "2") {
@@ -360,7 +380,7 @@ export default class Rename extends Vue {
 
   @Watch("beforeItems")
   watchFileList() {
-    this.change()
+    this.change();
   }
 }
 </script>
