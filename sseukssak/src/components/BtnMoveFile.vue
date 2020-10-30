@@ -168,6 +168,7 @@ export default class BtnMoveFile extends Vue {
     return true;
   }
   moveFile() {
+    BUS.$emit('bus:refreshfile');
     BUS.$emit('bus:dupcheck');
     BUS.$emit('bus:refreshfile');
     console.log(this.tagToDate);
@@ -214,8 +215,8 @@ export default class BtnMoveFile extends Vue {
             ) {
               if (type == '.' + this.fileSortList.files[idx].fileType) {
                 a.push([
-                  this.fromDir + "\\" + this.fileSortList.files[idx].name,
-                  directory.path + "\\" + this.fileSortList.files[idx].name,
+                  this.fromDir + '\\' + this.fileSortList.files[idx].name,
+                  directory.path + '\\' + this.fileSortList.files[idx].name
                 ]);
                 return;
               }

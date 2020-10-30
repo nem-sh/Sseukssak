@@ -29,10 +29,10 @@ export default class DupCheck extends Vue {
   dir: string = '';
   fromDir!: string;
   files: string[] = [];
-  duplicatedList!: string[][];
+  duplicatedList!: any[][];
   fileList!: string[];
 
-  changeDuplicatedList!: (newList: string[][]) => void;
+  changeDuplicatedList!: (newList: any[][]) => void;
 
   flag: boolean = false;
   filepath: string = '';
@@ -132,7 +132,8 @@ export default class DupCheck extends Vue {
               'duplicated files' +
               '\\' +
               dupedfilelist[f1][f2],
-            d.toString()
+            d.toString(),
+            2
           ]);
         } else {
           dupedhistory.push([
@@ -140,7 +141,8 @@ export default class DupCheck extends Vue {
             0,
             this.fromDir + '\\' + dupedfilelist[f1][f2],
             this.fromDir + '\\' + dupedfilelist[f1][f2],
-            d.toString()
+            d.toString(),
+            2
           ]);
         }
       }

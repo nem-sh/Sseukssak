@@ -1,5 +1,5 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import Vue from 'vue';
+import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
@@ -11,7 +11,7 @@ interface DirState {
   toLibraryNameList: string[];
   selectedToName: string;
   logBackCheck: boolean;
-  duplicatedList: string[][];
+  duplicatedList: any[][];
   dropToDir: string;
 }
 interface ToLibrary {
@@ -36,22 +36,22 @@ interface Directory {
 
 export default new Vuex.Store({
   state: {
-    dropToDir: "",
-    fromDir: "",
+    dropToDir: '',
+    fromDir: '',
     fileList: [],
     fileSortList: {
       directories: [],
-      files: [],
+      files: []
     },
     toLibraryList: [],
     toLibraryNameList: [],
-    selectedToName: "",
+    selectedToName: '',
     logBackCheck: false,
-    duplicatedList: [],
+    duplicatedList: [[]]
   },
   mutations: {
     changeDropToDir(state: DirState, dropToDir: string) {
-      state.dropToDir = dropToDir
+      state.dropToDir = dropToDir;
     },
     changeDir(state: DirState, newDir: string) {
       state.fromDir = newDir;
@@ -72,13 +72,13 @@ export default new Vuex.Store({
     changeSelectedToName(state: DirState, newName: string) {
       state.selectedToName = newName;
     },
-    changeDuplicatedList(state: DirState, newList: string[][]) {
+    changeDuplicatedList(state: DirState, newList: any[][]) {
       state.duplicatedList = newList;
     },
     changeLogBackCheck(state: DirState, newCheck) {
-      state.logBackCheck = newCheck
+      state.logBackCheck = newCheck;
     }
   },
   actions: {},
-  modules: {},
+  modules: {}
 });
