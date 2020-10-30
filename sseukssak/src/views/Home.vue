@@ -17,25 +17,53 @@
                     <v-col cols="4">
                       <h3><span>From</span></h3></v-col
                     >
-                    <v-col cols="8"> 폴더명 </v-col>
+                    <v-col
+                      cols="8"
+                      align="center"
+                      justify="center"
+                      class="folder-name"
+                      ><div v-if="fromDir">{{ fromDir }}</div>
+                      <div v-else>폴더를 선택해주세요!</div>
+                    </v-col>
                   </v-row>
                 </div>
-                <div class="select-date">select date</div>
+                <div class="select-date"></div>
               </div>
               <div class="from-part-second">
-                <FromPartition
-                  class="pink lighten-4 rounded-xl from-file-list"
-                />
+                <FromPartition class="lighten-4 rounded-xl from-file-list" />
               </div>
-              <div class="from-part-third">Flex item</div>
+              <div class="from-part-third" align="right">
+                <BtnMoveFile mr-4 /><BtnDupCheck />
+              </div>
             </v-col>
             <v-col
               cols="12"
               lg="6"
               md="6"
               sm="6"
-              class="to fill-height d-flex flex-column justify-center align-center"
+              class="to fill-height d-flex flex-column"
             >
+              <div class="to-part-first">
+                <div class="select-folder">
+                  <v-row>
+                    <v-col cols="4">
+                      <h3><span>To</span></h3></v-col
+                    >
+                    <v-col
+                      cols="8"
+                      align="center"
+                      justify="center"
+                      class="folder-name"
+                    >
+                      <div>라이브러리를 선택해주세요!</div>
+                    </v-col>
+                  </v-row>
+                </div>
+                <div class="select-date"></div>
+              </div>
+              <div class="to-part-second">
+                <ToPartition class="lighten-4 rounded-xl from-file-list" />
+              </div>
             </v-col>
           </v-row>
         </v-container>
@@ -44,7 +72,7 @@
 
     <v-row>
       <v-col>
-        <v-row no-gutters>From <BtnSelectFromDir />{{ fromDir }}</v-row>
+        <v-row no-gutters><BtnSelectFromDir />{{ fromDir }}</v-row>
         <v-row no-gutters>
           <ListFrom />
         </v-row>
@@ -75,6 +103,7 @@ import BtnMoveFile from "@/components/BtnMoveFile.vue";
 import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
 
 import FromPartition from "@/components/FromPartition.vue";
+import ToPartition from "@/components/ToPartition.vue";
 
 import ListTo from "@/components/ListTo.vue";
 import ListFrom from "@/components/ListFrom.vue";
@@ -92,6 +121,7 @@ import { mapState } from "vuex";
     ListTo,
     ListFrom,
     FromPartition,
+    ToPartition,
   },
   computed: mapState(["fromDir"]),
 })
@@ -105,6 +135,7 @@ export default class Home extends Vue {}
 
 .from-part-first .select-folder {
   height: 70%;
+  margin: 10px;
 }
 
 .from-part-first .select-date {
@@ -122,10 +153,14 @@ h3 {
 h3 span {
   display: block;
   margin: 0 0 17px 10px;
-  font-size: 50px;
-  line-height: 50px;
+  font-size: 40px;
+  line-height: 40px;
   color: #7288da;
   text-shadow: 0 13.36px 8.896px #c4b59d, 0 -2px 1px #fff;
   letter-spacing: -4px;
+}
+
+.folder-name {
+  font-size: 20px;
 }
 </style>
