@@ -54,21 +54,20 @@ export default new Vuex.Store({
     toLibraryNameList: [],
     selectedToName: '',
     logBackCheck: false,
-<<<<<<< HEAD
-    duplicatedList: [[]]
-=======
-    duplicatedList: [],
+    duplicatedList: [[]],
     modifyDirectroy: {
-      path: "",
+      path: '',
       typeTags: [],
       dateTags: [],
       titleTags: []
-    },
->>>>>>> 47968ead65bfaf58b598262cc5c7388b326069a6
+    }
   },
   mutations: {
-    changeModifyDirectroy(state: DirState, modifyDirectroy: ToLibraryDirectory) {
-      state.modifyDirectroy = modifyDirectroy
+    changeModifyDirectroy(
+      state: DirState,
+      modifyDirectroy: ToLibraryDirectory
+    ) {
+      state.modifyDirectroy = modifyDirectroy;
     },
     changeDropToDir(state: DirState, dropToDir: string) {
       state.dropToDir = dropToDir;
