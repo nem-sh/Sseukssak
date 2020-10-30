@@ -73,6 +73,7 @@ import Component from "vue-class-component";
 import Exp1 from "@/components/Exp1.vue";
 import BtnMoveFile from "@/components/BtnMoveFile.vue";
 import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
+import BtnUploadGoogleDrive from '@/components/BtnUploadGoogleDrive.vue'
 
 import FromPartition from "@/components/FromPartition.vue";
 
