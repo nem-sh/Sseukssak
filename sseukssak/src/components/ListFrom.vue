@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container @drop="dropFrom" dragenter.prevent @dragover.prevent>
     <div class="ma-5">
       <h3>
         <div @click="select = 0" style="display: inline; cursor: pointer">
@@ -31,7 +31,7 @@
         <v-list-item @click="enterDirectory('')">상위 폴더로</v-list-item>
       </div>
     </v-list>
-    <v-list v-for="directory in fileSortList.directories" :key="directory.file">
+    <v-list v-for="directory in fileSortList.directories" :key="directory.name">
       <div
         v-if="
           select == 0 ||
@@ -39,13 +39,13 @@
           (select == 2 && compareTime(directory.updatedTime))
         "
       >
-        <v-list-item @click="enterDirectory(directory.file)">{{
+        <v-list-item @click="enterDirectory(directory.name)">{{
           directory
         }}</v-list-item>
       </div>
     </v-list>
     <h5>files</h5>
-    <v-list v-for="file in fileSortList.files" :key="file.file">
+    <v-list v-for="file in fileSortList.files" :key="file.name">
       <div
         v-if="
           select == 0 ||
@@ -53,7 +53,7 @@
           (select == 2 && compareTime(file.updatedTime))
         "
       >
-        <v-list-item @click="openFile(file.file)">{{ file }}</v-list-item>
+        <v-list-item @click="openFile(file.name)">{{ file }}</v-list-item>
       </div>
     </v-list>
   </v-container>
@@ -73,12 +73,12 @@ interface SortList {
 }
 interface File {
   fileType: string;
-  file: string;
+  name: string;
   birthTime: number;
   updatedTime: number;
 }
 interface Directory {
-  file: string;
+  name: string;
   birthTime: number;
   updatedTime: number;
 }
@@ -90,10 +90,16 @@ interface Directory {
 export default class ListFrom extends Vue {
   now: Date = new Date();
   select: number = 0;
+  dropFrom(event) {
+    event.preventDefault();
+    event.stopPropagation();
 
+    for (const f of event.dataTransfer.files) {
+      console.log(f);
+      fs.renameSync(f.path, this.fromDir + "/" + f.name);
+    }
+  }
   mounted() {
-    // 본 함수는 기존 코드를 복붙하여 사용하였습니다.
-    // 디렉토리 호출 함수를 나눠서 mounted에서 해당 함수만 호출시킬 필요가 있습니다.
     BUS.$on("bus:refreshfile", () => {
       this.renewFrom();
     });
@@ -135,28 +141,28 @@ export default class ListFrom extends Vue {
     const fileList: string[] = fs.readdirSync(dir);
     const fileSortList: SortList = { directories: [], files: [] };
     let fileType = "";
-    fileList.forEach((file: string) => {
-      const fileSplit = file.split(".");
-      if (fs.lstatSync(this.fromDir + "/" + file).isDirectory()) {
-        const birthTime = fs.lstatSync(this.fromDir + "/" + file).birthtimeMs;
+    fileList.forEach((name: string) => {
+      const fileSplit = name.split(".");
+      if (fs.lstatSync(this.fromDir + "/" + name).isDirectory()) {
+        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
         const updatedTime = Math.max(
-          fs.lstatSync(this.fromDir + "/" + file).mtimeMs,
-          fs.lstatSync(this.fromDir + "/" + file).ctimeMs
+          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
         );
         fileSortList.directories.push({
-          file: file,
+          name: name,
           birthTime: birthTime,
           updatedTime: updatedTime,
         });
       } else {
         fileType = fileSplit[fileSplit.length - 1].toLowerCase();
-        const birthTime = fs.lstatSync(this.fromDir + "/" + file).birthtimeMs;
+        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
         const updatedTime = Math.max(
-          fs.lstatSync(this.fromDir + "/" + file).mtimeMs,
-          fs.lstatSync(this.fromDir + "/" + file).ctimeMs
+          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
         );
         fileSortList.files.push({
-          file: file,
+          name: name,
           fileType: fileType,
           birthTime: birthTime,
           updatedTime: updatedTime,

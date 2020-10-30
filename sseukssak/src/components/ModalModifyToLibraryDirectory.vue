@@ -1,11 +1,11 @@
 <template>
   <v-container class="pl-0">
-    <v-btn icon color="green" dark @click="dialog = true">
-      <v-icon>mdi-plus</v-icon>
+    <v-btn icon color="green" dark v-if="selectedToName" @click="dialog = true">
+      수정하기
     </v-btn>
     <v-dialog
+      width="500px"
       v-model="dialog"
-      fullscreen
       hide-overlay
       transition="dialog-bottom-transition"
       scrollable
@@ -15,26 +15,18 @@
           <v-btn icon dark @click="closeModal">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>새로운 라이브러리</v-toolbar-title>
+          <v-toolbar-title>디렉토리 수정</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-            <v-btn dark text @click="createLibrary"> 생성 </v-btn>
+            <v-btn dark text @click="modifyLibrary"> 수정</v-btn>
           </v-toolbar-items>
         </v-toolbar>
 
         <v-card-text style="height: 100%">
           <v-container>
-            <div style="width: 80%; margin: auto">
-              <div style="width: 60%">
-                <v-text-field label="라이브러리 이름" v-model="libraryTitle">
-                </v-text-field>
-              </div>
-              <div>
-                {{ libraryDirectories }}
-              </div>
-
+            <div style="width: 100%; margin: auto">
               <div id="type">
-                <v-btn @click="readDir"> 폴더 찾기 </v-btn>{{ directoryDir }}
+                {{ directoryDir }}
                 <v-select
                   v-model="selectedTypeTags"
                   :items="typeTags"
@@ -65,7 +57,7 @@
                   outlined
                 >
                 </v-select>
-                <div style="width: 50%; margin-left: auto">
+                <div style="width: 60%; margin-left: auto">
                   <v-dialog v-model="dialog2" persistent max-width="290">
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
@@ -84,7 +76,7 @@
                     <v-date-picker v-model="dates" range></v-date-picker>
                   </v-dialog>
                 </div>
-                <div style="width: 50%; margin-left: auto"></div>
+                <div style="width: 60%; margin-left: auto"></div>
               </div>
               <div id="name">
                 <v-select
@@ -96,7 +88,7 @@
                   multiple
                   outlined
                 ></v-select>
-                <div style="width: 50%; margin-left: auto">
+                <div style="width: 60%; margin-left: auto">
                   <v-text-field v-model="titleAddName" label="파일 이름 입력">
                     <v-icon slot="append" color="green" @click="titleAdd">
                       mdi-plus
@@ -114,15 +106,8 @@
                 outlined
               ></v-select>
             </div>
-            <div>
-              <v-btn color="green" dark @click="addDirectory">
-                새로운 디렉토리 추가<v-icon>mdi-plus</v-icon>
-              </v-btn>
-            </div>
           </v-container>
         </v-card-text>
-
-        <div style="flex: 1 1 auto"></div>
       </v-card>
     </v-dialog>
   </v-container>
@@ -131,13 +116,12 @@
 <script lang='ts'>
 import { Vue, Component, Watch } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
-// import fs from "fs";
 
 const { dialog } = require("electron").remote;
 
 interface ToLibrary {
   name: string;
-  directories: object[];
+  directories: ToLibraryDirectory[];
 }
 
 interface ToLibraryDirectory {
@@ -146,45 +130,63 @@ interface ToLibraryDirectory {
   dateTags: string[];
   titleTags: string[];
 }
+const AppProps = Vue.extend({
+  props: {
+    propDirectory: Object,
+  },
+});
 
 @Component({
-  computed: mapState(["toLibraryList", "toLibraryNameList"]),
-  methods: mapMutations(["changeToLibraryList"]),
+  computed: mapState([
+    "toLibraryList",
+    "toLibraryNameList",
+    "selectedToName",
+    "dropToDir",
+  ]),
+  methods: mapMutations(["changeToLibraryList", "changeDropToDir"]),
 })
-export default class ModalCreateToLibrary extends Vue {
+export default class ModalModifyToLibraryDirectory extends AppProps {
   // data
+  initalDirectory: ToLibraryDirectory = this.propDirectory;
   dates: string[] = [];
-  selectedTypeTags: string[] = [];
-  selectedDateTags: string[] = [];
-  totalTags: string[] = [];
-  selectedTotalTags: string[] = [];
+  selectedTypeTags: string[] = this.initalDirectory.typeTags;
+  selectedDateTags: string[] = this.initalDirectory.dateTags;
   libraryDirectories: ToLibraryDirectory[] = [];
-  libraryTitle: string = "";
-  directoryDir: string = "";
+
+  directoryDir: string = this.initalDirectory.path;
   dialog: boolean = false;
   dialog2: boolean = false;
   typeAddName: string = "";
   titleAddName: string = "";
-  typeTags: string[] = [
-    "#Image",
-    "#Document",
-    "#Video",
-    "#Audio",
-    "#Compressed",
-  ];
-  dateTags: string[] = [
-    "#Today",
-    "#This week",
-    "#This month",
-    "#Every new file",
-  ];
-  titleTags: string[] = [];
-  selectedTitleTags: string[] = [];
+  typeTags: string[] = Array.from(
+    new Set(
+      ["#Image", "#Document", "#Video", "#Audio", "#Compressed"].concat(
+        this.selectedTypeTags
+      )
+    )
+  );
+  dateTags: string[] = Array.from(
+    new Set(
+      ["#Today", "#This week", "#This month", "#Every new file"].concat(
+        this.selectedDateTags
+      )
+    )
+  );
+  titleTags: string[] = this.initalDirectory.titleTags;
+  selectedTitleTags: string[] = this.initalDirectory.titleTags;
 
+  selectedTotalTags: string[] = this.selectedTypeTags.concat(
+    this.selectedDateTags.concat(this.selectedTitleTags)
+  );
+  totalTags: string[] = this.selectedTypeTags.concat(
+    this.selectedDateTags.concat(this.selectedTitleTags)
+  );
   //vuex
   toLibraryList!: ToLibrary[];
   toLibraryNameList!: string[];
-
+  selectedToName!: string;
+  dropToDir!: string;
+  changeDropToDir!: (dir: string) => void;
   changeToLibraryList!: (newList: ToLibrary[]) => void;
 
   clickAlert() {
@@ -214,7 +216,6 @@ export default class ModalCreateToLibrary extends Vue {
     this.typeAddName = "";
   }
   closeModal() {
-    this.libraryTitle = "";
     this.libraryDirectories = [];
     this.directoryDir = "";
     this.selectedTypeTags = [];
@@ -222,65 +223,59 @@ export default class ModalCreateToLibrary extends Vue {
 
     this.dialog = false;
   }
-  readDir() {
-    this.directoryDir = dialog.showOpenDialogSync({
-      properties: ["openDirectory"],
-    })[0];
-  }
 
-  addDirectory() {
-    this.libraryDirectories.push({
-      path: this.directoryDir,
-      typeTags: this.selectedTypeTags,
-      dateTags: this.selectedDateTags,
-      titleTags: this.selectedTitleTags,
-    });
-    this.directoryDir = "";
-    this.selectedTypeTags = [];
-    this.selectedDateTags = [];
-    this.selectedTitleTags = [];
-  }
-
-  createLibrary() {
+  modifyLibrary() {
     const tempLibraryList: ToLibrary[] = this.toLibraryList;
 
-    for (let index = 0; index < this.toLibraryNameList.length; index++) {
-      if (this.toLibraryNameList[index] == this.libraryTitle) {
-        alert("중복된 이름이 있습니다.");
-        return;
+    for (let index1 = 0; index1 < this.toLibraryNameList.length; index1++) {
+      if (tempLibraryList[index1].name == this.selectedToName) {
+        for (
+          let index2 = 0;
+          index2 < tempLibraryList[index1].directories.length;
+          index2++
+        ) {
+          if (
+            tempLibraryList[index1].directories[index2].path ==
+            this.directoryDir
+          ) {
+            tempLibraryList[index1].directories[index2] = {
+              path: this.directoryDir,
+              typeTags: this.selectedTypeTags,
+              dateTags: this.selectedDateTags,
+              titleTags: this.selectedTitleTags,
+            };
+            this.changeToLibraryList(tempLibraryList);
+
+            window.localStorage.setItem(
+              "selectedFromData",
+              JSON.stringify(tempLibraryList)
+            );
+
+            this.libraryDirectories = [];
+            this.directoryDir = "";
+            this.selectedTypeTags = [];
+            this.selectedDateTags = [];
+            this.selectedTitleTags = [];
+
+            alert("수정되었습니다.");
+
+            this.dialog = false;
+            return;
+          }
+        }
       }
     }
-
-    tempLibraryList.push({
-      name: this.libraryTitle,
-      directories: this.libraryDirectories,
-    });
-
-    this.changeToLibraryList(tempLibraryList);
-    // fs.writeFileSync(
-    //   "C:/Users/multicampus/Desktop/selectedFromData.txt",
-    //   JSON.stringify(tempLibraryList)
-    // );
-
-    window.localStorage.setItem(
-      "selectedFromData",
-      JSON.stringify(tempLibraryList)
-    );
-
-    this.libraryTitle = "";
-    this.libraryDirectories = [];
-    this.directoryDir = "";
-    this.selectedTypeTags = [];
-    this.selectedDateTags = [];
-
-    this.selectedTitleTags = [];
-
-    alert("추가되었습니다.");
-
-    this.dialog = false;
   }
   get dateRangeText() {
     return this.dates.join(" ~ ");
+  }
+  @Watch("dropToDir")
+  watchDropToDir() {
+    if (this.dropToDir != "") {
+      this.directoryDir = this.dropToDir;
+      this.dialog = true;
+      this.changeDropToDir("");
+    }
   }
   @Watch("selectedTypeTags")
   watchSelectedTypeTags() {

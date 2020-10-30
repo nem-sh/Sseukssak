@@ -1,5 +1,5 @@
 <template>
-  <v-app class="app-container">
+  <v-app id="app" class="app-container">
     <div class="window-operations-container">
       <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
       <div class="operations">
@@ -13,8 +13,9 @@
         <i class="fas fa-times close" @click="closeWindow"></i>
       </div>
     </div>
-    <div class="app">
+    <div class="app-main">
       <div v-if="!mini" class="menu">
+        <div class="top-space"></div>
         <div class="menu--icon" @click="goInfoPage">
           <img class="app-logo" src="@/assets/sweeping.png" alt="" />
         </div>
@@ -30,70 +31,86 @@
           <span><i :class="item.icon"></i></span>
         </div>
       </div>
-      <div class="main"><router-view></router-view></div>
+      <div class="main">
+        <!-- <div class="top-space"></div> -->
+        <router-view></router-view>
+      </div>
     </div>
   </v-app>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import Home from "@/views/Home.vue";
-import "./components/styles/main.scss";
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import Home from '@/views/Home.vue';
+import './components/styles/main.scss';
 
-const { ipcRenderer, shell } = window.require("electron");
+const { ipcRenderer, shell } = window.require('electron');
 
 @Component({
   components: {
-    Home,
+    Home
   },
   data() {
     return {
       items: [
-        { id: 1, title: "Home", icon: "fas fa-home fa-lg", path: "/" },
-        { id: 2, title: "Rename", icon: "far fa-edit fa-lg", path: "rename" },
-      ],
+        { id: 1, title: 'Home', icon: 'fas fa-home fa-lg', path: '/' },
+        { id: 2, title: 'Rename', icon: 'far fa-edit fa-lg', path: 'rename' },
+        { id: 3, title: 'Restore', icon: 'fa fa-history', path: 'restore' }
+      ]
     };
-  },
+  }
 })
 export default class App extends Vue {
-  activeTab: string = "Home";
+  activeTab: string = 'Home';
   mini: boolean = false;
 
   goMenu(idx) {
-    if (idx === 1 && this.$route.name !== "Home") {
-      this.activeTab = "Home";
-      this.$router.push({ name: "Home" });
-    } else if (idx === 2 && this.$route.name !== "Rename") {
-      this.activeTab = "Rename";
-      this.$router.push({ name: "Rename" });
+    if (idx === 1 && this.$route.name !== 'Home') {
+      this.activeTab = 'Home';
+      this.$router.push({ name: 'Home' });
+    } else if (idx === 2 && this.$route.name !== 'Rename') {
+      this.activeTab = 'Rename';
+      this.$router.push({ name: 'Rename' });
+    } else if (idx === 3 && this.$route.name !== 'Restore') {
+      this.activeTab = 'Restore';
+      this.$router.push({ name: 'Restore' });
     }
   }
 
   closeWindow() {
-    const remote = window.require ? window.require("electron").remote : null;
+    const remote = window.require ? window.require('electron').remote : null;
     const WIN = remote.getCurrentWindow();
     WIN.close();
   }
 
   minimizeWindow() {
-    const remote = window.require ? window.require("electron").remote : null;
+    const remote = window.require ? window.require('electron').remote : null;
     const WIN = remote.getCurrentWindow();
     WIN.minimize();
   }
 
   resizeSmallWindow() {
     this.mini = true;
-    ipcRenderer.send("resize-me-smaller-please");
+    ipcRenderer.send('resize-me-smaller-please');
   }
 
   resizeBigWindow() {
     this.mini = false;
-    ipcRenderer.send("resize-me-bigger-please");
+    ipcRenderer.send('resize-me-bigger-please');
   }
 
   goInfoPage() {
-    shell.openExternal("http://k3b304.p.ssafy.io/");
+    shell.openExternal('http://k3b304.p.ssafy.io/');
   }
 }
 </script>
+
+<style>
+#app {
+  font-family: "Nanum Gothic", sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  color: #2c3e50;
+}
+</style>
