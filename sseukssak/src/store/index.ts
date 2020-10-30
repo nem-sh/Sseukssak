@@ -57,7 +57,7 @@ export default new Vuex.Store({
     selectedToName: "",
     logBackCheck: false,
     duplicatedList: [],
-    token: ""
+    token: "",
     modifyDirectroy: {
       path: "",
       typeTags: [],
