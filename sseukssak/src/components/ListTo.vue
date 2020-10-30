@@ -12,10 +12,10 @@
       <v-col cols="2" class="pl-0"><ModalCreateToLibrary /></v-col>
     </v-row>
     <v-col
-      ><button v-if="selectedToName" @click="deleteToLibrary">
+      ><v-btn color="red" v-if="selectedToName" @click="deleteToLibrary">
         라이브러리 지우기
-      </button></v-col
-    >
+      </v-btn>
+    </v-col>
 
     <v-col cols="2" class="pl-0"><ModalAddToLibraryDirectory /></v-col>
     <div v-for="toLibrary in toLibraryList" :key="toLibrary.name">
@@ -23,10 +23,15 @@
         {{ toLibrary.name }}
         <div v-for="directory in toLibrary.directories" :key="directory.path">
           {{ directory }}
-          <button @click="deleteToLibraryDirectory(directory.path)">
-            디렉토리 지우기
-          </button>
+
           <ModalModifyToLibraryDirectory :propDirectory="directory" />
+          <v-btn
+            icon
+            color="red"
+            @click="deleteToLibraryDirectory(directory.path)"
+          >
+            디렉토리<v-icon>mdi-minus</v-icon>
+          </v-btn>
         </div>
       </div>
     </div>
