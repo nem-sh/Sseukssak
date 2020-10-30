@@ -61,6 +61,8 @@ function createWindow() {
   win = new BrowserWindow({
     width: 800,
     height: 600,
+    minWidth: 800,
+    minHeight: 600,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -72,6 +74,7 @@ function createWindow() {
     center: true,
     thickFrame: true,
     frame: false,
+    transparent: true,
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -82,6 +85,7 @@ function createWindow() {
     createProtocol("app");
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
+    win.webContents.openDevTools({ mode: "undocked" });
   }
 
   win.on("minimize", function(event) {
@@ -131,8 +135,11 @@ app.on("ready", async () => {
   ipcMain.on("resize-me-smaller-please", (event, arg) => {
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
     if (win !== null) {
+      win.setMinimumSize(400, 200);
       win.setSize(400, 200);
       win.setPosition(width - 400, height - 200);
+      win.setAlwaysOnTop(true);
+      win.setResizable(false);
     }
   });
 
@@ -140,6 +147,9 @@ app.on("ready", async () => {
     if (win !== null) {
       win.setSize(800, 600);
       win.center();
+      win.setAlwaysOnTop(false);
+      win.setMinimumSize(800, 600);
+      win.setResizable(true);
     }
   });
 });
