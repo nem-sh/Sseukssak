@@ -11,6 +11,7 @@ interface DirState {
   toLibraryNameList: string[];
   selectedToName: string;
   duplicatedList: string[][];
+  token: string;
 }
 interface ToLibrary {
   name: string;
@@ -44,6 +45,7 @@ export default new Vuex.Store({
     toLibraryNameList: [],
     selectedToName: "",
     duplicatedList: [],
+    token: ""
   },
   mutations: {
     changeDir(state: DirState, newDir) {
@@ -68,6 +70,9 @@ export default new Vuex.Store({
     changeDuplicatedList(state: DirState, newList: string[][]) {
       state.duplicatedList = newList;
     },
+    setToken(state: DirState, newToken: string) {
+      state.token = newToken
+    }
   },
   actions: {},
   modules: {},
