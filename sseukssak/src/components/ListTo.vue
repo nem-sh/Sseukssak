@@ -11,12 +11,22 @@
       </v-col>
       <v-col cols="2" class="pl-0"><ModalCreateToLibrary /></v-col>
     </v-row>
+    <v-col
+      ><button v-if="selectedToName" @click="deleteToLibrary">
+        라이브러리 지우기
+      </button></v-col
+    >
+
     <v-col cols="2" class="pl-0"><ModalAddToLibraryDirectory /></v-col>
     <div v-for="toLibrary in toLibraryList" :key="toLibrary.name">
       <div v-if="toLibrary.name == selectedToName">
         {{ toLibrary.name }}
         <div v-for="directory in toLibrary.directories" :key="directory.path">
           {{ directory }}
+          <button @click="deleteToLibraryDirectory(directory.path)">
+            디렉토리 지우기
+          </button>
+          <ModalModifyToLibraryDirectory :propDirectory="directory" />
         </div>
       </div>
     </div>
@@ -29,13 +39,24 @@ import { Vue, Component, Watch } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
 import ModalCreateToLibrary from "@/components/ModalCreateToLibrary.vue";
 import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.vue";
+import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
 interface ToLibrary {
   name: string;
-  directories: object[];
+  directories: ToLibraryDirectory[];
+}
+interface ToLibraryDirectory {
+  path: string;
+  typeTags: string[];
+  dateTags: string[];
+  titleTags: string[];
 }
 
 @Component({
-  components: { ModalCreateToLibrary, ModalAddToLibraryDirectory },
+  components: {
+    ModalCreateToLibrary,
+    ModalAddToLibraryDirectory,
+    ModalModifyToLibraryDirectory,
+  },
   computed: mapState(["toLibraryList", "toLibraryNameList"]),
   methods: mapMutations([
     "changeToLibraryList",
@@ -44,6 +65,45 @@ interface ToLibrary {
   ]),
 })
 export default class ListTo extends Vue {
+  deleteToLibraryDirectory(directoryPath) {
+    const tempToLibraryList = this.toLibraryList;
+    for (let index1 = 0; index1 < tempToLibraryList.length; index1++) {
+      if (tempToLibraryList[index1].name == this.selectedToName) {
+        for (
+          let index2 = 0;
+          index2 < tempToLibraryList[index1].directories.length;
+          index2++
+        ) {
+          if (
+            tempToLibraryList[index1].directories[index2].path == directoryPath
+          ) {
+            tempToLibraryList[index1].directories.splice(index2, 1);
+            this.changeToLibraryList(tempToLibraryList);
+            window.localStorage.setItem(
+              "selectedFromData",
+              JSON.stringify(tempToLibraryList)
+            );
+            return;
+          }
+        }
+      }
+    }
+  }
+  deleteToLibrary() {
+    const tempToLibraryList = this.toLibraryList;
+    for (let index = 0; index < this.toLibraryList.length; index++) {
+      if (this.toLibraryList[index].name == this.selectedToName) {
+        this.selectedToName = "";
+        tempToLibraryList.splice(index, 1);
+        this.changeToLibraryList(tempToLibraryList);
+        window.localStorage.setItem(
+          "selectedFromData",
+          JSON.stringify(tempToLibraryList)
+        );
+        break;
+      }
+    }
+  }
   dropTo(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -86,8 +146,8 @@ export default class ListTo extends Vue {
     // this.changeToLibraryList(tempToLibrary);
   }
   selectedToName: string = "";
-  toLibraryList!: object;
-  toLibraryNameList!: object;
+  toLibraryList!: ToLibrary[];
+  toLibraryNameList!: string[];
   changeToLibraryList!: (newList: ToLibrary[]) => void;
   changeSelectedToName!: (newName: string) => void;
 

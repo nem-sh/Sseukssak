@@ -13,10 +13,17 @@ interface DirState {
   logBackCheck: boolean;
   duplicatedList: string[][];
   dropToDir: string;
+  modifyDirectroy: ToLibraryDirectory;
 }
 interface ToLibrary {
   name: string;
-  directories: object[];
+  directories: ToLibraryDirectory[];
+}
+interface ToLibraryDirectory {
+  path: string;
+  typeTags: string[];
+  dateTags: string[];
+  titleTags: string[];
 }
 interface SortList {
   directories: Directory[];
@@ -48,8 +55,17 @@ export default new Vuex.Store({
     selectedToName: "",
     logBackCheck: false,
     duplicatedList: [],
+    modifyDirectroy: {
+      path: "",
+      typeTags: [],
+      dateTags: [],
+      titleTags: []
+    },
   },
   mutations: {
+    changeModifyDirectroy(state: DirState, modifyDirectroy: ToLibraryDirectory) {
+      state.modifyDirectroy = modifyDirectroy
+    },
     changeDropToDir(state: DirState, dropToDir: string) {
       state.dropToDir = dropToDir
     },
