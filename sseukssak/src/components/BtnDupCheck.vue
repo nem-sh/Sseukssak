@@ -132,7 +132,7 @@ export default class DupCheck extends Vue {
               'duplicated files' +
               '\\' +
               dupedfilelist[f1][f2],
-            d.toString(),
+            d,
             2
           ]);
         } else {
@@ -141,7 +141,7 @@ export default class DupCheck extends Vue {
             0,
             this.fromDir + '\\' + dupedfilelist[f1][f2],
             this.fromDir + '\\' + dupedfilelist[f1][f2],
-            d.toString(),
+            d,
             2
           ]);
         }

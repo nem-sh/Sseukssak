@@ -14,6 +14,7 @@ interface DirState {
   duplicatedList: any[][];
   dropToDir: string;
   modifyDirectroy: ToLibraryDirectory;
+  renameHistory: any[][];
 }
 interface ToLibrary {
   name: string;
@@ -60,7 +61,8 @@ export default new Vuex.Store({
       typeTags: [],
       dateTags: [],
       titleTags: []
-    }
+    },
+    renameHistory: []
   },
   mutations: {
     changeModifyDirectroy(
@@ -94,8 +96,11 @@ export default new Vuex.Store({
     changeDuplicatedList(state: DirState, newList: any[][]) {
       state.duplicatedList = newList;
     },
-    changeLogBackCheck(state: DirState, newCheck) {
+    changeLogBackCheck(state: DirState, newCheck: boolean) {
       state.logBackCheck = newCheck;
+    },
+    changeRenameHistory(state: DirState, newHistory: any[]) {
+      state.renameHistory.push(newHistory);
     }
   },
   actions: {},

@@ -214,10 +214,27 @@ export default class BtnMoveFile extends Vue {
               )
             ) {
               if (type == '.' + this.fileSortList.files[idx].fileType) {
-                a.push([
-                  this.fromDir + '\\' + this.fileSortList.files[idx].name,
-                  directory.path + '\\' + this.fileSortList.files[idx].name
-                ]);
+                if (
+                  fs.existsSync(
+                    directory.path + '\\' + this.fileSortList.files[idx].name
+                  )
+                ) {
+                  alert(
+                    '중복된 이름의 파일이 존재하여 자동 리네임 되었습니다.'
+                  );
+                  a.push([
+                    this.fromDir + '\\' + this.fileSortList.files[idx].name,
+                    directory.path +
+                      '\\' +
+                      '[중복]' +
+                      this.fileSortList.files[idx].name
+                  ]);
+                } else {
+                  a.push([
+                    this.fromDir + '\\' + this.fileSortList.files[idx].name,
+                    directory.path + '\\' + this.fileSortList.files[idx].name
+                  ]);
+                }
                 return;
               }
             }
