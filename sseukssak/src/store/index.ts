@@ -97,6 +97,7 @@ export default new Vuex.Store({
     },
     setToken(state: DirState, newToken: string) {
       state.token = newToken
+    },
     changeLogBackCheck(state: DirState, newCheck: boolean) {
       state.logBackCheck = newCheck
     },
