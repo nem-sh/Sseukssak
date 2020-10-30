@@ -94,7 +94,7 @@ export default class DupCheck extends Vue {
     this.MoveDupedFiles(duplist);
   }
   MoveDupedFiles(dupedfilelist: string[][]) {
-    const dupedhistory: string[][] = [[]];
+    const dupedhistory: any[][] = [[]];
     if (!fs.existsSync(this.fromDir + '\\' + 'duplicated files')) {
       // duped files 폴더 생성 부분
       fs.mkdirSync(this.fromDir + '\\' + 'duplicated files');
@@ -124,14 +124,22 @@ export default class DupCheck extends Vue {
               dupedfilelist[f1][f2]
           );
           dupedhistory.push([
+            dupedfilelist[f1][f2],
+            1,
             this.fromDir + '\\' + dupedfilelist[f1][f2],
-            '중복파일 폴더로 이동됨',
+            this.fromDir +
+              '\\' +
+              'duplicated files' +
+              '\\' +
+              dupedfilelist[f1][f2],
             d.toString()
           ]);
         } else {
           dupedhistory.push([
+            dupedfilelist[f1][f2],
+            0,
             this.fromDir + '\\' + dupedfilelist[f1][f2],
-            '이동 실패함 - 중복파일 폴더에 같은 파일명이 존재',
+            this.fromDir + '\\' + dupedfilelist[f1][f2],
             d.toString()
           ]);
         }
