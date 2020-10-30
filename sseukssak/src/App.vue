@@ -1,5 +1,5 @@
 <template>
-  <v-app class="app-container">
+  <v-app id="app" class="app-container">
     <div class="window-operations-container">
       <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
       <div class="operations">
@@ -13,8 +13,9 @@
         <i class="fas fa-times close" @click="closeWindow"></i>
       </div>
     </div>
-    <div class="app">
+    <div class="app-main">
       <div v-if="!mini" class="menu">
+        <div class="top-space"></div>
         <div class="menu--icon" @click="goInfoPage">
           <img class="app-logo" src="@/assets/sweeping.png" alt="" />
         </div>
@@ -30,7 +31,10 @@
           <span><i :class="item.icon"></i></span>
         </div>
       </div>
-      <div class="main"><router-view></router-view></div>
+      <div class="main">
+        <!-- <div class="top-space"></div> -->
+        <router-view></router-view>
+      </div>
     </div>
   </v-app>
 </template>
@@ -97,3 +101,12 @@ export default class App extends Vue {
   }
 }
 </script>
+
+<style>
+#app {
+  font-family: "Nanum Gothic", sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  color: #2c3e50;
+}
+</style>
