@@ -1,5 +1,10 @@
 <template>
-  <v-container @drop="dropFrom" dragenter.prevent @dragover.prevent>
+  <v-container
+    @drop="dropFrom"
+    dragenter.prevent
+    @dragover.prevent
+    @click="closeContextMenu"
+  >
     <div class="ma-5">
       <h3>
         <div @click="select = 0" style="display: inline; cursor: pointer">
@@ -39,9 +44,11 @@
           (select == 2 && compareTime(directory.updatedTime))
         "
       >
-        <v-list-item @click="enterDirectory(directory.name)">{{
-          directory
-        }}</v-list-item>
+        <v-list-item
+          @click="enterDirectory(directory.name)"
+          @contextmenu.prevent="showContextMenu(directory, $event)"
+          >{{ directory }}</v-list-item
+        >
       </div>
     </v-list>
     <h5>files</h5>
@@ -53,9 +60,120 @@
           (select == 2 && compareTime(file.updatedTime))
         "
       >
-        <v-list-item @click="openFile(file.name)">{{ file }}</v-list-item>
+        <v-list-item
+          @click="openFile(file.name)"
+          @contextmenu.prevent="showContextMenu(file, $event)"
+          >{{ file }}</v-list-item
+        >
       </div>
     </v-list>
+    <div>
+      <ul v-if="!selectData.fileType" id="contextmenu" class="pa-0 contextmenu">
+        <li>
+          <a
+            @click="enterDirectory(directory.name)"
+            style="display: flex; align-items: center"
+            ><v-img
+              class="mr-2"
+              max-width="25"
+              contain
+              height="100%"
+              src="./../assets/openDirectory.png"
+              alt="OpenDirectory"
+            />디렉토리 열기</a
+          >
+        </li>
+        <li>
+          <a @click="clickclick" style="display: flex; align-items: center"
+            ><v-img
+              class="mr-2"
+              max-width="25"
+              contain
+              height="100%"
+              src="./../assets/delete.png"
+              alt="delete"
+            />디렉토리 지우기</a
+          >
+        </li>
+        <li>
+          <a @click="clickclick" style="display: flex; align-items: center">
+            <v-img
+              class="mr-2"
+              max-width="25"
+              contain
+              height="100%"
+              src="./../assets/googleDriveLogo.png"
+              alt="googleDrive"
+            />
+            구글 드라이브 백업</a
+          >
+        </li>
+        <li>
+          <a @click="clickclick" style="display: flex; align-items: center"
+            ><v-img
+              class="mr-2"
+              max-width="25"
+              contain
+              height="100%"
+              src="./../assets/info.png"
+              alt="info"
+            />디렉토리 정보</a
+          >
+        </li>
+      </ul>
+      <ul v-if="selectData.fileType" id="contextmenu" class="pa-0 contextmenu">
+        <li>
+          <a
+            @click="openFile(file.name)"
+            style="display: flex; align-items: center"
+            ><v-img
+              class="mr-2"
+              max-width="25"
+              contain
+              height="100%"
+              src="./../assets/run.png"
+              alt="delete"
+            />파일 실행</a
+          >
+        </li>
+        <li>
+          <a @click="clickclick" style="display: flex; align-items: center"
+            ><v-img
+              class="mr-2"
+              max-width="25"
+              contain
+              height="100%"
+              src="./../assets/delete.png"
+              alt="delete"
+            />파일 지우기</a
+          >
+        </li>
+        <li>
+          <a @click="clickclick" style="display: flex; align-items: center"
+            ><v-img
+              class="mr-2"
+              max-width="25"
+              contain
+              height="100%"
+              src="./../assets/googleDriveLogo.png"
+              alt="googleDrive"
+            />구글 드라이브 백업</a
+          >
+        </li>
+        <li>
+          <a @click="clickclick" style="display: flex; align-items: center"
+            ><v-img
+              class="mr-2"
+              max-width="25"
+              contain
+              height="100%"
+              src="./../assets/info.png"
+              alt="info"
+            />파일 정보</a
+          >
+        </li>
+      </ul>
+    </div>
   </v-container>
 </template>
 
@@ -88,8 +206,56 @@ interface Directory {
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
 })
 export default class ListFrom extends Vue {
+  selectData: object = {};
   now: Date = new Date();
   select: number = 0;
+  clickclick() {
+    alert("준비중^__^");
+  }
+  closeContextMenu() {
+    const unit = document.getElementById("contextmenu");
+    if (unit) {
+      unit.style.display = "none";
+    }
+  }
+  showContextMenu(value, e) {
+    this.selectData = value;
+    const winWidth = window.outerWidth;
+    const winHeight = window.outerHeight;
+    const posX: number = e.pageX;
+    const posY = e.pageY;
+    const unit = document.getElementById("contextmenu");
+    if (unit) {
+      const menuWidth: number = unit.clientWidth;
+      const menuHeight: number = unit.clientWidth;
+      const secMargin = 10;
+      let posLeft = "";
+      let posTop = "";
+      if (
+        posX + menuWidth + secMargin >= winWidth &&
+        posY + menuHeight + secMargin >= winHeight
+      ) {
+        posLeft = posX - menuWidth - secMargin + "px";
+        posTop = posY - menuHeight - secMargin + "px";
+      } else if (posX + menuWidth + secMargin >= winWidth) {
+        posLeft = posX - menuWidth - secMargin + "px";
+        posTop = posY + secMargin + "px";
+      } else if (posY + menuHeight + secMargin >= winHeight) {
+        posLeft = posX + secMargin + "px";
+        posTop = posY - menuHeight - secMargin + "px";
+      } else {
+        posLeft = posX + secMargin + "px";
+        posTop = posY + secMargin + "px";
+      }
+      if (posLeft && posTop) {
+        posLeft = posX + secMargin + "px";
+        posTop = posY + secMargin + "px";
+        unit.style.left = posLeft;
+        unit.style.top = posTop;
+        unit.style.display = "block";
+      }
+    }
+  }
   dropFrom(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -175,4 +341,39 @@ export default class ListFrom extends Vue {
 }
 </script>
 
-<style></style>
+<style>
+#contextmenu {
+  display: none;
+  position: absolute;
+  width: 200px;
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  border-radius: 5px;
+  list-style: none;
+  box-shadow: 0 15px 35px rgba(50, 50, 90, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+  z-index: 999999;
+}
+#contextmenu li {
+  border-left: 3px solid transparent;
+  transition: ease 0.2s;
+}
+
+#contextmenu li a {
+  display: block;
+  padding: 10px;
+  color: #5768a7;
+  text-decoration: none;
+  transition: ease 0.2s;
+}
+
+#contextmenu li:hover {
+  background: #a1b5fd;
+  border-left: 3px solid #5768a7;
+}
+
+#contextmenu li:hover a {
+  color: #ffffff;
+}
+</style>
