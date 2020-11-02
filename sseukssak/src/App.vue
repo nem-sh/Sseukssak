@@ -30,6 +30,14 @@
         >
           <span><i :class="item.icon"></i></span>
         </div>
+        <div>
+          <div v-show="this.$vuetify.theme.dark" class="menu--icon" @click="changeMode">
+            <span><i class="fas fa-sun fa-lg"></i></span>
+          </div>
+          <div v-show="!this.$vuetify.theme.dark" class="menu--icon" @click="changeMode">
+            <span><i class="fas fa-moon fa-lg"></i></span>
+          </div>
+        </div>
       </div>
       <div class="main">
         <!-- <div class="top-space"></div> -->
@@ -102,6 +110,10 @@ export default class App extends Vue {
 
   goInfoPage() {
     shell.openExternal('http://k3b304.p.ssafy.io/');
+  }
+  
+  changeMode() {
+    this.$vuetify.theme.dark = !this.$vuetify.theme.dark
   }
 }
 </script>

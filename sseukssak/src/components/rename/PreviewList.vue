@@ -1,38 +1,56 @@
 <template>
-  <v-col cols="7.5" class="rename-part-bg">
+  <v-col cols="7.5" :class="partMode">
     <div>
-      <div class="part-title">
+      <div :class="partTitleMode">
         <h4 class="text-center">3. 확인 후 rename</h4>
       </div>
     </div>
     <v-row>
-      <v-col cols="6">
-        <p class="text-center part-title">기존 파일명</p>
+      <v-col cols="5">
+        <p class="text-center" :class="partTitleMode">기존 파일명</p>
         <!-- <v-divider></v-divider> -->
-        <v-list-item v-for="(item, i) in beforeItems" :key="i">
-          <v-list-item-content class="white--text">
-            {{ i + 1 }}. {{ item.name }}
-          </v-list-item-content>
-        </v-list-item>
+        <v-virtual-scroll
+          :bench="benched"
+          :items="beforeItems"
+          height="120"
+          item-height="45"
+        >
+          <template v-slot:default="{ item }">
+            <v-list-item :key="beforeItems.indexOf(item)">
+              <v-list-item-content>
+                <p class="text-next-line">{{ beforeItems.indexOf(item) + 1 }}.{{ item.name }}</p>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+        </v-virtual-scroll>
       </v-col>
-      <v-col cols="6">
-        <p class="text-center part-title">변경될 파일명</p>
+      <v-col cols="5">
+        <p class="text-center" :class="partTitleMode">변경될 파일명</p>
         <!-- <v-divider></v-divider> -->
-        <v-list-item v-for="(item, i) in afterItems" :key="i">
-          <v-list-item-content class="white--text">
-            {{ i + 1 }}. {{ item.name }}
-          </v-list-item-content>
-        </v-list-item>
+        <v-virtual-scroll
+          :bench="benched"
+          :items="afterItems"
+          height="120"
+          item-height="45"
+        >
+          <template v-slot:default="{ item }">
+            <v-list-item :key="afterItems.indexOf(item)">
+              <v-list-item-content>
+                <p class="text-next-line">{{ afterItems.indexOf(item) + 1 }}.{{ item.name }}</p>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+        </v-virtual-scroll>
+      </v-col>
+      <v-col cols="2" class="d-flex flex-column my-auto align-center">
+        <v-btn class="mb-3" @click="rename">
+          OK
+        </v-btn>
+        <v-btn @click="logBack" :disabled="logBackCheck === false">
+          <i class="fas fa-redo-alt"></i>
+        </v-btn>
       </v-col>
     </v-row>
-    <div class="text-right mt-2">
-      <v-btn @click="logBack" :disabled="logBackCheck === false">
-        <i class="fas fa-redo-alt"></i>
-      </v-btn>
-      <v-btn class="ml-4 white--text" @click="rename" color="#7288da">
-        OK
-      </v-btn>
-    </div>
   </v-col>
 </template>
 
@@ -71,10 +89,18 @@ export default class Rename extends Vue {
   dupCheck!: string[];
   renameHistory!: any[][];
   logBackCheck!: boolean;
+  benched: number = 0;
   changePreview!: () => void;
   changeRenameHistory!: (newHistory: any[]) => void;
   changeLogBackCheck!: (newCheck: boolean) => void;
   initailizeRename!: () => void;
+
+  get partTitleMode() {
+    return this.$vuetify.theme.dark? "part-title-d" : "part-title"
+  }
+  get partMode() {
+    return this.$vuetify.theme.dark? "rename-part-bg-d" : "rename-part-bg"
+  }
 
   rename() {
     if (
@@ -172,6 +198,7 @@ export default class Rename extends Vue {
         }
       }
     });
+    this.initailizeRename()
   }
   
   @Watch("beforeItems")
@@ -180,3 +207,8 @@ export default class Rename extends Vue {
   }
 }
 </script>
+<style>
+.text-next-line {
+  word-break: break-word;
+}
+</style>

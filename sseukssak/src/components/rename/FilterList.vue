@@ -1,14 +1,15 @@
 <template>
-  <v-row class="rename-part-bg"> 
-    <v-col cols="12">
-      <h4 class="part-title text-center">2. 변경할 형식 정하기</h4>
+  <v-row :class="partMode"> 
+    <v-col cols="12 pb-0">
+      <h4 class="text-center" :class="partTitleMode">2. 변경할 형식 정하기</h4>
     </v-col>
-    <v-col cols="4" class="text-center">
-      <p class="font-weight-bold part-title">파일명 앞</p>
+    <v-col cols="4" class="text-center pb-0">
+      <p class="font-weight-bold" :class="partTitleMode">파일명 앞</p>
       <v-radio-group v-model="front" @change="filterChange(1)">
         <v-radio label="생성 날짜" value="1" color="#7288da"></v-radio>
         <v-radio label="사용자 지정" value="2" color="#7288da"></v-radio>
         <v-text-field
+          style="padding:3px 0px 0px 0px"
           v-show="front == '2'"
           v-model="fileName1"
           @input="nameChange(1)"
@@ -20,12 +21,13 @@
         <v-radio label="없음" value="3" color="#7288da"></v-radio>
       </v-radio-group>
     </v-col>
-    <v-col cols="4" class="text-center">
-      <p class="font-weight-bold part-title">파일명</p>
+    <v-col cols="4" class="text-center pb-0">
+      <p class="font-weight-bold" :class="partTitleMode">파일명</p>
       <v-radio-group v-model="middle" @change="filterChange(2)">
         <v-radio label="기존 파일명" value="1" color="#7288da"></v-radio>
         <v-radio label="사용자 지정" value="2" color="#7288da"></v-radio>
         <v-text-field
+          style="padding:3px 0px 0px 0px"
           v-show="middle == '2'"
           v-model="fileName2"
           @input="nameChange(2)"
@@ -36,8 +38,8 @@
         ></v-text-field>
       </v-radio-group>
     </v-col>
-    <v-col cols="4" class="text-center">
-      <p class="font-weight-bold part-title">파일명 뒤</p>
+    <v-col cols="4" class="text-center pb-0">
+      <p class="font-weight-bold" :class="partTitleMode">파일명 뒤</p>
       <v-radio-group v-model="back" @change="filterChange(3)">
         <v-radio label="숫자(수정 날짜 오름차순)" value="1" color="#7288da"></v-radio>
         <v-radio
@@ -47,6 +49,7 @@
           color="#7288da"
         ></v-radio>
         <v-text-field
+          style="padding:3px 0px 0px 0px"
           v-show="back == '2'"
           v-model="fileName3"
           @input="nameChange(3)"
@@ -101,6 +104,13 @@ export default class Rename extends Vue {
     return this.middle == "2" ? true : false;
   }
 
+  get partTitleMode() {
+    return this.$vuetify.theme.dark? "part-title-d" : "part-title"
+  }
+  get partMode() {
+    return this.$vuetify.theme.dark? "rename-part-bg-d" : "rename-part-bg"
+  }
+
   filterChange(n) {
     if (n === 1){
       this.changeFilterFront(this.front)
@@ -142,21 +152,3 @@ export default class Rename extends Vue {
   }
 }
 </script>
-
-<style>
-.rename-part-bg {
-  margin: 2px;
-  background-color: #1e2730;
-  /* background-color: #fce1eb; */
-}
-.part-title {
-  background-color: #24303a;
-  /* background-color: #f8bbd0; */
-}
-.theme--light.v-label {
-  color: white;
-}
-.theme--light.v-icon {
-  color: #7288da;
-}
-</style>

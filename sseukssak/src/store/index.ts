@@ -159,6 +159,7 @@ export default new Vuex.Store({
     },
     initailizeRename(state: DirState) {
       state.renameFileList = state.beforeItems = state.afterItems = [];
+      state.dupCheck = []
     },
     changeFilterFront(state: DirState, newFront: string) {
       state.filterFront = newFront
