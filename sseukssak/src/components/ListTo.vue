@@ -302,4 +302,8 @@ export default class ListTo extends Vue {
   height: 10%;
   padding-top: 0;
 }
+
+.theme--light.v-label {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
 </style>

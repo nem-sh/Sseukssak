@@ -66,6 +66,8 @@
     </v-col>
     <v-col>
       <Exp1 />
+      <BtnLoginGoogle/>
+      <BtnUploadGoogleDrive/>
     </v-col>
   </v-container>
 </template>
@@ -76,7 +78,6 @@ import Component from "vue-class-component";
 import Exp1 from "@/components/Exp1.vue";
 import BtnMoveFile from "@/components/BtnMoveFile.vue";
 import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
-import BtnUploadGoogleDrive from "@/components/BtnUploadGoogleDrive.vue";
 
 import FromFileList from "@/components/FromFileList.vue";
 
@@ -84,6 +85,9 @@ import ListTo from "@/components/ListTo.vue";
 import ListFrom from "@/components/ListFrom.vue";
 
 import BtnDupCheck from "@/components/BtnDupCheck.vue";
+
+import BtnLoginGoogle from "@/components/googleDrive/BtnLoginGoogle.vue"
+import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.vue"
 
 import { mapState } from "vuex";
 
@@ -96,6 +100,8 @@ import { mapState } from "vuex";
     ListTo,
     ListFrom,
     FromFileList,
+    BtnLoginGoogle,
+    BtnUploadGoogleDrive,
   },
   computed: mapState(["fromDir"]),
 })

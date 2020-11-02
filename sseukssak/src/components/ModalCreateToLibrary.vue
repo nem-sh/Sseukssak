@@ -30,9 +30,39 @@
               <div>
                 {{ libraryDirectories }}
               </div>
+              <v-btn @click="readDir"> 폴더 찾기 </v-btn>
+              <v-dialog v-model="dialog3" persistent max-width="290">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn color="primary" dark v-bind="attrs" v-on="on">
+                    From 경로에서 지정
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title class="headline">
+                    From 경로에서 지정
+                  </v-card-title>
+                  <v-card-text>
+                    <v-text-field
+                      v-model="readFromDirName"
+                      label="확장자 직접입력"
+                    >
+                    </v-text-field
+                  ></v-card-text>
 
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="green darken-1" text @click="dialog3 = false">
+                      취소
+                    </v-btn>
+                    <v-btn color="green darken-1" text @click="readFromDir">
+                      지정
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+
+              {{ directoryDir }}
               <div id="type">
-                <v-btn @click="readDir"> 폴더 찾기 </v-btn>{{ directoryDir }}
                 <v-select
                   v-model="selectedTypeTags"
                   :items="typeTags"
@@ -151,6 +181,7 @@ interface ToLibraryDirectory {
 })
 export default class ModalCreateToLibrary extends Vue {
   // data
+  readFromDirName: string = "";
   dates: string[] = [];
   selectedTypeTags: string[] = [];
   selectedDateTags: string[] = [];
@@ -161,6 +192,7 @@ export default class ModalCreateToLibrary extends Vue {
   directoryDir: string = "";
   dialog: boolean = false;
   dialog2: boolean = false;
+  dialog3: boolean = false;
   typeAddName: string = "";
   titleAddName: string = "";
   typeTags: string[] = [
@@ -224,6 +256,10 @@ export default class ModalCreateToLibrary extends Vue {
     this.directoryDir = dialog.showOpenDialogSync({
       properties: ["openDirectory"],
     })[0];
+  }
+  readFromDir() {
+    this.directoryDir = "%from%" + "\\" + this.readFromDirName;
+    this.dialog3 = false;
   }
 
   addDirectory() {
