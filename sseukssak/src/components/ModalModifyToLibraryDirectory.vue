@@ -1,8 +1,13 @@
 <template>
-  <v-container class="pl-0">
-    <v-btn icon color="green" dark v-if="selectedToName" @click="dialog = true">
-      수정하기
-    </v-btn>
+  <div>
+    <v-btn
+      icon
+      color="success"
+      dark
+      v-if="selectedToName"
+      @click="dialog = true"
+      ><i class="fas fa-edit"></i
+    ></v-btn>
     <v-dialog
       width="500px"
       v-model="dialog"
@@ -110,7 +115,7 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-  </v-container>
+  </div>
 </template>
 
 <script lang='ts'>

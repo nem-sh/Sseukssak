@@ -1,37 +1,103 @@
 <template>
   <v-container @drop="dropTo" dragenter.prevent @dragover.prevent>
-    <v-row>
-      <v-col cols="10" class="pr-0" style="display: flex; align-items: center">
-        <v-select
-          :items="toLibraryNameList"
-          v-model="selectedToName"
-          label="Select Library"
-          dense
-        ></v-select>
-      </v-col>
-      <v-col cols="2" class="pl-0"><ModalCreateToLibrary /></v-col>
-    </v-row>
-    <v-col
-      ><v-btn color="red" v-if="selectedToName" @click="deleteToLibrary">
-        라이브러리 지우기
-      </v-btn>
-    </v-col>
-    <v-col cols="2" class="pl-0"><ModalAddToLibraryDirectory /></v-col>
+    <div class="to-part-first">
+      <div class="select-folder">
+        <v-row>
+          <v-col cols="3" class="to-name">
+            <h3><span>To</span></h3></v-col
+          >
+          <v-col cols="9" align="center" justify="center">
+            <v-select
+              :items="toLibraryNameList"
+              v-model="selectedToName"
+              label="Select Library"
+              dense
+            ></v-select>
+          </v-col>
+        </v-row>
+        <v-row class="pr-3 d-flex flex-row-reverse">
+          <ModalCreateToLibrary />
+          <div class="mr-2">
+            <v-btn
+              color="error"
+              rounded
+              dark
+              v-if="selectedToName"
+              @click="deleteToLibrary"
+            >
+              삭제
+            </v-btn>
+          </div>
+        </v-row>
+      </div>
+    </div>
     <div v-for="toLibrary in toLibraryList" :key="toLibrary.name">
-      <div v-if="toLibrary.name == selectedToName">
-        {{ toLibrary.name }}
-        <div v-for="directory in toLibrary.directories" :key="directory.path">
-          {{ directory }}
-
+      <div v-if="toLibrary.name == selectedToName" class="to-part-second">
+        <v-virtual-scroll :items="items" height="380" item-height="84">
+          <template v-slot:default="{ item }">
+            <v-list-item link :key="item.idx">
+              <v-list-item-action>
+                <img
+                  src="@/assets/folder-icon.png"
+                  alt=""
+                  height="60px"
+                  width="60px"
+                />
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>
+                  <strong>{{ item.dirName }}</strong>
+                </v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-row align="center" justify="center" class="pa-0">
+                  <v-col cols="4" class="pa-0">
+                    <ModalCheckDirectoryTags />
+                  </v-col>
+                  <v-col cols="4" class="pa-0"
+                    ><ModalModifyToLibraryDirectory
+                      :propDirectory="item.directory"
+                  /></v-col>
+                  <v-col cols="4" class="pa-0"
+                    ><v-btn
+                      icon
+                      color="error"
+                      @click="deleteToLibraryDirectory(item.path)"
+                    >
+                      <i class="fas fa-trash-alt"></i></v-btn
+                  ></v-col>
+                </v-row>
+              </v-list-item-action>
+            </v-list-item>
+            <v-divider></v-divider>
+          </template>
+        </v-virtual-scroll>
+        <!-- <div v-for="directory in toLibrary.directories" :key="directory.path">
+            {{ directory }}
           <ModalModifyToLibraryDirectory :propDirectory="directory" />
-          <v-btn
+            <v-btn
             icon
             color="red"
             @click="deleteToLibraryDirectory(directory.path)"
           >
             디렉토리<v-icon>mdi-minus</v-icon>
           </v-btn>
-        </div>
+          </div> -->
+      </div>
+    </div>
+    <div v-if="!selectedToName" align="center" class="to-part-second">
+      <img
+        src="@/assets/animation_to_white.gif"
+        alt=""
+        height="300px"
+        width="300px"
+        class="mt-5"
+      />
+      <h3 class="mt-3">라이브러리를 선택해주세요 :)</h3>
+    </div>
+    <div class="to-part-third">
+      <div align="right">
+        <ModalAddToLibraryDirectory v-if="selectedToName" />
       </div>
     </div>
   </v-container>
@@ -44,6 +110,7 @@ import { mapMutations, mapState } from "vuex";
 import ModalCreateToLibrary from "@/components/ModalCreateToLibrary.vue";
 import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.vue";
 import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
+import ModalCheckDirectoryTags from "@/components/ModalCheckDirectoryTags.vue";
 interface ToLibrary {
   name: string;
   directories: ToLibraryDirectory[];
@@ -60,6 +127,7 @@ interface ToLibraryDirectory {
     ModalCreateToLibrary,
     ModalAddToLibraryDirectory,
     ModalModifyToLibraryDirectory,
+    ModalCheckDirectoryTags,
   },
   computed: mapState(["toLibraryList", "toLibraryNameList"]),
   methods: mapMutations([
@@ -154,17 +222,87 @@ export default class ListTo extends Vue {
   toLibraryNameList!: string[];
   changeToLibraryList!: (newList: ToLibrary[]) => void;
   changeSelectedToName!: (newName: string) => void;
-
   changeDropToDir!: (dir: string) => void;
+
+  dirLength: number = 0;
+  selectedDir!: ToLibraryDirectory[];
+
+  get items() {
+    return Array.from({ length: this.dirLength }, (k, v) => {
+      const libName = this.selectedToName;
+
+      let i;
+      for (i = 0; i < this.toLibraryList.length; i++) {
+        if (libName === this.toLibraryList[i].name) {
+          const dirName = this.toLibraryList[i].directories[v].path.split("\\");
+          return {
+            idx: v,
+            directory: this.toLibraryList[i].directories[v],
+            dirName: dirName[dirName.length - 1],
+            path: this.toLibraryList[i].directories[v].path,
+            typeTags: this.toLibraryList[i].directories[v].typeTags,
+            dateTags: this.toLibraryList[i].directories[v].dateTags,
+            titleTags: this.toLibraryList[i].directories[v].titleTags,
+          };
+        }
+      }
+    });
+  }
+
+  changeDirectoryLength(selectedToName) {
+    let i;
+    for (i = 0; i < this.toLibraryList.length; i++) {
+      if (selectedToName === this.toLibraryList[i].name) {
+        this.dirLength = this.toLibraryList[i].directories.length;
+      }
+    }
+  }
 
   @Watch("selectedToName")
   watchSelectedToName() {
     this.changeSelectedToName(this.selectedToName);
+    this.changeDirectoryLength(this.selectedToName);
   }
 }
 </script>
 
 <style>
+.to-name h3 {
+  /* margin: 20px; */
+  font-family: "Paytone One" !important;
+  color: #202020;
+  text-transform: uppercase;
+  letter-spacing: -2px;
+}
+
+.to-name h3 span {
+  display: block;
+  margin: 0 0 17px 10px;
+  font-size: 40px;
+  line-height: 40px;
+  color: #7288da;
+  text-shadow: 0 13.36px 8.896px #c4b59d, 0 -2px 1px #fff;
+  letter-spacing: -4px;
+}
+
+.to-part-first {
+  padding-top: 28px;
+  width: 100%;
+  height: 25%;
+}
+
+.to-part-second {
+  width: 100%;
+  height: 70%;
+  padding: 10px 0 10px 0;
+}
+
+.to-part-third {
+  width: 100%;
+  height: 10%;
+  padding-top: 0;
+}
+
 .theme--light.v-label {
   color: rgba(0, 0, 0, 0.6) !important;
 }
