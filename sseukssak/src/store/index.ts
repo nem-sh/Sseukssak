@@ -12,7 +12,6 @@ interface DirState {
   selectedToName: string;
   logBackCheck: boolean;
   duplicatedList: any[][];
-  token: string;
   dropToDir: string;
   modifyDirectroy: ToLibraryDirectory;
   renameHistory: any[][];
@@ -26,6 +25,10 @@ interface DirState {
   frontName: string;
   middleName: string;
   backName: string;
+  
+  // Google Auth
+  token: string;
+  tokenPath: string;
 }
 interface ToLibrary {
   name: string;
@@ -77,6 +80,7 @@ export default new Vuex.Store({
     logBackCheck: false,
     duplicatedList: [[]],
     token: '',
+    tokenPath: 'token.json',
     modifyDirectroy: {
       path: '',
       typeTags: [],

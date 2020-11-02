@@ -2,6 +2,10 @@
 node_modules
 /dist
 
+# google drive auth
+credentials.json
+token.json
+
 
 # local env files
 .env.local
