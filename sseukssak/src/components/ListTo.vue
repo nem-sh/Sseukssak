@@ -86,13 +86,15 @@
       </div>
     </div>
     <div v-if="!selectedToName" align="center" class="to-part-second">
-      <img
-        src="@/assets/animation_to_white.gif"
-        alt=""
-        height="300px"
-        width="300px"
+      <lottie-player
+        src="https://assets7.lottiefiles.com/packages/lf20_dl87KC.json"
+        background="transparent"
+        speed="1"
+        style="width: 300px; height: 300px"
+        loop
+        autoplay
         class="mt-5"
-      />
+      ></lottie-player>
       <h3 class="mt-3">라이브러리를 선택해주세요 :)</h3>
     </div>
     <div class="to-part-third">

@@ -6,7 +6,7 @@
       dark
       v-if="selectedToName"
       @click="dialog = true"
-      ><i class="fas fa-edit"></i
+      ><i class="fas fa-pencil-alt"></i
     ></v-btn>
     <v-dialog
       width="500px"
