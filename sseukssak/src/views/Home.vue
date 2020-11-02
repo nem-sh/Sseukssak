@@ -91,6 +91,7 @@
     </v-col>
     <v-col>
       <Exp1 />
+      <BtnLoginGoogle/>
     </v-col>
   </v-container>
 </template>
@@ -101,7 +102,7 @@ import Component from "vue-class-component";
 import Exp1 from "@/components/Exp1.vue";
 import BtnMoveFile from "@/components/BtnMoveFile.vue";
 import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
-import BtnUploadGoogleDrive from '@/components/BtnUploadGoogleDrive.vue'
+import BtnLoginGoogle from "@/components/googleDrive/BtnLoginGoogle.vue"
 
 import FromPartition from "@/components/FromPartition.vue";
 import ToPartition from "@/components/ToPartition.vue";
@@ -123,6 +124,7 @@ import { mapState } from "vuex";
     ListFrom,
     FromPartition,
     ToPartition,
+    BtnLoginGoogle,
   },
   computed: mapState(["fromDir"]),
 })
