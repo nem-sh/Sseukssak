@@ -11,7 +11,7 @@
           dark
           v-bind="attrs"
           v-on="on"
-          @click="login"
+          @click="login(oAuth2Client)"
         >
           구글 드라이브 연동
         </v-btn>
@@ -38,7 +38,7 @@
           <v-btn
             color="green darken-1"
             text
-            @click="getCode(oAuth2Client,tokenPath)"
+            @click="setCode(oAuth2Client,tokenPath)"
           >
             입력
           </v-btn>
@@ -64,6 +64,7 @@ const { shell } = require('electron').remote
   ]),
   methods: mapMutations(['setToken'])
 })
+
 export default class BtnLoginGoogle extends Vue {
     dialog: boolean = false
     tokenPath!: string
@@ -73,16 +74,16 @@ export default class BtnLoginGoogle extends Vue {
                 'access_type': 'offline',
                 scope: ['https://www.googleapis.com/auth/drive'] 
             }) 
-    login(){
+    login(oAuth2Client){
         fs.readFile(this.tokenPath,(err,token)=>{
             if (err) {
                 shell.openExternal(this.authUrl);
                 return
             }
-            this.oAuth2Client.setCredentials(JSON.parse(token.toString()));
+            oAuth2Client.setCredentials(JSON.parse(token.toString()));
         })
     }
-    getCode(oAuth2Client,TOKEN_PATH){
+    setCode(oAuth2Client,TOKEN_PATH){
         this.dialog = false
         
         oAuth2Client.getToken(this.code, (err, token) => {
