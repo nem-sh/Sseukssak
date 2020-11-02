@@ -16,7 +16,6 @@
         라이브러리 지우기
       </v-btn>
     </v-col>
-
     <v-col cols="2" class="pl-0"><ModalAddToLibraryDirectory /></v-col>
     <div v-for="toLibrary in toLibraryList" :key="toLibrary.name">
       <div v-if="toLibrary.name == selectedToName">
@@ -166,4 +165,7 @@ export default class ListTo extends Vue {
 </script>
 
 <style>
+.theme--light.v-label {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
 </style>
