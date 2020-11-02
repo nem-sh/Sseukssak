@@ -2,6 +2,7 @@
   --color-grey-dark: #202326;
   --color-grey-light: #363a3e;
   --color-purple: #7288da;
+  --color-pink: #f9b4e2;
   // #4C4C4E
   // #8A4F80
   // #E8D9C8
@@ -76,6 +77,43 @@ body {
   height: 75%;
 }
 
+.file--icon {
+  width: 50px;
+  height: 50px;
+  background: var(--color-purple);
+  border-radius: 20%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  color: white;
+  position: relative;
+  &.active {
+    &:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 13px;
+      background: white;
+      height: 46px;
+      border-radius: 33px;
+      margin-left: -19px;
+    }
+  }
+  &:hover {
+    border-radius: 20%;
+    background: var(--color-pink);
+    font-weight: bolder;
+  }
+}
+
+.file--icon img {
+  width: 75%;
+  height: 75%;
+}
+
 .menu--separator {
   width: 40px;
   height: 2px;
@@ -139,45 +177,80 @@ body {
   padding: 0 !important;
 }
 
-.from .from-part-first {
+.from-part-first {
   padding-top: 28px;
   padding-left: 5px;
   width: 100%;
   height: 20%;
+}
+
+.from-part-second {
+  width: 100%;
+  height: 70%;
+  padding: 10px;
+}
+
+.from-part-third {
+  padding-left: 5px;
+  width: 100%;
+  height: 15%;
 }
 
 .to {
   padding: 0 !important;
 }
 
-.from .from-part-second {
-  width: 100%;
-  height: 70%;
-  padding: 10px;
-}
-
-.to-part-first {
-  padding-top: 28px;
-  padding-left: 5px;
-  width: 100%;
-  height: 20%;
-}
-
-.to-part-second {
-  width: 100%;
-  height: 80%;
-  padding: 10px;
-}
-
-.from .from-part-third {
-  padding-left: 5px;
-  width: 100%;
-  height: 15%;
-}
-
 .from-to {
   padding: 0;
   height: 100%;
+}
+
+.from-to-name h3 {
+  /* margin: 20px; */
+  font-family: "Paytone One" !important;
+  color: #202020;
+  text-transform: uppercase;
+  letter-spacing: -2px;
+}
+
+.from-to-name h3 span {
+  display: block;
+  margin: 0 0 17px 10px;
+  font-size: 40px;
+  line-height: 40px;
+  color: #7288da;
+  text-shadow: 0 13.36px 8.896px #c4b59d, 0 -2px 1px #fff;
+  letter-spacing: -4px;
+}
+
+.menu--update {
+  &:hover {
+    color: green;
+  }
+}
+
+.menu--delete {
+  &:hover {
+    color: red;
+  }
+}
+
+.from-file-list {
+  height: 100%;
+}
+
+// .from-part-first .select-folder {
+//   height: 70%;
+//   width: 100%;
+// }
+
+.from-part-first .select-date {
+  height: 30%;
+}
+
+.folder-name {
+  font-size: 20px;
+  width: 100%;
 }
 
 @media (prefers-reduced-motion: no-preference) {

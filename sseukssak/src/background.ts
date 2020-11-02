@@ -19,6 +19,8 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 // be closed automatically when the JavaScript object is garbage collected.
 let win: BrowserWindow | null;
 let tray: Tray | null;
+const browserWidth = 1000;
+const browserHeight = 600;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -59,10 +61,10 @@ function createTray() {
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    minWidth: 800,
-    minHeight: 600,
+    width: browserWidth,
+    height: browserHeight,
+    minWidth: browserWidth,
+    minHeight: browserHeight,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -145,10 +147,10 @@ app.on("ready", async () => {
 
   ipcMain.on("resize-me-bigger-please", (event, arg) => {
     if (win !== null) {
-      win.setSize(800, 600);
+      win.setSize(browserWidth, browserHeight);
       win.center();
       win.setAlwaysOnTop(false);
-      win.setMinimumSize(800, 600);
+      win.setMinimumSize(browserWidth, browserHeight);
       win.setResizable(true);
     }
   });

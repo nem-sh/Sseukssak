@@ -1,7 +1,7 @@
 <template>
-  <v-container class="pl-0">
-    <v-btn icon color="green" dark v-if="selectedToName" @click="dialog = true">
-      디렉토리 <v-icon>mdi-plus</v-icon>
+  <div class="pl-0">
+    <v-btn text color="#7288da" v-if="selectedToName" @click="dialog = true">
+      디렉토리 추가 <v-icon>mdi-plus</v-icon>
     </v-btn>
     <v-dialog
       width="500px"
@@ -110,7 +110,7 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-  </v-container>
+  </div>
 </template>
 
 <script lang='ts'>

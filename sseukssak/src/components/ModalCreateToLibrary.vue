@@ -1,8 +1,6 @@
 <template>
-  <v-container class="pl-0">
-    <v-btn icon color="green" dark @click="dialog = true">
-      <v-icon>mdi-plus</v-icon>
-    </v-btn>
+  <div class="pl-0">
+    <v-btn color="#7288da" rounded dark @click="dialog = true">추가</v-btn>
     <v-dialog
       v-model="dialog"
       fullscreen
@@ -125,7 +123,7 @@
         <div style="flex: 1 1 auto"></div>
       </v-card>
     </v-dialog>
-  </v-container>
+  </div>
 </template>
 
 <script lang='ts'>
