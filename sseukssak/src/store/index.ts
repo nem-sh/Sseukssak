@@ -1,5 +1,5 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import Vue from 'vue';
+import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
@@ -11,7 +11,8 @@ interface DirState {
   toLibraryNameList: string[];
   selectedToName: string;
   logBackCheck: boolean;
-  duplicatedList: string[][];
+  duplicatedList: any[][];
+  token: string;
   dropToDir: string;
   modifyDirectroy: ToLibraryDirectory;
   renameHistory: any[][];
@@ -63,20 +64,21 @@ interface FileInfo {
 
 export default new Vuex.Store({
   state: {
-    dropToDir: "",
-    fromDir: "",
+    dropToDir: '',
+    fromDir: '',
     fileList: [],
     fileSortList: {
       directories: [],
-      files: [],
+      files: []
     },
     toLibraryList: [],
     toLibraryNameList: [],
-    selectedToName: "",
+    selectedToName: '',
     logBackCheck: false,
-    duplicatedList: [],
+    duplicatedList: [[]],
+    token: '',
     modifyDirectroy: {
-      path: "",
+      path: '',
       typeTags: [],
       dateTags: [],
       titleTags: []
@@ -94,11 +96,14 @@ export default new Vuex.Store({
     backName: "",
   },
   mutations: {
-    changeModifyDirectroy(state: DirState, modifyDirectroy: ToLibraryDirectory) {
-      state.modifyDirectroy = modifyDirectroy
+    changeModifyDirectroy(
+      state: DirState,
+      modifyDirectroy: ToLibraryDirectory
+    ) {
+      state.modifyDirectroy = modifyDirectroy;
     },
     changeDropToDir(state: DirState, dropToDir: string) {
-      state.dropToDir = dropToDir
+      state.dropToDir = dropToDir;
     },
     changeDir(state: DirState, newDir: string) {
       state.fromDir = newDir;
@@ -119,11 +124,14 @@ export default new Vuex.Store({
     changeSelectedToName(state: DirState, newName: string) {
       state.selectedToName = newName;
     },
-    changeDuplicatedList(state: DirState, newList: string[][]) {
+    changeDuplicatedList(state: DirState, newList: any[][]) {
       state.duplicatedList = newList;
     },
+    setToken(state: DirState, newToken: string) {
+      state.token = newToken;
+    },
     changeLogBackCheck(state: DirState, newCheck: boolean) {
-      state.logBackCheck = newCheck
+      state.logBackCheck = newCheck;
     },
     changeRenameHistory(state: DirState, newHistory: any[]){
       state.renameHistory.push(newHistory)

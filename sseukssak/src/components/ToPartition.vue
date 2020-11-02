@@ -1,57 +1,38 @@
 <template>
   <div>
-    <v-card elevation="16" max-width="400" class="mx-auto">
-      <v-virtual-scroll
-        :bench="benched"
-        :items="items"
-        height="300"
-        item-height="64"
-      >
-        <template v-slot:default="{ item }">
-          <v-list-item :key="item">
-            <v-list-item-action>
-              <v-btn fab small depressed color="primary">
-                {{ item }}
-              </v-btn>
-            </v-list-item-action>
-
-            <v-list-item-content>
-              <v-list-item-title>
-                User Database Record <strong>ID {{ item }}</strong>
-              </v-list-item-title>
-            </v-list-item-content>
-
-            <v-list-item-action>
-              <v-icon small> mdi-open-in-new </v-icon>
-            </v-list-item-action>
-          </v-list-item>
-
-          <v-divider></v-divider>
-        </template>
-      </v-virtual-scroll>
-    </v-card>
+    <v-virtual-scroll
+      :bench="benched"
+      :items="items"
+      height="400"
+      item-height="64"
+    >
+      <template v-slot:default="{ item }" class="mt-4">
+        <v-list-item :key="item" class="d-flex justify-space-between mb-6">
+          <v-card v-for="n in 1" :key="n" class="pa-2" outlined tile>
+            folder
+          </v-card>
+          tag
+        </v-list-item>
+        <v-divider></v-divider>
+      </template>
+    </v-virtual-scroll>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
 
-@Component({
-  data: () => ({
-    benched: 0,
-  }),
-  computed: {
-    items() {
-      return Array.from({ length: this.length }, (k, v) => v + 1);
-    },
-    length() {
-      return 7000;
-    },
-  },
-})
-export default class App extends Vue {}
-</script>
+@Component({})
+export default class App extends Vue {
+  benched: number = 0;
 
-<style>
-</style>
+  get length() {
+    return 3;
+  }
+
+  get items() {
+    return Array.from({ length: this.length }, (k, v) => v + 1);
+  }
+}
+</script>
