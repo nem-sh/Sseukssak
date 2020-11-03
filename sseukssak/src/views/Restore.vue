@@ -16,9 +16,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import fs from 'fs';
+import path from 'path';
+import electron, { app } from 'electron';
 
 import { mapMutations, mapState } from 'vuex';
 import constants from '@/assets/constants.json';
+import Home from './Home.vue';
 
 @Component({
   components: {},
@@ -40,7 +44,7 @@ export default class Restore extends Vue {
   //   };
   // }
   mounted() {
-    console.log(constants.history.workcode);
+    // console.log(constants.history.workcode);
   }
 
   // array.sort(function(a,b){
@@ -51,7 +55,7 @@ export default class Restore extends Vue {
     console.log('test');
     console.log(constants.history.workcode);
     for (let i = 0; i < this.duplicatedList.length; i++) {
-      console.log(this.duplicatedList[i]);
+      // console.log(this.duplicatedList[i]);
 
       if (this.duplicatedList[i][1] == 0) {
         this.duplicatedList[i][1] == '실패';
@@ -72,11 +76,55 @@ export default class Restore extends Vue {
     this.historyList.sort((a: any[], b: any[]) => {
       return b[4] - a[4];
     });
+    this.jsontest();
+  }
+
+  jsontest() {
+    console.log(this.duplicatedList);
+    const m = fs.readFileSync(
+      path.resolve(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        '..',
+        '..',
+        '..',
+        'history_test.json'
+      )
+    );
+
+    const mm = JSON.parse(m.toString());
+
+    console.log(Object.keys(mm.datas).length);
+    // mm['datas'][0]['date'] = 'has changed';
+    // if (mm['datas'][1] == undefined) {
+    //   mm['datas'][1] = {};
+    // }
+
+    // mm['datas'][1]['date'] = 'write test';
+    // mm['datas'][1]['test3'] = 'write test 2';
+
+    for (let k = 0; k < this.duplicatedList.length; k++) {
+      if (mm['datas'][k] == undefined) {
+        mm['datas'][k] = {};
+      }
+      mm['datas'][k]['filename'] = this.duplicatedList[k][0];
+      mm['datas'][k]['success'] = this.duplicatedList[k][1];
+      mm['datas'][k]['before'] = this.duplicatedList[k][2];
+      mm['datas'][k]['after'] = this.duplicatedList[k][3];
+      mm['datas'][k]['date'] = this.duplicatedList[k][4];
+      mm['datas'][k]['workcode'] = this.duplicatedList[k][5];
+    }
+
+    const newdata = JSON.stringify(mm);
+    fs.writeFileSync('history_test.json', newdata);
+    console.log('saved');
   }
 
   created() {
     this.isLoading = true;
-    console.log(this.isLoading);
+    // console.log(this.isLoading);
   }
 }
 </script>
