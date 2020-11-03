@@ -33,9 +33,13 @@
     </div>
     <div v-for="toLibrary in toLibraryList" :key="toLibrary.name">
       <div v-if="toLibrary.name == selectedToName" class="to-part-second">
-        <v-virtual-scroll :items="items" height="380" item-height="84">
+        <v-virtual-scroll
+          :items="toLibrary.directories"
+          height="380"
+          item-height="84"
+        >
           <template v-slot:default="{ item }">
-            <v-list-item link :key="item.idx">
+            <v-list-item link :key="item.path">
               <v-list-item-action>
                 <img
                   src="@/assets/folder-icon.png"
@@ -46,7 +50,7 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  <strong>{{ item.dirName }}</strong>
+                  <strong>{{ getDirectoryName(item.path) }}</strong>
                 </v-list-item-title>
               </v-list-item-content>
               <v-list-item-action>
@@ -55,8 +59,7 @@
                     <ModalCheckDirectoryTags />
                   </v-col>
                   <v-col cols="4" class="pa-0"
-                    ><ModalModifyToLibraryDirectory
-                      :propDirectory="item.directory"
+                    ><ModalModifyToLibraryDirectory :propDirectory="item"
                   /></v-col>
                   <v-col cols="4" class="pa-0"
                     ><v-btn
@@ -73,16 +76,16 @@
           </template>
         </v-virtual-scroll>
         <!-- <div v-for="directory in toLibrary.directories" :key="directory.path">
-            {{ directory }}
+          {{ directory }}
           <ModalModifyToLibraryDirectory :propDirectory="directory" />
-            <v-btn
+          <v-btn
             icon
             color="red"
             @click="deleteToLibraryDirectory(directory.path)"
           >
             디렉토리<v-icon>mdi-minus</v-icon>
           </v-btn>
-          </div> -->
+        </div> -->
       </div>
     </div>
     <div v-if="!selectedToName" align="center" class="to-part-second">
@@ -228,27 +231,9 @@ export default class ListTo extends Vue {
 
   dirLength: number = 0;
   selectedDir!: ToLibraryDirectory[];
-
-  get items() {
-    return Array.from({ length: this.dirLength }, (k, v) => {
-      const libName = this.selectedToName;
-
-      let i;
-      for (i = 0; i < this.toLibraryList.length; i++) {
-        if (libName === this.toLibraryList[i].name) {
-          const dirName = this.toLibraryList[i].directories[v].path.split("\\");
-          return {
-            idx: v,
-            directory: this.toLibraryList[i].directories[v],
-            dirName: dirName[dirName.length - 1],
-            path: this.toLibraryList[i].directories[v].path,
-            typeTags: this.toLibraryList[i].directories[v].typeTags,
-            dateTags: this.toLibraryList[i].directories[v].dateTags,
-            titleTags: this.toLibraryList[i].directories[v].titleTags,
-          };
-        }
-      }
-    });
+  getDirectoryName(path) {
+    const pathList = path.split("\\");
+    return pathList[pathList.length - 1];
   }
 
   changeDirectoryLength(selectedToName) {
