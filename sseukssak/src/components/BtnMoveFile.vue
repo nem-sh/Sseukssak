@@ -1,5 +1,13 @@
 <template>
-  <v-btn @click="moveFile"> 정리 </v-btn>
+  <v-btn
+    class="mr-5"
+    color="var(--color-purple)"
+    dark
+    rounded
+    @click="moveFile"
+  >
+    정리
+  </v-btn>
 </template>
 
 <script lang="ts">

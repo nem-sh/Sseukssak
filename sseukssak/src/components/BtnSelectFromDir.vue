@@ -1,5 +1,7 @@
 <template>
-  <v-btn @click="read"> 찾기 </v-btn>
+  <v-btn icon @click="read">
+    <i class="far fa-folder-open fa-2x"></i>
+  </v-btn>
 </template>
 
 <script lang="ts">
