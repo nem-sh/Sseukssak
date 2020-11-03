@@ -177,10 +177,14 @@
     </div>
 
     <div>
-      <ul v-if="!selectData.fileType" id="contextmenu" class="pa-0 contextmenu">
+      <ul
+        v-if="!selectedData.fileType"
+        id="contextmenu"
+        class="pa-0 contextmenu"
+      >
         <li>
           <a
-            @click="enterDirectory(fromDir + '\\' + selectData.name)"
+            @click="enterDirectory(fromDir + '\\' + selectedData.name)"
             style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
@@ -194,7 +198,24 @@
         </li>
         <li>
           <a
-            @click="deleteThis(fromDir + '\\' + selectData.name)"
+            @click="
+              renameValue = selectedData.name;
+              dialog2 = true;
+            "
+            style="display: flex; align-items: center"
+            ><v-img
+              class="mr-2"
+              max-width="25"
+              contain
+              height="100%"
+              src="./../assets/rename.png"
+              alt="rename"
+            />파일 리네임</a
+          >
+        </li>
+        <li>
+          <a
+            @click="deleteThis(fromDir + '\\' + selectedData.name, true)"
             style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
@@ -207,7 +228,7 @@
           >
         </li>
         <li>
-          <a @click="clickclick" style="display: flex; align-items: center">
+          <a @click="dialog2 = true" style="display: flex; align-items: center">
             <v-img
               class="mr-2"
               max-width="25"
@@ -220,7 +241,7 @@
           >
         </li>
         <li>
-          <a @click="clickclick" style="display: flex; align-items: center"
+          <a @click="openShell()" style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
               max-width="25"
@@ -228,14 +249,18 @@
               height="100%"
               src="./../assets/info.png"
               alt="info"
-            />디렉토리 정보</a
+            />탐색기에서 열기</a
           >
         </li>
       </ul>
-      <ul v-if="selectData.fileType" id="contextmenu" class="pa-0 contextmenu">
+      <ul
+        v-if="selectedData.fileType"
+        id="contextmenu"
+        class="pa-0 contextmenu"
+      >
         <li>
           <a
-            @click="openFile(selectData.name)"
+            @click="openFile(selectedData.name)"
             style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
@@ -249,7 +274,24 @@
         </li>
         <li>
           <a
-            @click="deleteThis(fromDir + '\\' + selectData.name)"
+            @click="
+              renameValue = selectedData.name;
+              dialog2 = true;
+            "
+            style="display: flex; align-items: center"
+            ><v-img
+              class="mr-2"
+              max-width="25"
+              contain
+              height="100%"
+              src="./../assets/rename.png"
+              alt="rename"
+            />파일 리네임</a
+          >
+        </li>
+        <li>
+          <a
+            @click="deleteThis(fromDir + '\\' + selectedData.name, true)"
             style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
@@ -274,7 +316,7 @@
           >
         </li>
         <li>
-          <a @click="clickclick" style="display: flex; align-items: center"
+          <a @click="getInfo()" style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
               max-width="25"
@@ -286,6 +328,67 @@
           >
         </li>
       </ul>
+      <v-dialog v-model="dialog" max-width="500">
+        <v-card>
+          <v-card-title class="headline mb-3">
+            {{ selectedDataInfo.name }}
+          </v-card-title>
+
+          <v-card-text class="text--primary">
+            <div class="mb-2">대상 형식 : {{ selectedDataInfo.fileType }}</div>
+            <div>대상 크기 : {{ selectedDataInfo.size }} byte</div>
+          </v-card-text>
+
+          <v-spacer></v-spacer>
+          <v-card-text class="text--primary">
+            <div class="mb-2">만든 날짜 : {{ selectedDataInfo.birthTime }}</div>
+            <div>수정 날짜 : {{ selectedDataInfo.updatedTime }}</div>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="green darken-1"
+              text
+              @click="openFile(selectedData.name)"
+            >
+              실행
+            </v-btn>
+            <v-btn
+              color="red darken-1"
+              text
+              @click="
+                deleteThis(fromDir + '\\' + selectedData.name, true);
+                dialog = false;
+              "
+            >
+              제거
+            </v-btn>
+            <v-btn color=" darken-1" text @click="dialog = false"> 닫기 </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="dialog2" persistent max-width="290">
+        <v-card>
+          <v-card-title class="headline">
+            {{ selectedData.name }}의 이름 바꾸기
+          </v-card-title>
+          <v-card-text>
+            <v-text-field v-model="renameValue" label="변경할 이름">
+            </v-text-field
+          ></v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="green darken-1" text @click="dialog2 = false">
+              취소
+            </v-btn>
+            <v-btn color="green darken-1" text @click="renameThis">
+              지정
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
   </v-container>
 </template>
@@ -301,6 +404,8 @@ import { BUS } from "./EventBus.js";
 import BtnMoveFile from "@/components/BtnMoveFile.vue";
 import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
 import BtnDupCheck from "@/components/BtnDupCheck.vue";
+
+const { shell } = require("electron").remote;
 
 interface SortList {
   directories: Directory[];
@@ -327,30 +432,69 @@ interface Directory {
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
 })
 export default class ListFrom extends Vue {
-  selectData: object = {};
+  renameValue: string = "";
+  selectedData: object = {};
+  selectedDataInfo: object = {};
   now: Date = new Date();
   select: number = 0;
   fromListLen: number = 0;
   fileSortList!: SortList[];
-
+  dialog: boolean = false;
+  dialog2: boolean = false;
   clickclick() {
     alert("준비중^__^");
   }
+  renameThis() {
+    if (
+      fs.lstatSync(this.fromDir + "\\" + this.selectedData["name"]).isFile() &&
+      !this.renameValue.includes(".")
+    ) {
+      this.renameValue = this.renameValue + "." + this.selectedData["fileType"];
+    }
+    fs.renameSync(
+      this.fromDir + "\\" + this.selectedData["name"],
+      this.fromDir + "\\" + this.renameValue
+    );
+    this.renewFrom();
+    alert("수정됨^__^");
+    this.dialog2 = false;
+  }
+  openShell() {
+    shell.openExternal(
+      "'" + this.fromDir + "\\" + this.selectedData["name"] + "'"
+    );
+  }
+  getInfo() {
+    this.selectedDataInfo["name"] = this.selectedData["name"];
 
-  deleteThis(path) {
+    this.selectedDataInfo["fileType"] = this.selectedData["fileType"];
+    this.selectedDataInfo["birthTime"] = new Date(
+      this.selectedData["birthTime"]
+    );
+    this.selectedDataInfo["updatedTime"] = new Date(
+      this.selectedData["updatedTime"]
+    );
+    this.selectedDataInfo["size"] = fs.statSync(
+      this.fromDir + "\\" + this.selectedData["name"]
+    ).size;
+
+    this.dialog = true;
+  }
+  deleteThis(path, isFinal) {
     if (fs.lstatSync(path).isDirectory()) {
       const fileList = fs.readdirSync(path);
-      console.log(fileList);
       fileList.forEach((name: string) => {
-        this.deleteThis(path + "\\" + name);
+        this.deleteThis(path + "\\" + name, false);
       });
 
       fs.rmdirSync(path);
     } else {
       fs.unlinkSync(path);
     }
-    alert("지워드림 ^_^");
-    this.renewFrom();
+    if (isFinal) {
+      alert("지워드림 ^_^");
+      this.renewFrom();
+    }
   }
   closeContextMenu() {
     const unit = document.getElementById("contextmenu");
@@ -359,7 +503,7 @@ export default class ListFrom extends Vue {
     }
   }
   showContextMenu(value, e) {
-    this.selectData = value;
+    this.selectedData = value;
     const winWidth = window.outerWidth;
     const winHeight = window.outerHeight;
     const posX: number = e.pageX;
@@ -401,7 +545,6 @@ export default class ListFrom extends Vue {
     event.stopPropagation();
 
     for (const f of event.dataTransfer.files) {
-      console.log(f);
       fs.renameSync(f.path, this.fromDir + "/" + f.name);
     }
   }
