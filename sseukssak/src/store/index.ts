@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import Vue from "vue";
+import Vuex from "vuex";
 
 Vue.use(Vuex);
 
@@ -25,7 +25,7 @@ interface DirState {
   frontName: string;
   middleName: string;
   backName: string;
-  
+
   // Google Auth
   token: string;
   tokenPath: string;
@@ -67,25 +67,25 @@ interface FileInfo {
 
 export default new Vuex.Store({
   state: {
-    dropToDir: '',
-    fromDir: '',
+    dropToDir: "",
+    fromDir: "",
     fileList: [],
     fileSortList: {
       directories: [],
-      files: []
+      files: [],
     },
     toLibraryList: [],
     toLibraryNameList: [],
-    selectedToName: '',
+    selectedToName: "",
     logBackCheck: false,
     duplicatedList: [[]],
-    token: '',
-    tokenPath: 'token.json',
+    token: "",
+    tokenPath: "token.json",
     modifyDirectroy: {
-      path: '',
+      path: "",
       typeTags: [],
       dateTags: [],
-      titleTags: []
+      titleTags: [],
     },
     renameHistory: [],
     renameFileList: [],
@@ -137,55 +137,57 @@ export default new Vuex.Store({
     changeLogBackCheck(state: DirState, newCheck: boolean) {
       state.logBackCheck = newCheck;
     },
-    changeRenameHistory(state: DirState, newHistory: any[]){
-      state.renameHistory.push(newHistory)
+    changeRenameHistory(state: DirState, newHistory: any[]) {
+      state.renameHistory.push(newHistory);
     },
     changePreview(state: DirState) {
       state.afterItems = [];
       state.beforeItems.forEach((item, i) => {
         const tmp = Object.assign({}, item, {
-          name: this.getters["front"](item) + this.getters["middle"](item) + this.getters["back"](item, i+1),
+          name:
+            this.getters["front"](item) +
+            this.getters["middle"](item) +
+            this.getters["back"](item, i + 1),
         });
         state.afterItems.push(tmp);
       });
     },
     sortBeforeItems(state: DirState) {
-      state.beforeItems.sort(function (a, b) {
+      state.beforeItems.sort(function(a, b) {
         return a.mtime > b.mtime ? 1 : -1;
       });
     },
-    changeRenameFileList(state: DirState, item: FileInfo){
+    changeRenameFileList(state: DirState, item: FileInfo) {
       state.renameFileList.push(item);
       state.dupCheck.push(item.name);
     },
     changeBeforeItems(state: DirState, newItems: FileInfo[]) {
-      state.beforeItems = newItems
+      state.beforeItems = newItems;
     },
     initailizeRename(state: DirState) {
       state.renameFileList = state.beforeItems = state.afterItems = [];
-      state.dupCheck = []
+      state.dupCheck = [];
     },
     changeFilterFront(state: DirState, newFront: string) {
-      state.filterFront = newFront
+      state.filterFront = newFront;
     },
     changeFilterMiddle(state: DirState, newMiddle: string) {
-      state.filterMiddle = newMiddle
+      state.filterMiddle = newMiddle;
     },
     changeFilterBack(state: DirState, newBack: string) {
-      state.filterBack = newBack
+      state.filterBack = newBack;
     },
     changeFrontName(state: DirState, newName: string) {
-      state.frontName = newName
+      state.frontName = newName;
     },
     changeMiddleName(state: DirState, newName: string) {
-      state.middleName = newName
+      state.middleName = newName;
     },
     changeBackName(state: DirState, newName: string) {
-      state.backName = newName
+      state.backName = newName;
     },
   },
-  actions: {
-  },
+  actions: {},
   getters: {
     front: (state) => (item: FileInfo) => {
       if (state.filterFront == "1") {
@@ -205,26 +207,29 @@ export default new Vuex.Store({
     middle: (state) => (item: FileInfo) => {
       if (state.filterMiddle == "1") {
         if (item.type !== "") {
-          return item.name.substring(0, item.name.length - (item.type.length + 1));
+          return item.name.substring(
+            0,
+            item.name.length - (item.type.length + 1)
+          );
         } else {
-          return item.name
+          return item.name;
         }
       } else {
         return state.middleName;
       }
     },
     back: (state) => (item: FileInfo, i: number) => {
-      let _fileType = ""
+      let _fileType = "";
       if (item.type !== "") {
-        _fileType = "." + item.type
+        _fileType = "." + item.type;
       }
       if (state.filterBack == "1") {
-        return "_" + i + _fileType
+        return "_" + i + _fileType;
       } else if (state.filterBack == "2") {
-        return state.backName + _fileType
+        return state.backName + _fileType;
       } else {
-        return "" + _fileType
-      }    
+        return "" + _fileType;
+      }
     },
   },
   modules: {},

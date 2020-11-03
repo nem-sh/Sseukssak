@@ -5,29 +5,79 @@
     @dragover.prevent
     @click="closeContextMenu"
   >
-    <div class="ma-5">
-      <h3>
-        <div @click="select = 0" style="display: inline; cursor: pointer">
-          <div v-if="select == 0" style="display: inline">전체보기</div>
-          <div v-if="select != 0" style="display: inline; color: #e0e0e0">
+    <div class="from-part-first">
+      <div class="select-folder">
+        <v-row>
+          <v-col cols="4" class="from-to-name">
+            <h3><span>From</span></h3></v-col
+          >
+          <v-col cols="6" class="d-flex align-center justify-center"
+            ><div v-if="fromDir">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <h3 v-bind="attrs" v-on="on">{{ dirPath }}</h3>
+                </template>
+                <span>{{ fromDir }}</span>
+              </v-tooltip>
+            </div>
+            <div v-else>
+              <h3>폴더를 선택해주세요!</h3>
+            </div>
+          </v-col>
+          <v-col cols="2" class="d-flex align-center justify-center"
+            ><BtnSelectFromDir />
+          </v-col>
+        </v-row>
+      </div>
+
+      <div class="select-date" align="center">
+        <v-btn-toggle v-model="text" tile color="#7288da" group>
+          <v-btn
+            @click="select = 0"
+            class="rounded-xl"
+            small
+            rounded
+            value="left"
+          >
             전체보기
-          </div>
-        </div>
-        |
-        <div @click="select = 1" style="display: inline; cursor: pointer">
-          <div v-if="select == 1" style="display: inline">오늘 생성된</div>
-          <div v-if="select != 1" style="display: inline; color: #e0e0e0">
+          </v-btn>
+          <v-btn
+            @click="select = 1"
+            class="rounded-xl"
+            small
+            rounded
+            value="center"
+          >
             오늘 생성된
-          </div>
-        </div>
-        |
-        <div @click="select = 2" style="display: inline; cursor: pointer">
-          <div v-if="select == 2" style="display: inline">오늘 수정된</div>
-          <div v-if="select != 2" style="display: inline; color: #e0e0e0">
+          </v-btn>
+          <v-btn
+            @click="select = 2"
+            class="rounded-xl"
+            small
+            rounded
+            value="right"
+          >
             오늘 수정된
+          </v-btn>
+        </v-btn-toggle>
+      </div>
+    </div>
+
+    <div class="from-part-second">
+      <div class="lighten-4 rounded-xl from-file-list">
+        <v-virtual-scroll :items="tests" height="380" item-height="90">
+          <div :key="item" class="d-flex justify-space-between mx-5 pt-3">
+            <div v-for="n in 4" :key="n" class="pa-2" outlined tile>
+              <div class="file--icon">PNG</div>
+              <div align="center">{{ item }}</div>
+            </div>
           </div>
-        </div>
-      </h3>
+        </v-virtual-scroll>
+      </div>
+    </div>
+
+    <div class="from-part-third" align="right">
+      <BtnDupCheck mr-5 /><BtnMoveFile />
     </div>
 
     <h5>directories</h5>
@@ -47,7 +97,7 @@
         <v-list-item
           @click="enterDirectory(directory.name)"
           @contextmenu.prevent="showContextMenu(directory, $event)"
-          >{{ directory }}</v-list-item
+          >{{ directory.name }}</v-list-item
         >
       </div>
     </v-list>
@@ -185,6 +235,10 @@ import childProcess from "child_process";
 // event bus call
 import { BUS } from "./EventBus.js";
 
+import BtnMoveFile from "@/components/BtnMoveFile.vue";
+import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
+import BtnDupCheck from "@/components/BtnDupCheck.vue";
+
 interface SortList {
   directories: Directory[];
   files: File[];
@@ -201,14 +255,21 @@ interface Directory {
   updatedTime: number;
 }
 @Component({
-  components: {},
-  computed: mapState(["fileSortList", "fromDir"]),
+  components: {
+    BtnMoveFile,
+    BtnSelectFromDir,
+    BtnDupCheck,
+  },
+  computed: mapState(["fileSortList", "fromDir", "fileList"]),
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
 })
 export default class ListFrom extends Vue {
   selectData: object = {};
   now: Date = new Date();
   select: number = 0;
+  fromListLen: number = 0;
+  fileSortList!: SortList[];
+
   clickclick() {
     alert("준비중^__^");
   }
@@ -335,13 +396,50 @@ export default class ListFrom extends Vue {
         });
       }
     });
+
     this.changeFileSortList(fileSortList);
     this.changeFileList(fileList);
+  }
+
+  get items() {
+    return Array.from({ length: this.fromListLen }, (k, v) => v + 1);
+  }
+
+  get dirPath() {
+    const tmp = this.fromDir.split("\\");
+    return tmp[tmp.length - 1];
+  }
+
+  get tests() {
+    return this.fileSortList["directories"].concat(this.fileSortList["files"]);
   }
 }
 </script>
 
 <style>
+.from-part-first {
+  padding-top: 28px;
+  width: 100%;
+}
+
+.from-part-second {
+  width: 100%;
+  padding: 0 0 10px 0;
+}
+
+.from-part-third {
+  width: 100%;
+  padding-top: 0;
+}
+
+.from-file-list {
+  height: 100%;
+}
+
+.folder-name {
+  font-size: 20px;
+}
+
 #contextmenu {
   display: none;
   position: absolute;
