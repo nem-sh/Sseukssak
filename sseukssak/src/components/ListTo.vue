@@ -1,5 +1,10 @@
 <template>
-  <v-container @drop="dropTo" dragenter.prevent @dragover.prevent>
+  <v-container
+    style="padding-bottom: 0"
+    @drop="dropTo"
+    dragenter.prevent
+    @dragover.prevent
+  >
     <div class="to-part-first">
       <div class="select-folder">
         <v-row>
@@ -301,7 +306,7 @@ export default class ListTo extends Vue {
 
 .to-part-third {
   width: 100%;
-  height: 10%;
+  height: 40px;
   padding-top: 0;
 }
 

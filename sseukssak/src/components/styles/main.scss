@@ -3,6 +3,7 @@
   --color-grey-light: #363a3e;
   --color-purple: #7288da;
   --color-pink: #f9b4e2;
+  --color-grey-lighter: #f6f8fa;
   // #4C4C4E
   // #8A4F80
   // #E8D9C8
@@ -119,6 +120,7 @@ body {
   border-radius: 20%;
   display: flex;
   align-items: center;
+  margin-top: 5px;
   margin-bottom: 5px;
   justify-content: center;
   transition: all 0.2s ease-in-out;
@@ -147,6 +149,16 @@ body {
 .file--icon img {
   width: 75%;
   height: 75%;
+}
+
+.folder--icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 20%;
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .menu--separator {
@@ -262,6 +274,16 @@ body {
 .folder-name {
   font-size: 20px;
   width: 100%;
+}
+
+.file-box {
+  width: 97px !important;
+  &:hover {
+    border-radius: 10%;
+    background: var(--color-grey-lighter);
+    font-weight: bolder;
+    cursor: pointer;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
