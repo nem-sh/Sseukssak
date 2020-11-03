@@ -100,7 +100,7 @@ export default new Vuex.Store({
     backName: "",
     // google dive
     tokenPath: 'token.json',
-    oAuth2Client: new google.auth.OAuth2("1096987524792-3jbd92ksgk67a55169h1jbnbvnequ2ca.apps.googleusercontent.com", "1moPvka8ihD8bsUIR_zTVLql","urn:ietf:wg:oauth:2.0:oob")
+    oAuth2Client: new google.auth.OAuth2("957933273560-84cubajfji0djc5k9r9n2okck14sribj.apps.googleusercontent.com", "xErwUWs1A-ohs2fgcFFqdulF","urn:ietf:wg:oauth:2.0:oob")
   },
   mutations: {
     changeModifyDirectroy(
