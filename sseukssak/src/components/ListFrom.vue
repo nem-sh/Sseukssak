@@ -64,14 +64,110 @@
     </div>
 
     <div class="from-part-second">
-      <div class="lighten-4 rounded-xl from-file-list">
-        <v-virtual-scroll :items="tests" height="380" item-height="90">
-          <div :key="item" class="d-flex justify-space-between mx-5 pt-3">
-            <div v-for="n in 4" :key="n" class="pa-2" outlined tile>
-              <div class="file--icon">PNG</div>
-              <div align="center">{{ item }}</div>
+      <div class="lighten-4 rounded-xl" height="100%">
+        <v-virtual-scroll :items="fileList" height="380" item-height="90">
+          <template v-slot:default="{ item }">
+            <div :key="item.name" class="d-flex align-start mx-5 pt-3">
+              <div v-if="fileList.indexOf(item) === 0" class="pa-2 file-box">
+                <div align="center" @click="enterDirectory('')">
+                  <img
+                    src="@/assets/folder-icon.png"
+                    alt=""
+                    height="50px"
+                    width="50px"
+                    class="folder--icon"
+                  />
+                </div>
+                <div class="file-name" align="center">상위 폴더</div>
+              </div>
+              <div v-for="file in item" :key="file.name" class="pa-2 file-box">
+                <div
+                  v-if="
+                    select == 0 ||
+                    (select == 1 && compareTime(file.birthTime)) ||
+                    (select == 2 && compareTime(file.updatedTime))
+                  "
+                >
+                  <div
+                    v-if="file.fileType"
+                    @click="openFile(file.name)"
+                    @contextmenu.prevent="showContextMenu(file, $event)"
+                  >
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <div
+                          v-if="file.fileType"
+                          align="center"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <div class="file--icon">{{ file.fileType }}</div>
+                        </div>
+                        <div v-else align="center" v-bind="attrs" v-on="on">
+                          <img
+                            src="@/assets/folder-icon.png"
+                            alt=""
+                            height="50px"
+                            width="50px"
+                            class="folder--icon"
+                          />
+                        </div>
+                      </template>
+                      <span>{{ file.name }}</span>
+                    </v-tooltip>
+                    <div
+                      v-if="file.name.length <= 6"
+                      class="file-name"
+                      align="center"
+                    >
+                      {{ file.name }}
+                    </div>
+                    <div v-else class="file-name" align="center">
+                      {{ file.name.slice(0, 6) }}..
+                    </div>
+                  </div>
+                  <div
+                    v-else
+                    @click="enterDirectory(file.name)"
+                    @contextmenu.prevent="showContextMenu(file, $event)"
+                  >
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <div
+                          v-if="file.fileType"
+                          align="center"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <div class="file--icon">{{ file.fileType }}</div>
+                        </div>
+                        <div v-else align="center" v-bind="attrs" v-on="on">
+                          <img
+                            src="@/assets/folder-icon.png"
+                            alt=""
+                            height="50px"
+                            width="50px"
+                            class="folder--icon"
+                          />
+                        </div>
+                      </template>
+                      <span>{{ file.name }}</span>
+                    </v-tooltip>
+                    <div
+                      v-if="file.name.length <= 6"
+                      class="file-name"
+                      align="center"
+                    >
+                      {{ file.name }}
+                    </div>
+                    <div v-else class="file-name" align="center">
+                      {{ file.name.slice(0, 6) }}..
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          </template>
         </v-virtual-scroll>
       </div>
     </div>
@@ -80,43 +176,6 @@
       <BtnDupCheck mr-5 /><BtnMoveFile />
     </div>
 
-    <h5>directories</h5>
-    <v-list v-if="fromDir">
-      <div>
-        <v-list-item @click="enterDirectory('')">상위 폴더로</v-list-item>
-      </div>
-    </v-list>
-    <v-list v-for="directory in fileSortList.directories" :key="directory.name">
-      <div
-        v-if="
-          select == 0 ||
-          (select == 1 && compareTime(directory.birthTime)) ||
-          (select == 2 && compareTime(directory.updatedTime))
-        "
-      >
-        <v-list-item
-          @click="enterDirectory(directory.name)"
-          @contextmenu.prevent="showContextMenu(directory, $event)"
-          >{{ directory.name }}</v-list-item
-        >
-      </div>
-    </v-list>
-    <h5>files</h5>
-    <v-list v-for="file in fileSortList.files" :key="file.name">
-      <div
-        v-if="
-          select == 0 ||
-          (select == 1 && compareTime(file.birthTime)) ||
-          (select == 2 && compareTime(file.updatedTime))
-        "
-      >
-        <v-list-item
-          @click="openFile(file.name)"
-          @contextmenu.prevent="showContextMenu(file, $event)"
-          >{{ file }}</v-list-item
-        >
-      </div>
-    </v-list>
     <div>
       <ul v-if="!selectData.fileType" id="contextmenu" class="pa-0 contextmenu">
         <li>
@@ -430,8 +489,27 @@ export default class ListFrom extends Vue {
     return tmp[tmp.length - 1];
   }
 
-  get tests() {
-    return this.fileSortList["directories"].concat(this.fileSortList["files"]);
+  makeListForScroll() {
+    const totalFile = this.fileSortList["directories"].concat(
+      this.fileSortList["files"]
+    );
+    const totalFileForScroll: object[] = [];
+    let n = 0;
+    while (n < totalFile.length) {
+      if (n === 0) {
+        totalFileForScroll.push(totalFile.slice(n, n + 3));
+        n += 3;
+      } else {
+        totalFileForScroll.push(totalFile.slice(n, n + 4));
+        n += 4;
+      }
+    }
+    return totalFileForScroll;
+  }
+
+  get fileList() {
+    const fileList = this.makeListForScroll();
+    return fileList;
   }
 }
 </script>
@@ -452,12 +530,12 @@ export default class ListFrom extends Vue {
   padding-top: 0;
 }
 
-.from-file-list {
-  height: 100%;
-}
-
 .folder-name {
   font-size: 20px;
+}
+
+.file-name {
+  font-size: 13px;
 }
 
 #contextmenu {
