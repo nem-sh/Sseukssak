@@ -121,7 +121,7 @@
       <ul v-if="!selectData.fileType" id="contextmenu" class="pa-0 contextmenu">
         <li>
           <a
-            @click="enterDirectory(directory.name)"
+            @click="enterDirectory(fromDir + '\\' + selectData.name)"
             style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
@@ -134,7 +134,9 @@
           >
         </li>
         <li>
-          <a @click="clickclick" style="display: flex; align-items: center"
+          <a
+            @click="deleteThis(fromDir + '\\' + selectData.name)"
+            style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
               max-width="25"
@@ -174,7 +176,7 @@
       <ul v-if="selectData.fileType" id="contextmenu" class="pa-0 contextmenu">
         <li>
           <a
-            @click="openFile(file.name)"
+            @click="openFile(selectData.name)"
             style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
@@ -182,12 +184,14 @@
               contain
               height="100%"
               src="./../assets/run.png"
-              alt="delete"
+              alt="run"
             />파일 실행</a
           >
         </li>
         <li>
-          <a @click="clickclick" style="display: flex; align-items: center"
+          <a
+            @click="deleteThis(fromDir + '\\' + selectData.name)"
+            style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
               max-width="25"
@@ -272,6 +276,22 @@ export default class ListFrom extends Vue {
 
   clickclick() {
     alert("준비중^__^");
+  }
+
+  deleteThis(path) {
+    if (fs.lstatSync(path).isDirectory()) {
+      const fileList = fs.readdirSync(path);
+      console.log(fileList);
+      fileList.forEach((name: string) => {
+        this.deleteThis(path + "\\" + name);
+      });
+
+      fs.rmdirSync(path);
+    } else {
+      fs.unlinkSync(path);
+    }
+    alert("지워드림 ^_^");
+    this.renewFrom();
   }
   closeContextMenu() {
     const unit = document.getElementById("contextmenu");
