@@ -2,7 +2,7 @@
 <div>
   대상 파일:{{filePath}}
   <v-text-field type="text" v-model="filePath"/>
-  <v-btn @click="uploadFile">업로드</v-btn>
+  <v-btn @click="uploadFile(oAuth2Client)">업로드</v-btn>
 </div>
 </template>
 
@@ -13,8 +13,17 @@ import fs from 'fs'
 import { google } from 'googleapis'
 import { mapMutations, mapState } from 'vuex'
 
-@Component
+@Component({
+  computed:
+  mapState([
+    "tokenPath",
+    "oAuth2Client"
+  ])
+})
+
 export default class App extends Vue {
+    oAuth2Client!: object
+
     uploadFile(auth) {
             const drive = google.drive({ version: 'v3', auth })
             const fileMetadata = {
