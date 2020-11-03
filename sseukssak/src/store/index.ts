@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
+import { google } from 'googleapis'
+
 Vue.use(Vuex);
 
 interface DirState {
@@ -27,8 +29,8 @@ interface DirState {
   backName: string;
 
   // Google Auth
-  token: string;
   tokenPath: string;
+  oAuth2Client: any;
 }
 interface ToLibrary {
   name: string;
@@ -79,8 +81,6 @@ export default new Vuex.Store({
     selectedToName: "",
     logBackCheck: false,
     duplicatedList: [[]],
-    token: "",
-    tokenPath: "token.json",
     modifyDirectroy: {
       path: "",
       typeTags: [],
@@ -98,6 +98,9 @@ export default new Vuex.Store({
     frontName: "",
     middleName: "",
     backName: "",
+    // google dive
+    tokenPath: 'token.json',
+    oAuth2Client: new google.auth.OAuth2("957933273560-84cubajfji0djc5k9r9n2okck14sribj.apps.googleusercontent.com", "xErwUWs1A-ohs2fgcFFqdulF","urn:ietf:wg:oauth:2.0:oob")
   },
   mutations: {
     changeModifyDirectroy(
@@ -130,9 +133,6 @@ export default new Vuex.Store({
     },
     changeDuplicatedList(state: DirState, newList: any[][]) {
       state.duplicatedList = newList;
-    },
-    setToken(state: DirState, newToken: string) {
-      state.token = newToken;
     },
     changeLogBackCheck(state: DirState, newCheck: boolean) {
       state.logBackCheck = newCheck;
@@ -231,6 +231,12 @@ export default new Vuex.Store({
         return "" + _fileType;
       }
     },
+    authUrl: (state) => {
+      return state.oAuth2Client.generateAuthUrl({
+        'access_type': 'offline',
+        scope: ['https://www.googleapis.com/auth/drive'] 
+    }) 
+    }
   },
   modules: {},
 });

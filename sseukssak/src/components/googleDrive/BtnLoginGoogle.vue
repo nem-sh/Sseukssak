@@ -52,28 +52,30 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import fs from 'fs'
-import { mapMutations, mapState } from 'vuex'
-import { google } from 'googleapis'
+import { mapGetters, mapState } from 'vuex'
 
 const { shell } = require('electron').remote
 
 @Component({
-  computed: mapState([
-    "token",
-    "tokenPath"
+  computed:{
+  ...mapState([
+    "tokenPath",
+    "oAuth2Client"
   ]),
-  methods: mapMutations(['setToken'])
+  ...mapGetters([
+      "authUrl"
+  ])
+  }
 })
 
 export default class BtnLoginGoogle extends Vue {
     dialog: boolean = false
     tokenPath!: string
     code: string = ''
-    oAuth2Client = new google.auth.OAuth2("1096987524792-3jbd92ksgk67a55169h1jbnbvnequ2ca.apps.googleusercontent.com", "1moPvka8ihD8bsUIR_zTVLql","urn:ietf:wg:oauth:2.0:oob")
-    authUrl = this.oAuth2Client.generateAuthUrl({
-                'access_type': 'offline',
-                scope: ['https://www.googleapis.com/auth/drive'] 
-            }) 
+    oAuth2Client!: any
+    authUrl!: string
+
+
     login(oAuth2Client){
         fs.readFile(this.tokenPath,(err,token)=>{
             if (err) {
