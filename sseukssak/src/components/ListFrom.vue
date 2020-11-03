@@ -432,6 +432,7 @@ interface Directory {
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
 })
 export default class ListFrom extends Vue {
+  text: string = "";
   renameValue: string = "";
   selectedData: object = {};
   selectedDataInfo: object = {};
@@ -506,7 +507,7 @@ export default class ListFrom extends Vue {
     this.selectedData = value;
     const winWidth = window.outerWidth;
     const winHeight = window.outerHeight;
-    const posX: number = e.pageX;
+    const posX: number = e.pageX - 50;
     const posY = e.pageY;
     const unit = document.getElementById("contextmenu");
     if (unit) {
