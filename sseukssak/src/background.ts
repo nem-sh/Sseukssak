@@ -82,12 +82,17 @@ function createWindow() {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
-    if (!process.env.IS_TEST) win.webContents.openDevTools();
+    // if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
     createProtocol("app");
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
-    win.webContents.openDevTools({ mode: "undocked" });
+    // win.loadURL(url.format({
+    //   pathname: path.join(__dirname, 'index.html'),
+    //   protocol: 'file:',
+    //   slashes: true
+    // }));
+    // win.webContents.openDevTools({ mode: "undocked" });
   }
 
   win.on("minimize", function(event) {
