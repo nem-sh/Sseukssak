@@ -7,7 +7,7 @@
     >
       <v-card>
         <v-card-title dark color="#7288da" style="background-color:#7288da; color:white">
-          새로운 라이브러리 생성
+          새로운 정리 규칙 생성
           <v-spacer></v-spacer>
           <v-btn
             color="white"
@@ -21,7 +21,7 @@
         </v-card-title>
         <v-card-text class="pt-4">
           <div>
-            <v-text-field label="라이브러리 이름" v-model="libraryTitle">
+            <v-text-field label="정리 규칙명" v-model="libraryTitle">
             </v-text-field>
           </div>
         </v-card-text>
@@ -149,6 +149,16 @@ export default class ModalCreateToLibrary extends Vue {
   }
 
   createLibrary() {
+    if (this.libraryTitle === "") {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "정리 규칙명을 입력해주세요",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+      return
+    }
     const tempLibraryList: ToLibrary[] = this.toLibraryList;
 
     for (let index = 0; index < this.toLibraryNameList.length; index++) {
