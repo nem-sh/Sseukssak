@@ -31,7 +31,8 @@
         >
           <span><i :class="item.icon"></i></span>
         </div>
-        <div>
+        <!-- 다크모드 -->
+        <!-- <div>
           <div
             v-show="this.$vuetify.theme.dark"
             class="menu--icon"
@@ -46,7 +47,7 @@
           >
             <span><i class="fas fa-moon fa-lg"></i></span>
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="main">
         <!-- <div class="top-space"></div> -->

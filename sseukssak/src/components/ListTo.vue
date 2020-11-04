@@ -42,16 +42,28 @@
           :items="toLibrary.directories"
           height="380"
           item-height="84"
+          class="file-scroller"
         >
           <template v-slot:default="{ item }">
             <v-list-item link :key="item.path" @click="openShell(item.path)">
               <v-list-item-action>
-                <img
+                <v-img
                   src="@/assets/folder-icon.png"
                   alt=""
                   height="60px"
                   width="60px"
-                />
+                  ><template v-slot:placeholder>
+                    <v-row
+                      class="fill-height ma-0"
+                      align="center"
+                      justify="center"
+                    >
+                      <v-progress-circular
+                        indeterminate
+                        color="var(--color-purple)"
+                      ></v-progress-circular>
+                    </v-row> </template
+                ></v-img>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
@@ -60,13 +72,13 @@
               </v-list-item-content>
               <v-list-item-action>
                 <v-row align="center" justify="center" class="pa-0">
-                  <v-col cols="4" class="pa-0">
+                  <!-- <v-col cols="4" class="pa-0">
                     <ModalCheckDirectoryTags />
-                  </v-col>
-                  <v-col cols="4" class="pa-0"
+                  </v-col> -->
+                  <v-col cols="6" class="pa-0"
                     ><ModalModifyToLibraryDirectory :propDirectory="item"
                   /></v-col>
-                  <v-col cols="4" class="pa-0"
+                  <v-col cols="6" class="pa-0"
                     ><v-btn
                       icon
                       color="error"
@@ -80,17 +92,6 @@
             <v-divider></v-divider>
           </template>
         </v-virtual-scroll>
-        <!-- <div v-for="directory in toLibrary.directories" :key="directory.path">
-          {{ directory }}
-          <ModalModifyToLibraryDirectory :propDirectory="directory" />
-          <v-btn
-            icon
-            color="red"
-            @click="deleteToLibraryDirectory(directory.path)"
-          >
-            디렉토리<v-icon>mdi-minus</v-icon>
-          </v-btn>
-        </div> -->
       </div>
     </div>
     <div v-if="!selectedToName" align="center" class="to-part-second">

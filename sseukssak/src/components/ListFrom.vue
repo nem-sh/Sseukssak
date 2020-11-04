@@ -30,7 +30,7 @@
         </v-row>
       </div>
 
-      <div class="select-date" align="center">
+      <!-- <div class="select-date" align="center">
         <v-btn-toggle v-model="text" tile color="#7288da" group>
           <v-btn
             @click="select = 0"
@@ -60,23 +60,26 @@
             오늘 수정된
           </v-btn>
         </v-btn-toggle>
-      </div>
+      </div> -->
     </div>
 
     <div class="from-part-second">
-      <div class="lighten-4 rounded-xl" height="100%">
-        <v-virtual-scroll :items="fileList" height="380" item-height="90">
+      <div class="rounded-xl" height="100%">
+        <v-virtual-scroll
+          v-if="fileList.length !== 0"
+          :items="fileList"
+          height="380"
+          item-height="90"
+          class="file-scroller"
+        >
+          <div v-if="fileList.length === 0">Nono</div>
           <template v-slot:default="{ item }">
             <div :key="item.name" class="d-flex align-start mx-5 pt-3">
               <div v-if="fileList.indexOf(item) === 0" class="pa-2 file-box">
                 <div align="center" @click="enterDirectory('')">
-                  <img
-                    src="@/assets/folder-icon.png"
-                    alt=""
-                    height="50px"
-                    width="50px"
-                    class="folder--icon"
-                  />
+                  <div class="folder--icon">
+                    <i class="fas fa-long-arrow-up fa-2x mx-auto"></i>
+                  </div>
                 </div>
                 <div class="file-name" align="center">상위 폴더</div>
               </div>
@@ -103,14 +106,27 @@
                         >
                           <v-hover v-slot="{ hover }">
                             <div class="file--icon">
-                              <img
+                              <v-img
                                 v-if="!hover"
                                 height="50px"
                                 width="50px"
                                 class="folder--icon"
                                 :src="file.icon"
                                 alt="icon"
-                              />
+                              >
+                                <template v-slot:placeholder>
+                                  <v-row
+                                    class="fill-height ma-0"
+                                    align="center"
+                                    justify="center"
+                                  >
+                                    <v-progress-circular
+                                      indeterminate
+                                      color="var(--color-purple)"
+                                    ></v-progress-circular>
+                                  </v-row>
+                                </template>
+                              </v-img>
                               <div v-else>{{ file.fileType }}</div>
                             </div>
                           </v-hover>
@@ -154,13 +170,25 @@
                           <div class="file--icon">{{ file.fileType }}</div>
                         </div>
                         <div v-else align="center" v-bind="attrs" v-on="on">
-                          <img
+                          <v-img
                             src="@/assets/folder-icon.png"
                             alt=""
                             height="50px"
                             width="50px"
                             class="folder--icon"
-                          />
+                          >
+                            <template v-slot:placeholder>
+                              <v-row
+                                class="fill-height ma-0"
+                                align="center"
+                                justify="center"
+                              >
+                                <v-progress-circular
+                                  indeterminate
+                                  color="var(--color-purple)"
+                                ></v-progress-circular>
+                              </v-row> </template
+                          ></v-img>
                         </div>
                       </template>
                       <span>{{ file.name }}</span>
@@ -181,11 +209,36 @@
             </div>
           </template>
         </v-virtual-scroll>
+        <div v-else class="d-flex flex-column mx-5 pt-3" height="380">
+          <div v-if="fromDir" class="pa-2 file-box">
+            <div align="center" @click="enterDirectory('')">
+              <div class="folder--icon">
+                <i class="fas fa-long-arrow-up fa-2x mx-auto"></i>
+              </div>
+            </div>
+            <div class="file-name" align="center">상위 폴더</div>
+          </div>
+          <div v-if="fromDir" align="center">
+            <lottie-player
+              src="https://assets6.lottiefiles.com/temp/lf20_Celp8h.json"
+              background="transparent"
+              speed="1"
+              style="width: 220px; height: 220px"
+              autoplay
+              mx-auto
+            ></lottie-player>
+            <h3 class="mt-2">정리할 파일이 없습니다 :(</h3>
+            <div style="font-size: 12px" class="mt-2">
+              다른 폴더를 선택해 주세요!
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="from-part-third" align="right">
-      <BtnDupCheck mr-5 /><BtnMoveFile />
+    <div v-if="fileList.length !== 0" class="from-part-third" align="right">
+      <!-- <BtnDupCheck mr-5 /> -->
+      <BtnMoveFile />
     </div>
 
     <div>
