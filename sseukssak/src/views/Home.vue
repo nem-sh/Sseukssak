@@ -1,32 +1,31 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col>
-        <v-row no-gutters>From <BtnSelectFromDir />{{ fromDir }}</v-row>
-        <v-row no-gutters>
-          <v-list v-for="file in fileList" :key="file">
-            <v-list-item>{{ file }}</v-list-item>
-          </v-list>
-        </v-row>
-      </v-col>
-
-      <v-col>
-        <v-row no-gutters>To</v-row>
-        <v-row no-gutters>
-          <ToList />
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-footer absolute>
-      <v-col>
-        <BtnRename />
-        <BtnMoveFile />
-        <DupCheck />
-      </v-col>
-      <v-col>
-        <Exp1 />
-      </v-col>
-    </v-footer>
+  <v-container class="from-to">
+    <div>
+      <v-app>
+        <v-container fluid pa-0>
+          <v-row align="center" justify="center" style="height: 100vh" dense>
+            <v-col
+              cols="12"
+              lg="6"
+              md="6"
+              sm="6"
+              class="from fill-height d-flex flex-column"
+            >
+              <ListFrom />
+            </v-col>
+            <v-col
+              cols="12"
+              lg="6"
+              md="6"
+              sm="6"
+              class="to fill-height d-flex flex-column"
+            >
+              <ListTo />
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-app>
+    </div>
   </v-container>
 </template>
 
@@ -34,26 +33,26 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import Exp1 from "@/components/Exp1.vue";
-import BtnRename from "@/components/BtnRename.vue";
 import BtnMoveFile from "@/components/BtnMoveFile.vue";
-import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
 
-import ToList from "@/components/ToList.vue";
+import ListTo from "@/components/ListTo.vue";
+import ListFrom from "@/components/ListFrom.vue";
 
-import DupCheck from "@/components/DupCheck.vue";
+import BtnDupCheck from "@/components/BtnDupCheck.vue";
+
 
 import { mapState } from "vuex";
 
 @Component({
   components: {
     Exp1,
-    BtnRename,
     BtnMoveFile,
-    BtnSelectFromDir,
-    DupCheck,
-    ToList,
+    BtnDupCheck,
+    ListTo,
+    ListFrom,
   },
-  computed: mapState(["fromDir", "fileList"]),
+  computed: mapState(["fromDir"]),
 })
 export default class Home extends Vue {}
 </script>
+
