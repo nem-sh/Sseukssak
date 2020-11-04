@@ -1,13 +1,47 @@
 <template>
-  <v-btn
-    class="mr-5"
-    color="var(--color-purple)"
-    dark
-    rounded
-    @click="moveFile"
-  >
-    정리
-  </v-btn>
+  <div style="display: inline">
+    <v-dialog v-model="dialog" persistent max-width="400px">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          class="mr-5"
+          color="var(--color-purple)"
+          dark
+          rounded
+          @click="moveFile"
+          v-bind="attrs"
+          v-on="on"
+        >
+          정리
+        </v-btn>
+      </template>
+      <v-card align="center">
+        <v-card-text>
+          <!-- <lottie-player
+            src="https://assets7.lottiefiles.com/packages/lf20_7PhD2J.json"
+            background="transparent"
+            speed="1"
+            style="width: 300px; height: 300px"
+            loop
+            autoplay
+          ></lottie-player> -->
+          <lottie-player
+            src="https://assets6.lottiefiles.com/packages/lf20_AvXSwT.json"
+            background="transparent"
+            speed="1"
+            style="width: 300px; height: 300px"
+            loop
+            autoplay
+          ></lottie-player>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="var(--color-purple)" text @click="dialog = false">
+            취소
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script lang="ts">
@@ -48,6 +82,7 @@ interface File {
   ]),
 })
 export default class BtnMoveFile extends Vue {
+  dialog: boolean = false;
   now: Date = new Date();
   tagToDate: object = {
     "#Today": new Date(
@@ -176,6 +211,7 @@ export default class BtnMoveFile extends Vue {
     return true;
   }
   moveFile() {
+    this.dialog = true;
     BUS.$emit("bus:refreshfile");
     BUS.$emit("bus:dupcheck");
     BUS.$emit("bus:refreshfile");
@@ -266,6 +302,7 @@ export default class BtnMoveFile extends Vue {
         fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
       }
     }
+    this.dialog = false;
     alert("정리가 완료되었습니다.");
     BUS.$emit("bus:refreshfile");
   }
