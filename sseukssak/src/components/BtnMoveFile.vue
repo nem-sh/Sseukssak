@@ -221,8 +221,8 @@ export default class BtnMoveFile extends Vue {
     return true;
   }
   moveFile() {
-    console.log("111", this.fileSortList);
-    // this.dialog = true;
+    this.dialog = true;
+    const fileSortList = this.fileSortList;
     BUS.$emit("bus:refreshfile");
     BUS.$emit("bus:dupcheck");
     BUS.$emit("bus:refreshfile");
@@ -257,45 +257,43 @@ export default class BtnMoveFile extends Vue {
         }
       });
     });
-    console.log("222", this.fileSortList);
-
-    for (const idx in this.fileSortList.files) {
+    for (const idx in fileSortList.files) {
       const a: string[][] = [];
 
       directories.forEach((directory: ToLibraryDirectory) => {
         directory.types.forEach((type) => {
           if (
             this.compareDate(
-              new Date(this.fileSortList.files[idx].birthTime),
+              new Date(fileSortList.files[idx].birthTime),
               directory.dateTags
             )
           ) {
             if (
               this.compareTitle(
-                this.fileSortList.files[idx].name,
+                fileSortList.files[idx].name,
                 directory.titleTags
               )
             ) {
-              if (type == "." + this.fileSortList.files[idx].fileType) {
+              if (type == "." + fileSortList.files[idx].fileType) {
                 if (
                   fs.existsSync(
-                    directory.path + "\\" + this.fileSortList.files[idx].name
+                    directory.path + "\\" + fileSortList.files[idx].name
                   )
                 ) {
                   alert(
                     "중복된 이름의 파일이 존재하여 자동 리네임 되었습니다."
                   );
                   a.push([
-                    this.fromDir + "\\" + this.fileSortList.files[idx].name,
+                    this.fromDir + "\\" + fileSortList.files[idx].name,
                     directory.path +
                       "\\" +
                       "[중복]" +
-                      this.fileSortList.files[idx].name,
+                      fileSortList.files[idx].name,
                   ]);
                 } else {
                   a.push([
-                    this.fromDir + "\\" + this.fileSortList.files[idx].name,
-                    directory.path + "\\" + this.fileSortList.files[idx].name,
+                    this.fromDir + "\\" + fileSortList.files[idx].name,
+                    directory.path + "\\" + fileSortList.files[idx].name,
                   ]);
                 }
                 return;

@@ -10,6 +10,7 @@
         <p class="text-center" :class="partTitleMode">기존 파일명</p>
         <!-- <v-divider></v-divider> -->
         <v-virtual-scroll
+          class="file-scroller"
           :bench="benched"
           :items="beforeItems"
           height="120"
@@ -28,6 +29,7 @@
         <p class="text-center" :class="partTitleMode">변경될 파일명</p>
         <!-- <v-divider></v-divider> -->
         <v-virtual-scroll
+          class="file-scroller"
           :bench="benched"
           :items="afterItems"
           height="120"
@@ -46,9 +48,9 @@
         <v-btn rounded class="mb-3" @click="rename" color="#7288da">
           OK
         </v-btn>
-        <v-btn rounded @click="logBack" :disabled="logBackCheck === false" color="red accent-2">
+        <!-- <v-btn rounded @click="logBack" :disabled="logBackCheck === false" color="red accent-2">
           <i class="fas fa-redo-alt"></i>
-        </v-btn>
+        </v-btn> -->
       </v-col>
     </v-row>
   </v-col>

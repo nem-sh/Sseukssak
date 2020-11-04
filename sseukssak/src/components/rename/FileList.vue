@@ -12,6 +12,7 @@
         폴더를 선택해주세요 :)
     </p>
     <v-virtual-scroll
+      class="file-scroller"
       :bench="benched"
       :items="renameFileList"
       height="120"

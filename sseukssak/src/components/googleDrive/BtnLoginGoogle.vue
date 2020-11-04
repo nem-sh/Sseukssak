@@ -6,15 +6,13 @@
       max-width="400"
     >
       <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="primary"
-          dark
+          <i 
+          class="fab fa-google-drive"
           v-bind="attrs"
           v-on="on"
           @click="login(oAuth2Client)"
-        >
-          구글 드라이브 연동
-        </v-btn>
+          >
+          </i>
       </template>
       <v-card>
         <v-card-title class="headline">
