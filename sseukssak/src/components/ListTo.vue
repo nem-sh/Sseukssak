@@ -121,13 +121,12 @@
 import { Vue, Component, Watch } from "vue-property-decorator";
 import fs from "fs";
 import { mapMutations, mapState } from "vuex";
-import Swal from "sweetalert2"
+import Swal from "sweetalert2";
 
 import ModalCreateToLibrary from "@/components/ModalCreateToLibrary.vue";
 import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.vue";
 // import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
 import ModalCheckDirectoryTags from "@/components/ModalCheckDirectoryTags.vue";
-
 
 import { shell } from "electron";
 // const { shell } = require("electron").remote;
@@ -189,7 +188,8 @@ export default class ListTo extends Vue {
               index2++
             ) {
               if (
-                tempToLibraryList[index1].directories[index2].path == directoryPath
+                tempToLibraryList[index1].directories[index2].path ==
+                directoryPath
               ) {
                 tempToLibraryList[index1].directories.splice(index2, 1);
                 this.changeToLibraryList(tempToLibraryList);
@@ -200,8 +200,10 @@ export default class ListTo extends Vue {
                 return;
               }
             }
-          }}
-    }})
+          }
+        }
+      }
+    });
   }
   deleteToLibrary() {
     Swal.fire({
@@ -225,7 +227,8 @@ export default class ListTo extends Vue {
             break;
           }
         }
-      }})
+      }
+    });
   }
   dropTo(event) {
     event.preventDefault();
@@ -242,15 +245,142 @@ export default class ListTo extends Vue {
   }
   created() {
     const mySettings = window.localStorage.getItem("selectedFromData"); // 로컬스토리지에서 해당 key 이름으로 되어있는 value 값 불러오기
-    let mySettingObj: ToLibrary[] = [];
-    if (!mySettings) {
+    let mySettingObj: ToLibrary[] = [
+      {
+        name: "유형별 정리",
+        directories: [
+          {
+            path: "%from%\\이미지",
+            typeTags: ["#Image"],
+            dateTags: [],
+            titleTags: [],
+          },
+          {
+            path: "%from%\\문서",
+            typeTags: ["#Document"],
+            dateTags: [],
+            titleTags: [],
+          },
+          {
+            path: "%from%\\비디오",
+            typeTags: ["#Video"],
+            dateTags: [],
+            titleTags: [],
+          },
+          {
+            path: "%from%\\오디오",
+            typeTags: ["#Audio"],
+            dateTags: [],
+            titleTags: [],
+          },
+          {
+            path: "%from%\\압축파일",
+            typeTags: ["#Compressed"],
+            dateTags: [],
+            titleTags: [],
+          },
+          {
+            path: "%from%\\바로가기",
+            typeTags: ["lnk"],
+            dateTags: [],
+            titleTags: [],
+          },
+        ],
+      },
+    ];
+    if (!mySettings || mySettings == "[]") {
       // 해당 키의 데이터가 없다면 - 최초 사용 시에만 이 필터에 걸릴 것
-      const SerializedData = JSON.stringify([]); // 로컬스토리지는 string 값만 저장할 수 있기 때문에 이 절차가 필요함
+      const SerializedData = JSON.stringify([
+        {
+          name: "유형별 정리",
+          directories: [
+            {
+              path: "%from%\\이미지",
+              typeTags: ["#Image"],
+              dateTags: [],
+              titleTags: [],
+            },
+            {
+              path: "%from%\\문서",
+              typeTags: ["#Document"],
+              dateTags: [],
+              titleTags: [],
+            },
+            {
+              path: "%from%\\비디오",
+              typeTags: ["#Video"],
+              dateTags: [],
+              titleTags: [],
+            },
+            {
+              path: "%from%\\오디오",
+              typeTags: ["#Audio"],
+              dateTags: [],
+              titleTags: [],
+            },
+            {
+              path: "%from%\\압축파일",
+              typeTags: ["#Compressed"],
+              dateTags: [],
+              titleTags: [],
+            },
+            {
+              path: "%from%\\바로가기",
+              typeTags: ["lnk"],
+              dateTags: [],
+              titleTags: [],
+            },
+          ],
+        },
+      ]); // 로컬스토리지는 string 값만 저장할 수 있기 때문에 이 절차가 필요함
       window.localStorage.setItem("selectedFromData", SerializedData); // 앞에가 key, 뒤에가 value로 저장됨
     } else {
       mySettingObj = JSON.parse(mySettings);
     }
-
+    // const SerializedData = JSON.stringify([
+    //   {
+    //     name: "유형별 정리",
+    //     directories: [
+    //       {
+    //         path: "%from%\\이미지",
+    //         typeTags: ["#Image"],
+    //         dateTags: [],
+    //         titleTags: [],
+    //       },
+    //       {
+    //         path: "%from%\\문서",
+    //         typeTags: ["#Document"],
+    //         dateTags: [],
+    //         titleTags: [],
+    //       },
+    //       {
+    //         path: "%from%\\비디오",
+    //         typeTags: ["#Video"],
+    //         dateTags: [],
+    //         titleTags: [],
+    //       },
+    //       {
+    //         path: "%from%\\오디오",
+    //         typeTags: ["#Audio"],
+    //         dateTags: [],
+    //         titleTags: [],
+    //       },
+    //       {
+    //         path: "%from%\\압축파일",
+    //         typeTags: ["#Compressed"],
+    //         dateTags: [],
+    //         titleTags: [],
+    //       },
+    //       {
+    //         path: "%from%\\바로가기",
+    //         typeTags: ["lnk"],
+    //         dateTags: [],
+    //         titleTags: [],
+    //       },
+    //     ],
+    //   },
+    // ]); // 로컬스토리지는 string 값만 저장할 수 있기 때문에 이 절차가 필요함
+    // window.localStorage.setItem("selectedFromData", SerializedData); // 앞에가 key, 뒤에가 value로 저장됨
     this.changeToLibraryList(mySettingObj);
 
     // if (!fs.existsSync("C:/Users/multicampus/Desktop/selectedFromData.txt")) {
