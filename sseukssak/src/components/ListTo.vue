@@ -142,7 +142,7 @@ interface ToLibraryDirectory {
     ModalModifyToLibraryDirectory,
     ModalCheckDirectoryTags,
   },
-  computed: mapState(["toLibraryList", "toLibraryNameList"]),
+  computed: mapState(["toLibraryList", "toLibraryNameList", "fromDir"]),
   methods: mapMutations([
     "changeToLibraryList",
     "changeSelectedToName",
@@ -150,13 +150,19 @@ interface ToLibraryDirectory {
   ]),
 })
 export default class ListTo extends Vue {
-  openShell(path) {
-    console.log(path);
-    if (!fs.existsSync(path)) {
-      fs.mkdirSync(path);
-      console.log(1);
+  openShell(path: string) {
+    let newPath = path;
+    if (path.includes("%from%")) {
+      if (this.fromDir) {
+        newPath = path.replace("%from%", this.fromDir);
+      } else {
+        alert("이 폴더를 열기 위해선 from을 먼저 지정해주세요!");
+      }
     }
-    shell.openPath(path);
+    if (!fs.existsSync(newPath)) {
+      fs.mkdirSync(newPath);
+    }
+    shell.openPath(newPath);
   }
   deleteToLibraryDirectory(directoryPath) {
     const tempToLibraryList = this.toLibraryList;
@@ -247,6 +253,7 @@ export default class ListTo extends Vue {
 
   dirLength: number = 0;
   selectedDir!: ToLibraryDirectory[];
+  fromDir!: string;
   getDirectoryName(path) {
     const pathList = path.split("\\");
     return pathList[pathList.length - 1];
