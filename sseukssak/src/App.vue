@@ -3,7 +3,7 @@
     <div class="window-operations-container">
       <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
       <div class="operations">
-        <i class="fab fa-google-drive"></i>
+        <BtnLoginGoogle/>
         <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
         <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i>
         <i
@@ -61,12 +61,14 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import Home from "@/views/Home.vue";
 import "./components/styles/main.scss";
+import BtnLoginGoogle from '@/components/googleDrive/BtnLoginGoogle.vue'
 
 const { ipcRenderer, shell } = window.require("electron");
 
 @Component({
   components: {
     Home,
+    BtnLoginGoogle
   },
   data() {
     return {
