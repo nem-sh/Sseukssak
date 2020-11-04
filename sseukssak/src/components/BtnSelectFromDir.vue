@@ -72,7 +72,11 @@ export default class BtnSelectFromDir extends Vue {
         );
         let iconPath = this.fromDir + "/" + name;
         if (name.includes(".lnk")) {
-          iconPath = shell.readShortcutLink(iconPath).target;
+          try {
+            iconPath = shell.readShortcutLink(iconPath).target;
+          } catch {
+            iconPath = this.fromDir + "/" + name;
+          }
         }
         let realIcon = "";
         app.getFileIcon(iconPath).then((fileIcon) => {

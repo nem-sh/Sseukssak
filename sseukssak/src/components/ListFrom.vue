@@ -507,7 +507,9 @@ export default class ListFrom extends Vue {
   dialog2: boolean = false;
   clickclick() {
     alert("준비중^__^");
-    console.log(fs.createReadStream(this.fromDir+'\\'+this.selectedData["name"]))
+    console.log(
+      fs.createReadStream(this.fromDir + "\\" + this.selectedData["name"])
+    );
   }
 
   renameThis() {
@@ -676,7 +678,11 @@ export default class ListFrom extends Vue {
         );
         let iconPath = this.fromDir + "/" + name;
         if (name.includes(".lnk")) {
-          iconPath = shell.readShortcutLink(iconPath).target;
+          try {
+            iconPath = shell.readShortcutLink(iconPath).target;
+          } catch {
+            iconPath = this.fromDir + "/" + name;
+          }
         }
         let realIcon = "";
         app.getFileIcon(iconPath).then((fileIcon) => {
