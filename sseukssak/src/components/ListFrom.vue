@@ -239,7 +239,7 @@
             />디렉토리 지우기</a
           >
         </li>
-        <li>
+        <!-- <li>
           <a @click="dialog2 = true" style="display: flex; align-items: center">
             <v-img
               class="mr-2"
@@ -251,7 +251,7 @@
             />
             구글 드라이브 백업</a
           >
-        </li>
+        </li> -->
         <li>
           <a @click="openShell()" style="display: flex; align-items: center"
             ><v-img
@@ -316,16 +316,7 @@
           >
         </li>
         <li>
-          <a @click="clickclick" style="display: flex; align-items: center"
-            ><v-img
-              class="mr-2"
-              max-width="25"
-              contain
-              height="100%"
-              src="./../assets/googleDriveLogo.png"
-              alt="googleDrive"
-            />구글 드라이브 백업</a
-          >
+          <BtnUploadGoogleDrive v-bind:fileName="selectedData.name"/>
         </li>
         <li>
           <a @click="getInfo()" style="display: flex; align-items: center"
@@ -417,6 +408,8 @@ import BtnMoveFile from "@/components/BtnMoveFile.vue";
 import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
 import BtnDupCheck from "@/components/BtnDupCheck.vue";
 
+import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.vue"
+
 // import { shell } from "electron";
 const { shell } = require("electron").remote;
 const { app } = require("electron").remote;
@@ -442,6 +435,7 @@ interface Directory {
     BtnMoveFile,
     BtnSelectFromDir,
     BtnDupCheck,
+    BtnUploadGoogleDrive
   },
   computed: mapState(["fileSortList", "fromDir", "fileList"]),
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
@@ -460,6 +454,7 @@ export default class ListFrom extends Vue {
   dialog2: boolean = false;
   clickclick() {
     alert("준비중^__^");
+    console.log(fs.createReadStream(this.fromDir+'\\'+this.selectedData["name"]))
   }
 
   renameThis() {
