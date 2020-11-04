@@ -101,7 +101,19 @@
                           v-bind="attrs"
                           v-on="on"
                         >
-                          <div class="file--icon">{{ file.fileType }}</div>
+                          <v-hover v-slot="{ hover }">
+                            <div class="file--icon">
+                              <img
+                                v-if="!hover"
+                                height="50px"
+                                width="50px"
+                                class="folder--icon"
+                                :src="file.icon"
+                                alt="icon"
+                              />
+                              <div v-else>{{ file.fileType }}</div>
+                            </div>
+                          </v-hover>
                         </div>
                         <div v-else align="center" v-bind="attrs" v-on="on">
                           <img
@@ -405,7 +417,9 @@ import BtnMoveFile from "@/components/BtnMoveFile.vue";
 import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
 import BtnDupCheck from "@/components/BtnDupCheck.vue";
 
+// import { shell } from "electron";
 const { shell } = require("electron").remote;
+const { app } = require("electron").remote;
 
 interface SortList {
   directories: Directory[];
@@ -416,6 +430,7 @@ interface File {
   name: string;
   birthTime: number;
   updatedTime: number;
+  icon: string;
 }
 interface Directory {
   name: string;
@@ -432,6 +447,7 @@ interface Directory {
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
 })
 export default class ListFrom extends Vue {
+  icon = require("./../assets/info.png");
   text: string = "";
   renameValue: string = "";
   selectedData: object = {};
@@ -445,6 +461,7 @@ export default class ListFrom extends Vue {
   clickclick() {
     alert("준비중^__^");
   }
+
   renameThis() {
     if (
       fs.lstatSync(this.fromDir + "\\" + this.selectedData["name"]).isFile() &&
@@ -461,9 +478,8 @@ export default class ListFrom extends Vue {
     this.dialog2 = false;
   }
   openShell() {
-    shell.openExternal(
-      "'" + this.fromDir + "\\" + this.selectedData["name"] + "'"
-    );
+    console.log(this.fromDir + "\\" + this.selectedData["name"]);
+    shell.openPath(this.fromDir + "\\" + this.selectedData["name"]);
   }
   getInfo() {
     this.selectedDataInfo["name"] = this.selectedData["name"];
@@ -507,7 +523,7 @@ export default class ListFrom extends Vue {
     this.selectedData = value;
     const winWidth = window.outerWidth;
     const winHeight = window.outerHeight;
-    const posX: number = e.pageX - 50;
+    const posX: number = e.pageX - 65;
     const posY = e.pageY;
     const unit = document.getElementById("contextmenu");
     if (unit) {
@@ -590,7 +606,6 @@ export default class ListFrom extends Vue {
   async getFrom(dir: string) {
     const fileList: string[] = fs.readdirSync(dir);
     const fileSortList: SortList = { directories: [], files: [] };
-    let fileType = "";
     fileList.forEach((name: string) => {
       const fileSplit = name.split(".");
       if (fs.lstatSync(this.fromDir + "/" + name).isDirectory()) {
@@ -605,17 +620,26 @@ export default class ListFrom extends Vue {
           updatedTime: updatedTime,
         });
       } else {
-        fileType = fileSplit[fileSplit.length - 1].toLowerCase();
+        const fileType = fileSplit[fileSplit.length - 1].toLowerCase();
         const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
         const updatedTime = Math.max(
           fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
           fs.lstatSync(this.fromDir + "/" + name).ctimeMs
         );
-        fileSortList.files.push({
-          name: name,
-          fileType: fileType,
-          birthTime: birthTime,
-          updatedTime: updatedTime,
+        let iconPath = this.fromDir + "/" + name;
+        if (name.includes(".lnk")) {
+          iconPath = shell.readShortcutLink(iconPath).target;
+        }
+        let realIcon = "";
+        app.getFileIcon(iconPath).then((fileIcon) => {
+          realIcon = fileIcon.toDataURL();
+          fileSortList.files.push({
+            name: name,
+            fileType: fileType,
+            birthTime: birthTime,
+            updatedTime: updatedTime,
+            icon: realIcon,
+          });
         });
       }
     });

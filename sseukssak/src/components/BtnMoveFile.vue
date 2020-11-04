@@ -37,6 +37,7 @@ interface File {
   name: string;
   birthTime: number;
   updatedTime: number;
+  icon: string;
 }
 @Component({
   computed: mapState([

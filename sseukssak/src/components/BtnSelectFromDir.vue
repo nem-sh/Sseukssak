@@ -7,11 +7,12 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import fs from "fs";
+import fs, { realpath } from "fs";
 import { mapMutations, mapState } from "vuex";
 
 const { dialog } = require("electron").remote;
-
+import { shell } from "electron";
+const { app } = require("electron").remote;
 interface SortList {
   directories: Directory[];
   files: File[];
@@ -21,6 +22,7 @@ interface File {
   name: string;
   birthTime: number;
   updatedTime: number;
+  icon: string;
 }
 interface Directory {
   name: string;
@@ -48,7 +50,6 @@ export default class BtnSelectFromDir extends Vue {
     const fileList = fs.readdirSync(this.fromDir);
 
     const fileSortList: SortList = { directories: [], files: [] };
-    let fileType = "";
     fileList.forEach((name: string) => {
       const fileSplit = name.split(".");
       if (fs.lstatSync(this.fromDir + "/" + name).isDirectory()) {
@@ -63,17 +64,26 @@ export default class BtnSelectFromDir extends Vue {
           updatedTime: updatedTime,
         });
       } else {
-        fileType = fileSplit[fileSplit.length - 1].toLowerCase();
+        const fileType = fileSplit[fileSplit.length - 1].toLowerCase();
         const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
         const updatedTime = Math.max(
           fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
           fs.lstatSync(this.fromDir + "/" + name).ctimeMs
         );
-        fileSortList.files.push({
-          name: name,
-          fileType: fileType,
-          birthTime: birthTime,
-          updatedTime: updatedTime,
+        let iconPath = this.fromDir + "/" + name;
+        if (name.includes(".lnk")) {
+          iconPath = shell.readShortcutLink(iconPath).target;
+        }
+        let realIcon = "";
+        app.getFileIcon(iconPath).then((fileIcon) => {
+          realIcon = fileIcon.toDataURL();
+          fileSortList.files.push({
+            name: name,
+            fileType: fileType,
+            birthTime: birthTime,
+            updatedTime: updatedTime,
+            icon: realIcon,
+          });
         });
       }
     });

@@ -51,6 +51,7 @@ interface File {
   name: string;
   birthTime: number;
   updatedTime: number;
+  icon: string;
 }
 interface Directory {
   name: string;
@@ -153,7 +154,7 @@ export default new Vuex.Store({
       });
     },
     sortBeforeItems(state: DirState) {
-      state.beforeItems.sort(function(a, b) {
+      state.beforeItems.sort(function (a, b) {
         return a.mtime > b.mtime ? 1 : -1;
       });
     },

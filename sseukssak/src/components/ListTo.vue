@@ -44,7 +44,7 @@
           item-height="84"
         >
           <template v-slot:default="{ item }">
-            <v-list-item link :key="item.path">
+            <v-list-item link :key="item.path" @click="openShell(item.path)">
               <v-list-item-action>
                 <img
                   src="@/assets/folder-icon.png"
@@ -115,12 +115,15 @@
 
 <script lang='ts'>
 import { Vue, Component, Watch } from "vue-property-decorator";
-// import fs from "fs";
+import fs from "fs";
 import { mapMutations, mapState } from "vuex";
 import ModalCreateToLibrary from "@/components/ModalCreateToLibrary.vue";
 import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.vue";
 import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
 import ModalCheckDirectoryTags from "@/components/ModalCheckDirectoryTags.vue";
+
+import { shell } from "electron";
+// const { shell } = require("electron").remote;
 interface ToLibrary {
   name: string;
   directories: ToLibraryDirectory[];
@@ -147,6 +150,14 @@ interface ToLibraryDirectory {
   ]),
 })
 export default class ListTo extends Vue {
+  openShell(path) {
+    console.log(path);
+    if (!fs.existsSync(path)) {
+      fs.mkdirSync(path);
+      console.log(1);
+    }
+    shell.openPath(path);
+  }
   deleteToLibraryDirectory(directoryPath) {
     const tempToLibraryList = this.toLibraryList;
     for (let index1 = 0; index1 < tempToLibraryList.length; index1++) {
