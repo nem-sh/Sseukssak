@@ -26,10 +26,6 @@
         </v-container>
       </v-app>
     </div>
-    <!-- <v-col>
-      <BtnLoginGoogle />
-      <BtnUploadGoogleDrive />
-    </v-col> -->
   </v-container>
 </template>
 
@@ -44,8 +40,6 @@ import ListFrom from "@/components/ListFrom.vue";
 
 import BtnDupCheck from "@/components/BtnDupCheck.vue";
 
-import BtnLoginGoogle from "@/components/googleDrive/BtnLoginGoogle.vue";
-import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.vue";
 
 import { mapState } from "vuex";
 
@@ -56,8 +50,6 @@ import { mapState } from "vuex";
     BtnDupCheck,
     ListTo,
     ListFrom,
-    BtnLoginGoogle,
-    BtnUploadGoogleDrive,
   },
   computed: mapState(["fromDir"]),
 })
