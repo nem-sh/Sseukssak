@@ -8,8 +8,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^0.21.0",
     "core-js": "^3.6.5",
     "fullpage.js": "^3.0.9",
+    "js-file-download": "^0.4.12",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-fullpage": "^2.0.5",

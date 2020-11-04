@@ -3,14 +3,14 @@
     <div class="window-operations-container">
       <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
       <div class="operations">
-        <BtnLoginGoogle/>
+        <!-- <BtnLoginGoogle /> -->
         <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
-        <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i>
-        <i
+        <!-- <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i> -->
+        <!-- <i
           v-if="!mini"
           class="fas fa-compress-alt"
           @click="resizeSmallWindow"
-        ></i>
+        ></i> -->
         <i class="fas fa-times close" @click="closeWindow"></i>
       </div>
     </div>
@@ -62,14 +62,14 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import Home from "@/views/Home.vue";
 import "./components/styles/main.scss";
-import BtnLoginGoogle from '@/components/googleDrive/BtnLoginGoogle.vue'
+import BtnLoginGoogle from "@/components/googleDrive/BtnLoginGoogle.vue";
 
 const { ipcRenderer, shell } = window.require("electron");
 
 @Component({
   components: {
     Home,
-    BtnLoginGoogle
+    BtnLoginGoogle,
   },
   data() {
     return {
@@ -81,14 +81,17 @@ const { ipcRenderer, shell } = window.require("electron");
           icon: "fas fa-pencil fa-lg",
           path: "rename",
         },
-        {
-          id: 3,
-          title: "Restore",
-          icon: "fa fa-history fa-lg",
-          path: "restore",
-        },
+        // {
+        //   id: 3,
+        //   title: "Restore",
+        //   icon: "fa fa-history fa-lg",
+        //   path: "restore",
+        // },
       ],
     };
+  },
+  created() {
+    this.$router.push({ name: "Home" });
   },
 })
 export default class App extends Vue {
