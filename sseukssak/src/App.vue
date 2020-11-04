@@ -5,12 +5,12 @@
       <div class="operations">
         <!-- <BtnLoginGoogle /> -->
         <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
-        <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i>
-        <i
+        <!-- <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i> -->
+        <!-- <i
           v-if="!mini"
           class="fas fa-compress-alt"
           @click="resizeSmallWindow"
-        ></i>
+        ></i> -->
         <i class="fas fa-times close" @click="closeWindow"></i>
       </div>
     </div>

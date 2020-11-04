@@ -15,7 +15,7 @@
             <v-select
               :items="toLibraryNameList"
               v-model="selectedToName"
-              label="Select Library"
+              label="Select rule"
               dense
             ></v-select>
           </v-col>
@@ -75,14 +75,14 @@
                   <!-- <v-col cols="4" class="pa-0">
                     <ModalCheckDirectoryTags />
                   </v-col> -->
-                  <v-col cols="6" class="pa-0"
-                    ><ModalModifyToLibraryDirectory :propDirectory="item"
-                  /></v-col>
+                  <!-- <v-col cols="6" class="pa-0">
+                    <ModalModifyToLibraryDirectory :propDirectory="item"/>
+                  </v-col> -->
                   <v-col cols="6" class="pa-0"
                     ><v-btn
                       icon
                       color="error"
-                      @click="deleteToLibraryDirectory(item.path)"
+                      @click.stop="deleteToLibraryDirectory(item.path)"
                     >
                       <i class="fas fa-trash-alt"></i></v-btn
                   ></v-col>
@@ -104,9 +104,9 @@
         autoplay
         class="mt-5"
       ></lottie-player>
-      <h3 class="mt-3">라이브러리를 선택해주세요</h3>
+      <h3 class="mt-3">정리 규칙을 선택해주세요</h3>
       <div style="font-size: 12px" class="mt-2">
-        나만의 라이브러리를 만들어 사용해보세요!
+        나만의 정리 규칙을 만들어 사용해보세요!
       </div>
     </div>
     <div v-if="selectedToName" class="to-part-third">
@@ -121,10 +121,13 @@
 import { Vue, Component, Watch } from "vue-property-decorator";
 import fs from "fs";
 import { mapMutations, mapState } from "vuex";
+import Swal from "sweetalert2"
+
 import ModalCreateToLibrary from "@/components/ModalCreateToLibrary.vue";
 import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.vue";
-import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
+// import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
 import ModalCheckDirectoryTags from "@/components/ModalCheckDirectoryTags.vue";
+
 
 import { shell } from "electron";
 // const { shell } = require("electron").remote;
@@ -143,7 +146,7 @@ interface ToLibraryDirectory {
   components: {
     ModalCreateToLibrary,
     ModalAddToLibraryDirectory,
-    ModalModifyToLibraryDirectory,
+    // ModalModifyToLibraryDirectory,
     ModalCheckDirectoryTags,
   },
   computed: mapState(["toLibraryList", "toLibraryNameList", "fromDir"]),
@@ -168,44 +171,61 @@ export default class ListTo extends Vue {
     }
     shell.openPath(newPath);
   }
-  deleteToLibraryDirectory(directoryPath) {
-    const tempToLibraryList = this.toLibraryList;
-    for (let index1 = 0; index1 < tempToLibraryList.length; index1++) {
-      if (tempToLibraryList[index1].name == this.selectedToName) {
-        for (
-          let index2 = 0;
-          index2 < tempToLibraryList[index1].directories.length;
-          index2++
-        ) {
-          if (
-            tempToLibraryList[index1].directories[index2].path == directoryPath
-          ) {
-            tempToLibraryList[index1].directories.splice(index2, 1);
+  deleteToLibraryDirectory(directoryPath, event) {
+    Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: "삭제하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: `Yes`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const tempToLibraryList = this.toLibraryList;
+        for (let index1 = 0; index1 < tempToLibraryList.length; index1++) {
+          if (tempToLibraryList[index1].name == this.selectedToName) {
+            for (
+              let index2 = 0;
+              index2 < tempToLibraryList[index1].directories.length;
+              index2++
+            ) {
+              if (
+                tempToLibraryList[index1].directories[index2].path == directoryPath
+              ) {
+                tempToLibraryList[index1].directories.splice(index2, 1);
+                this.changeToLibraryList(tempToLibraryList);
+                window.localStorage.setItem(
+                  "selectedFromData",
+                  JSON.stringify(tempToLibraryList)
+                );
+                return;
+              }
+            }
+          }}
+    }})
+  }
+  deleteToLibrary() {
+    Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: "삭제하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: `Yes`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const tempToLibraryList = this.toLibraryList;
+        for (let index = 0; index < this.toLibraryList.length; index++) {
+          if (this.toLibraryList[index].name == this.selectedToName) {
+            this.selectedToName = "";
+            tempToLibraryList.splice(index, 1);
             this.changeToLibraryList(tempToLibraryList);
             window.localStorage.setItem(
               "selectedFromData",
               JSON.stringify(tempToLibraryList)
             );
-            return;
+            break;
           }
         }
-      }
-    }
-  }
-  deleteToLibrary() {
-    const tempToLibraryList = this.toLibraryList;
-    for (let index = 0; index < this.toLibraryList.length; index++) {
-      if (this.toLibraryList[index].name == this.selectedToName) {
-        this.selectedToName = "";
-        tempToLibraryList.splice(index, 1);
-        this.changeToLibraryList(tempToLibraryList);
-        window.localStorage.setItem(
-          "selectedFromData",
-          JSON.stringify(tempToLibraryList)
-        );
-        break;
-      }
-    }
+      }})
   }
   dropTo(event) {
     event.preventDefault();
