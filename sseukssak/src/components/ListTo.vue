@@ -103,9 +103,12 @@
         autoplay
         class="mt-5"
       ></lottie-player>
-      <h3 class="mt-3">라이브러리를 선택해주세요 :)</h3>
+      <h3 class="mt-3">라이브러리를 선택해주세요</h3>
+      <div style="font-size: 12px" class="mt-2">
+        나만의 라이브러리를 만들어 사용해보세요!
+      </div>
     </div>
-    <div class="to-part-third">
+    <div v-if="selectedToName" class="to-part-third">
       <div align="right">
         <ModalAddToLibraryDirectory v-if="selectedToName" />
       </div>

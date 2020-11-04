@@ -3,6 +3,7 @@
     <div class="window-operations-container">
       <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
       <div class="operations">
+        <i class="fab fa-google-drive"></i>
         <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
         <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i>
         <i
@@ -70,9 +71,19 @@ const { ipcRenderer, shell } = window.require("electron");
   data() {
     return {
       items: [
-        { id: 1, title: "Home", icon: "fas fa-home fa-lg", path: "/" },
-        { id: 2, title: "Rename", icon: "far fa-edit fa-lg", path: "rename" },
-        { id: 3, title: "Restore", icon: "fa fa-history", path: "restore" },
+        { id: 1, title: "Home", icon: "fas fa-folders fa-lg", path: "/" },
+        {
+          id: 2,
+          title: "Rename",
+          icon: "fas fa-pencil fa-lg",
+          path: "rename",
+        },
+        {
+          id: 3,
+          title: "Restore",
+          icon: "fa fa-history fa-lg",
+          path: "restore",
+        },
       ],
     };
   },
@@ -109,11 +120,19 @@ export default class App extends Vue {
   resizeSmallWindow() {
     this.mini = true;
     ipcRenderer.send("resize-me-smaller-please");
+    if (this.$route.name !== "MiniMode") {
+      this.activeTab = "MiniMode";
+      this.$router.push({ name: "MiniMode" });
+    }
   }
 
   resizeBigWindow() {
     this.mini = false;
     ipcRenderer.send("resize-me-bigger-please");
+    if (this.$route.name !== "Home") {
+      this.activeTab = "Home";
+      this.$router.push({ name: "Home" });
+    }
   }
 
   goInfoPage() {

@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from 'vue-router';
 import Home from '@/views/Home.vue';
 import Rename from '@/views/Rename.vue';
 import Restore from '@/views/Restore.vue';
+import MiniMode from '@/views/MiniMode.vue';
 
 Vue.use(VueRouter);
 
@@ -21,6 +22,11 @@ const routes: Array<RouteConfig> = [
     path: '/restore',
     name: 'Restore',
     component: Restore
+  },
+  {
+    path: '/mini',
+    name: 'MiniMode',
+    component: MiniMode
   }
 ];
 
