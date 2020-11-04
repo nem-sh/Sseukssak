@@ -279,7 +279,7 @@ export default class BtnMoveFile extends Vue {
                     directory.path +
                       "\\" +
                       "[중복]" +
-                      this.fileSortList.files[idx].name,
+                      fileSortList.files[idx].name,
                   ]);
                 } else {
                   a.push([
