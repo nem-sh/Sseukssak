@@ -65,7 +65,12 @@
 
     <div class="from-part-second">
       <div class="lighten-4 rounded-xl" height="100%">
-        <v-virtual-scroll :items="fileList" height="380" item-height="90">
+        <v-virtual-scroll
+          :items="fileList"
+          height="380"
+          item-height="90"
+          class="file-scroller"
+        >
           <template v-slot:default="{ item }">
             <div :key="item.name" class="d-flex align-start mx-5 pt-3">
               <div v-if="fileList.indexOf(item) === 0" class="pa-2 file-box">

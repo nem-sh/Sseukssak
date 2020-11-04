@@ -42,6 +42,7 @@
           :items="toLibrary.directories"
           height="380"
           item-height="84"
+          class="file-scroller"
         >
           <template v-slot:default="{ item }">
             <v-list-item link :key="item.path" @click="openShell(item.path)">
