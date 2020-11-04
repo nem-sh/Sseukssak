@@ -6,7 +6,7 @@
     <div>
       <FilterList/>
       <v-row style="margin:2px">
-        <FileList/>`
+        <FileList/>
         <div class="mx-1" :class="partMode"></div>
         <PreviewList/>
       </v-row>
