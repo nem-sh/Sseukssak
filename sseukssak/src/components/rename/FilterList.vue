@@ -4,7 +4,7 @@
       <h4 class="text-center" :class="partTitleMode">2. 변경할 형식 정하기</h4>
     </v-col>
     <v-col cols="4" class="text-center pb-0">
-      <p class="font-weight-bold" :class="partTitleMode">파일명 앞</p>
+      <p class="font-weight-bold" :class="partTitleMode">머리말</p>
       <v-radio-group v-model="front" @change="filterChange(1)">
         <v-radio label="생성 날짜" value="1" color="#7288da"></v-radio>
         <v-radio label="사용자 지정" value="2" color="#7288da"></v-radio>
@@ -15,16 +15,16 @@
           @input="nameChange(1)"
           :rules="nameRules"
           :counter="10"
-          label="파일명 앞에 추가할 문자"
+          label="머리말 추가"
           required
         ></v-text-field>
         <v-radio label="없음" value="3" color="#7288da"></v-radio>
       </v-radio-group>
     </v-col>
     <v-col cols="4" class="text-center pb-0">
-      <p class="font-weight-bold" :class="partTitleMode">파일명</p>
+      <p class="font-weight-bold" :class="partTitleMode">폴더/파일명</p>
       <v-radio-group v-model="middle" @change="filterChange(2)">
-        <v-radio label="기존 파일명" value="1" color="#7288da"></v-radio>
+        <v-radio label="기존 폴더/파일명" value="1" color="#7288da"></v-radio>
         <v-radio label="사용자 지정" value="2" color="#7288da"></v-radio>
         <v-text-field
           style="padding:3px 0px 0px 0px"
@@ -39,7 +39,7 @@
       </v-radio-group>
     </v-col>
     <v-col cols="4" class="text-center pb-0">
-      <p class="font-weight-bold" :class="partTitleMode">파일명 뒤</p>
+      <p class="font-weight-bold" :class="partTitleMode">꼬리말</p>
       <v-radio-group v-model="back" @change="filterChange(3)">
         <v-radio label="숫자(수정 날짜 오름차순)" value="1" color="#7288da"></v-radio>
         <v-radio
@@ -55,7 +55,7 @@
           @input="nameChange(3)"
           :rules="nameRules"
           :counter="10"
-          label="파일명 뒤에 추가할 문자"
+          label="꼬리말 추가"
           required
         ></v-text-field>
         <v-radio label="없음" value="3" :disabled="isDisabled" color="#7288da"></v-radio>
@@ -69,6 +69,8 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Watch } from "vue-property-decorator";
 import { mapMutations, mapState } from 'vuex';
+
+import { BUS } from "../EventBus.js";
 
 @Component({
   computed: mapState(["filterFront", "filterMiddle", "filterBack", "frontName", "middleName", "backName"]),
@@ -132,6 +134,13 @@ export default class Rename extends Vue {
     }
     this.changePreview()  
   }
+
+  refreshFilter() {
+    this.fileName1 = this.fileName2 = this.fileName1 = ""
+    this.front = "3"
+    this.middle = "1"
+    this.back = "3"
+  }
   
   mounted() {
     this.front = this.filterFront
@@ -140,6 +149,9 @@ export default class Rename extends Vue {
     this.fileName1 = this.frontName
     this.fileName2 = this.middleName
     this.fileName3 = this.backName
+    BUS.$on("bus:refreshfilter", () => {
+      this.refreshFilter();
+    })
   }
 
   @Watch("middle")

@@ -1,24 +1,25 @@
 <template>
-  <v-col cols="4" :class="partMode">
+  <v-col :class="partMode">
     <div :class="partTitleMode">
-      <h4 class="text-center">1. 변경할 파일들 선택</h4>
+      <h4 class="text-center">1. 변경할 폴더/파일 선택</h4>
     </div>
-    <div class="text-right mt-2">
+    <div class="d-flex justify-space-between mt-2">
+        <v-checkbox :style="{visibility: visibility}" v-model="allSelect" color="#7288da" class="my-1" label="전체 선택"></v-checkbox>
         <v-btn icon @click="read()">
           <i class="far fa-folder-open fa-2x" :class="folderMode"></i>
         </v-btn>
     </div>
-    <p class="text-center" v-show="renameFileList.length <= 0">
-        폴더를 선택해주세요 :)
-    </p>
     <v-virtual-scroll
       class="file-scroller"
       :bench="benched"
       :items="renameFileList"
-      height="120"
+      height="300"
       item-height="40"
     >
       <template v-slot:default="{ item }">
+        <p class="text-center" v-show="renameFileList.length <= 0">
+            폴더를 선택해주세요 :)
+        </p>
         <v-checkbox
           class="my-0 text-next-line"
           @change="changeSelect"
@@ -42,6 +43,7 @@ import Component from "vue-class-component";
 import fs from "fs";
 import path from "path";
 import { mapMutations, mapState } from 'vuex';
+import { Watch } from 'vue-property-decorator';
 const { dialog } = require("electron").remote;
 
 interface FileInfo {
@@ -55,7 +57,7 @@ interface FileInfo {
 
 @Component({
   computed: mapState(["renameFileList", "beforeItems"]),
-  methods: mapMutations(["changeBeforeItems", "changePreview", "sortBeforeItems", "changeRenameFileList", "initailizeRename"])
+  methods: mapMutations(["sortRenameFileList", "changeBeforeItems", "changePreview", "sortBeforeItems", "changeRenameFileList", "initailizeRename"])
 })
 
 export default class Rename extends Vue {
@@ -68,6 +70,7 @@ export default class Rename extends Vue {
   changeRenameFileList!: (item: FileInfo) => void;
   changeBeforeItems!: (item: FileInfo[]) => void;
   sortBeforeItems!: () => void;
+  sortRenameFileList!: () => void;
   initailizeRename!: () => void;
   fileType: object = {
     "Document": [
@@ -134,6 +137,7 @@ export default class Rename extends Vue {
     "Audio": ["wav", "wma", "mp3"],
     "Compressed": ["zip", "apk", "rar", "7z", "tar"],
   };
+  allSelect: boolean = false;
 
   get partTitleMode() {
     return this.$vuetify.theme.dark? "part-title-d" : "part-title"
@@ -144,6 +148,11 @@ export default class Rename extends Vue {
   get folderMode() {
     return this.$vuetify.theme.dark? "folder-d" : "folder"
   }
+
+  get visibility() {
+    return this.renameFileList.length > 0 ? 'visible' : 'hidden'
+  }
+
   fileIcon(type) {
     if (this.fileType["Document"].includes(type)) {
       return require('../../assets/docx_file.png')
@@ -169,6 +178,7 @@ export default class Rename extends Vue {
     const files = fs.readdirSync(dir);
     if (!files.length) return;
     this.choiceList = [];
+    this.allSelect = false
     this.initailizeRename();
     for (const v of files) {
       const p = path.join(dir, v);
@@ -190,6 +200,7 @@ export default class Rename extends Vue {
       await this.changeRenameFileList(item);
     }
     await this.changeBeforeItems([])
+    await this.sortRenameFileList()
   }
   changeSelect() {
     this.changeBeforeItems(this.choiceList)
@@ -197,6 +208,16 @@ export default class Rename extends Vue {
   }
   mounted() {
     this.choiceList = this.beforeItems
+  }
+
+  @Watch("allSelect")
+  watchAllSelect() {
+    if (this.allSelect === true) {
+      this.choiceList = this.renameFileList
+    } else {
+      this.choiceList = []
+    }
+    this.changeBeforeItems(this.choiceList)
   }
 }
 </script>

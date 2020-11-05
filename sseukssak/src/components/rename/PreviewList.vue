@@ -1,20 +1,20 @@
 <template>
-  <v-col cols="7.5" :class="partMode">
+  <v-col cols="12" :class="partMode">
     <div>
       <div :class="partTitleMode">
         <h4 class="text-center">3. 확인 후 rename</h4>
       </div>
     </div>
     <v-row>
-      <v-col cols="5">
-        <p class="text-center" :class="partTitleMode">기존 파일명</p>
+      <v-col cols="5.5">
+        <p class="text-center" :class="partTitleMode">기존 폴더/파일명</p>
         <!-- <v-divider></v-divider> -->
         <v-virtual-scroll
           class="file-scroller"
           :bench="benched"
           :items="beforeItems"
-          height="120"
-          item-height="45"
+          max-height="200"
+          item-height="40"
         >
           <template v-slot:default="{ item }">
             <v-list-item :key="beforeItems.indexOf(item)">
@@ -25,15 +25,15 @@
           </template>
         </v-virtual-scroll>
       </v-col>
-      <v-col cols="5">
-        <p class="text-center" :class="partTitleMode">변경될 파일명</p>
+      <v-col cols="5.5">
+        <p class="text-center" :class="partTitleMode">변경될 폴더/파일명</p>
         <!-- <v-divider></v-divider> -->
         <v-virtual-scroll
           class="file-scroller"
           :bench="benched"
           :items="afterItems"
-          height="120"
-          item-height="45"
+          max-height="200"
+          item-height="40"
         >
           <template v-slot:default="{ item }">
             <v-list-item :key="afterItems.indexOf(item)">
@@ -44,8 +44,8 @@
           </template>
         </v-virtual-scroll>
       </v-col>
-      <v-col cols="2" class="d-flex flex-column my-auto align-center">
-        <v-btn rounded class="mb-3" @click="rename" color="#7288da">
+      <v-col cols="1" class="d-flex flex-column my-auto align-center">
+        <v-btn dark rounded class="mb-3" @click="rename" color="#7288da">
           OK
         </v-btn>
         <!-- <v-btn rounded @click="logBack" :disabled="logBackCheck === false" color="red accent-2">
@@ -65,6 +65,7 @@ import path from "path";
 import { mapMutations, mapState } from 'vuex';
 
 import Swal from "sweetalert2"
+import { BUS } from "../EventBus.js";
 
 interface FileInfo {
   name: string;
@@ -173,9 +174,9 @@ export default class Rename extends Vue {
       if (dupTmp.length > 0) {
         const text = dupTmp
           .map(function (item, index) {
-            return index + 1 + ". " + item.name + " => " + dupTmpChange[index];
+            return item.name + " => " + dupTmpChange[index];
           })
-          .join("\n");
+          .join(" , ");
         Swal.fire({
           position: "center",
           icon: "warning",
@@ -190,6 +191,9 @@ export default class Rename extends Vue {
               const n = path.join(item.dir, dupTmpChange[i]);
               fs.renameSync(o, n);
               logData.push([item + " => " + dupTmpChange[i], 1, o, n, workTime, 3])
+              this.$emit("finish")
+              this.initailizeRename()
+              BUS.$emit("bus:refreshfilter");
             })
           }
         })
@@ -201,10 +205,12 @@ export default class Rename extends Vue {
           showConfirmButton: false,
           timer: 1000,
         });
+        this.$emit("finish")
+        this.initailizeRename()
+        BUS.$emit("bus:refreshfilter");
       }
       this.changeRenameHistory(logData)
       this.changeLogBackCheck(true)
-      this.initailizeRename()
     }
   }
 
