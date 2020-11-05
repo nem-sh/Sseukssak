@@ -81,6 +81,7 @@ export default class Rename extends Vue {
   nameRules: object = [
     (v) => !!v || "It is required",
     (v) => v.length <= 20 || "It must be less than 20 characters",
+    (v) => v.search(/[?:|*<>\\/"]/gi) === -1 || '해당 특수 문자(?:|*<>\\/")는 사용할 수 없습니다.',
   ];
   front: string = "3";
   middle: string = "1";
