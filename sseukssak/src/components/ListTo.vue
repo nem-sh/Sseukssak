@@ -38,9 +38,13 @@
     </div>
     <div v-for="toLibrary in toLibraryList" :key="toLibrary.name">
       <div v-if="toLibrary.name == selectedToName" class="to-part-second">
+        <v-list-item link>
+          <ModalAddToLibraryDirectory v-if="selectedToName" />
+        </v-list-item>
+        <v-divider></v-divider>
         <v-virtual-scroll
           :items="toLibrary.directories"
-          height="380"
+          height="370"
           item-height="84"
           class="file-scroller"
         >
@@ -68,6 +72,7 @@
               <v-list-item-content>
                 <v-list-item-title>
                   <strong>{{ getDirectoryName(item.path) }}</strong>
+                  <!-- <div>{{ item.typeTags }}</div> -->
                 </v-list-item-title>
               </v-list-item-content>
               <v-list-item-action>
@@ -78,14 +83,39 @@
                   <!-- <v-col cols="6" class="pa-0">
                     <ModalModifyToLibraryDirectory :propDirectory="item"/>
                   </v-col> -->
-                  <v-col cols="6" class="pa-0"
-                    ><v-btn
-                      icon
-                      color="error"
-                      @click.stop="deleteToLibraryDirectory(item.path)"
-                    >
-                      <i class="fas fa-trash-alt"></i></v-btn
-                  ></v-col>
+                  <v-col cols="6" class="pa-0">
+                    <v-menu top :offset-y="offset">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn icon v-bind="attrs" v-on="on">
+                          <i class="fas fa-ellipsis-v-alt"></i
+                        ></v-btn>
+                      </template>
+                      <v-list>
+                        <!-- 수정하기 -->
+                        <!-- <v-list-item link>
+                          <v-list-item-title
+                            ><i
+                              class="fas fa-pen mr-2"
+                              style="color: #009688"
+                            ></i
+                            >수정하기</v-list-item-title
+                          >
+                        </v-list-item> -->
+                        <v-list-item
+                          link
+                          @click.stop="deleteToLibraryDirectory(item.path)"
+                        >
+                          <v-list-item-title
+                            ><i
+                              class="fas fa-trash mr-2"
+                              style="color: #e53935"
+                            ></i>
+                            삭제하기</v-list-item-title
+                          >
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </v-col>
                 </v-row>
               </v-list-item-action>
             </v-list-item>
@@ -109,11 +139,11 @@
         나만의 정리 규칙을 만들어 사용해보세요!
       </div>
     </div>
-    <div v-if="selectedToName" class="to-part-third">
+    <!-- <div v-if="selectedToName" class="to-part-third">
       <div align="right">
         <ModalAddToLibraryDirectory v-if="selectedToName" />
       </div>
-    </div>
+    </div> -->
   </v-container>
 </template>
 
@@ -408,6 +438,8 @@ export default class ListTo extends Vue {
   dirLength: number = 0;
   selectedDir!: ToLibraryDirectory[];
   fromDir!: string;
+  offset: boolean = true;
+
   getDirectoryName(path) {
     const pathList = path.split("\\");
     return pathList[pathList.length - 1];
