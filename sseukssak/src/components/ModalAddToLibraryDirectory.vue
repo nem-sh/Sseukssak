@@ -1,8 +1,8 @@
 <template>
-  <div class="pl-0">
-    <v-btn text color="#7288da" v-if="selectedToName" @click="dialog = true">
-      디렉토리 추가 <v-icon>mdi-plus</v-icon>
-    </v-btn>
+  <div class="add-folder">
+    <div v-if="selectedToName" @click="dialog = true">
+      <i class="far fa-plus mx-3"></i>폴더 추가
+    </div>
     <v-dialog
       width="500px"
       v-model="dialog"
@@ -323,5 +323,12 @@ export default class ModalAddToLibraryDirectory extends Vue {
 <style>
 header {
   height: 64px;
+}
+
+.add-folder {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  color: var(--color-purple);
 }
 </style>
