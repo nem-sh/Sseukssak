@@ -17,6 +17,8 @@ interface DirState {
   dropToDir: string;
   modifyDirectroy: ToLibraryDirectory;
   renameHistory: any[][];
+
+  moveHistory: any[][];
   renameFileList: FileInfo[];
   beforeItems: FileInfo[];
   afterItems: FileInfo[];
@@ -89,6 +91,8 @@ export default new Vuex.Store({
       titleTags: [],
     },
     renameHistory: [],
+
+    moveHistory: [],
     renameFileList: [],
     beforeItems: [],
     afterItems: [],
@@ -101,7 +105,7 @@ export default new Vuex.Store({
     backName: "",
     // google dive
     tokenPath: 'token.json',
-    oAuth2Client: new google.auth.OAuth2("957933273560-84cubajfji0djc5k9r9n2okck14sribj.apps.googleusercontent.com", "xErwUWs1A-ohs2fgcFFqdulF","urn:ietf:wg:oauth:2.0:oob")
+    oAuth2Client: new google.auth.OAuth2("957933273560-84cubajfji0djc5k9r9n2okck14sribj.apps.googleusercontent.com", "xErwUWs1A-ohs2fgcFFqdulF", "urn:ietf:wg:oauth:2.0:oob")
   },
   mutations: {
     changeModifyDirectroy(
@@ -140,6 +144,9 @@ export default new Vuex.Store({
     },
     changeRenameHistory(state: DirState, newHistory: any[]) {
       state.renameHistory.push(newHistory);
+    },
+    changeMoveHistory(state: DirState, newHistory: any[]) {
+      state.moveHistory.push(newHistory);
     },
     changePreview(state: DirState) {
       state.afterItems = [];
@@ -246,8 +253,8 @@ export default new Vuex.Store({
     authUrl: (state) => {
       return state.oAuth2Client.generateAuthUrl({
         'access_type': 'offline',
-        scope: ['https://www.googleapis.com/auth/drive'] 
-    }) 
+        scope: ['https://www.googleapis.com/auth/drive']
+      })
     }
   },
   modules: {},
