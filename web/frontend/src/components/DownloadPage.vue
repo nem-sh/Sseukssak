@@ -13,10 +13,12 @@
           cols="12"
           sm="4"
         >
-        <button
-      class="DownloadButton"
-  @click="download()"
->다운로드</button>
+        <v-btn
+          class="DownloadButton"
+          rounded
+          elevation="5"
+          @click="download()"
+        >다운로드</v-btn>
         </v-col>
         <v-col
           cols="12"
@@ -86,15 +88,14 @@ export default {
     height: 40%;
 }
 .LogoImage {
-    height: 80%;
-    width: 50%;
+    height: 100%;
+    width: 80%;
 }
 .DownloadButton {
-    height: 40%;
+    height: 30% !important;
     width: 100%;
-    background-color: gray;
-    border-radius: 20px;
+    background-color: white;
     text-align: center;
-    font-size: 40px;
+    font-size: 40px !important;
 }
 </style>
