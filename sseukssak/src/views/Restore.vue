@@ -5,8 +5,13 @@
     <br />
     <p>현재 중복파일 체크 내역만 확인 가능함</p>
     <!-- <v-btn @click="sortHistory(localHistory)">이동 내역 불러오기</v-btn> -->
+
     <hr />
-    <div v-if="isLoading" class="history">
+    <div
+      v-if="isLoading"
+      class="history"
+      style="overflow:scroll; height:400px;"
+    >
       <v-list v-for="history in historyList" :key="history.id">
         <div
           v-for="historychunk in history"
@@ -138,24 +143,26 @@ export default class Restore extends Vue {
     for (let i = 1; i < this.duplicatedList.length; i++) {
       // console.log(i);
       // console.log(tmpL + i);
-      if (mm['datas'][tmpL + i] == undefined) {
-        mm['datas'][tmpL + i] = {
-          filename: null,
-          success: null,
-          before: null,
-          after: null,
-          date: null,
-          workcode: null
-        };
+      if (this.duplicatedList[i].length != 0) {
+        if (mm['datas'][tmpL + i] == undefined) {
+          mm['datas'][tmpL + i] = {
+            filename: null,
+            success: null,
+            before: null,
+            after: null,
+            date: null,
+            workcode: null
+          };
+        }
+        // console.log(mm);
+        // console.log(this.duplicatedList[i]);
+        mm['datas'][tmpL + i]['filename'] = this.duplicatedList[i][0];
+        mm['datas'][tmpL + i]['success'] = this.duplicatedList[i][1];
+        mm['datas'][tmpL + i]['before'] = this.duplicatedList[i][2];
+        mm['datas'][tmpL + i]['after'] = this.duplicatedList[i][3];
+        mm['datas'][tmpL + i]['date'] = this.duplicatedList[i][4];
+        mm['datas'][tmpL + i]['workcode'] = this.duplicatedList[i][5];
       }
-      // console.log(mm);
-      // console.log(this.duplicatedList[i]);
-      mm['datas'][tmpL + i]['filename'] = this.duplicatedList[i][0];
-      mm['datas'][tmpL + i]['success'] = this.duplicatedList[i][1];
-      mm['datas'][tmpL + i]['before'] = this.duplicatedList[i][2];
-      mm['datas'][tmpL + i]['after'] = this.duplicatedList[i][3];
-      mm['datas'][tmpL + i]['date'] = this.duplicatedList[i][4];
-      mm['datas'][tmpL + i]['workcode'] = this.duplicatedList[i][5];
     }
     // this.localHistory = mm;
     const mm2 = Buffer.from(JSON.stringify(mm));
@@ -164,8 +171,8 @@ export default class Restore extends Vue {
   }
 
   jsontest(changedHistory: object) {
-    console.log(changedHistory);
-    console.log(typeof changedHistory);
+    // console.log(changedHistory);
+    // console.log(typeof changedHistory);
     // let mm;
     // try {
     //   mm = Buffer.from(JSON.stringify(changedHistory));
@@ -173,28 +180,32 @@ export default class Restore extends Vue {
     //   mm = changedHistory;
     // }
     const mm = JSON.parse(changedHistory.toString());
-    console.log(mm);
+    // console.log(mm);
 
     this.historyList = JSON.parse(changedHistory.toString());
-    for (let k = 0; k < this.duplicatedList.length; k++) {
-      if (mm['datas'][k] == undefined) {
-        mm['datas'][k] = {
-          filename: null,
-          success: null,
-          before: null,
-          after: null,
-          date: null,
-          workcode: null
-        };
-      }
-      mm['datas'][k]['filename'] = this.duplicatedList[k][0];
-      mm['datas'][k]['success'] = this.duplicatedList[k][1];
-      mm['datas'][k]['before'] = this.duplicatedList[k][2];
-      mm['datas'][k]['after'] = this.duplicatedList[k][3];
-      mm['datas'][k]['date'] = this.duplicatedList[k][4];
-      mm['datas'][k]['workcode'] = this.duplicatedList[k][5];
+    for (let k = 0; k < this.historyList.length; k++) {
+      console.log(mm.datas[k]);
+      if (mm['datas'][k].length != 0) {
+        if (mm['datas'][k] == undefined) {
+          mm['datas'][k] = {
+            filename: null,
+            success: null,
+            before: null,
+            after: null,
+            date: null,
+            workcode: null
+          };
+        }
 
-      // console.log(this.historyList);
+        mm['datas'][k]['filename'] = this.duplicatedList[k][0];
+        mm['datas'][k]['success'] = this.duplicatedList[k][1];
+        mm['datas'][k]['before'] = this.duplicatedList[k][2];
+        mm['datas'][k]['after'] = this.duplicatedList[k][3];
+        mm['datas'][k]['date'] = this.duplicatedList[k][4];
+        mm['datas'][k]['workcode'] = this.duplicatedList[k][5];
+
+        // console.log(this.historyList);
+      }
     }
 
     const newdata = JSON.stringify(mm);
