@@ -24,35 +24,21 @@
       </v-stepper-header> -->
 
       <v-stepper-items>
-        <v-stepper-content
-          v-for="n in steps"
-          :key="`${n}-content`"
-          :step="n"
-        >
+        <v-stepper-content v-for="n in steps" :key="`${n}-content`" :step="n">
           <div>
-            <FileList v-show="n === 1"/>
-            <v-row style="margin:2px"  v-show="n === 2">
-              <FilterList/>
-              <PreviewList @finish="e1=1"/>
+            <FileList v-show="n === 1" />
+            <v-row style="margin: 2px" v-show="n === 2">
+              <FilterList />
+              <PreviewList @finish="e1 = 1" />
             </v-row>
           </div>
           <div v-show="n === 2" class="text-center pt-3">
-            <v-btn
-              dark
-              text
-              color="#7288da"
-              @click="nextStep(n)"
-            >
+            <v-btn dark text color="#7288da" @click="nextStep(n)">
               <i class="fas fa-arrow-left fa-3x"></i>
             </v-btn>
           </div>
           <div v-show="n === 1" class="text-center pt-3">
-            <v-btn
-              dark
-              text
-              color="#7288da"
-              @click="nextStep(n)"
-            >
+            <v-btn dark text color="#7288da" @click="nextStep(n)">
               <i class="fas fa-arrow-right fa-3x"></i>
             </v-btn>
           </div>
@@ -80,32 +66,31 @@ import PreviewList from "@/components/rename/PreviewList.vue";
 
 @Component({
   components: {
-  FileList,
-  FilterList,
-  PreviewList,
+    FileList,
+    FilterList,
+    PreviewList,
   },
 })
-
 export default class Rename extends Vue {
   e1: number = 1;
   steps: number = 2;
-  title: string[] = ["이름 변경할 폴더/파일 선택", "Rename"]
+  title: string[] = ["이름 변경할 폴더/파일 선택", "Rename"];
 
   get bgMode() {
-    return this.$vuetify.theme.dark? "rename-bg-d" : "rename-bg"
+    return this.$vuetify.theme.dark ? "rename-bg-d" : "rename-bg";
   }
   get titleMode() {
-    return this.$vuetify.theme.dark? "rename-title-d" : "rename-title"
+    return this.$vuetify.theme.dark ? "rename-title-d" : "rename-title";
   }
   get partMode() {
-    return this.$vuetify.theme.dark? "rename-part-bg-d" : "rename-part-bg"
+    return this.$vuetify.theme.dark ? "rename-part-bg-d" : "rename-part-bg";
   }
 
-  nextStep (n) {
+  nextStep(n) {
     if (n === this.steps) {
-      this.e1 = 1
+      this.e1 = 1;
     } else {
-      this.e1 = n + 1
+      this.e1 = n + 1;
     }
   }
 }
@@ -121,9 +106,10 @@ export default class Rename extends Vue {
   height: 100%;
   overflow: auto;
 }
-.rename-title, .rename-title-d {
+.rename-title,
+.rename-title-d {
   /* margin: 20px; */
-  font-family: "Paytone One" !important;
+  /* font-family: "Paytone One" !important; */
   color: #202020;
   text-transform: uppercase;
   letter-spacing: -2px;
@@ -160,7 +146,8 @@ export default class Rename extends Vue {
 .part-title-d {
   background-color: #24303a;
 }
-.theme--light.v-icon, .theme--dark.v-icon {
+.theme--light.v-icon,
+.theme--dark.v-icon {
   color: #7288da;
 }
 .folder {
