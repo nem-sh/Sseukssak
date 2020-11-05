@@ -4,6 +4,7 @@
     @drop="dropTo"
     dragenter.prevent
     @dragover.prevent
+    @click="closeContextMenu"
   >
     <div class="to-part-first">
       <div class="select-folder">
@@ -159,6 +160,9 @@ import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.
 import ModalCheckDirectoryTags from "@/components/ModalCheckDirectoryTags.vue";
 
 import { shell } from "electron";
+
+import { BUS } from "./EventBus.js";
+
 // const { shell } = require("electron").remote;
 interface ToLibrary {
   name: string;
@@ -452,6 +456,10 @@ export default class ListTo extends Vue {
         this.dirLength = this.toLibraryList[i].directories.length;
       }
     }
+  }
+
+  closeContextMenu() {
+    BUS.$emit("bus:closecontextmenu");
   }
 
   changeSN(name) {

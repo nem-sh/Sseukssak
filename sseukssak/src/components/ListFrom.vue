@@ -466,6 +466,12 @@ import BtnDupCheck from '@/components/BtnDupCheck.vue';
 // import { shell } from "electron";
 const { shell } = require('electron').remote;
 const { app } = require('electron').remote;
+// 휴지통
+import { remote } from "electron";
+const trash = remote.require('trash');
+
+import Swal from "sweetalert2"
+
 
 interface SortList {
   directories: Directory[];
@@ -553,13 +559,22 @@ export default class ListFrom extends Vue {
       fileList.forEach((name: string) => {
         this.deleteThis(path + '\\' + name, false);
       });
-
-      fs.rmdirSync(path);
+      (async () => {
+        await trash([path]);
+      })();
     } else {
-      fs.unlinkSync(path);
+      (async () => {
+        await trash([path]);
+      })();
     }
     if (isFinal) {
-      alert('지워드림 ^_^');
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "삭제되었습니다",
+        showConfirmButton: false,
+        timer: 1000,
+      });
       this.renewFrom();
     }
   }
@@ -619,6 +634,9 @@ export default class ListFrom extends Vue {
     BUS.$on('bus:refreshfile', () => {
       console.log('refresh file');
       this.renewFrom();
+    });
+    BUS.$on('bus:closecontextmenu', () => {
+      this.closeContextMenu();
     });
   }
 
