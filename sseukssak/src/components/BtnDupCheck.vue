@@ -1,44 +1,65 @@
 <template>
-  <v-btn class="mr-5" color="var(--color-purple)" dark rounded>
-    중복 확인
-  </v-btn>
+  <div></div>
 </template>
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-const { dialog } = require("electron").remote;
-import fs from "fs";
+import Vue from 'vue';
+import Component from 'vue-class-component';
+const { dialog } = require('electron').remote;
+import fs from 'fs';
 
-import { mapMutations, mapState } from "vuex";
+import { mapMutations, mapState } from 'vuex';
 
-import { BUS } from "./EventBus.js";
-
+import { BUS } from './EventBus.js';
+interface ToLibrary {
+  name: string;
+  directories: ToLibraryDirectory[];
+}
+interface ToLibraryDirectory {
+  path: string;
+  typeTags: string[];
+  dateTags: string[];
+  titleTags: string[];
+  types: string[];
+}
+interface SortList {
+  directories: object[];
+  files: File[];
+}
+interface File {
+  fileType: string;
+  name: string;
+  birthTime: number;
+  updatedTime: number;
+  icon: string;
+}
 @Component({
-  computed: mapState(["fileSortList", "fromDir", "duplicatedList", "fileList"]),
+  computed: mapState(['fileSortList', 'fromDir', 'duplicatedList', 'fileList']),
   methods: mapMutations([
-    "changeDir",
-    "changeFileList",
-    "changeFileSortList",
-    "changeDuplicatedList",
-  ]),
+    'changeDir',
+    'changeFileList',
+    'changeFileSortList',
+    'changeDuplicatedList'
+  ])
 })
 export default class DupCheck extends Vue {
   mounted() {
-    BUS.$on("bus:dupcheck", () => {
-      this.DuplicateCheck(this.fileList);
+    console.log('mounted at dupcheck');
+    BUS.$on('bus:dupcheck', () => {
+      this.DuplicateCheck();
     });
   }
-  dir: string = "";
+  dir: string = '';
   fromDir!: string;
   files: string[] = [];
   duplicatedList!: any[][];
   fileList!: string[];
+  fileSortList!: SortList;
 
   changeDuplicatedList!: (newList: any[][]) => void;
 
   flag: boolean = false;
-  filepath: string = "";
-  extension: string = "";
+  filepath: string = '';
+  extension: string = '';
   stats: string[] = [];
 
   checkingQueuej: object = {};
@@ -46,7 +67,7 @@ export default class DupCheck extends Vue {
 
   read() {
     const rs = dialog.showOpenDialogSync({
-      properties: ["openDirectory"],
+      properties: ['openDirectory']
     });
     if (!rs) return;
 
@@ -57,30 +78,32 @@ export default class DupCheck extends Vue {
     // this.fetch()
   }
   stat(filepath, q) {
-    if (q == "j") {
+    if (q == 'j') {
       this.checkingQueuej = fs.statSync(filepath);
-    } else if (q == "k") {
+    } else if (q == 'k') {
       this.checkingQueuek = fs.statSync(filepath);
     }
   }
-  DuplicateCheck(fileList: string[]) {
+  // DuplicateCheck(fileList: string[]) {
+  DuplicateCheck() {
+    console.log(this.fileList);
     const duplist = [[this.fromDir]];
-    const dupchecked = Array(fileList.length).fill(1);
-    for (let j = 0; j < fileList.length; j++) {
-      const tmpduplist = [fileList[j]];
+    const dupchecked = Array(this.fileList.length).fill(1);
+    for (let j = 0; j < this.fileList.length; j++) {
+      const tmpduplist = [this.fileList[j]];
       if (dupchecked[j] == 1) {
-        this.stat(this.fromDir + "\\" + fileList[j], "j");
-        for (let k = j + 1; k < fileList.length; k++) {
+        this.stat(this.fromDir + '\\' + this.fileList[j], 'j');
+        for (let k = j + 1; k < this.fileList.length; k++) {
           if (dupchecked[k] == 1) {
-            this.stat(this.fromDir + "\\" + fileList[k], "k");
+            this.stat(this.fromDir + '\\' + this.fileList[k], 'k');
             // 중복 검증 부분
 
-            if (this.checkingQueuej["size"] == this.checkingQueuek["size"]) {
+            if (this.checkingQueuej['size'] == this.checkingQueuek['size']) {
               if (
-                this.checkingQueuej["mtimeMs"] == this.checkingQueuek["mtimeMs"]
+                this.checkingQueuej['mtimeMs'] == this.checkingQueuek['mtimeMs']
               ) {
                 // console.log(this.checkingQueuej, this.checkingQueuek)
-                tmpduplist.push(fileList[k]);
+                tmpduplist.push(this.fileList[k]);
                 dupchecked[k] = 0;
               }
             }
@@ -97,9 +120,9 @@ export default class DupCheck extends Vue {
   }
   MoveDupedFiles(dupedfilelist: string[][]) {
     const dupedhistory: any[][] = [[]];
-    if (!fs.existsSync(this.fromDir + "\\" + "duplicated files")) {
+    if (!fs.existsSync(this.fromDir + '\\' + 'duplicated files')) {
       // duped files 폴더 생성 부분
-      fs.mkdirSync(this.fromDir + "\\" + "duplicated files");
+      fs.mkdirSync(this.fromDir + '\\' + 'duplicated files');
     }
     // let movedfiles = 0;
     // let alreadyexistfiles = 0;
@@ -111,40 +134,40 @@ export default class DupCheck extends Vue {
         if (
           !fs.existsSync(
             this.fromDir +
-              "\\" +
-              "duplicated files" +
-              "\\" +
+              '\\' +
+              'duplicated files' +
+              '\\' +
               dupedfilelist[f1][f2]
           )
         ) {
           fs.renameSync(
-            this.fromDir + "\\" + dupedfilelist[f1][f2],
+            this.fromDir + '\\' + dupedfilelist[f1][f2],
             this.fromDir +
-              "\\" +
-              "duplicated files" +
-              "\\" +
+              '\\' +
+              'duplicated files' +
+              '\\' +
               dupedfilelist[f1][f2]
           );
           dupedhistory.push([
             dupedfilelist[f1][f2],
             1,
-            this.fromDir + "\\" + dupedfilelist[f1][f2],
+            this.fromDir + '\\' + dupedfilelist[f1][f2],
             this.fromDir +
-              "\\" +
-              "duplicated files" +
-              "\\" +
+              '\\' +
+              'duplicated files' +
+              '\\' +
               dupedfilelist[f1][f2],
             d,
-            2,
+            2
           ]);
         } else {
           dupedhistory.push([
             dupedfilelist[f1][f2],
             0,
-            this.fromDir + "\\" + dupedfilelist[f1][f2],
-            this.fromDir + "\\" + dupedfilelist[f1][f2],
+            this.fromDir + '\\' + dupedfilelist[f1][f2],
+            this.fromDir + '\\' + dupedfilelist[f1][f2],
             d,
-            2,
+            2
           ]);
         }
       }
