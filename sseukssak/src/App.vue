@@ -92,6 +92,8 @@ const { ipcRenderer, shell } = window.require("electron");
   },
   created() {
     this.$router.push({ name: "Home" });
+    const args = process.argv;
+    console.log(args);
   },
 })
 export default class App extends Vue {

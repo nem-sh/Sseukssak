@@ -239,7 +239,11 @@ export default class ListTo extends Vue {
       if (this.selectedToName == "") {
         alert("라이브러리 먼저 선택 ㄱㄱ");
       } else {
-        this.changeDropToDir(f.path);
+        if (fs.statSync(f.path).isDirectory()) {
+          this.changeDropToDir(f.path);
+        } else {
+          alert("디렉토리가 아닙니다");
+        }
       }
     }
   }
@@ -424,7 +428,7 @@ export default class ListTo extends Vue {
 
   changeSN(name) {
     this.selectedToName = name;
-    this.changeSelectedToName(name)
+    this.changeSelectedToName(name);
     this.changeDirectoryLength(name);
   }
 

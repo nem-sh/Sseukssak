@@ -259,7 +259,9 @@ export default class BtnMoveFile extends Vue {
     });
     for (const idx in fileSortList.files) {
       const a: string[][] = [];
-
+      if (!fs.existsSync(this.fromDir + "\\" + fileSortList.files[idx].name)) {
+        continue;
+      }
       directories.forEach((directory: ToLibraryDirectory) => {
         directory.types.forEach((type) => {
           if (
