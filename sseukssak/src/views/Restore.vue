@@ -4,43 +4,65 @@
     <br />
     <br />
     <p>현재 중복파일 체크 내역만 확인 가능함</p>
-    <!-- <v-btn @click="sortHistory(localHistory)">이동 내역 불러오기</v-btn> -->
+    <v-btn @click="resetHistory()">내역 초기화</v-btn>
 
     <hr />
-    <div
-      v-if="isLoading"
-      class="history"
-      style="overflow:scroll; height:400px;"
-    >
-      <v-list v-for="history in historyList" :key="history.id">
-        <div
-          v-for="historychunk in history"
-          :key="historychunk.id"
-          class="chunk"
+    <div v-if="isLoading" style="overflow:scroll; height:400px;">
+      <div v-if="historyList.length != 0">
+        <v-list
+          v-for="historychunk in historyList"
+          :key="historychunk.filename"
         >
-          <p>
-            <b>파일명 : {{ historychunk.filename }}</b>
-          </p>
-          <p>실행시간 : {{ historychunk.date }}</p>
-          <p>작업코드 : {{ historychunk.workcode }}</p>
-        </div>
-      </v-list>
+          <!-- <div
+          v-for="historychunk in history"
+          :key="historychunk.filename"
+          class="chunk"
+        > -->
+          <div
+            class="chunk"
+            v-bind:style="
+              historychunk[1] == 0 ? { 'background-color': '#cceeff' } : {}
+            "
+          >
+            <p>
+              <b>파일명 : {{ historychunk[0] }}</b>
+            </p>
+            <p>{{ historychunk[1] }}</p>
+            <p>실행시간 : {{ historychunk[4] }}</p>
+            <p>작업코드 : {{ historychunk[5] }}</p>
+            <!-- </div> -->
+          </div>
+        </v-list>
+      </div>
     </div>
   </v-container>
 </template>
 
 <style>
-div.history {
-  border: 1px blue;
-  background-color: #9900ff;
-}
-
 div.chunk {
-  border: 1px black;
-  background-color: #cceeff;
+  padding: 2px;
+  border: 1px black solid;
   color: black;
   font-size: 10px;
   line-height: 8px;
+  background-color: #cceeff;
+}
+.chunksucc {
+  padding: 2px;
+  border: 1px black solid;
+  color: black;
+  font-size: 10px;
+  line-height: 8px;
+  background-color: #cceeff;
+}
+
+.chunkfail {
+  padding: 2px;
+  border: 1px black solid;
+  color: black;
+  font-size: 10px;
+  line-height: 8px;
+  background-color: #e0eb4c;
 }
 </style>
 <script lang="ts">
@@ -51,52 +73,46 @@ import path from 'path';
 // import electron, { app } from 'electron';
 
 import { mapMutations, mapState } from 'vuex';
-// import constants from '@/assets/constants.json';
+import constants from '@/assets/constants.json';
 // import Home from './Home.vue';
 
 @Component({
   components: {},
 
-  computed: mapState(['fileSortList', 'fromDir', 'duplicatedList', 'fileList']),
+  computed: mapState([
+    'fileSortList',
+    'fromDir',
+    'duplicatedList',
+    'fileList',
+    'renameHistory'
+  ]),
 
   methods: mapMutations([
     'changeDir',
     'changeFileList',
     'changeFileSortList',
-    'changeDuplicatedList'
+    'changeDuplicatedList',
+    'changeRenameHistory'
   ])
 })
 export default class Restore extends Vue {
-  // localHistory: Record<string, any> = {
-  //   datas: {}
-  // };
   changeDuplicatedList!: (newList: any[][]) => void;
+  changeRenameHistory!: (newList: any[][]) => void;
   localHistory: any;
   duplicatedList!: any[][];
+  renameHistory!: any[][];
   isLoading!: boolean;
   historyList: (string | number)[][] = [[]];
 
-  // data() {
-  //   return {
-  //     historyList: [[]]
-  //   };
-  // }
-
   mounted() {
-    // console.log(constants.history.workcode);
     console.log(this.duplicatedList);
     this.readHistory();
   }
 
   readHistory() {
-    // console.log('readhistory');
     console.log(this.duplicatedList);
     const nulldata = {
-      datas: {
-        '0': {
-          date: null
-        }
-      }
+      datas: {}
     };
     const nulldata2 = JSON.stringify(nulldata);
 
@@ -140,12 +156,13 @@ export default class Restore extends Vue {
       return;
     }
     const tmpL = Object.keys(mm.datas).length;
+    console.log(tmpL);
     for (let i = 1; i < this.duplicatedList.length; i++) {
       // console.log(i);
       // console.log(tmpL + i);
       if (this.duplicatedList[i].length != 0) {
-        if (mm['datas'][tmpL + i] == undefined) {
-          mm['datas'][tmpL + i] = {
+        if (mm['datas'][tmpL + i - 1] == undefined) {
+          mm['datas'][tmpL + i - 1] = {
             filename: null,
             success: null,
             before: null,
@@ -156,36 +173,58 @@ export default class Restore extends Vue {
         }
         // console.log(mm);
         // console.log(this.duplicatedList[i]);
-        mm['datas'][tmpL + i]['filename'] = this.duplicatedList[i][0];
-        mm['datas'][tmpL + i]['success'] = this.duplicatedList[i][1];
-        mm['datas'][tmpL + i]['before'] = this.duplicatedList[i][2];
-        mm['datas'][tmpL + i]['after'] = this.duplicatedList[i][3];
-        mm['datas'][tmpL + i]['date'] = this.duplicatedList[i][4];
-        mm['datas'][tmpL + i]['workcode'] = this.duplicatedList[i][5];
+        mm['datas'][tmpL + i - 1]['filename'] = this.duplicatedList[i][0];
+        mm['datas'][tmpL + i - 1]['success'] = this.duplicatedList[i][1];
+        mm['datas'][tmpL + i - 1]['before'] = this.duplicatedList[i][2];
+        mm['datas'][tmpL + i - 1]['after'] = this.duplicatedList[i][3];
+        mm['datas'][tmpL + i - 1]['date'] = this.duplicatedList[i][4];
+        mm['datas'][tmpL + i - 1]['workcode'] = this.duplicatedList[i][5];
       }
     }
     // this.localHistory = mm;
     const mm2 = Buffer.from(JSON.stringify(mm));
+    console.log(mm2);
     this.changeDuplicatedList([]);
     this.jsontest(mm2);
   }
 
   jsontest(changedHistory: object) {
-    // console.log(changedHistory);
-    // console.log(typeof changedHistory);
-    // let mm;
-    // try {
-    //   mm = Buffer.from(JSON.stringify(changedHistory));
-    // } catch {
-    //   mm = changedHistory;
-    // }
+    const sortingarr = [];
     const mm = JSON.parse(changedHistory.toString());
-    // console.log(mm);
 
-    this.historyList = JSON.parse(changedHistory.toString());
+    //arr에 담기
+
+    for (let a = 0; a < Object.keys(mm.datas).length; a++) {
+      try {
+        sortingarr.push([
+          mm['datas'][a]['filename'],
+          mm['datas'][a]['success'],
+          mm['datas'][a]['before'],
+          mm['datas'][a]['after'],
+          mm['datas'][a]['date'],
+          mm['datas'][a]['workcode']
+        ]);
+      } catch (err) {
+        console.log('error', err);
+      }
+    }
+
+    // 날짜순으로 정렬
+    sortingarr.sort(function(a, b) {
+      return a[4] > b[4] ? -1 : a[4] < b[4] ? 1 : 0;
+    });
+    // console.log(sortingarr);
+
+    //historylist 변경
+    this.historyList = sortingarr.slice(0, 100);
+    console.log(mm);
+    console.log(this.historyList);
+    //100개까지만 저장하기
     for (let k = 0; k < this.historyList.length; k++) {
-      console.log(mm.datas[k]);
-      if (mm['datas'][k].length != 0) {
+      if (k >= 100) {
+        continue;
+      }
+      if (mm['datas'][k].length != 0)
         if (mm['datas'][k] == undefined) {
           mm['datas'][k] = {
             filename: null,
@@ -195,17 +234,23 @@ export default class Restore extends Vue {
             date: null,
             workcode: null
           };
+
+          mm['datas'][k]['filename'] = this.historyList[k][0];
+          mm['datas'][k]['success'] = this.historyList[k][1];
+          mm['datas'][k]['before'] = this.historyList[k][2];
+          mm['datas'][k]['after'] = this.historyList[k][3];
+          mm['datas'][k]['date'] = this.historyList[k][4];
+          mm['datas'][k]['workcode'] = this.historyList[k][5];
+
+          // console.log(this.historyList);
         }
-
-        mm['datas'][k]['filename'] = this.duplicatedList[k][0];
-        mm['datas'][k]['success'] = this.duplicatedList[k][1];
-        mm['datas'][k]['before'] = this.duplicatedList[k][2];
-        mm['datas'][k]['after'] = this.duplicatedList[k][3];
-        mm['datas'][k]['date'] = this.duplicatedList[k][4];
-        mm['datas'][k]['workcode'] = this.duplicatedList[k][5];
-
-        // console.log(this.historyList);
-      }
+    }
+    // constants 기준으로 출력할 값 바꾸기
+    for (let h = 0; h < this.historyList.length; h++) {
+      const d = new Date(this.historyList[h][4]);
+      this.historyList[h][4] = d.toString();
+      const wc = this.historyList[h][5];
+      this.historyList[h][5] = constants.history.workcode[wc];
     }
 
     const newdata = JSON.stringify(mm);
@@ -213,7 +258,20 @@ export default class Restore extends Vue {
     // console.log('saved');
   }
 
+  resetHistory() {
+    this.isLoading = false;
+    const nulldata = {
+      datas: {}
+    };
+    const nulldata2 = JSON.stringify(nulldata);
+    this.historyList = [];
+
+    fs.writeFileSync('history_test.json', nulldata2);
+    this.isLoading = true;
+  }
+
   created() {
+    console.log(this.renameHistory);
     this.isLoading = true;
     // console.log(this.isLoading);
   }

@@ -129,7 +129,7 @@ export default class DupCheck extends Vue {
     for (let f1 = 1; f1 < dupedfilelist.length; f1++) {
       for (let f2 = 1; f2 < dupedfilelist[f1].length; f2++) {
         // 옮기는 폴더에 같은 이름의 파일이 있는 경우는 옮기지 말아야 함.
-        const d = new Date(Date.now());
+        const d = new Date().setTime(Date.now());
 
         if (
           !fs.existsSync(
