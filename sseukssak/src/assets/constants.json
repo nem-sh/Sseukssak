@@ -4,6 +4,10 @@
       "1": "Move",
       "2": "Check Duplicated Files",
       "3": "Rename"
+    },
+    "success": {
+      "0": "실패",
+      "1": "성공"
     }
   }
 }
