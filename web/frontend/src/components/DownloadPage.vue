@@ -1,18 +1,42 @@
 <template>
-  <button @click="download">
-      다운로드
-  </button>
+    <v-container class="OuterDiv">
+      <v-row class="TopRow">
+        <img src="../assets/myLogo.png" alt="Image Gone!!" class="LogoImage"/>
+      </v-row>
+      <v-row class="BottomRow">
+        <v-col
+          cols="12"
+          sm="4"
+        >
+        </v-col>
+        <v-col
+          cols="12"
+          sm="4"
+        >
+        <button
+      class="DownloadButton"
+  @click="download()"
+>다운로드</button>
+        </v-col>
+        <v-col
+          cols="12"
+          sm="4"
+        >
+        </v-col>
+      </v-row>
+    </v-container>
 </template>
 
 <script>
-// import axios from "axios";
+import myLogo from "../assets/myLogo.png"
 import fileDownload from "js-file-download"
-import myImage from "../assets/logo.png"
 
 export default {
     data () {
         return {
-            SERVER_URL: "서버 유얼엘"
+            SERVER_URL: "서버 유얼엘",
+            backImage: "",
+
         }
     },
     methods: {
@@ -40,12 +64,37 @@ export default {
             // link.setAttribute("download", "File_Name.png")
             // document.body.appendChild(link);
             // link.click();
-            fileDownload(myImage, "myFileBabe.png")
+            fileDownload(myLogo, "myFileBabe.png")
         },
     }
 }
 </script>
 
 <style>
-
+.OuterDiv {
+    height: 100vh;
+    width: 100vw;
+    background-color: lightblue;
+}
+.TopRow {
+    height: 60%;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+.BottomRow {
+    height: 40%;
+}
+.LogoImage {
+    height: 80%;
+    width: 50%;
+}
+.DownloadButton {
+    height: 40%;
+    width: 100%;
+    background-color: gray;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 40px;
+}
 </style>
