@@ -13,7 +13,7 @@
           class="file-scroller"
           :bench="benched"
           :items="beforeItems"
-          max-height="200"
+          height="150"
           item-height="40"
         >
           <template v-slot:default="{ item }">
@@ -32,7 +32,7 @@
           class="file-scroller"
           :bench="benched"
           :items="afterItems"
-          max-height="200"
+          height="150"
           item-height="40"
         >
           <template v-slot:default="{ item }">
@@ -141,6 +141,21 @@ export default class Rename extends Vue {
         timer: 1000,
       });
     } else {
+      // 특수문자 예외처리
+      const specialC =  /[?:|*<>\\/"]/gi;
+      this.afterItems.forEach((item, i) => {
+        if (item.name.search(specialC) !== -1) {
+          Swal.fire({
+            position: "center",
+            icon: "warning",
+            title: `이름에 특수 문자(${specialC})는 사용하실 수 없습니다`,
+            showConfirmButton: false,
+            timer: 1000,
+          });
+        }
+        return
+      })
+
       // 예외처리 하기(변경할 파일명이 이미 기존 폴더 내에 존재하는 경우)
       const dupTmp: Array<FileInfo> = []
       const dupTmpChange: Array<string> = []
