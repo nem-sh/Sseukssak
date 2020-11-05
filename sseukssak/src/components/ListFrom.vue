@@ -92,8 +92,8 @@
                 <div
                   v-if="
                     select == 0 ||
-                      (select == 1 && compareTime(file.birthTime)) ||
-                      (select == 2 && compareTime(file.updatedTime))
+                    (select == 1 && compareTime(file.birthTime)) ||
+                    (select == 2 && compareTime(file.updatedTime))
                   "
                 >
                   <div
@@ -459,26 +459,25 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import fs from 'fs';
-import { mapMutations, mapState } from 'vuex';
-import childProcess from 'child_process';
+import { Vue, Component } from "vue-property-decorator";
+import fs from "fs";
+import { mapMutations, mapState } from "vuex";
+import childProcess from "child_process";
 // event bus call
-import { BUS } from './EventBus.js';
+import { BUS } from "./EventBus.js";
 
-import BtnMoveFile from '@/components/BtnMoveFile.vue';
-import BtnSelectFromDir from '@/components/BtnSelectFromDir.vue';
-import BtnDupCheck from '@/components/BtnDupCheck.vue';
+import BtnMoveFile from "@/components/BtnMoveFile.vue";
+import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
+import BtnDupCheck from "@/components/BtnDupCheck.vue";
 
 // import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.vue"
 import Swal from "sweetalert2";
 // import { shell } from "electron";
-const { shell } = require('electron').remote;
-const { app } = require('electron').remote;
+const { shell } = require("electron").remote;
+const { app } = require("electron").remote;
 // 휴지통
 import { remote } from "electron";
-const trash = remote.require('trash');
-
+const trash = remote.require("trash");
 
 interface SortList {
   directories: Directory[];
@@ -500,16 +499,16 @@ interface Directory {
   components: {
     BtnMoveFile,
     BtnSelectFromDir,
-    BtnDupCheck
+    BtnDupCheck,
     // BtnUploadGoogleDrive
   },
-  computed: mapState(['fileSortList', 'fromDir', 'fileList']),
-  methods: mapMutations(['changeDir', 'changeFileList', 'changeFileSortList'])
+  computed: mapState(["fileSortList", "fromDir", "fileList"]),
+  methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
 })
 export default class ListFrom extends Vue {
-  icon = require('./../assets/info.png');
-  text: string = '';
-  renameValue: string = '';
+  icon = require("./../assets/info.png");
+  text: string = "";
+  renameValue: string = "";
   selectedData: object = {};
   selectedDataInfo: object = {};
   now: Date = new Date();
@@ -534,9 +533,9 @@ export default class ListFrom extends Vue {
       '\\ / : * ? " < > | 은 사용 불가능합니다',
   };
   clickclick() {
-    alert('준비중^__^');
+    alert("준비중^__^");
     console.log(
-      fs.createReadStream(this.fromDir + '\\' + this.selectedData['name'])
+      fs.createReadStream(this.fromDir + "\\" + this.selectedData["name"])
     );
   }
 
@@ -565,32 +564,32 @@ export default class ListFrom extends Vue {
       fs.lstatSync(this.fromDir + "\\" + this.selectedData["name"]).isFile() &&
       !this.renameValue.includes(".")
     ) {
-      this.renameValue = this.renameValue + '.' + this.selectedData['fileType'];
+      this.renameValue = this.renameValue + "." + this.selectedData["fileType"];
     }
     fs.renameSync(
-      this.fromDir + '\\' + this.selectedData['name'],
-      this.fromDir + '\\' + this.renameValue
+      this.fromDir + "\\" + this.selectedData["name"],
+      this.fromDir + "\\" + this.renameValue
     );
     this.renewFrom();
-    alert('수정됨^__^');
+    alert("수정됨^__^");
     this.dialog2 = false;
   }
   openShell() {
-    console.log(this.fromDir + '\\' + this.selectedData['name']);
-    shell.openPath(this.fromDir + '\\' + this.selectedData['name']);
+    console.log(this.fromDir + "\\" + this.selectedData["name"]);
+    shell.openPath(this.fromDir + "\\" + this.selectedData["name"]);
   }
   getInfo() {
-    this.selectedDataInfo['name'] = this.selectedData['name'];
+    this.selectedDataInfo["name"] = this.selectedData["name"];
 
-    this.selectedDataInfo['fileType'] = this.selectedData['fileType'];
-    this.selectedDataInfo['birthTime'] = new Date(
-      this.selectedData['birthTime']
+    this.selectedDataInfo["fileType"] = this.selectedData["fileType"];
+    this.selectedDataInfo["birthTime"] = new Date(
+      this.selectedData["birthTime"]
     );
-    this.selectedDataInfo['updatedTime'] = new Date(
-      this.selectedData['updatedTime']
+    this.selectedDataInfo["updatedTime"] = new Date(
+      this.selectedData["updatedTime"]
     );
-    this.selectedDataInfo['size'] = fs.statSync(
-      this.fromDir + '\\' + this.selectedData['name']
+    this.selectedDataInfo["size"] = fs.statSync(
+      this.fromDir + "\\" + this.selectedData["name"]
     ).size;
 
     this.dialog = true;
@@ -599,7 +598,7 @@ export default class ListFrom extends Vue {
     if (fs.lstatSync(path).isDirectory()) {
       const fileList = fs.readdirSync(path);
       fileList.forEach((name: string) => {
-        this.deleteThis(path + '\\' + name, false);
+        this.deleteThis(path + "\\" + name, false);
       });
       (async () => {
         await trash([path]);
@@ -621,9 +620,9 @@ export default class ListFrom extends Vue {
     }
   }
   closeContextMenu() {
-    const unit = document.getElementById('contextmenu');
+    const unit = document.getElementById("contextmenu");
     if (unit) {
-      unit.style.display = 'none';
+      unit.style.display = "none";
     }
   }
   showContextMenu(value, e) {
@@ -632,35 +631,35 @@ export default class ListFrom extends Vue {
     const winHeight = window.outerHeight;
     const posX: number = e.pageX - 65;
     const posY = e.pageY;
-    const unit = document.getElementById('contextmenu');
+    const unit = document.getElementById("contextmenu");
     if (unit) {
       const menuWidth: number = unit.clientWidth;
       const menuHeight: number = unit.clientWidth;
       const secMargin = 10;
-      let posLeft = '';
-      let posTop = '';
+      let posLeft = "";
+      let posTop = "";
       if (
         posX + menuWidth + secMargin >= winWidth &&
         posY + menuHeight + secMargin >= winHeight
       ) {
-        posLeft = posX - menuWidth - secMargin + 'px';
-        posTop = posY - menuHeight - secMargin + 'px';
+        posLeft = posX - menuWidth - secMargin + "px";
+        posTop = posY - menuHeight - secMargin + "px";
       } else if (posX + menuWidth + secMargin >= winWidth) {
-        posLeft = posX - menuWidth - secMargin + 'px';
-        posTop = posY + secMargin + 'px';
+        posLeft = posX - menuWidth - secMargin + "px";
+        posTop = posY + secMargin + "px";
       } else if (posY + menuHeight + secMargin >= winHeight) {
-        posLeft = posX + secMargin + 'px';
-        posTop = posY - menuHeight - secMargin + 'px';
+        posLeft = posX + secMargin + "px";
+        posTop = posY - menuHeight - secMargin + "px";
       } else {
-        posLeft = posX + secMargin + 'px';
-        posTop = posY + secMargin + 'px';
+        posLeft = posX + secMargin + "px";
+        posTop = posY + secMargin + "px";
       }
       if (posLeft && posTop) {
-        posLeft = posX + secMargin + 'px';
-        posTop = posY + secMargin + 'px';
+        posLeft = posX + secMargin + "px";
+        posTop = posY + secMargin + "px";
         unit.style.left = posLeft;
         unit.style.top = posTop;
-        unit.style.display = 'block';
+        unit.style.display = "block";
       }
     }
   }
@@ -669,15 +668,15 @@ export default class ListFrom extends Vue {
     event.stopPropagation();
 
     for (const f of event.dataTransfer.files) {
-      fs.renameSync(f.path, this.fromDir + '/' + f.name);
+      fs.renameSync(f.path, this.fromDir + "/" + f.name);
     }
   }
   mounted() {
-    BUS.$on('bus:refreshfile', () => {
-      console.log('refresh file');
+    BUS.$on("bus:refreshfile", () => {
+      console.log("refresh file");
       this.renewFrom();
     });
-    BUS.$on('bus:closecontextmenu', () => {
+    BUS.$on("bus:closecontextmenu", () => {
       this.closeContextMenu();
     });
   }
@@ -688,7 +687,7 @@ export default class ListFrom extends Vue {
   changeFileSortList!: (newList: SortList) => void;
   openFile(file: string) {
     // const { spawn } = require("child_process");
-    childProcess.execSync('"' + this.fromDir + '\\' + file + '"');
+    childProcess.execSync('"' + this.fromDir + "\\" + file + '"');
   }
   compareTime(time: number) {
     const timeValue = new Date(time);
@@ -702,12 +701,12 @@ export default class ListFrom extends Vue {
     return false;
   }
   async enterDirectory(enteredDirectory: string) {
-    if (enteredDirectory == '') {
-      const dir: string[] = this.fromDir.split('\\');
+    if (enteredDirectory == "") {
+      const dir: string[] = this.fromDir.split("\\");
       dir.pop();
-      this.changeDir(dir.join('\\'));
+      this.changeDir(dir.join("\\"));
     } else {
-      this.changeDir(this.fromDir + '\\' + enteredDirectory);
+      this.changeDir(this.fromDir + "\\" + enteredDirectory);
     }
     this.getFrom(this.fromDir);
   }
@@ -718,34 +717,34 @@ export default class ListFrom extends Vue {
     const fileList: string[] = fs.readdirSync(dir);
     const fileSortList: SortList = { directories: [], files: [] };
     fileList.forEach((name: string) => {
-      const fileSplit = name.split('.');
-      if (fs.lstatSync(this.fromDir + '/' + name).isDirectory()) {
-        const birthTime = fs.lstatSync(this.fromDir + '/' + name).birthtimeMs;
+      const fileSplit = name.split(".");
+      if (fs.lstatSync(this.fromDir + "/" + name).isDirectory()) {
+        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
         const updatedTime = Math.max(
-          fs.lstatSync(this.fromDir + '/' + name).mtimeMs,
-          fs.lstatSync(this.fromDir + '/' + name).ctimeMs
+          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
         );
         fileSortList.directories.push({
           name: name,
           birthTime: birthTime,
-          updatedTime: updatedTime
+          updatedTime: updatedTime,
         });
       } else {
         const fileType = fileSplit[fileSplit.length - 1].toLowerCase();
-        const birthTime = fs.lstatSync(this.fromDir + '/' + name).birthtimeMs;
+        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
         const updatedTime = Math.max(
-          fs.lstatSync(this.fromDir + '/' + name).mtimeMs,
-          fs.lstatSync(this.fromDir + '/' + name).ctimeMs
+          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
         );
-        let iconPath = this.fromDir + '/' + name;
-        if (name.includes('.lnk')) {
+        let iconPath = this.fromDir + "/" + name;
+        if (name.includes(".lnk")) {
           try {
             iconPath = shell.readShortcutLink(iconPath).target;
           } catch {
-            iconPath = this.fromDir + '/' + name;
+            iconPath = this.fromDir + "/" + name;
           }
         }
-        let realIcon = '';
+        let realIcon = "";
         app.getFileIcon(iconPath).then((fileIcon) => {
           realIcon = fileIcon.toDataURL();
           fileSortList.files.push({
@@ -753,7 +752,7 @@ export default class ListFrom extends Vue {
             fileType: fileType,
             birthTime: birthTime,
             updatedTime: updatedTime,
-            icon: realIcon
+            icon: realIcon,
           });
         });
       }
@@ -768,13 +767,13 @@ export default class ListFrom extends Vue {
   }
 
   get dirPath() {
-    const tmp = this.fromDir.split('\\');
+    const tmp = this.fromDir.split("\\");
     return tmp[tmp.length - 1];
   }
 
   makeListForScroll() {
-    const totalFile = this.fileSortList['directories'].concat(
-      this.fileSortList['files']
+    const totalFile = this.fileSortList["directories"].concat(
+      this.fileSortList["files"]
     );
     const totalFileForScroll: object[] = [];
     let n = 0;

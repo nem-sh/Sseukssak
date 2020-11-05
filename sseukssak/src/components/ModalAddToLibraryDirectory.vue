@@ -46,7 +46,7 @@
                     </template>
                     <v-card>
                       <v-card-title>
-                        메인 From 경로에 자동 폴더 생성
+                        폴더 추가
                         <!-- <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
                           <i style="color:grey" v-bind="attrs" v-on="on" class="far fa-question-circle fa-2x"></i>
@@ -56,7 +56,7 @@
                       </v-card-title>
                       <v-card-text>
                         <div>
-                          정리 버튼을 누르면, From 경로에 해당 폴더가 자동
+                          정리 버튼을 누르면, 정리할 폴더 내에 해당 폴더가 자동
                           생성됩니다.
                         </div>
                         <div>
@@ -181,7 +181,7 @@
                 <div style="width: 100%; margin-left: auto">
                   <v-text-field
                     v-model="titleAddName"
-                    label="파일명 직접 입력"
+                    label="파일명에 포함되는 문자 입력"
                     class="pt-0"
                     prepend-icon="mdi-pencil"
                   >
