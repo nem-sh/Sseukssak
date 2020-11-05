@@ -138,7 +138,7 @@
               </div>
               <div id="date" v-show="selectedFilter === '날짜'">
                 <div style="width: 80%; margin-left: auto">
-                  <v-dialog v-model="dialog2" persistent max-width="290">
+                  <v-dialog v-model="dialog2" max-width="290">
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
                         class="pt-0"
