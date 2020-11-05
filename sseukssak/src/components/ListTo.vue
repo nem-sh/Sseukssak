@@ -11,7 +11,7 @@
           <v-col cols="3" class="to-name">
             <h3><span>To</span></h3></v-col
           >
-          <v-col cols="9" align="center" justify="center">
+          <v-col cols="7" align="center" justify="center" class="mt-5">
             <v-select
               :items="toLibraryNameList"
               v-model="selectedToName"
@@ -19,20 +19,20 @@
               dense
             ></v-select>
           </v-col>
-        </v-row>
-        <v-row class="pr-3 d-flex flex-row-reverse">
-          <ModalCreateToLibrary />
-          <div class="mr-2">
-            <v-btn
-              color="error"
-              rounded
-              dark
-              v-if="selectedToName"
-              @click="deleteToLibrary"
-            >
-              삭제
-            </v-btn>
-          </div>
+          <v-col cols="2" class="d-flex flex-column">
+            <ModalCreateToLibrary @create="changeSN" />
+            <div class="mt-2">
+              <v-btn
+                color="error"
+                rounded
+                dark
+                v-if="selectedToName"
+                @click="deleteToLibrary"
+              >
+                삭제
+              </v-btn>
+            </div>
+          </v-col>
         </v-row>
       </div>
     </div>
@@ -420,6 +420,12 @@ export default class ListTo extends Vue {
         this.dirLength = this.toLibraryList[i].directories.length;
       }
     }
+  }
+
+  changeSN(name) {
+    this.selectedToName = name;
+    this.changeSelectedToName(name)
+    this.changeDirectoryLength(name);
   }
 
   @Watch("selectedToName")
