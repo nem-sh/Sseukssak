@@ -24,8 +24,13 @@
               <h3>폴더를 선택해주세요!</h3>
             </div>
           </v-col>
-          <v-col cols="2" class="d-flex align-center justify-center"
+          <v-col cols="1" class="d-flex align-center justify-center"
             ><BtnSelectFromDir />
+          </v-col>
+          <v-col cols="1" class="d-flex align-center justify-center"
+            ><v-btn icon @click="renewFrom">
+              <i class="fas fa-sync-alt fa-2x"></i>
+            </v-btn>
           </v-col>
         </v-row>
       </div>
@@ -430,7 +435,11 @@
             {{ selectedData.name }}의 이름 바꾸기
           </v-card-title>
           <v-card-text>
-            <v-text-field v-model="renameValue" label="변경할 이름">
+            <v-text-field
+              v-model="renameValue"
+              :rules="[rules.required, rules.speical]"
+              label="변경할 이름"
+            >
             </v-text-field
           ></v-card-text>
 
@@ -462,10 +471,14 @@ import BtnSelectFromDir from '@/components/BtnSelectFromDir.vue';
 import BtnDupCheck from '@/components/BtnDupCheck.vue';
 
 // import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.vue"
-
+import Swal from "sweetalert2";
 // import { shell } from "electron";
 const { shell } = require('electron').remote;
 const { app } = require('electron').remote;
+// 휴지통
+import { remote } from "electron";
+const trash = remote.require('trash');
+
 
 interface SortList {
   directories: Directory[];
@@ -505,6 +518,21 @@ export default class ListFrom extends Vue {
   fileSortList!: SortList[];
   dialog: boolean = false;
   dialog2: boolean = false;
+  rules: object = {
+    required: (value) => !!value || "Required.",
+    speical: (v) =>
+      (v.indexOf("/") == -1 &&
+        v.indexOf("/") == -1 &&
+        v.indexOf(":") == -1 &&
+        v.indexOf("*") == -1 &&
+        v.indexOf("?") == -1 &&
+        v.indexOf('"') == -1 &&
+        v.indexOf("<") == -1 &&
+        v.indexOf(">") == -1 &&
+        v.indexOf("|") == -1 &&
+        v.indexOf("\\") == -1) ||
+      '\\ / : * ? " < > | 은 사용 불가능합니다',
+  };
   clickclick() {
     alert('준비중^__^');
     console.log(
@@ -514,8 +542,28 @@ export default class ListFrom extends Vue {
 
   renameThis() {
     if (
-      fs.lstatSync(this.fromDir + '\\' + this.selectedData['name']).isFile() &&
-      !this.renameValue.includes('.')
+      this.renameValue.includes("|") ||
+      this.renameValue.includes("\\") ||
+      this.renameValue.includes("?") ||
+      this.renameValue.includes("<") ||
+      this.renameValue.includes(">") ||
+      this.renameValue.includes("/") ||
+      this.renameValue.includes(":") ||
+      this.renameValue.includes('"')
+    ) {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "특수문자 안된다고",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+
+      return;
+    }
+    if (
+      fs.lstatSync(this.fromDir + "\\" + this.selectedData["name"]).isFile() &&
+      !this.renameValue.includes(".")
     ) {
       this.renameValue = this.renameValue + '.' + this.selectedData['fileType'];
     }
@@ -553,13 +601,22 @@ export default class ListFrom extends Vue {
       fileList.forEach((name: string) => {
         this.deleteThis(path + '\\' + name, false);
       });
-
-      fs.rmdirSync(path);
+      (async () => {
+        await trash([path]);
+      })();
     } else {
-      fs.unlinkSync(path);
+      (async () => {
+        await trash([path]);
+      })();
     }
     if (isFinal) {
-      alert('지워드림 ^_^');
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "삭제되었습니다",
+        showConfirmButton: false,
+        timer: 1000,
+      });
       this.renewFrom();
     }
   }
@@ -619,6 +676,9 @@ export default class ListFrom extends Vue {
     BUS.$on('bus:refreshfile', () => {
       console.log('refresh file');
       this.renewFrom();
+    });
+    BUS.$on('bus:closecontextmenu', () => {
+      this.closeContextMenu();
     });
   }
 

@@ -4,6 +4,7 @@
     @drop="dropTo"
     dragenter.prevent
     @dragover.prevent
+    @click="closeContextMenu"
   >
     <div class="to-part-first">
       <div class="select-folder">
@@ -72,7 +73,6 @@
               <v-list-item-content>
                 <v-list-item-title>
                   <strong>{{ getDirectoryName(item.path) }}</strong>
-                  <!-- <div>{{ item.typeTags }}</div> -->
                 </v-list-item-title>
               </v-list-item-content>
               <v-list-item-action>
@@ -159,6 +159,9 @@ import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.
 import ModalCheckDirectoryTags from "@/components/ModalCheckDirectoryTags.vue";
 
 import { shell } from "electron";
+
+import { BUS } from "./EventBus.js";
+
 // const { shell } = require("electron").remote;
 interface ToLibrary {
   name: string;
@@ -269,7 +272,11 @@ export default class ListTo extends Vue {
       if (this.selectedToName == "") {
         alert("라이브러리 먼저 선택 ㄱㄱ");
       } else {
-        this.changeDropToDir(f.path);
+        if (fs.statSync(f.path).isDirectory()) {
+          this.changeDropToDir(f.path);
+        } else {
+          alert("디렉토리가 아닙니다");
+        }
       }
     }
   }
@@ -454,9 +461,13 @@ export default class ListTo extends Vue {
     }
   }
 
+  closeContextMenu() {
+    BUS.$emit("bus:closecontextmenu");
+  }
+
   changeSN(name) {
     this.selectedToName = name;
-    this.changeSelectedToName(name)
+    this.changeSelectedToName(name);
     this.changeDirectoryLength(name);
   }
 
@@ -471,7 +482,7 @@ export default class ListTo extends Vue {
 <style>
 .to-name h3 {
   /* margin: 20px; */
-  font-family: "Paytone One" !important;
+  /* font-family: "Paytone One" !important; */
   color: #202020;
   text-transform: uppercase;
   letter-spacing: -2px;
