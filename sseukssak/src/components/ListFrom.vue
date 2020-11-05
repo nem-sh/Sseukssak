@@ -479,8 +479,6 @@ const { app } = require('electron').remote;
 import { remote } from "electron";
 const trash = remote.require('trash');
 
-import Swal from "sweetalert2"
-
 
 interface SortList {
   directories: Directory[];
