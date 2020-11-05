@@ -11,32 +11,43 @@
       scrollable
     >
       <v-card tile>
-        <v-card-title dark color="#7288da" style="background-color:#7288da; color:white">
+        <v-card-title
+          dark
+          color="#7288da"
+          style="background-color: #7288da; color: white"
+        >
           <v-btn class="mr-3" icon dark @click="closeModal">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           정리 폴더 추가
           <v-spacer></v-spacer>
-          
         </v-card-title>
-      
+
         <v-card-text class="file-scroller" style="height: 100%">
           <v-container>
             <div style="width: 100%; margin: auto">
               <div>
                 <h2 class="mt-4">1. 정리 폴더 선택</h2>
                 <div class="text-right mb-1">
-                  <v-btn @click="readDir" text color="green"><i class="fas fa-search mr-2"></i>폴더 찾기</v-btn>
-                  <v-dialog class="file-scroller" v-model="dialog3" persistent max-width="500">
+                  <v-btn @click="readDir" text color="green"
+                    ><i class="fas fa-search mr-2"></i>폴더 찾기</v-btn
+                  >
+                  <v-dialog
+                    class="file-scroller"
+                    v-model="dialog3"
+                    persistent
+                    max-width="500"
+                  >
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn color="green" text v-bind="attrs" v-on="on">
-                        <i class="fas fa-folder-plus mr-2"></i>From 경로에 자동 폴더 생성
+                        <i class="fas fa-folder-plus mr-2"></i>From 경로에 자동
+                        폴더 생성
                       </v-btn>
                     </template>
                     <v-card>
                       <v-card-title>
                         메인 From 경로에 자동 폴더 생성
-                      <!-- <v-tooltip bottom>
+                        <!-- <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
                           <i style="color:grey" v-bind="attrs" v-on="on" class="far fa-question-circle fa-2x"></i>
                         </template>
@@ -44,8 +55,13 @@
                       </v-tooltip> -->
                       </v-card-title>
                       <v-card-text>
-                        <div>정리 버튼을 누르면, From 경로에 해당 폴더가 자동 생성됩니다.</div>
-                        <div>(같은 폴더명 존재 시, 해당 폴더에 정리됩니다.)</div>
+                        <div>
+                          정리 버튼을 누르면, From 경로에 해당 폴더가 자동
+                          생성됩니다.
+                        </div>
+                        <div>
+                          (같은 폴더명 존재 시, 해당 폴더에 정리됩니다.)
+                        </div>
                       </v-card-text>
                       <v-card-text>
                         <v-text-field
@@ -57,7 +73,11 @@
 
                       <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="green darken-1" text @click="dialog3 = false">
+                        <v-btn
+                          color="green darken-1"
+                          text
+                          @click="dialog3 = false"
+                        >
                           취소
                         </v-btn>
                         <v-btn color="green darken-1" text @click="readFromDir">
@@ -67,7 +87,7 @@
                     </v-card>
                   </v-dialog>
                 </div>
-                <div class=" ml-3 mb-3 font-weight-bold d-flex align-center">
+                <div class="ml-3 mb-3 font-weight-bold d-flex align-center">
                   <img
                     v-show="directoryDir.length > 0"
                     src="@/assets/folder-icon.png"
@@ -93,10 +113,15 @@
               </v-row>
               <div id="type" v-show="selectedFilter === '파일 유형'">
                 <div style="width: 80%; margin-left: auto">
-                  <v-text-field v-model="typeAddName" label="확장자 직접 입력(ex. jpg, ppt)" prepend-icon="mdi-pencil" class="pt-0">
-                  <v-icon slot="append" color="green" @click="typeAdd">
+                  <v-text-field
+                    v-model="typeAddName"
+                    label="확장자 직접 입력(ex. jpg, ppt)"
+                    prepend-icon="mdi-pencil"
+                    class="pt-0"
+                  >
+                    <v-icon slot="append" color="green" @click="typeAdd">
                       mdi-plus
-                  </v-icon>
+                    </v-icon>
                   </v-text-field>
                 </div>
                 <v-select
@@ -124,30 +149,44 @@
                         v-bind="attrs"
                         v-on="on"
                         @click="dates = []"
-                      ><v-icon slot="append" color="green" @click="dateAdd">
-                        mdi-plus
-                      </v-icon>
+                        ><v-icon slot="append" color="green" @click="dateAdd">
+                          mdi-plus
+                        </v-icon>
                       </v-text-field>
                     </template>
-                    <v-date-picker v-model="dates" range></v-date-picker>
+                    <v-date-picker
+                      header-color="var(--color-purple)"
+                      v-model="dates"
+                      range
+                    >
+                      <v-spacer></v-spacer>
+                      <v-btn text color="primary" @click="dialog2 = false">
+                        Cancel
+                      </v-btn>
+                    </v-date-picker>
                   </v-dialog>
                 </div>
-              <v-select
-                v-model="selectedDateTags"
-                :items="dateTags"
-                deletable-chips
-                chips
-                label="날짜 분류 선택"
-                multiple
-                outlined
-              >
-              </v-select>
+                <v-select
+                  v-model="selectedDateTags"
+                  :items="dateTags"
+                  deletable-chips
+                  chips
+                  label="날짜 분류 선택"
+                  multiple
+                  outlined
+                >
+                </v-select>
               </div>
               <div id="name" v-show="selectedFilter === '파일명'">
                 <div style="width: 100%; margin-left: auto">
-                  <v-text-field v-model="titleAddName" label="파일명 직접 입력" class="pt-0" prepend-icon="mdi-pencil">
+                  <v-text-field
+                    v-model="titleAddName"
+                    label="파일명 직접 입력"
+                    class="pt-0"
+                    prepend-icon="mdi-pencil"
+                  >
                     <v-icon slot="append" color="green" @click="titleAdd">
-                        mdi-plus
+                      mdi-plus
                     </v-icon>
                   </v-text-field>
                 </div>
@@ -173,11 +212,7 @@
                 outlined
               ></v-select>
               <div class="text-center">
-                <v-btn
-                  dark
-                  color="#7288da"
-                  @click="createLibrary"
-                >
+                <v-btn dark color="#7288da" @click="createLibrary">
                   정리 폴더 추가
                 </v-btn>
               </div>
@@ -192,7 +227,7 @@
 <script lang='ts'>
 import { Vue, Component, Watch } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
-import Swal from "sweetalert2"
+import Swal from "sweetalert2";
 
 const { dialog } = require("electron").remote;
 
@@ -247,8 +282,8 @@ export default class ModalAddToLibraryDirectory extends Vue {
   ];
   titleTags: string[] = [];
   selectedTitleTags: string[] = [];
-  filters: string[] = ["파일 유형", "날짜", "파일명"]
-  selectedFilter: string = ""
+  filters: string[] = ["파일 유형", "날짜", "파일명"];
+  selectedFilter: string = "";
   readFromDirName: string = "";
 
   //vuex
@@ -261,7 +296,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
 
   titleAdd() {
     if (this.titleAddName === "") {
-      return
+      return;
     }
     this.selectedTitleTags.push(this.titleAddName);
     this.titleTags.push(this.titleAddName);
@@ -284,7 +319,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
   }
   typeAdd() {
     if (this.typeAddName === "") {
-      return
+      return;
     }
     let addName = this.typeAddName.toLowerCase();
     if (addName[0] != ".") {
@@ -299,9 +334,9 @@ export default class ModalAddToLibraryDirectory extends Vue {
     this.directoryDir = "";
     this.selectedTypeTags = [];
     this.selectedDateTags = [];
-    this.readFromDirName = ""
-    this.directoryDir = ""
-    this.selectedFilter = ""
+    this.readFromDirName = "";
+    this.directoryDir = "";
+    this.selectedFilter = "";
     this.dialog = false;
   }
   readDir() {
@@ -346,9 +381,9 @@ export default class ModalAddToLibraryDirectory extends Vue {
       this.selectedTypeTags = [];
       this.selectedDateTags = [];
       this.selectedTitleTags = [];
-      this.readFromDirName = ""
-      this.directoryDir = ""
-      this.selectedFilter = ""
+      this.readFromDirName = "";
+      this.directoryDir = "";
+      this.selectedFilter = "";
 
       Swal.fire({
         position: "center",
@@ -399,6 +434,13 @@ export default class ModalAddToLibraryDirectory extends Vue {
   @Watch("dates")
   watchDates() {
     if (this.dates.length == 2) {
+      const fromSelect = new Date(this.dates[0]);
+      const toSelect = new Date(this.dates[1]);
+      console.log(fromSelect.toDateString());
+      console.log(typeof toSelect);
+      if (fromSelect > toSelect) {
+        [this.dates[0], this.dates[1]] = [this.dates[1], this.dates[0]];
+      }
       this.dialog2 = false;
     }
   }

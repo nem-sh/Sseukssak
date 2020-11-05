@@ -72,7 +72,6 @@
               <v-list-item-content>
                 <v-list-item-title>
                   <strong>{{ getDirectoryName(item.path) }}</strong>
-                  <!-- <div>{{ item.typeTags }}</div> -->
                 </v-list-item-title>
               </v-list-item-content>
               <v-list-item-action>
@@ -456,7 +455,7 @@ export default class ListTo extends Vue {
 
   changeSN(name) {
     this.selectedToName = name;
-    this.changeSelectedToName(name)
+    this.changeSelectedToName(name);
     this.changeDirectoryLength(name);
   }
 
@@ -471,7 +470,7 @@ export default class ListTo extends Vue {
 <style>
 .to-name h3 {
   /* margin: 20px; */
-  font-family: "Paytone One" !important;
+  /* font-family: "Paytone One" !important; */
   color: #202020;
   text-transform: uppercase;
   letter-spacing: -2px;
