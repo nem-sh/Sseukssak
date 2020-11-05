@@ -158,9 +158,16 @@ export default new Vuex.Store({
         return a.mtime > b.mtime ? 1 : -1;
       });
     },
+    sortRenameFileList(state: DirState) {
+      state.renameFileList.sort(function (a, b) {
+        return a.mtime > b.mtime ? 1 : -1;
+      });
+      state.renameFileList.forEach((item) => {
+        state.dupCheck.push(item.name);
+      })
+    },
     changeRenameFileList(state: DirState, item: FileInfo) {
       state.renameFileList.push(item);
-      state.dupCheck.push(item.name);
     },
     changeBeforeItems(state: DirState, newItems: FileInfo[]) {
       state.beforeItems = newItems;
@@ -168,6 +175,10 @@ export default new Vuex.Store({
     initailizeRename(state: DirState) {
       state.renameFileList = state.beforeItems = state.afterItems = [];
       state.dupCheck = [];
+      state.filterFront = "3"
+      state.filterMiddle = "1"
+      state.filterBack = "3"
+      state.frontName = state.middleName = state.backName = ""
     },
     changeFilterFront(state: DirState, newFront: string) {
       state.filterFront = newFront;

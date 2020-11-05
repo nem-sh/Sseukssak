@@ -1,22 +1,79 @@
 <template>
   <v-container class="screen" :class="bgMode">
-    <div class="mt-7">
-      <h3 :class="titleMode"><span>통일한 파일명 변경</span></h3>
+    <div class="mt-10 pb-3">
+      <h3 :class="titleMode"><span>통일한 폴더/파일명 변경</span></h3>
     </div>
-    <div>
+
+    <v-stepper v-model="e1">
+      <!-- <v-stepper-header>
+        <template v-for="n in steps">
+          <v-stepper-step
+            :key="`${n}-step`"
+            :complete="e1 > n"
+            :step="n"
+            editable
+          >
+            {{ title[n-1] }}
+          </v-stepper-step>
+
+          <v-divider
+            v-if="n !== steps"
+            :key="n"
+          ></v-divider>
+        </template>
+      </v-stepper-header> -->
+
+      <v-stepper-items>
+        <v-stepper-content
+          v-for="n in steps"
+          :key="`${n}-content`"
+          :step="n"
+        >
+          <div>
+            <FileList v-show="n === 1"/>
+            <v-row style="margin:2px"  v-show="n === 2">
+              <FilterList/>
+              <PreviewList @finish="e1=1"/>
+            </v-row>
+          </div>
+          <div v-show="n === 2" class="text-center pt-3">
+            <v-btn
+              dark
+              text
+              color="#7288da"
+              @click="nextStep(n)"
+            >
+              <i class="fas fa-arrow-left fa-3x"></i>
+            </v-btn>
+          </div>
+          <div v-show="n === 1" class="text-center pt-3">
+            <v-btn
+              dark
+              text
+              color="#7288da"
+              @click="nextStep(n)"
+            >
+              <i class="fas fa-arrow-right fa-3x"></i>
+            </v-btn>
+          </div>
+        </v-stepper-content>
+      </v-stepper-items>
+    </v-stepper>
+    <!-- <div>
       <FilterList/>
       <v-row style="margin:2px">
         <FileList/>
         <div class="mx-1" :class="partMode"></div>
         <PreviewList/>
       </v-row>
-    </div>
+    </div> -->
   </v-container>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import Component from "vue-class-component";
+import { Component } from "vue-property-decorator";
+
 import FileList from "@/components/rename/FileList.vue";
 import FilterList from "@/components/rename/FilterList.vue";
 import PreviewList from "@/components/rename/PreviewList.vue";
@@ -30,6 +87,10 @@ import PreviewList from "@/components/rename/PreviewList.vue";
 })
 
 export default class Rename extends Vue {
+  e1: number = 1;
+  steps: number = 2;
+  title: string[] = ["이름 변경할 폴더/파일 선택", "Rename"]
+
   get bgMode() {
     return this.$vuetify.theme.dark? "rename-bg-d" : "rename-bg"
   }
@@ -38,6 +99,14 @@ export default class Rename extends Vue {
   }
   get partMode() {
     return this.$vuetify.theme.dark? "rename-part-bg-d" : "rename-part-bg"
+  }
+
+  nextStep (n) {
+    if (n === this.steps) {
+      this.e1 = 1
+    } else {
+      this.e1 = n + 1
+    }
   }
 }
 </script>
@@ -50,6 +119,7 @@ export default class Rename extends Vue {
 .screen {
   width: 100%;
   height: 100%;
+  overflow: auto;
 }
 .rename-title, .rename-title-d {
   /* margin: 20px; */
@@ -98,5 +168,14 @@ export default class Rename extends Vue {
 }
 .folder-d {
   color: white;
+}
+.v-stepper {
+  box-shadow: none !important;
+}
+.v-stepper__content {
+  padding: 0 !important;
+}
+.screen::-webkit-scrollbar {
+  display: none;
 }
 </style>
