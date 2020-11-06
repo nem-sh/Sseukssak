@@ -10,14 +10,12 @@
           <i 
           v-if="isLogin"
           class="fab fa-google-drive"
-          v-bind="attrs"
-          v-on="on"
-          @click="login(oAuth2Client)"
-          >
-          
+          @click="logout"
+          >          
           </i>
+
           <i 
-          v-if="!isLogin"
+          v-else
           style="color: #999999"
           class="fab fa-google-drive"
           v-bind="attrs"
@@ -62,7 +60,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import fs from 'fs'
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 
 const { shell } = require('electron').remote
 
@@ -76,7 +74,10 @@ const { shell } = require('electron').remote
   ...mapGetters([
       "authUrl"
   ])
-  }
+  },
+  methods:mapMutations([
+    "changeLoginState"
+  ])
 })
 
 export default class BtnLoginGoogle extends Vue {
@@ -84,6 +85,8 @@ export default class BtnLoginGoogle extends Vue {
   oAuth2Client!: any
   authUrl!: string
   isLogin!: boolean
+
+  changeLoginState!: (value: boolean) => void
 
   dialog: boolean = false
   code: string = ''
@@ -98,9 +101,20 @@ export default class BtnLoginGoogle extends Vue {
           oAuth2Client.setCredentials(JSON.parse(token.toString()));
       })
   }
+
+  
+  logout(){
+    
+    fs.unlink(this.tokenPath, (err)=>{
+      if (err) return console.error(err);
+      this.changeLoginState(false)
+      console.log(this.isLogin)
+    })
+  }
+
   setCode(oAuth2Client,TOKEN_PATH){
       this.dialog = false
-      
+      this.changeLoginState(true)
       oAuth2Client.getToken(this.code, (err, token) => {
           if (err) return console.error('Error retrieving access token', err);
 
