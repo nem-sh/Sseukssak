@@ -6,7 +6,19 @@
       max-width="400"
     >
       <template v-slot:activator="{ on, attrs }">
+          
           <i 
+          v-if="isLogin"
+          class="fab fa-google-drive"
+          v-bind="attrs"
+          v-on="on"
+          @click="login(oAuth2Client)"
+          >
+          
+          </i>
+          <i 
+          v-if="!isLogin"
+          style="color: #999999"
           class="fab fa-google-drive"
           v-bind="attrs"
           v-on="on"
@@ -58,7 +70,8 @@ const { shell } = require('electron').remote
   computed:{
   ...mapState([
     "tokenPath",
-    "oAuth2Client"
+    "oAuth2Client",
+    "isLogin"
   ]),
   ...mapGetters([
       "authUrl"
@@ -67,36 +80,38 @@ const { shell } = require('electron').remote
 })
 
 export default class BtnLoginGoogle extends Vue {
-    dialog: boolean = false
-    tokenPath!: string
-    code: string = ''
-    oAuth2Client!: any
-    authUrl!: string
+  tokenPath!: string
+  oAuth2Client!: any
+  authUrl!: string
+  isLogin!: boolean
+
+  dialog: boolean = false
+  code: string = ''
 
 
-    login(oAuth2Client){
-        fs.readFile(this.tokenPath,(err,token)=>{
-            if (err) {
-                shell.openExternal(this.authUrl);
-                return
-            }
-            oAuth2Client.setCredentials(JSON.parse(token.toString()));
-        })
-    }
-    setCode(oAuth2Client,TOKEN_PATH){
-        this.dialog = false
-        
-        oAuth2Client.getToken(this.code, (err, token) => {
-            if (err) return console.error('Error retrieving access token', err);
+  login(oAuth2Client){
+      fs.readFile(this.tokenPath,(err,token)=>{
+          if (err) {
+              shell.openExternal(this.authUrl);
+              return
+          }
+          oAuth2Client.setCredentials(JSON.parse(token.toString()));
+      })
+  }
+  setCode(oAuth2Client,TOKEN_PATH){
+      this.dialog = false
+      
+      oAuth2Client.getToken(this.code, (err, token) => {
+          if (err) return console.error('Error retrieving access token', err);
 
-            oAuth2Client.setCredentials(token);
-            
-            fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-                if (err) return console.error(err);
-                console.log('Token stored to', TOKEN_PATH);
-            });
-        })
-    }
+          oAuth2Client.setCredentials(token);
+          
+          fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+              if (err) return console.error(err);
+              console.log('Token stored to', TOKEN_PATH);
+          });
+      })
+  }
 }
 </script>
 
