@@ -13,7 +13,7 @@
           class="file-scroller"
           :bench="benched"
           :items="beforeItems"
-          height="150"
+          height="120"
           item-height="40"
         >
           <template v-slot:default="{ item }">
@@ -32,7 +32,7 @@
           class="file-scroller"
           :bench="benched"
           :items="afterItems"
-          height="150"
+          height="120"
           item-height="40"
         >
           <template v-slot:default="{ item }">
@@ -45,7 +45,7 @@
         </v-virtual-scroll>
       </v-col>
       <v-col cols="1" class="d-flex flex-column my-auto align-center">
-        <v-btn dark rounded class="mb-3" @click="rename" color="#7288da">
+        <v-btn dark rounded class="mr-3" @click="rename" color="#7288da">
           OK
         </v-btn>
         <!-- <v-btn rounded @click="logBack" :disabled="logBackCheck === false" color="red accent-2">
@@ -155,77 +155,87 @@ export default class Rename extends Vue {
         }
         return
       })
+      // 베타버전 주의 알림
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "이름을 변경하시겠습니까?",
+        text: "현재 베타 버전이라 복원 기능을 넣어놓지 않았습니다. 주의해주세요.",
+        showCancelButton: true,
+        confirmButtonText: `Yes`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+        // 예외처리 하기(변경할 파일명이 이미 기존 폴더 내에 존재하는 경우)
+        const dupTmp: Array<FileInfo> = []
+        const dupTmpChange: Array<string> = []
+        const logData: Array<object> = []
+        const workTime: Date = new Date()
 
-      // 예외처리 하기(변경할 파일명이 이미 기존 폴더 내에 존재하는 경우)
-      const dupTmp: Array<FileInfo> = []
-      const dupTmpChange: Array<string> = []
-      const logData: Array<object> = []
-      const workTime: Date = new Date()
-
-      this.afterItems.forEach((item, i) => {
-        const dupIdx = this.dupCheck.indexOf(item.name)
-        // 확장자
-        let _fileType = ""
-        if (item.type !== "") {
-          _fileType = "." + item.type
-        }
-        // 자기 자신은 제외
-        if (dupIdx !== -1 && this.renameFileList[dupIdx].ctime !== item.ctime) {
-          dupTmp.push(this.beforeItems[i]);
-          // 중복되지 않는 파일명 생성
-          let cnt = 1
-          let noDupName = item.name.substring(0, item.name.length - _fileType.length) + "(" + cnt + ")" + _fileType
-          do {
-            noDupName = item.name.substring(0, item.name.length - _fileType.length) + "(" + cnt++ + ")" + _fileType
-          } while (noDupName in this.dupCheck)
-          dupTmpChange.push(noDupName)
-        } else {
-          const o = path.join(item.dir, this.beforeItems[i].name);
-          const n = path.join(item.dir, item.name);
-          fs.renameSync(o, n);
-          logData.push([this.beforeItems[i].name + " => " + item.name, 1, o, n, workTime, 3])
-        }
-      });
-      if (dupTmp.length > 0) {
-        const text = dupTmp
-          .map(function (item, index) {
-            return item.name + " => " + dupTmpChange[index];
-          })
-          .join(" , ");
-        Swal.fire({
-          position: "center",
-          icon: "warning",
-          title: "바꾸려는 파일명이 해당 디렉토리에 이미 존재합니다. 다음과 같이 변경하시겠습니까?",
-          text: text,
-          showCancelButton: true,
-          confirmButtonText: `Yes`,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            dupTmp.forEach((item, i) => {
-              const o = path.join(item.dir, item.name);
-              const n = path.join(item.dir, dupTmpChange[i]);
-              fs.renameSync(o, n);
-              logData.push([item + " => " + dupTmpChange[i], 1, o, n, workTime, 3])
-              this.$emit("finish")
-              this.initailizeRename()
-              BUS.$emit("bus:refreshfilter");
-            })
+        this.afterItems.forEach((item, i) => {
+          const dupIdx = this.dupCheck.indexOf(item.name)
+          // 확장자
+          let _fileType = ""
+          if (item.type !== "") {
+            _fileType = "." + item.type
           }
-        })
-      } else {
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: "파일명이 변경되었습니다",
-          showConfirmButton: false,
-          timer: 1000,
+          // 자기 자신은 제외
+          if (dupIdx !== -1 && this.renameFileList[dupIdx].ctime !== item.ctime) {
+            dupTmp.push(this.beforeItems[i]);
+            // 중복되지 않는 파일명 생성
+            let cnt = 1
+            let noDupName = item.name.substring(0, item.name.length - _fileType.length) + "(" + cnt + ")" + _fileType
+            do {
+              noDupName = item.name.substring(0, item.name.length - _fileType.length) + "(" + cnt++ + ")" + _fileType
+            } while (noDupName in this.dupCheck)
+            dupTmpChange.push(noDupName)
+          } else {
+            const o = path.join(item.dir, this.beforeItems[i].name);
+            const n = path.join(item.dir, item.name);
+            fs.renameSync(o, n);
+            logData.push([this.beforeItems[i].name + " => " + item.name, 1, o, n, workTime, 3])
+          }
         });
-        this.$emit("finish")
-        this.initailizeRename()
-        BUS.$emit("bus:refreshfilter");
-      }
-      this.changeRenameHistory(logData)
-      this.changeLogBackCheck(true)
+        if (dupTmp.length > 0) {
+          const text = dupTmp
+            .map(function (item, index) {
+              return item.name + " => " + dupTmpChange[index];
+            })
+            .join(" , ");
+          Swal.fire({
+            position: "center",
+            icon: "warning",
+            title: "바꾸려는 파일명이 해당 디렉토리에 이미 존재합니다. 다음과 같이 변경하시겠습니까?",
+            text: text,
+            showCancelButton: true,
+            confirmButtonText: `Yes`,
+          }).then((result) => {
+            if (result.isConfirmed) {
+              dupTmp.forEach((item, i) => {
+                const o = path.join(item.dir, item.name);
+                const n = path.join(item.dir, dupTmpChange[i]);
+                fs.renameSync(o, n);
+                logData.push([item + " => " + dupTmpChange[i], 1, o, n, workTime, 3])
+                this.$emit("finish")
+                this.initailizeRename()
+                BUS.$emit("bus:refreshfilter");
+              })
+            }
+          })
+        } else {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "파일명이 변경되었습니다",
+            showConfirmButton: false,
+            timer: 1000,
+          });
+          this.$emit("finish")
+          this.initailizeRename()
+          BUS.$emit("bus:refreshfilter");
+        }
+        this.changeRenameHistory(logData)
+        this.changeLogBackCheck(true)
+      }})
     }
   }
 

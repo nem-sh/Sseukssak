@@ -16,9 +16,9 @@ interface DirState {
   duplicatedList: [][];
   dropToDir: string;
   modifyDirectroy: ToLibraryDirectory;
-  renameHistory: [][];
+  renameHistory: any[][];
 
-  moveHistory: [][];
+  moveHistory: any[][];
   renameFileList: FileInfo[];
   beforeItems: FileInfo[];
   afterItems: FileInfo[];
@@ -256,7 +256,7 @@ export default new Vuex.Store({
     },
     authUrl: (state) => {
       return state.oAuth2Client.generateAuthUrl({
-        access_type: 'offline',
+        accessType: 'offline',
         scope: ['https://www.googleapis.com/auth/drive']
       });
     }

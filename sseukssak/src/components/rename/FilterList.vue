@@ -7,7 +7,7 @@
       <p class="font-weight-bold" :class="partTitleMode">머리말</p>
       <v-radio-group v-model="front" @change="filterChange(1)">
         <v-radio label="생성 날짜" value="1" color="#7288da"></v-radio>
-        <v-radio label="사용자 지정" value="2" color="#7288da"></v-radio>
+        <v-radio label="사용자 입력" value="2" color="#7288da"></v-radio>
         <v-text-field
           style="padding:3px 0px 0px 0px"
           v-show="front == '2'"
@@ -24,8 +24,8 @@
     <v-col cols="4" class="text-center pb-0">
       <p class="font-weight-bold" :class="partTitleMode">폴더/파일명</p>
       <v-radio-group v-model="middle" @change="filterChange(2)">
-        <v-radio label="기존 폴더/파일명" value="1" color="#7288da"></v-radio>
-        <v-radio label="사용자 지정" value="2" color="#7288da"></v-radio>
+        <v-radio label="기존 이름" value="1" color="#7288da"></v-radio>
+        <v-radio label="사용자 입력" value="2" color="#7288da"></v-radio>
         <v-text-field
           style="padding:3px 0px 0px 0px"
           v-show="middle == '2'"
@@ -43,7 +43,7 @@
       <v-radio-group v-model="back" @change="filterChange(3)">
         <v-radio label="숫자(수정 날짜 오름차순)" value="1" color="#7288da"></v-radio>
         <v-radio
-          label="사용자 지정"
+          label="사용자 입력"
           value="2"
           :disabled="isDisabled"
           color="#7288da"

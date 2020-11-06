@@ -13,7 +13,7 @@
       class="file-scroller"
       :bench="benched"
       :items="renameFileList"
-      height="300"
+      height="330"
       item-height="40"
     >
       <template v-slot:default="{ item }">

@@ -40,8 +40,7 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn color="green" text v-bind="attrs" v-on="on">
-                        <i class="fas fa-folder-plus mr-2"></i>From 경로에 자동
-                        폴더 생성
+                        <i class="fas fa-folder-plus mr-2"></i>폴더 추가
                       </v-btn>
                     </template>
                     <v-card>
@@ -210,6 +209,7 @@
                 label="총 정리 기준"
                 multiple
                 outlined
+                filled
               ></v-select>
               <div class="text-center">
                 <v-btn dark color="#7288da" @click="createLibrary">
