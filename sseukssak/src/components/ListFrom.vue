@@ -374,7 +374,7 @@
           >
         </li>
         <li>
-          <!-- <BtnUploadGoogleDrive v-bind:fileName="selectedData.name"/> -->
+          <BtnUploadGoogleDrive v-bind:fileName="selectedData.name"/>
         </li>
         <li>
           <a @click="getInfo()" style="display: flex; align-items: center"
@@ -470,7 +470,7 @@ import BtnMoveFile from "@/components/BtnMoveFile.vue";
 import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
 import BtnDupCheck from "@/components/BtnDupCheck.vue";
 
-// import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.vue"
+import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.vue"
 import Swal from "sweetalert2";
 // import { shell } from "electron";
 const { shell } = require("electron").remote;
@@ -500,7 +500,7 @@ interface Directory {
     BtnMoveFile,
     BtnSelectFromDir,
     BtnDupCheck,
-    // BtnUploadGoogleDrive
+    BtnUploadGoogleDrive
   },
   computed: mapState(["fileSortList", "fromDir", "fileList"]),
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
