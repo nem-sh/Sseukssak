@@ -6,7 +6,17 @@
       max-width="400"
     >
       <template v-slot:activator="{ on, attrs }">
+          
           <i 
+          v-if="isLogin"
+          class="fab fa-google-drive"
+          @click="logout"
+          >          
+          </i>
+
+          <i 
+          v-else
+          style="color: #999999"
           class="fab fa-google-drive"
           v-bind="attrs"
           v-on="on"
@@ -50,7 +60,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import fs from 'fs'
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 
 const { shell } = require('electron').remote
 
@@ -58,45 +68,64 @@ const { shell } = require('electron').remote
   computed:{
   ...mapState([
     "tokenPath",
-    "oAuth2Client"
+    "oAuth2Client",
+    "isLogin"
   ]),
   ...mapGetters([
       "authUrl"
   ])
-  }
+  },
+  methods:mapMutations([
+    "changeLoginState"
+  ])
 })
 
 export default class BtnLoginGoogle extends Vue {
-    dialog: boolean = false
-    tokenPath!: string
-    code: string = ''
-    oAuth2Client!: any
-    authUrl!: string
+  tokenPath!: string
+  oAuth2Client!: any
+  authUrl!: string
+  isLogin!: boolean
+
+  changeLoginState!: (value: boolean) => void
+
+  dialog: boolean = false
+  code: string = ''
 
 
-    login(oAuth2Client){
-        fs.readFile(this.tokenPath,(err,token)=>{
-            if (err) {
-                shell.openExternal(this.authUrl);
-                return
-            }
-            oAuth2Client.setCredentials(JSON.parse(token.toString()));
-        })
-    }
-    setCode(oAuth2Client,TOKEN_PATH){
-        this.dialog = false
-        
-        oAuth2Client.getToken(this.code, (err, token) => {
-            if (err) return console.error('Error retrieving access token', err);
+  login(oAuth2Client){
+      fs.readFile(this.tokenPath,(err,token)=>{
+          if (err) {
+              shell.openExternal(this.authUrl);
+              return
+          }
+          oAuth2Client.setCredentials(JSON.parse(token.toString()));
+      })
+  }
 
-            oAuth2Client.setCredentials(token);
-            
-            fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-                if (err) return console.error(err);
-                console.log('Token stored to', TOKEN_PATH);
-            });
-        })
-    }
+  
+  logout(){
+    
+    fs.unlink(this.tokenPath, (err)=>{
+      if (err) return console.error(err);
+      this.changeLoginState(false)
+      console.log(this.isLogin)
+    })
+  }
+
+  setCode(oAuth2Client,TOKEN_PATH){
+      this.dialog = false
+      this.changeLoginState(true)
+      oAuth2Client.getToken(this.code, (err, token) => {
+          if (err) return console.error('Error retrieving access token', err);
+
+          oAuth2Client.setCredentials(token);
+          
+          fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+              if (err) return console.error(err);
+              console.log('Token stored to', TOKEN_PATH);
+          });
+      })
+  }
 }
 </script>
 

@@ -3,7 +3,7 @@
     <div class="window-operations-container">
       <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
       <div class="operations">
-        <!-- <BtnLoginGoogle /> -->
+        <BtnLoginGoogle class="mr-1"/>
         <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
         <!-- <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i> -->
         <!-- <i
