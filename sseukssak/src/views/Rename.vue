@@ -1,6 +1,6 @@
 <template>
   <v-container class="screen" :class="bgMode">
-    <div class="mt-10 pb-3">
+    <div class="mt-10">
       <h3 :class="titleMode"><span>통일한 폴더/파일명 변경</span></h3>
     </div>
 
@@ -25,23 +25,25 @@
 
       <v-stepper-items>
         <v-stepper-content v-for="n in steps" :key="`${n}-content`" :step="n">
-          <div>
-            <FileList v-show="n === 1" />
-            <v-row style="margin: 2px" v-show="n === 2">
-              <FilterList />
-              <PreviewList @finish="e1 = 1" />
-            </v-row>
-          </div>
-          <div v-show="n === 2" class="text-center pt-3">
-            <v-btn dark text color="#7288da" @click="nextStep(n)">
-              <i class="fas fa-arrow-left fa-3x"></i>
-            </v-btn>
-          </div>
-          <div v-show="n === 1" class="text-center pt-3">
-            <v-btn dark text color="#7288da" @click="nextStep(n)">
-              <i class="fas fa-arrow-right fa-3x"></i>
-            </v-btn>
-          </div>
+          <v-row>
+            <v-col cols="1" v-show="n === 2" class="text-center px-0 my-auto">
+              <v-btn dark text color="#7288da" @click="nextStep(n)">
+                <i class="fas fa-angle-double-left fa-3x"></i>
+              </v-btn>
+            </v-col>
+            <v-col cols="11">
+              <FileList v-show="n === 1" />
+              <v-row style="margin: 2px" v-show="n === 2">
+                <FilterList />
+                <PreviewList @finish="e1 = 1" />
+              </v-row>
+            </v-col>
+            <v-col cols="1" v-show="n === 1" class="text-center px-0 my-auto">
+              <v-btn dark text color="#7288da" @click="nextStep(n)" class="px-0">
+                <i class="fas fa-angle-double-right fa-3x"></i>
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>

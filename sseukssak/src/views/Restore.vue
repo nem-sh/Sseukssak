@@ -96,7 +96,7 @@ export default class Restore extends Vue {
   changeDuplicatedList!: (newList: [][]) => void;
   changeRenameHistory!: (newList: [][]) => void;
   changeMoveHistory!: (newList: [][]) => void;
-  localHistory: any[];
+  localHistory: any[] = [];
   duplicatedList!: any[][];
   renameHistory!: any[][];
   moveHistory!: any[][];
