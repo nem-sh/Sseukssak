@@ -60,6 +60,10 @@ import fs from "fs";
 import { mapState, mapMutations } from "vuex";
 
 import { BUS } from "./EventBus.js";
+import { file } from "googleapis/build/src/apis/file";
+
+const { shell } = require("electron").remote;
+const { app } = require("electron").remote;
 interface ToLibrary {
   name: string;
   directories: ToLibraryDirectory[];
@@ -92,7 +96,11 @@ interface File {
     "toLibraryList",
     "moveHistory",
   ]),
-  methods: mapMutations(["changeMoveHistory"]),
+  methods: mapMutations([
+    "changeMoveHistory",
+    "changeFileSortList",
+    "changeFileList",
+  ]),
 })
 export default class BtnMoveFile extends Vue {
   fileList!: object;
@@ -204,6 +212,8 @@ export default class BtnMoveFile extends Vue {
   selectedToName!: string;
   fileSortList!: SortList;
   duplicatedList!: any[][];
+  changeFileList!: (newList: string[]) => void;
+  changeFileSortList!: (newList: SortList) => void;
   changeMoveHistory!: (newList: any[]) => void;
   compareTitle(file: string, titleTags: string[]) {
     if (titleTags.length == 0) {
@@ -248,32 +258,43 @@ export default class BtnMoveFile extends Vue {
     }
     return true;
   }
+
   moveFile() {
     this.dialog = true;
-    const fileSortList = this.fileSortList;
 
     BUS.$emit("bus:refreshfile");
     BUS.$emit("bus:dupcheck");
     BUS.$emit("bus:refreshfile");
-    let selectedFrom: ToLibrary = { name: "", directories: [] };
+
+    let selectedFrom: ToLibraryDirectory[] = [];
+
     for (let index = 0; index < this.toLibraryList.length; index++) {
       if (this.toLibraryList[index].name == this.selectedToName) {
-        selectedFrom = this.toLibraryList[index];
+        selectedFrom = this.toLibraryList[index].directories;
         break;
       }
     }
-    if (selectedFrom.name == "") {
+    if (selectedFrom == []) {
       return;
     }
 
-    const directories: ToLibraryDirectory[] = selectedFrom.directories;
-    directories.forEach((directory: ToLibraryDirectory) => {
-      directory.path = directory.path.replace("%from%", this.fromDir);
-      if (!fs.existsSync(directory.path)) {
-        console.log(1);
-        fs.mkdirSync(directory.path);
+    const directories: ToLibraryDirectory[] = JSON.parse(
+      JSON.stringify(selectedFrom)
+    );
+
+    console.log(directories, selectedFrom);
+
+    for (let index = 0; index < directories.length; index++) {
+      const element = directories[index];
+      directories[index].path = directories[index].path.replace(
+        "%from%",
+        this.fromDir
+      );
+
+      if (!fs.existsSync(directories[index].path)) {
+        fs.mkdirSync(directories[index].path);
       }
-    });
+    }
     directories.forEach((directory: ToLibraryDirectory) => {
       directory.types = [];
       directory.typeTags.forEach((typeTag) => {
@@ -284,13 +305,17 @@ export default class BtnMoveFile extends Vue {
         }
       });
     });
-    for (const idx in fileSortList.files) {
+    console.log(directories, selectedFrom);
+    const fileSortList = this.fileSortList;
+
+    for (const idx of fileSortList.files) {
+      console.log(fileSortList, 7);
       const a: string[][] = [];
-      if (!fs.existsSync(this.fromDir + "\\" + fileSortList.files[idx].name)) {
+      if (!fs.existsSync(this.fromDir + "\\" + idx.name)) {
         this.changeMoveHistory([
-          fileSortList.files[idx].name,
+          idx.name,
           1,
-          this.fromDir + "\\" + fileSortList.files[idx].name,
+          this.fromDir + "\\" + idx.name,
           "파일이 존재하지 않습니다.",
           new Date().getTime(),
           1,
@@ -299,38 +324,21 @@ export default class BtnMoveFile extends Vue {
       }
       directories.forEach((directory: ToLibraryDirectory) => {
         directory.types.forEach((type) => {
-          if (
-            this.compareDate(
-              new Date(fileSortList.files[idx].birthTime),
-              directory.dateTags
-            )
-          ) {
-            if (
-              this.compareTitle(
-                fileSortList.files[idx].name,
-                directory.titleTags
-              )
-            ) {
-              if (type == "." + fileSortList.files[idx].fileType) {
-                if (
-                  fs.existsSync(
-                    directory.path + "\\" + fileSortList.files[idx].name
-                  )
-                ) {
+          if (this.compareDate(new Date(idx.birthTime), directory.dateTags)) {
+            if (this.compareTitle(idx.name, directory.titleTags)) {
+              if (type == "." + idx.fileType) {
+                if (fs.existsSync(directory.path + "\\" + idx.name)) {
                   alert(
                     "중복된 이름의 파일이 존재하여 자동 리네임 되었습니다."
                   );
                   a.push([
-                    this.fromDir + "\\" + fileSortList.files[idx].name,
-                    directory.path +
-                      "\\" +
-                      "[중복]" +
-                      fileSortList.files[idx].name,
+                    this.fromDir + "\\" + idx.name,
+                    directory.path + "\\" + "[중복]" + idx.name,
                   ]);
                 } else {
                   a.push([
-                    this.fromDir + "\\" + fileSortList.files[idx].name,
-                    directory.path + "\\" + fileSortList.files[idx].name,
+                    this.fromDir + "\\" + idx.name,
+                    directory.path + "\\" + idx.name,
                   ]);
                 }
                 return;
@@ -345,7 +353,7 @@ export default class BtnMoveFile extends Vue {
         for (step = 0; step < a.length - 1; step++) {
           // Runs 5 times, with values of step 0 through 4.
           this.changeMoveHistory([
-            fileSortList.files[idx].name,
+            idx.name,
             1,
             a[step][0],
             a[step][1],
@@ -355,7 +363,7 @@ export default class BtnMoveFile extends Vue {
           fs.copyFileSync(a[step][0], a[step][1]);
         }
         this.changeMoveHistory([
-          fileSortList.files[idx].name,
+          idx.name,
           1,
           a[a.length - 1][0],
           a[a.length - 1][1],
@@ -367,6 +375,7 @@ export default class BtnMoveFile extends Vue {
     }
     // this.dialog = false;
     alert("정리가 완료되었습니다.");
+
     BUS.$emit("bus:refreshfile");
   }
 }
