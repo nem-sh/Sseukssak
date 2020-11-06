@@ -714,7 +714,9 @@ export default class ListFrom extends Vue {
     this.getFrom(this.fromDir);
   }
   async getFrom(dir: string) {
+    console.log(12);
     const fileList: string[] = fs.readdirSync(dir);
+    console.log(3);
     const fileSortList: SortList = { directories: [], files: [] };
     fileList.forEach((name: string) => {
       const fileSplit = name.split(".");
@@ -745,16 +747,18 @@ export default class ListFrom extends Vue {
           }
         }
         let realIcon = "";
+        const file = {
+          name: name,
+          fileType: fileType,
+          birthTime: birthTime,
+          updatedTime: updatedTime,
+          icon: "",
+        };
         app.getFileIcon(iconPath).then((fileIcon) => {
           realIcon = fileIcon.toDataURL();
-          fileSortList.files.push({
-            name: name,
-            fileType: fileType,
-            birthTime: birthTime,
-            updatedTime: updatedTime,
-            icon: realIcon,
-          });
+          file["icon"] = realIcon;
         });
+        fileSortList.files.push(file);
       }
     });
 
