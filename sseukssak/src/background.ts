@@ -18,6 +18,7 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win: BrowserWindow | null;
+let loadingScreen: BrowserWindow | null;
 let tray: Tray | null;
 const browserWidth = 1000;
 const browserHeight = 600;
@@ -57,6 +58,50 @@ function createTray() {
 
   return appIcon;
 }
+function createLoadingScreen() {
+  loadingScreen = new BrowserWindow({
+    width: 300,
+    height: 300,
+    webPreferences: {
+      nodeIntegration: (process.env
+        .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
+      webSecurity: false,
+    },
+    autoHideMenuBar: true,
+    center: true,
+    thickFrame: true,
+    frame: false,
+    transparent: true,
+  });
+  loadingScreen.setResizable(false);
+  loadingScreen.setAlwaysOnTop(true);
+
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    if (loadingScreen !== null) {
+      loadingScreen.loadURL("file://" + __dirname + "/bundled/loading.html");
+      loadingScreen.once("ready-to-show", () => {
+        if (loadingScreen !== null) {
+          loadingScreen.show();
+        }
+      });
+    }
+  } else {
+    createProtocol("app");
+    loadingScreen.loadURL("app://./loading.html");
+    loadingScreen.once("ready-to-show", () => {
+      if (loadingScreen !== null) {
+        loadingScreen.show();
+      }
+    });
+  }
+  loadingScreen.on("closed", () => (loadingScreen = null));
+
+  loadingScreen.webContents.on("did-finish-load", () => {
+    if (loadingScreen !== null) {
+      loadingScreen.show();
+    }
+  });
+}
 
 function createWindow() {
   // Create the browser window.
@@ -80,26 +125,36 @@ function createWindow() {
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
+    // develop
     // Load the url of the dev server if in development mode
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
-    // if (!process.env.IS_TEST) win.webContents.openDevTools();
+    // 개발자 모드에서 개발자 모드 On
+    if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
+    // build
     createProtocol("app");
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
-    // win.loadURL(url.format({
-    //   pathname: path.join(__dirname, 'index.html'),
-    //   protocol: 'file:',
-    //   slashes: true
-    // }));
+
+    // 빌드 한 프로그램에서 개발자 모드 On
     // win.webContents.openDevTools({ mode: "undocked" });
   }
+  win.once("ready-to-show", () => {
+    if (win !== null) {
+      win.show();
+    }
+  });
 
-  win.on("minimize", function(event) {
-    event.preventDefault();
-    // win.setSkipTaskbar(true);
-    if (!tray) {
-      tray = createTray();
+  win.on("closed", function() {
+    win = null;
+  });
+
+  win.webContents.on("did-finish-load", () => {
+    if (loadingScreen) {
+      loadingScreen.close();
+    }
+    if (win !== null) {
+      win.show();
     }
   });
 
@@ -137,7 +192,13 @@ app.on("ready", async () => {
       console.error("Vue Devtools failed to install:", e.toString());
     }
   }
-  createWindow();
+  createLoadingScreen();
+  if (!tray) {
+    tray = createTray();
+  }
+  setTimeout(() => {
+    createWindow();
+  }, 4000);
 
   ipcMain.on("resize-me-smaller-please", (event, arg) => {
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;

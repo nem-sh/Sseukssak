@@ -48,6 +48,9 @@
             <span><i class="fas fa-moon fa-lg"></i></span>
           </div>
         </div> -->
+        <div class="menu--settings" @click="goInfoPage">
+          <img class="app-logo" src="@/assets/sweeping.png" alt="" />
+        </div>
       </div>
       <div class="main">
         <!-- <div class="top-space"></div> -->

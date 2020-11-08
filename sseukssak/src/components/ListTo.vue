@@ -9,10 +9,10 @@
     <div class="to-part-first">
       <div class="select-folder">
         <v-row>
-          <v-col cols="3" class="to-name">
+          <v-col cols="2" class="to-name">
             <h3><span>To</span></h3></v-col
           >
-          <v-col cols="7" align="center" justify="center" class="mt-5">
+          <v-col cols="7" align="center" justify="center">
             <v-select
               :items="toLibraryNameList"
               v-model="selectedToName"
@@ -20,7 +20,7 @@
               dense
             ></v-select>
           </v-col>
-          <v-col cols="2" class="d-flex flex-column">
+          <v-col cols="3" class="d-flex flex-column">
             <ModalCreateToLibrary @create="changeSN" />
             <div class="mt-2">
               <v-btn
@@ -480,33 +480,13 @@ export default class ListTo extends Vue {
 </script>
 
 <style>
-.to-name h3 {
-  /* margin: 20px; */
-  /* font-family: "Paytone One" !important; */
-  color: #202020;
-  text-transform: uppercase;
-  letter-spacing: -2px;
-}
-
-.to-name h3 span {
-  display: block;
-  margin: 0 0 17px 10px;
-  font-size: 40px;
-  line-height: 40px;
-  color: #7288da;
-  text-shadow: 0 13.36px 8.896px #c4b59d, 0 -2px 1px #fff;
-  letter-spacing: -4px;
-}
-
 .to-part-first {
-  padding-top: 28px;
+  padding-top: 20px;
   width: 100%;
-  height: 25%;
 }
 
 .to-part-second {
   width: 100%;
-  height: 70%;
   padding: 10px 0 10px 0;
 }
 

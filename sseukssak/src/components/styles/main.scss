@@ -130,6 +130,41 @@ body::-webkit-scrollbar {
   }
 }
 
+.menu--settings {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  color: white;
+  position: relative;
+  &.active {
+    &:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 13px;
+      background: white;
+      height: 46px;
+      border-radius: 33px;
+      margin-left: -19px;
+    }
+  }
+  &:hover {
+    border-radius: 20%;
+    background: var(--color-purple);
+  }
+}
+
+.menu--settings img {
+  width: 75%;
+  height: 75%;
+}
+
 .menu--icon img {
   width: 75%;
   height: 75%;
@@ -271,12 +306,24 @@ body::-webkit-scrollbar {
 
 .from-to-name h3 span {
   display: block;
-  margin: 0 0 17px 10px;
   font-size: 40px;
   line-height: 40px;
   color: #7288da;
-  text-shadow: 0 13.36px 8.896px #c4b59d, 0 -2px 1px #fff;
-  letter-spacing: -4px;
+}
+
+.to-name h3 {
+  /* margin: 20px; */
+  /* font-family: "Paytone One" !important; */
+  color: #202020;
+  text-transform: uppercase;
+  letter-spacing: -2px;
+}
+
+.to-name h3 span {
+  display: block;
+  font-size: 40px;
+  line-height: 40px;
+  color: #7288da;
 }
 
 .menu--update {

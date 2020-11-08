@@ -802,7 +802,7 @@ export default class ListFrom extends Vue {
 
 <style>
 .from-part-first {
-  padding-top: 28px;
+  padding-top: 20px;
   width: 100%;
 }
 
