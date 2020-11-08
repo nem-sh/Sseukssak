@@ -34,7 +34,6 @@
           </v-col>
         </v-row>
       </div>
-
       <!-- <div class="select-date" align="center">
         <v-btn-toggle v-model="text" tile color="#7288da" group>
           <v-btn

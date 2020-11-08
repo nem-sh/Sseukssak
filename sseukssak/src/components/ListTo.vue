@@ -78,12 +78,6 @@
               </v-list-item-content>
               <v-list-item-action>
                 <v-row align="center" justify="center" class="pa-0">
-                  <!-- <v-col cols="4" class="pa-0">
-                    <ModalCheckDirectoryTags />
-                  </v-col> -->
-                  <!-- <v-col cols="6" class="pa-0">
-                    <ModalModifyToLibraryDirectory :propDirectory="item"/>
-                  </v-col> -->
                   <v-col cols="6" class="pa-0">
                     <v-menu top :offset-y="offset">
                       <template v-slot:activator="{ on, attrs }">
@@ -157,7 +151,6 @@ import Swal from "sweetalert2";
 import ModalCreateToLibrary from "@/components/ModalCreateToLibrary.vue";
 import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.vue";
 // import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
-import ModalCheckDirectoryTags from "@/components/ModalCheckDirectoryTags.vue";
 
 import { shell } from "electron";
 
@@ -180,7 +173,6 @@ interface ToLibraryDirectory {
     ModalCreateToLibrary,
     ModalAddToLibraryDirectory,
     // ModalModifyToLibraryDirectory,
-    ModalCheckDirectoryTags,
   },
   computed: mapState(["toLibraryList", "toLibraryNameList", "fromDir"]),
   methods: mapMutations([
