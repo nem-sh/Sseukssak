@@ -12,15 +12,16 @@
           <v-col cols="2" class="to-name">
             <h3><span>To</span></h3></v-col
           >
-          <v-col cols="7" align="center" justify="center">
+          <v-col cols="8" align="center" justify="center" class="mt-5">
             <v-select
               :items="toLibraryNameList"
               v-model="selectedToName"
               label="Select rule"
               dense
+              outlined
             ></v-select>
           </v-col>
-          <v-col cols="3" class="d-flex flex-column">
+          <v-col cols="2" class="d-flex flex-column">
             <ModalCreateToLibrary @create="changeSN" />
             <div class="mt-2">
               <v-btn

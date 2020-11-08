@@ -1,12 +1,13 @@
 <template>
   <div class="pl-0">
     <v-btn color="#7288da" rounded dark @click="dialog = true">추가</v-btn>
-    <v-dialog
-      v-model="dialog"
-      max-width="400"
-    >
+    <v-dialog v-model="dialog" max-width="400">
       <v-card>
-        <v-card-title dark color="#7288da" style="background-color:#7288da; color:white">
+        <v-card-title
+          dark
+          color="#7288da"
+          style="background-color: #7288da; color: white"
+        >
           새로운 정리 규칙 생성
           <v-spacer></v-spacer>
           <v-btn
@@ -21,7 +22,11 @@
         </v-card-title>
         <v-card-text class="pt-4">
           <div>
-            <v-text-field @keypress.enter="createLibrary" label="정리 규칙명" v-model="libraryTitle">
+            <v-text-field
+              @keypress.enter="createLibrary"
+              label="정리 규칙명"
+              v-model="libraryTitle"
+            >
             </v-text-field>
           </div>
         </v-card-text>
@@ -33,8 +38,7 @@
 <script lang='ts'>
 import { Vue, Component } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
-import Swal from "sweetalert2"
-
+import Swal from "sweetalert2";
 
 interface ToLibrary {
   name: string;
@@ -79,7 +83,7 @@ export default class ModalCreateToLibrary extends Vue {
         showConfirmButton: false,
         timer: 1000,
       });
-      return
+      return;
     }
     const tempLibraryList: ToLibrary[] = this.toLibraryList;
 
@@ -111,7 +115,7 @@ export default class ModalCreateToLibrary extends Vue {
       JSON.stringify(tempLibraryList)
     );
 
-    this.$emit("create", this.libraryTitle)
+    this.$emit("create", this.libraryTitle);
     this.libraryTitle = "";
     this.libraryDirectories = [];
     Swal.fire({
