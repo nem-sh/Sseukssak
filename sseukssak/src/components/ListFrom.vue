@@ -34,7 +34,6 @@
           </v-col>
         </v-row>
       </div>
-
       <!-- <div class="select-date" align="center">
         <v-btn-toggle v-model="text" tile color="#7288da" group>
           <v-btn
@@ -73,11 +72,10 @@
         <v-virtual-scroll
           v-if="fileList.length !== 0"
           :items="fileList"
-          height="380"
+          height="420"
           item-height="90"
           class="file-scroller"
         >
-          <div v-if="fileList.length === 0">Nono</div>
           <template v-slot:default="{ item }">
             <div :key="item.name" class="d-flex align-start mx-5 pt-3">
               <div v-if="fileList.indexOf(item) === 0" class="pa-2 file-box">
@@ -802,7 +800,7 @@ export default class ListFrom extends Vue {
 
 <style>
 .from-part-first {
-  padding-top: 28px;
+  padding-top: 20px;
   width: 100%;
 }
 
