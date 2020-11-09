@@ -1,53 +1,89 @@
 <template>
-    <v-dialog
-                    class="file-scroller"
-                    v-model="dialog3"
-                    persistent
-                    max-width="500"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn color="green" text v-bind="attrs" v-on="on">
-                        <i class="fas fa-folder-plus mr-2"></i>구글 드라이브
-                      </v-btn>
-                    </template>
-                    <v-card>
-                      <v-card-title>
-                        생성할 구글 드라이브 폴더 명을 입력해 주세요
-                      </v-card-title>
-                     
-                      <v-card-text>
-                        <v-text-field
-                          v-model="readFromDirName"
-                          label="새 폴더명 입력"
-                        >
-                        </v-text-field
-                      ></v-card-text>
+  <v-dialog
+    v-if="isLogin"
+    class="file-scroller"
+    v-model="dialog"
+    persistent
+    max-width="500"
+  >
+    <template v-slot:activator="{ on, attrs }">
+      <v-btn color="green" text v-bind="attrs" v-on="on">
+        <i class="fab fa-google-drive mr-2"></i>구글 드라이브
+      </v-btn>
+    </template>
 
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                          color="green darken-1"
-                          text
-                          @click="dialog3 = false"
-                        >
-                          취소
-                        </v-btn>
-                        <v-btn color="green darken-1" text @click="readFromDir">
-                          추가
-                        </v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
+    <v-card>
+      <v-card-title>
+        생성할 구글 드라이브 폴더 명을 입력해 주세요
+      </v-card-title>
+      <v-card-text>
+        <v-text-field
+          v-model="folderName"
+          label="새 폴더명 입력"
+        >
+        </v-text-field>
+      </v-card-text>
 
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="red darken-1"
+          text
+          @click="dialog = false"
+        >
+          취소
+        </v-btn>
+        <v-btn color="green darken-1" text @click="makeGoogleFolder">
+          추가
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script lang='ts'>
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import fs from 'fs'
+import { mapState } from 'vuex'
+import { google } from 'googleapis';
 
 
-@Component
+@Component({
+  computed:mapState([
+    "oAuth2Client",
+    "isLogin"
+  ]),
+})
+
 export default class BtnCreateGoogleFolder extends Vue {
+  dialog: boolean = false
+  folderName: string = ''
+  isLogin!: boolean
+  oAuth2Client!: any
+  // drive: any = google.drive({version: 'v3', auth: this.oAuth2Client})
+
+  makeGoogleFolder(){
+    console.log(this.oAuth2Client)
+    const drive = google.drive({version: 'v3', auth: this.oAuth2Client})
+    const fileMetadata = {
+      'name': this.folderName,
+      'mimeType': 'application/vnd.google-apps.folder'
+    }
+    drive.files.create({
+      requestBody : fileMetadata,
+      fields: 'id'
+    }, (err, file) => {
+      if (err){
+        alert('폴더 생성에 실패했습니다.')
+      }else{
+        console.log(file)
+        alert('폴더 생성에 성공했습니다.')
+      }
+      this.dialog = false
+    })
+  }
+
 
 }
 </script>
