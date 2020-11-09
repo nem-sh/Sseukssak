@@ -24,13 +24,8 @@
               <h3>폴더를 선택해주세요!</h3>
             </div>
           </v-col>
-          <v-col cols="1" class="d-flex align-center justify-center"
+          <v-col cols="2" class="d-flex align-center justify-center"
             ><BtnSelectFromDir />
-          </v-col>
-          <v-col cols="1" class="d-flex align-center justify-center"
-            ><v-btn icon @click="renewFrom">
-              <i class="fas fa-sync-alt fa-2x"></i>
-            </v-btn>
           </v-col>
         </v-row>
       </div>
@@ -68,17 +63,33 @@
     </div>
 
     <div class="from-part-second">
+      <div class="d-flex justify-end">
+        <ListFromFilter @filter-date="filterDate" :state="filterState" />
+        <v-btn
+          class="ma-2"
+          outlined
+          rounded
+          small
+          color="var(--color-purple)"
+          @click="renewFrom"
+        >
+          <i class="fas fa-sync-alt mr-2"></i>새로고침
+        </v-btn>
+      </div>
       <div class="rounded-xl" height="100%">
         <v-virtual-scroll
-          v-if="fileList.length !== 0"
-          :items="fileList"
+          v-if="fileScrollList.length !== 0"
+          :items="fileScrollList"
           height="420"
           item-height="90"
           class="file-scroller"
         >
           <template v-slot:default="{ item }">
             <div :key="item.name" class="d-flex align-start mx-5 pt-3">
-              <div v-if="fileList.indexOf(item) === 0" class="pa-2 file-box">
+              <div
+                v-if="fileScrollList.indexOf(item) === 0"
+                class="pa-2 file-box"
+              >
                 <div align="center" @click="enterDirectory('')">
                   <div class="folder--icon">
                     <i class="fas fa-long-arrow-up fa-2x mx-auto"></i>
@@ -239,7 +250,11 @@
       </div>
     </div>
 
-    <div v-if="fileList.length !== 0" class="from-part-third" align="right">
+    <div
+      v-if="fileScrollList.length !== 0"
+      class="from-part-third"
+      align="right"
+    >
       <BtnDupCheck mr-5 />
       <BtnMoveFile />
     </div>
@@ -372,7 +387,7 @@
           >
         </li>
         <li>
-          <BtnUploadGoogleDrive v-bind:fileName="selectedData.name"/>
+          <BtnUploadGoogleDrive v-bind:fileName="selectedData.name" />
         </li>
         <li>
           <a @click="getInfo()" style="display: flex; align-items: center"
@@ -467,8 +482,10 @@ import { BUS } from "./EventBus.js";
 import BtnMoveFile from "@/components/BtnMoveFile.vue";
 import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
 import BtnDupCheck from "@/components/BtnDupCheck.vue";
+import ListFromBreadcrumbs from "@/components/listFrom/ListFromBreadcrumbs.vue";
+import ListFromFilter from "@/components/listFrom/ListFromFilter.vue";
 
-import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.vue"
+import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.vue";
 import Swal from "sweetalert2";
 // import { shell } from "electron";
 const { shell } = require("electron").remote;
@@ -498,7 +515,9 @@ interface Directory {
     BtnMoveFile,
     BtnSelectFromDir,
     BtnDupCheck,
-    BtnUploadGoogleDrive
+    BtnUploadGoogleDrive,
+    ListFromBreadcrumbs,
+    ListFromFilter,
   },
   computed: mapState(["fileSortList", "fromDir", "fileList"]),
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
@@ -515,6 +534,7 @@ export default class ListFrom extends Vue {
   fileSortList!: SortList[];
   dialog: boolean = false;
   dialog2: boolean = false;
+  filterState: string = "";
   rules: object = {
     required: (value) => !!value || "Required.",
     speical: (v) =>
@@ -699,6 +719,7 @@ export default class ListFrom extends Vue {
     return false;
   }
   async enterDirectory(enteredDirectory: string) {
+    this.filterState = "전체보기";
     if (enteredDirectory == "") {
       const dir: string[] = this.fromDir.split("\\");
       dir.pop();
@@ -710,11 +731,10 @@ export default class ListFrom extends Vue {
   }
   async renewFrom() {
     this.getFrom(this.fromDir);
+    this.filterState = "전체보기";
   }
   async getFrom(dir: string) {
-    console.log(12);
     const fileList: string[] = fs.readdirSync(dir);
-    console.log(3);
     const fileSortList: SortList = { directories: [], files: [] };
     fileList.forEach((name: string) => {
       const fileSplit = name.split(".");
@@ -759,13 +779,8 @@ export default class ListFrom extends Vue {
         fileSortList.files.push(file);
       }
     });
-
     this.changeFileSortList(fileSortList);
     this.changeFileList(fileList);
-  }
-
-  get items() {
-    return Array.from({ length: this.fromListLen }, (k, v) => v + 1);
   }
 
   get dirPath() {
@@ -791,9 +806,45 @@ export default class ListFrom extends Vue {
     return totalFileForScroll;
   }
 
-  get fileList() {
-    const fileList = this.makeListForScroll();
-    return fileList;
+  get fileScrollList() {
+    const fileScrollList = this.makeListForScroll();
+    return fileScrollList;
+  }
+  filterDate(id) {
+    const fileSortList: SortList = { directories: [], files: [] };
+    if (id === 1) {
+      this.getFrom(this.fromDir);
+    } else {
+      for (let i = 0; i < this.fileSortList["directories"].length; i++) {
+        if (
+          this.compareTime(this.fileSortList["directories"][i].birthTime) &&
+          id === 2
+        ) {
+          fileSortList.directories.push(this.fileSortList["directories"][i]);
+        }
+        if (
+          this.compareTime(this.fileSortList["directories"][i].updatedTime) &&
+          id === 3
+        ) {
+          fileSortList.directories.push(this.fileSortList["directories"][i]);
+        }
+      }
+      for (let i = 0; i < this.fileSortList["files"].length; i++) {
+        if (
+          this.compareTime(this.fileSortList["files"][i].birthTime) &&
+          id === 2
+        ) {
+          fileSortList.files.push(this.fileSortList["files"][i]);
+        }
+        if (
+          this.compareTime(this.fileSortList["files"][i].updatedTime) &&
+          id === 3
+        ) {
+          fileSortList.files.push(this.fileSortList["files"][i]);
+        }
+      }
+      this.changeFileSortList(fileSortList);
+    }
   }
 }
 </script>
