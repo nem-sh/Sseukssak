@@ -77,7 +77,28 @@ const { shell } = require('electron').remote
   },
   methods:mapMutations([
     "changeLoginState"
-  ])
+  ]),
+  created() {
+    fs.stat(this.tokenPath, (err) => {
+      if (!err) {
+        const token = fs.readFile(this.tokenPath,(err,data) => {
+          if(!err){
+            const savedToken = JSON.parse(data)
+            this.oAuth2Client.setCredentials(savedToken)
+            this.oAuth2Client.on('tokens',(tokens)=>{
+              if (tokens['refresh_token']){
+                savedToken['refresh_token'] = tokens['refresh_token']
+              }              
+              savedToken['access_token'] = tokens['access_token']
+              fs.writeFileSync(this.tokenPath,savedToken)
+            })
+          }
+        })
+        console.log(this.oAuth2Client)
+        this.changeLoginState(true)
+      }
+    })
+  }
 })
 
 export default class BtnLoginGoogle extends Vue {
@@ -103,12 +124,11 @@ export default class BtnLoginGoogle extends Vue {
   }
 
   
-  logout(){
-    
+  logout(){    
     fs.unlink(this.tokenPath, (err)=>{
-      if (err) return console.error(err);
+      if (err) return alert(`구글 드라이브 연동 해제에 실패했습니다.${err}`);
       this.changeLoginState(false)
-      console.log(this.isLogin)
+      alert('구글 드라이브 연동 해제에 성공했습니다.');
     })
   }
 
@@ -116,14 +136,16 @@ export default class BtnLoginGoogle extends Vue {
       this.dialog = false
       this.changeLoginState(true)
       oAuth2Client.getToken(this.code, (err, token) => {
-          if (err) return console.error('Error retrieving access token', err);
-
+          if (err) return alert('잘못된 코드입니다. 다시 확인해주세요.')
+          
           oAuth2Client.setCredentials(token);
           
           fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
               if (err) return console.error(err);
               console.log('Token stored to', TOKEN_PATH);
           });
+
+          alert('구글 드라이브를 연동에 성공했습니다.')
       })
   }
 }
