@@ -19,6 +19,7 @@ interface DirState {
   dropToDir: string;
   modifyDirectroy: ToLibraryDirectory;
   renameHistory: any[][];
+  renameHistory2: any[][];
 
   moveHistory: any[][];
   renameFileList: FileInfo[];
@@ -98,7 +99,7 @@ export default new Vuex.Store({
       titleTags: [],
     },
     renameHistory: [],
-
+    renameHistory2: [],
     moveHistory: [],
     renameFileList: [],
     beforeItems: [],
@@ -231,8 +232,10 @@ export default new Vuex.Store({
     },
     changeLoginState(state: DirState, value: boolean){
       state.isLogin = value
-    }
-
+    },
+    changeRenameHistory2(state: DirState, newHistory: []) {
+      state.renameHistory2.push(newHistory);
+    },
   },
   actions: {},
   getters: {
