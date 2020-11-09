@@ -73,6 +73,7 @@ interface FileInfo {
   mtime: Date;
   type: string;
   dir: string;
+  icon: string;
 }
 
 export default new Vuex.Store({

@@ -4,7 +4,7 @@
     <v-dialog v-model="dialog" max-width="400">
       <v-card>
         <v-card-title class="pr-3" dark color="#7288da" style="background-color:#7288da; color:white">
-          새로운 정리 규칙 생성
+          새로운 정리 규칙 추가
           <v-spacer></v-spacer>
           <v-btn
             class="pr-0"
@@ -26,7 +26,7 @@
                 dark
                 @click="createLibrary"
               >
-                정리 규칙 추가
+                추가
               </v-btn>
             </div>
           </div>
