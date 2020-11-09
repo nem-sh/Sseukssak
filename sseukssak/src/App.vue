@@ -3,7 +3,7 @@
     <div class="window-operations-container">
       <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
       <div class="operations">
-        <!-- <BtnLoginGoogle /> -->
+        <BtnLoginGoogle class="mr-1"/>
         <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
         <!-- <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i> -->
         <!-- <i
@@ -15,24 +15,65 @@
       </div>
     </div>
     <div class="app-main">
-      <div v-if="!mini" class="menu">
-        <div class="top-space"></div>
-        <div class="menu--logo" @click="goInfoPage">
-          <img class="app-logo" src="@/assets/sweeping.png" alt="" />
-        </div>
-        <div class="menu--separator"></div>
-        <div
-          class="menu--icon"
-          v-for="item in items"
-          :key="item.title"
-          :to="item.path == '#' ? '' : item.path"
-          @click="goMenu(item.id)"
-          :class="{ active: activeTab === item.title }"
-        >
-          <span><i :class="item.icon"></i></span>
-        </div>
-        <!-- 다크모드 -->
-        <!-- <div>
+      <div>
+        <div class="menu">
+          <div v-if="!mini" class="menu-first">
+            <div class="top-space"></div>
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <div class="menu--logo" v-bind="attrs" v-on="on">
+                  <img class="app-logo" src="@/assets/sweeping.png" alt="" />
+                </div>
+              </template>
+              <span>쓱싹</span>
+            </v-tooltip>
+
+            <div class="menu--separator"></div>
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  class="menu--icon"
+                  @click="goMenu(1)"
+                  v-bind="attrs"
+                  v-on="on"
+                  :class="{ active: activeTab === 'Home' }"
+                >
+                  <span><i class="fas fa-folders fa-lg"></i></span>
+                </div>
+              </template>
+              <span>파일 정리</span>
+            </v-tooltip>
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  class="menu--icon"
+                  @click="goMenu(2)"
+                  v-bind="attrs"
+                  v-on="on"
+                  :class="{ active: activeTab === 'Rename' }"
+                >
+                  <span><i class="fas fa-pencil fa-lg"></i></span>
+                </div>
+              </template>
+              <span>Rename</span>
+            </v-tooltip>
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  class="menu--icon"
+                  @click="goMenu(3)"
+                  v-bind="attrs"
+                  v-on="on"
+                  :class="{ active: activeTab === 'Restore' }"
+                >
+                  <span><i class="far fa-history fa-lg"></i></span>
+                </div>
+              </template>
+              <span>History</span>
+            </v-tooltip>
+
+            <!-- 다크모드 -->
+            <!-- <div>
           <div
             v-show="this.$vuetify.theme.dark"
             class="menu--icon"
@@ -48,9 +89,38 @@
             <span><i class="fas fa-moon fa-lg"></i></span>
           </div>
         </div> -->
+          </div>
+          <div v-if="!mini" class="menu-second">
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  class="menu--settings"
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="goSettingsPage"
+                >
+                  <span><i class="far fa-cog fa-lg"></i></span>
+                </div>
+              </template>
+              <span>환경설정</span>
+            </v-tooltip>
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  class="menu--settings"
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="goInfoPage"
+                >
+                  <span><i class="far fa-question fa-lg"></i></span>
+                </div>
+              </template>
+              <span>도움말</span>
+            </v-tooltip>
+          </div>
+        </div>
       </div>
       <div class="main">
-        <!-- <div class="top-space"></div> -->
         <router-view></router-view>
       </div>
     </div>
@@ -59,6 +129,7 @@
 
 <script lang="ts">
 import Vue from "vue";
+import Swal from "sweetalert2";
 import Component from "vue-class-component";
 import Home from "@/views/Home.vue";
 import "./components/styles/main.scss";
@@ -81,12 +152,12 @@ const { ipcRenderer, shell } = window.require("electron");
           icon: "fas fa-pencil fa-lg",
           path: "rename",
         },
-        // {
-        //   id: 3,
-        //   title: 'Restore',
-        //   icon: 'fa fa-history fa-lg',
-        //   path: 'restore'
-        // }
+        {
+          id: 3,
+          title: "Restore",
+          icon: "fa fa-history fa-lg",
+          path: "restore",
+        },
       ],
     };
   },
@@ -106,8 +177,15 @@ export default class App extends Vue {
       this.activeTab = "Rename";
       this.$router.push({ name: "Rename" });
     } else if (idx === 3 && this.$route.name !== "Restore") {
-      this.activeTab = "Restore";
-      this.$router.push({ name: "Restore" });
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "준비중 입니다 :)",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+      // this.activeTab = "Restore";
+      // this.$router.push({ name: "Restore" });
     }
   }
 
@@ -148,6 +226,16 @@ export default class App extends Vue {
   changeMode() {
     this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
   }
+
+  goSettingsPage() {
+    Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: "준비중 입니다 :)",
+      showConfirmButton: false,
+      timer: 1000,
+    });
+  }
 }
 </script>
 
@@ -157,5 +245,8 @@ export default class App extends Vue {
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
   color: #2c3e50;
+}
+.swal2-popup {
+  color: rebeccapurple;
 }
 </style>

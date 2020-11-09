@@ -1,5 +1,5 @@
 <template>
-  <v-btn icon @click="read">
+  <v-btn icon @click="read(true)">
     <i class="far fa-folder-open fa-2x"></i>
   </v-btn>
 </template>
@@ -9,10 +9,14 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import fs, { realpath } from "fs";
 import { mapMutations, mapState } from "vuex";
-
+import { BUS } from "./EventBus.js";
 const { dialog } = require("electron").remote;
 import { shell } from "electron";
 const { app } = require("electron").remote;
+
+const homeDir = require("os").homedir();
+const desktopDir = `${homeDir}/Desktop`;
+
 interface SortList {
   directories: Directory[];
   files: File[];
@@ -31,22 +35,34 @@ interface Directory {
 }
 
 @Component({
-  computed: mapState(["fromDir"]),
-  methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
+  computed: mapState(["fromDir", "firstOpen"]),
+  methods: mapMutations([
+    "changeDir",
+    "changeFileList",
+    "changeFileSortList",
+    "changeFirstOpenValue",
+  ]),
 })
 export default class BtnSelectFromDir extends Vue {
   fromDir!: string;
+  firstOpen!: boolean;
 
   changeDir!: (newDir: string) => void;
   changeFileList!: (newList: string[]) => void;
   changeFileSortList!: (newList: SortList) => void;
+  changeFirstOpenValue!: () => void;
 
-  async read() {
-    const rs = dialog.showOpenDialogSync({
-      properties: ["openDirectory"],
-    });
-    if (!rs) return;
-    this.changeDir(rs[0]);
+  async read(open) {
+    this.changeFirstOpenValue();
+    if (open) {
+      const rs = dialog.showOpenDialogSync({
+        properties: ["openDirectory"],
+      });
+      if (!rs) return;
+      this.changeDir(rs[0]);
+    } else {
+      this.changeDir(desktopDir);
+    }
     const fileList = fs.readdirSync(this.fromDir);
 
     const fileSortList: SortList = { directories: [], files: [] };
@@ -93,6 +109,11 @@ export default class BtnSelectFromDir extends Vue {
     });
     this.changeFileSortList(fileSortList);
     this.changeFileList(fileList);
+  }
+  mounted() {
+    if (this.firstOpen) {
+      this.read(false);
+    }
   }
 }
 </script>

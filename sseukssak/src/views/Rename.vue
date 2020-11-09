@@ -21,7 +21,13 @@
               </v-row>
             </v-col>
             <v-col cols="1" v-show="n === 1" class="text-center px-0 my-auto">
-              <v-btn dark text color="#7288da" @click="nextStep(n)" class="px-0">
+              <v-btn
+                dark
+                text
+                color="#7288da"
+                @click="nextStep(n)"
+                class="px-0"
+              >
                 <i class="fas fa-angle-double-right fa-3x"></i>
               </v-btn>
             </v-col>
@@ -92,18 +98,15 @@ export default class Rename extends Vue {
 }
 .rename-title span {
   display: block;
-  margin: 0 0 17px 10px;
-  font-size: 40px;
-  line-height: 40px;
+  font-size: 30px;
+  line-height: 30px;
   color: #7288da;
-  text-shadow: 0 13.36px 8.896px #c4b59d, 0 -2px 1px #fff;
-  letter-spacing: -4px;
 }
 .rename-title-d span {
   display: block;
   margin: 0 0 17px 10px;
-  font-size: 40px;
-  line-height: 40px;
+  font-size: 30px;
+  line-height: 30px;
   color: #7288da;
   text-shadow: 0 13.36px 8.896px black, 0 -2px 1px rgb(122, 120, 120);
   letter-spacing: -4px;

@@ -1,10 +1,7 @@
 <template>
   <div class="pl-0">
     <v-btn color="#7288da" rounded dark @click="dialog = true">추가</v-btn>
-    <v-dialog
-      v-model="dialog"
-      max-width="400"
-    >
+    <v-dialog v-model="dialog" max-width="400">
       <v-card>
         <v-card-title class="pr-3" dark color="#7288da" style="background-color:#7288da; color:white">
           새로운 정리 규칙 생성
@@ -42,8 +39,7 @@
 <script lang='ts'>
 import { Vue, Component } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
-import Swal from "sweetalert2"
-
+import Swal from "sweetalert2";
 
 interface ToLibrary {
   name: string;
@@ -92,7 +88,7 @@ export default class ModalCreateToLibrary extends Vue {
         showConfirmButton: false,
         timer: 1000,
       });
-      return
+      return;
     }
     const tempLibraryList: ToLibrary[] = this.toLibraryList;
 
@@ -124,7 +120,7 @@ export default class ModalCreateToLibrary extends Vue {
       JSON.stringify(tempLibraryList)
     );
 
-    this.$emit("create", this.libraryTitle)
+    this.$emit("create", this.libraryTitle);
     this.libraryTitle = "";
     this.libraryDirectories = [];
     Swal.fire({
