@@ -1,7 +1,7 @@
 <template>
   <v-container class="screen" :class="bgMode">
     <div class="mt-10">
-      <h3 :class="titleMode"><span>통일한 파일/폴더명 변경</span></h3>
+      <h3 :class="titleMode"><span>RENAME</span></h3>
     </div>
 
     <v-stepper v-model="e1">

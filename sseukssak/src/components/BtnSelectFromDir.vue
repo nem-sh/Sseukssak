@@ -15,7 +15,7 @@ import { shell } from "electron";
 const { app } = require("electron").remote;
 
 const homeDir = require("os").homedir();
-const desktopDir = `${homeDir}/Desktop`;
+const desktopDir = `${homeDir}\\Desktop`;
 
 interface SortList {
   directories: Directory[];
