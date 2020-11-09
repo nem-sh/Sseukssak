@@ -6,23 +6,32 @@
       max-width="400"
     >
       <v-card>
-        <v-card-title dark color="#7288da" style="background-color:#7288da; color:white">
+        <v-card-title class="pr-3" dark color="#7288da" style="background-color:#7288da; color:white">
           새로운 정리 규칙 생성
           <v-spacer></v-spacer>
           <v-btn
+            class="pr-0"
+            text
             color="white"
-            class="text--primary"
-            fab
-            small
-            @click="createLibrary"
+            @click="dialog = false"
           >
-            <v-icon>mdi-plus</v-icon>
+            <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
         <v-card-text class="pt-4">
           <div>
-            <v-text-field @keypress.enter="createLibrary" label="정리 규칙명" v-model="libraryTitle">
+            <v-text-field :rules="rules" @keypress.enter="createLibrary" label="정리 규칙명" v-model="libraryTitle">
             </v-text-field>
+            <div class="text-right">
+              <v-btn
+                color="#7288da"
+                rounded
+                dark
+                @click="createLibrary"
+              >
+                정리 규칙 추가
+              </v-btn>
+            </div>
           </div>
         </v-card-text>
       </v-card>
@@ -57,6 +66,10 @@ export default class ModalCreateToLibrary extends Vue {
   libraryDirectories: ToLibraryDirectory[] = [];
   libraryTitle: string = "";
   dialog: boolean = false;
+
+  rules: object = [
+    (v) => !!v || "It is required",
+  ];
 
   //vuex
   toLibraryList!: ToLibrary[];

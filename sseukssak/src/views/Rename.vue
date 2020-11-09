@@ -1,28 +1,10 @@
 <template>
   <v-container class="screen" :class="bgMode">
     <div class="mt-10">
-      <h3 :class="titleMode"><span>통일한 폴더/파일명 변경</span></h3>
+      <h3 :class="titleMode"><span>통일한 파일/폴더명 변경</span></h3>
     </div>
 
     <v-stepper v-model="e1">
-      <!-- <v-stepper-header>
-        <template v-for="n in steps">
-          <v-stepper-step
-            :key="`${n}-step`"
-            :complete="e1 > n"
-            :step="n"
-            editable
-          >
-            {{ title[n-1] }}
-          </v-stepper-step>
-
-          <v-divider
-            v-if="n !== steps"
-            :key="n"
-          ></v-divider>
-        </template>
-      </v-stepper-header> -->
-
       <v-stepper-items>
         <v-stepper-content v-for="n in steps" :key="`${n}-content`" :step="n">
           <v-row>
@@ -47,14 +29,6 @@
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
-    <!-- <div>
-      <FilterList/>
-      <v-row style="margin:2px">
-        <FileList/>
-        <div class="mx-1" :class="partMode"></div>
-        <PreviewList/>
-      </v-row>
-    </div> -->
   </v-container>
 </template>
 

@@ -2,12 +2,12 @@
   <v-col cols="12" :class="partMode">
     <div>
       <div :class="partTitleMode">
-        <h4 class="text-center">3. 확인 후 rename</h4>
+        <h4 class="text-center">3. 확인 및 변경</h4>
       </div>
     </div>
     <v-row>
       <v-col cols="5.5">
-        <p class="text-center" :class="partTitleMode">기존 폴더/파일명</p>
+        <p class="text-center font-weight-bold" :class="partTitleMode">Before</p>
         <!-- <v-divider></v-divider> -->
         <v-virtual-scroll
           class="file-scroller"
@@ -19,14 +19,14 @@
           <template v-slot:default="{ item }">
             <v-list-item :key="beforeItems.indexOf(item)">
               <v-list-item-content>
-                <p class="text-next-line">{{ beforeItems.indexOf(item) + 1 }}.{{ item.name }}</p>
+                <p class="text-next-line font-weight-bold">{{ beforeItems.indexOf(item) + 1 }}.{{ item.name }}</p>
               </v-list-item-content>
             </v-list-item>
           </template>
         </v-virtual-scroll>
       </v-col>
       <v-col cols="5.5">
-        <p class="text-center" :class="partTitleMode">변경될 폴더/파일명</p>
+        <p class="text-center font-weight-bold" style="color:blue" :class="partTitleMode">After</p>
         <!-- <v-divider></v-divider> -->
         <v-virtual-scroll
           class="file-scroller"
@@ -38,19 +38,19 @@
           <template v-slot:default="{ item }">
             <v-list-item :key="afterItems.indexOf(item)">
               <v-list-item-content>
-                <p class="text-next-line">{{ afterItems.indexOf(item) + 1 }}.{{ item.name }}</p>
+                <p class="text-next-line font-weight-bold" style="color:blue">{{ afterItems.indexOf(item) + 1 }}.{{ item.name }}</p>
               </v-list-item-content>
             </v-list-item>
           </template>
         </v-virtual-scroll>
       </v-col>
       <v-col cols="1" class="d-flex flex-column my-auto align-center">
-        <v-btn dark rounded class="mr-3" @click="rename" color="#7288da">
-          OK
+        <v-btn dark rounded class="mr-3 mb-2" @click="rename" color="#7288da">
+          변경
         </v-btn>
-        <!-- <v-btn rounded @click="logBack" :disabled="logBackCheck === false" color="red accent-2">
+        <v-btn rounded class="mr-3" @click="logBack" :disabled="logBackCheck === false" color="red accent-2">
           <i class="fas fa-redo-alt"></i>
-        </v-btn> -->
+        </v-btn>
       </v-col>
     </v-row>
   </v-col>
@@ -143,7 +143,7 @@ export default class Rename extends Vue {
     } else {
       // 특수문자 예외처리
       const specialC =  /[?:|*<>\\/"]/gi;
-      this.afterItems.forEach((item, i) => {
+      this.afterItems.forEach((item) => {
         if (item.name.search(specialC) !== -1) {
           Swal.fire({
             position: "center",
@@ -160,7 +160,7 @@ export default class Rename extends Vue {
         position: "center",
         icon: "warning",
         title: "이름을 변경하시겠습니까?",
-        text: "현재 베타 버전이라 복원 기능을 넣어놓지 않았습니다. 주의해주세요.",
+        text: "베타 버전입니다. 중요한 파일 변경은 주의해주세요.",
         showCancelButton: true,
         confirmButtonText: `Yes`,
       }).then((result) => {
@@ -191,8 +191,10 @@ export default class Rename extends Vue {
           } else {
             const o = path.join(item.dir, this.beforeItems[i].name);
             const n = path.join(item.dir, item.name);
-            fs.renameSync(o, n);
-            logData.push([this.beforeItems[i].name + " => " + item.name, 1, o, n, workTime, 3])
+            if (o !== n) {
+              fs.renameSync(o, n);
+              logData.push([this.beforeItems[i].name + " => " + item.name, 1, o, n, workTime, 3])
+            }
           }
         });
         if (dupTmp.length > 0) {
@@ -240,21 +242,43 @@ export default class Rename extends Vue {
   }
 
   logBack() {
-    this.changeLogBackCheck(false)
-    const lastLog = this.renameHistory[this.renameHistory.length - 1]
-    lastLog.forEach(log => {
-      // 예외처리(해당 폴더에 되돌리려는 파일명이 존재하면 -> 덮어씌어지지 않게)
-      if (fs.existsSync(log[2])) {
-        Swal.fire({
-          position: "center",
-          icon: "warning",
-          title: "되돌리려는 파일명과 같은 파일명이 존재합니다. 덮어씌우시겠습니까?",
-          text: log[2],
-          showCancelButton: true,
-          confirmButtonText: `Yes`,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // 예외처리(해당 폴더에 해당 파일이 존재하지 않으면)
+    Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: "이전 작업을 되돌리시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: `Yes`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.changeLogBackCheck(false)
+        const lastLog = this.renameHistory[this.renameHistory.length - 1]
+        lastLog.forEach(log => {
+          // 예외처리(해당 폴더에 되돌리려는 파일명이 존재하면 -> 덮어씌어지지 않게)
+          if (fs.existsSync(log[2])) {
+            Swal.fire({
+              position: "center",
+              icon: "warning",
+              title: "되돌리려는 파일명과 같은 파일명이 존재합니다. 덮어씌우시겠습니까?",
+              text: log[2],
+              showCancelButton: true,
+              confirmButtonText: `Yes`,
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // 예외처리(해당 폴더에 해당 파일이 존재하지 않으면)
+                try {
+                  fs.renameSync(log[3], log[2]);
+                } catch (error) {
+                  Swal.fire({
+                    position: "center",
+                    icon: "warning",
+                    title: "되돌리려는 파일이 존재하지 않습니다",
+                    showConfirmButton: false,
+                    timer: 1000,
+                  });
+                }
+              }
+            })
+          } else {
             try {
               fs.renameSync(log[3], log[2]);
             } catch (error) {
@@ -267,22 +291,9 @@ export default class Rename extends Vue {
               });
             }
           }
-        })
-      } else {
-        try {
-          fs.renameSync(log[3], log[2]);
-        } catch (error) {
-          Swal.fire({
-            position: "center",
-            icon: "warning",
-            title: "되돌리려는 파일이 존재하지 않습니다",
-            showConfirmButton: false,
-            timer: 1000,
-          });
-        }
-      }
-    });
-    this.initailizeRename()
+        });
+        this.initailizeRename()
+      }})
   }
   
   @Watch("beforeItems")
