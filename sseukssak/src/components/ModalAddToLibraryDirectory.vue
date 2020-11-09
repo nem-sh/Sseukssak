@@ -83,6 +83,7 @@
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
+                  <BtnCreateGoogleFolder/>
                 </div>
                 <div class="ml-3 mb-3 font-weight-bold d-flex align-center">
                   <img
@@ -222,6 +223,7 @@
 import { Vue, Component, Watch } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
 import Swal from "sweetalert2";
+import BtnCreateGoogleFolder from "@/components/googleDrive/BtnCreateGoogleFolder.vue"
 
 const { dialog } = require("electron").remote;
 
@@ -245,6 +247,9 @@ interface ToLibraryDirectory {
     "dropToDir",
   ]),
   methods: mapMutations(["changeToLibraryList", "changeDropToDir"]),
+  components: {
+    BtnCreateGoogleFolder
+  },
 })
 export default class ModalAddToLibraryDirectory extends Vue {
   // data
