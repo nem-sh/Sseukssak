@@ -48,7 +48,7 @@
         <v-btn dark rounded class="mr-3 mb-2" @click="rename" color="#7288da">
           변경
         </v-btn>
-        <v-btn rounded class="mr-3" @click="logBack" :disabled="logBackCheck === false" color="red accent-2">
+        <v-btn rounded dark class="mr-3" @click="logBack" :disabled="logBackCheck === false" color="red accent-2">
           <i class="fas fa-redo-alt"></i>
         </v-btn>
       </v-col>
@@ -78,7 +78,7 @@ interface FileInfo {
 
 @Component({
   computed: mapState(["filterFront", "filterMiddle", "filterBack", "frontName", "middleName", "backName", "renameFileList", "beforeItems", "afterItems", "dupCheck", "renameHistory", "logBackCheck"]),
-  methods: mapMutations(["changePreview", "changeRenameHistory", "changeLogBackCheck", "initailizeRename"])
+  methods: mapMutations(["changePreview", "changeRenameHistory", "changeRenameHistory2", "changeLogBackCheck", "initailizeRename"])
 })
 
 export default class Rename extends Vue {
@@ -97,6 +97,7 @@ export default class Rename extends Vue {
   benched: number = 0;
   changePreview!: () => void;
   changeRenameHistory!: (newHistory: any[]) => void;
+  changeRenameHistory2!: (newHistory: any[]) => void;
   changeLogBackCheck!: (newCheck: boolean) => void;
   initailizeRename!: () => void;
 
@@ -169,7 +170,7 @@ export default class Rename extends Vue {
         const dupTmp: Array<FileInfo> = []
         const dupTmpChange: Array<string> = []
         const logData: Array<object> = []
-        const workTime: Date = new Date()
+        const workTime: number = new Date().setTime(Date.now())
 
         this.afterItems.forEach((item, i) => {
           const dupIdx = this.dupCheck.indexOf(item.name)
@@ -194,6 +195,7 @@ export default class Rename extends Vue {
             if (o !== n) {
               fs.renameSync(o, n);
               logData.push([this.beforeItems[i].name + " => " + item.name, 1, o, n, workTime, 3])
+              this.changeRenameHistory2([this.beforeItems[i].name + " => " + item.name, 1, o, n, workTime, 3])
             }
           }
         });
@@ -217,6 +219,7 @@ export default class Rename extends Vue {
                 const n = path.join(item.dir, dupTmpChange[i]);
                 fs.renameSync(o, n);
                 logData.push([item + " => " + dupTmpChange[i], 1, o, n, workTime, 3])
+                this.changeRenameHistory2([this.beforeItems[i].name + " => " + item.name, 1, o, n, workTime, 3])
                 this.$emit("finish")
                 this.initailizeRename()
                 BUS.$emit("bus:refreshfilter");
