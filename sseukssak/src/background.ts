@@ -77,7 +77,7 @@ function createLoadingScreen() {
   loadingScreen.setAlwaysOnTop(true);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
-    if (loadingScreen !== null) {
+    /* if (loadingScreen !== null) {
       console.log(__dirname);
       loadingScreen.loadURL("file://" + __dirname + "/bundled/loading.html");
       loadingScreen.once("ready-to-show", () => {
@@ -85,7 +85,7 @@ function createLoadingScreen() {
           loadingScreen.show();
         }
       });
-    }
+    }*/
   } else {
     createProtocol("app");
     loadingScreen.loadURL("app://./loading.html");
