@@ -1,7 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import { google } from "googleapis";
+import { google } from 'googleapis';
+import { stat } from 'fs';
 
 Vue.use(Vuex);
 
@@ -34,6 +35,7 @@ interface DirState {
   // Google Auth
   tokenPath: string;
   oAuth2Client: any;
+  isLogin: boolean;
 }
 interface ToLibrary {
   name: string;
@@ -108,10 +110,11 @@ export default new Vuex.Store({
     // google dive
     tokenPath: "token.json",
     oAuth2Client: new google.auth.OAuth2(
-      "957933273560-84cubajfji0djc5k9r9n2okck14sribj.apps.googleusercontent.com",
-      "xErwUWs1A-ohs2fgcFFqdulF",
-      "urn:ietf:wg:oauth:2.0:oob"
+      '957933273560-84cubajfji0djc5k9r9n2okck14sribj.apps.googleusercontent.com',
+      'xErwUWs1A-ohs2fgcFFqdulF',
+      'urn:ietf:wg:oauth:2.0:oob'
     ),
+    isLogin: false
   },
   mutations: {
     changeModifyDirectroy(
@@ -214,6 +217,10 @@ export default new Vuex.Store({
     changeBackName(state: DirState, newName: string) {
       state.backName = newName;
     },
+    changeLoginState(state: DirState, value: boolean){
+      state.isLogin = value
+    }
+
   },
   actions: {},
   getters: {
