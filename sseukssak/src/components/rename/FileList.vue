@@ -6,7 +6,7 @@
     <div class="d-flex justify-space-between mt-2">
         <v-checkbox :style="{visibility: visibility}" v-model="selectCheck" color="#7288da" class="my-1" label="전체 선택"></v-checkbox>
         <div class="font-weight-bold">
-          {{ renameDir }}
+          {{ shortDir }}
           <v-btn icon @click="read()">
             <i class="far fa-folder-open fa-2x" :class="folderMode"></i>
           </v-btn>
@@ -34,7 +34,12 @@
           color="#7288da"
         >
         <template v-slot:label>
-          <img height="20px" :src="fileIcon(item.type)"/>{{item.name}}
+          <div v-if="item.type" class="d-flex">
+            <img height="20px" :src="item.icon" alt="icon" class="mr-1"/><span>{{item.name}}</span>
+          </div>
+          <div v-else class="d-flex">
+            <img height="20px" src="@/assets/folder-icon.png" alt="icon" class="mr-1"/><span>{{item.name}}</span>
+          </div>
         </template>
       </v-checkbox>
       </template>
@@ -50,6 +55,8 @@ import path from "path";
 import { mapMutations, mapState } from 'vuex';
 import { Watch } from 'vue-property-decorator';
 const { dialog } = require("electron").remote;
+const { shell } = require("electron").remote;
+const { app } = require("electron").remote;
 
 interface FileInfo {
   name: string;
@@ -58,6 +65,7 @@ interface FileInfo {
   mtime: Date;
   type: string;
   dir: string;
+  icon: string;
 }
 
 @Component({
@@ -77,71 +85,6 @@ export default class Rename extends Vue {
   sortBeforeItems!: () => void;
   sortRenameFileList!: () => void;
   initailizeRename!: () => void;
-  fileType: object = {
-    "Document": [
-      "ppt",
-      "pptx",
-      "doc",
-      "docx",
-      "xls",
-      "pdf",
-      "ai",
-      "pad",
-      "hwp",
-      "txt",
-      "md",
-    ],
-    "Image": [
-      "jpg",
-      "jpeg",
-      "jpe",
-      "gif",
-      "png",
-      "bmp",
-      "rle",
-      "dib",
-      "psd",
-      "pdd",
-      "raw",
-      "dcm",
-      "dc3",
-      "dic",
-      "eps",
-      "psb",
-      "pct",
-      "pict",
-      "pxr",
-      "pbm",
-      "pgm",
-      "pnm",
-      "pfm",
-      "pam",
-      "tiff",
-      "tif",
-      "cr2",
-      "srw",
-      "nrw",
-    ],
-    "Video": [
-      "avi",
-      "mpg",
-      "mpeg",
-      "mpe",
-      "wmv",
-      "asf",
-      "asx",
-      "flv",
-      "rm",
-      "mov",
-      "dat",
-      "mkv",
-      "flv",
-      "mov",
-      "mp4",
-    ],
-    "Audio": ["wav", "wma", "mp3"],
-    "Compressed": ["zip", "apk", "rar", "7z", "tar"],
-  };
   allSelect!: boolean;
   selectCheck: boolean = false;
   renameDir!: string;
@@ -162,20 +105,9 @@ export default class Rename extends Vue {
     return this.renameFileList.length > 0 ? 'visible' : 'hidden'
   }
 
-  fileIcon(type) {
-    if (this.fileType["Document"].includes(type)) {
-      return require('../../assets/docx_file.png')
-    } else if (this.fileType["Image"].includes(type)) {
-      return require('../../assets/image_file.png')
-    } else if (this.fileType["Video"].includes(type)) {
-      return require('../../assets/video_file.png')
-    } else if (this.fileType["Audio"].includes(type)) {
-      return require('../../assets/audio_file.png')
-    } else if (this.fileType["Compressed"].includes(type)) {
-      return require('../../assets/zip_file.png')
-    } else {
-      return require('../../assets/folder-icon.png')
-    }
+  get shortDir() {
+    const dirs = this.renameDir.split("\\")
+    return dirs[dirs.length - 1]
   }
 
   async read() {
@@ -205,7 +137,22 @@ export default class Rename extends Vue {
         mtime: stat.mtime,
         type: _fileType,
         dir: dir,
+        icon: "",
       };
+      // 파일 아이콘
+      let iconPath = dir + "/" + v;
+      if (v.includes(".lnk")) {
+        try {
+          iconPath = shell.readShortcutLink(iconPath).target;
+        } catch {
+          iconPath = dir + "/" + v;
+        }
+      }
+      let realIcon = "";
+      app.getFileIcon(iconPath).then((fileIcon) => {
+        realIcon = fileIcon.toDataURL();
+        item["icon"] = realIcon;
+        });
       tmpFileList.push(item)
     }
     await this.changeRenameFileList(tmpFileList);
