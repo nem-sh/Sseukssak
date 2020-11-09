@@ -31,6 +31,8 @@ interface DirState {
   frontName: string;
   middleName: string;
   backName: string;
+  allSelect: boolean;
+  renameDir: string;
 
   // Google Auth
   tokenPath: string;
@@ -104,9 +106,12 @@ export default new Vuex.Store({
     filterMiddle: "1",
     filterBack: "3",
     dupCheck: [],
-    frontName: "",
-    middleName: "",
-    backName: "",
+    frontName: '',
+    middleName: '',
+    backName: '',
+    allSelect: false,
+    renameDir: '',
+    
     // google dive
     tokenPath: "token.json",
     oAuth2Client: new google.auth.OAuth2(
@@ -185,8 +190,8 @@ export default new Vuex.Store({
         state.dupCheck.push(item.name);
       });
     },
-    changeRenameFileList(state: DirState, item: FileInfo) {
-      state.renameFileList.push(item);
+    changeRenameFileList(state: DirState, newlist: FileInfo[]) {
+      state.renameFileList = newlist;
     },
     changeBeforeItems(state: DirState, newItems: FileInfo[]) {
       state.beforeItems = newItems;
@@ -216,6 +221,12 @@ export default new Vuex.Store({
     },
     changeBackName(state: DirState, newName: string) {
       state.backName = newName;
+    },
+    changeAllSelect(state: DirState) {
+      state.allSelect = !state.allSelect
+    },
+    changeRenameDir(state: DirState, newDir: string) {
+      state.renameDir = newDir
     },
     changeLoginState(state: DirState, value: boolean){
       state.isLogin = value

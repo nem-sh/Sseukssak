@@ -1,7 +1,7 @@
 <template>
   <v-row :class="partMode"> 
     <v-col cols="12 pb-0">
-      <h4 class="text-center" :class="partTitleMode">2. 변경할 형식 정하기</h4>
+      <h4 class="text-center" :class="partTitleMode">2. 변경할 형식 설정</h4>
     </v-col>
     <v-col cols="4" class="text-center pb-0">
       <p class="font-weight-bold" :class="partTitleMode">머리말</p>
