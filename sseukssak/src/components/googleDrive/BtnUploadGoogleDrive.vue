@@ -56,8 +56,6 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
 
       axios.post(UPLOAD_URL,file,{headers:headers})
         .then(res=>{
-          console.log('hack!')
-          console.log(res.data)
           const data={
             name:this.fileName
           }
@@ -66,10 +64,10 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
             'Content-Type':'application/json'
           }
           axios.patch(PATCH_URL+`${res.data.id}?uploadType=multipart`,data,{headers:patchHeaders})
-            .then(res=>console.log(res))
-            .catch(err=>console.log(err))
+            .then(() => alert('구글 드라이브로 업로드에 성공했습니다.'))
+            .catch(err=>alert(`구글 드라이브로 업로드에 실패했습니다. ${err}`))
         })
-        .catch(err=>console.log(err))
+        .catch(err=>alert(`구글 드라이브로 업로드에 실패했습니다. ${err}`))
     }
 
 }
