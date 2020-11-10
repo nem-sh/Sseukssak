@@ -336,35 +336,42 @@ export default class BtnMoveFile extends Vue {
         continue;
       }
       directories.forEach((directory: ToLibraryDirectory) => {
-        directory.types.forEach((type) => {
-          if (this.compareDate(new Date(idx.birthTime), directory.dateTags)) {
-            if (this.compareTitle(idx.name, directory.titleTags)) {
+        if (this.compareDate(new Date(idx.birthTime), directory.dateTags)) {
+          if (this.compareTitle(idx.name, directory.titleTags)) {
+            console.log(idx.name);
+
+            let flag = false;
+            directory.types.forEach((type) => {
               if (type == "." + idx.fileType || type == idx.fileType) {
-                console.log(idx.name);
-                if (fs.existsSync(directory.path + "\\" + idx.name)) {
-                  Swal.fire({
-                    position: "center",
-                    icon: "warning",
-                    title:
-                      "중복된 이름의 파일이 존재하여 자동 리네임 되었습니다",
-                    showConfirmButton: false,
-                    timer: 1000,
-                  });
-                  a.push([
-                    this.fromDir + "\\" + idx.name,
-                    directory.path + "\\" + "[중복]" + idx.name,
-                  ]);
-                } else {
-                  a.push([
-                    this.fromDir + "\\" + idx.name,
-                    directory.path + "\\" + idx.name,
-                  ]);
-                }
+                flag = true;
                 return;
+              }
+            });
+            if (directory.types.length == 0) {
+              flag = true;
+            }
+            if (flag) {
+              if (fs.existsSync(directory.path + "\\" + idx.name)) {
+                Swal.fire({
+                  position: "center",
+                  icon: "warning",
+                  title: "중복된 이름의 파일이 존재하여 자동 리네임 되었습니다",
+                  showConfirmButton: false,
+                  timer: 1000,
+                });
+                a.push([
+                  this.fromDir + "\\" + idx.name,
+                  directory.path + "\\" + "[중복]" + idx.name,
+                ]);
+              } else {
+                a.push([
+                  this.fromDir + "\\" + idx.name,
+                  directory.path + "\\" + idx.name,
+                ]);
               }
             }
           }
-        });
+        }
       });
       console.log(a, 1);
       let step;
