@@ -29,7 +29,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 function createTray() {
-  let appIcon = new Tray(path.join(__static, "sweeping.png"));
+  let appIcon = new Tray(path.join(__static, "sweeping2.png"));
   const contextMenu = Menu.buildFromTemplate([
     {
       label: "Show",
