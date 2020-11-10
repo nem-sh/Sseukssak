@@ -127,59 +127,59 @@
                   ></v-overflow-btn>
                 </v-col>
               </v-row>
-                <div id="type" v-show="selectedFilter === '파일 유형' && selectedType === '확장자 직접 입력'">
-                  <div>
-                    <v-text-field
-                      v-model="typeAddName"
-                      label="확장자 직접 입력(ex. jpg, ppt)"
-                      prepend-icon="mdi-pencil"
-                      class="pt-0"
-                      @keypress.enter="clickAddBtn"
+              <div id="type" v-show="selectedFilter === '파일 유형' && selectedType === '확장자 직접 입력'">
+                <div>
+                  <v-text-field
+                    v-model="typeAddName"
+                    label="확장자 직접 입력(ex. jpg, ppt)"
+                    prepend-icon="mdi-pencil"
+                    class="pt-0"
+                    @keypress.enter="clickAddBtn"
+                  >
+                  </v-text-field>
+                </div>
+              </div>
+              <div id="date" v-show="selectedFilter === '날짜' && selectedDate === '날짜 범위 직접 선택'">
+                <div>
+                  <v-dialog v-model="dialog2" max-width="290">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        class="pt-0"
+                        v-model="dateRangeText"
+                        label="날짜 범위 직접 선택"
+                        prepend-icon="mdi-calendar"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                        @click="dates = []"
+                        >
+                      </v-text-field>
+                    </template>
+                    <v-date-picker
+                      header-color="var(--color-purple)"
+                      v-model="dates"
+                      range
                     >
-                    </v-text-field>
-                  </div>
+                      <v-spacer></v-spacer>
+                      <v-btn text color="primary" @click="dialog2 = false">
+                        Cancel
+                      </v-btn>
+                    </v-date-picker>
+                  </v-dialog>
                 </div>
-                <div id="date" v-show="selectedFilter === '날짜' && selectedDate === '날짜 범위 직접 선택'">
-                  <div>
-                    <v-dialog v-model="dialog2" max-width="290">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          class="pt-0"
-                          v-model="dateRangeText"
-                          label="날짜 범위 직접 선택"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                          @click="dates = []"
-                          >
-                        </v-text-field>
-                      </template>
-                      <v-date-picker
-                        header-color="var(--color-purple)"
-                        v-model="dates"
-                        range
-                      >
-                        <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="dialog2 = false">
-                          Cancel
-                        </v-btn>
-                      </v-date-picker>
-                    </v-dialog>
-                  </div>
+              </div>
+              <div id="name" v-show="selectedFilter === '파일명'">
+                <div>
+                  <v-text-field
+                    v-model="titleAddName"
+                    label="파일명에 포함되는 문자 입력"
+                    class="pt-0"
+                    prepend-icon="mdi-pencil"
+                    @keypress.enter="clickAddBtn"
+                  >
+                  </v-text-field>
                 </div>
-                <div id="name" v-show="selectedFilter === '파일명'">
-                  <div>
-                    <v-text-field
-                      v-model="titleAddName"
-                      label="파일명에 포함되는 문자 입력"
-                      class="pt-0"
-                      prepend-icon="mdi-pencil"
-                      @keypress.enter="clickAddBtn"
-                    >
-                    </v-text-field>
-                  </div>
-                </div>
+              </div>
               <div class="text-right pb-5">
                 <v-btn
                   v-show="selectedFilter !== '' && ((selectedFilter === '파일 유형' && selectedType !== '') || (selectedFilter === '날짜' && selectedDate !== '') || (selectedFilter === '파일명'))"
@@ -308,6 +308,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
       this.selectedTitleTags.push(this.titleAddName);
     }
     this.titleAddName = "";
+    this.addInitialize()
   }
   dateAdd() {
     if (this.dates.length != 2) {
@@ -324,6 +325,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
       this.selectedDateTags.push(this.dates[0] + "~" + this.dates[1]);
     }
     this.dates = [];
+    this.addInitialize()
   }
   typeAdd() {
     if (this.typeAddName === "") {
@@ -344,6 +346,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
       this.selectedTypeTags.push(addName);
     }
     this.typeAddName = "";
+    this.addInitialize()
   }
 
   clickAddBtn() {
@@ -363,6 +366,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
       } else {
         if (this.dupCheckFilter(this.selectedType)) {
           this.selectedTypeTags.push(this.selectedType)
+          this.addInitialize()
         }
       }
     } else if (this.selectedFilter === "날짜") {
@@ -371,11 +375,15 @@ export default class ModalAddToLibraryDirectory extends Vue {
       } else {
         if (this.dupCheckFilter(this.selectedDate)) {
           this.selectedDateTags.push(this.selectedDate)
+          this.addInitialize()
         }
       }
     } else if (this.selectedFilter === "파일명") {
       this.titleAdd()
     }
+  }
+
+  addInitialize() {
     this.selectedFilter = this.selectedType = this.selectedDate = ""
     this.titleAddName = this.typeAddName = ""
     this.dates = []
