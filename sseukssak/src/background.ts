@@ -53,7 +53,7 @@ function createTray() {
     }
   });
 
-  appIcon.setToolTip("SseukSsak");
+  appIcon.setToolTip("쓱싹");
   appIcon.setContextMenu(contextMenu);
 
   return appIcon;

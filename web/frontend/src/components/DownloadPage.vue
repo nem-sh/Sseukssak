@@ -1,7 +1,7 @@
 <template>
-    <v-container class="OuterDiv">
+    <v-container class="OuterDiv" fluid at-0>
       <v-row class="TopRow">
-        <img src="../assets/myLogo.png" alt="Image Gone!!" class="LogoImage"/>
+        Sseukssak
       </v-row>
       <v-row class="BottomRow">
         <v-col
@@ -30,7 +30,8 @@
 </template>
 
 <script>
-import myLogo from "../assets/myLogo.png"
+import Before from "../assets/Before.png"
+import After from "../assets/After.png"
 import fileDownload from "js-file-download"
 
 export default {
@@ -66,7 +67,7 @@ export default {
             // link.setAttribute("download", "File_Name.png")
             // document.body.appendChild(link);
             // link.click();
-            fileDownload(myLogo, "myFileBabe.png")
+            fileDownload(Before, "Sseukssak Setup")
         },
     }
 }
@@ -74,9 +75,10 @@ export default {
 
 <style>
 .OuterDiv {
-    height: 100vh;
-    width: 100vw;
-    background-color: lightblue;
+  height: 85vh;
+  margin-bottom: 10vh;
+  padding-top: 0;
+  width: 65vw;
 }
 .TopRow {
     height: 60%;

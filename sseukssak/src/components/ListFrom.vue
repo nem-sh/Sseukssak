@@ -387,7 +387,10 @@
           >
         </li>
         <li>
-          <BtnUploadGoogleDrive v-bind:fileName="selectedData.name" v-if="isLogin" />
+          <BtnUploadGoogleDrive
+            v-bind:fileName="selectedData.name"
+            v-if="isLogin"
+          />
         </li>
         <li>
           <a @click="getInfo()" style="display: flex; align-items: center"
@@ -519,7 +522,7 @@ interface Directory {
     ListFromBreadcrumbs,
     ListFromFilter,
   },
-  computed: mapState(["fileSortList", "fromDir", "fileList","isLogin"]),
+  computed: mapState(["fileSortList", "fromDir", "fileList", "isLogin"]),
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
 })
 export default class ListFrom extends Vue {
@@ -550,8 +553,15 @@ export default class ListFrom extends Vue {
         v.indexOf("\\") == -1) ||
       '\\ / : * ? " < > | 은 사용 불가능합니다',
   };
+
   clickclick() {
-    alert("준비중^__^");
+    Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: "준비중입니다",
+      showConfirmButton: false,
+      timer: 1000,
+    });
     console.log(
       fs.createReadStream(this.fromDir + "\\" + this.selectedData["name"])
     );
@@ -589,7 +599,13 @@ export default class ListFrom extends Vue {
       this.fromDir + "\\" + this.renameValue
     );
     this.renewFrom();
-    alert("수정됨^__^");
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "수정되었습니다",
+      showConfirmButton: false,
+      timer: 1000,
+    });
     this.dialog2 = false;
   }
   openShell() {
@@ -647,15 +663,16 @@ export default class ListFrom extends Vue {
     this.selectedData = value;
     const winWidth = window.outerWidth;
     const winHeight = window.outerHeight;
-    const posX: number = e.pageX - 65;
+    const posX: number = e.pageX - 90;
     const posY = e.pageY;
     const unit = document.getElementById("contextmenu");
     if (unit) {
       const menuWidth: number = unit.clientWidth;
-      const menuHeight: number = unit.clientWidth;
+      const menuHeight: number = unit.clientHeight;
       const secMargin = 10;
       let posLeft = "";
       let posTop = "";
+      console.log(posX, posY, menuWidth, menuHeight, winWidth, winHeight);
       if (
         posX + menuWidth + secMargin >= winWidth &&
         posY + menuHeight + secMargin >= winHeight
@@ -672,9 +689,15 @@ export default class ListFrom extends Vue {
         posLeft = posX + secMargin + "px";
         posTop = posY + secMargin + "px";
       }
+
+      console.log(posLeft, posTop);
       if (posLeft && posTop) {
-        posLeft = posX + secMargin + "px";
         posTop = posY + secMargin + "px";
+        posLeft = posX + secMargin + "px";
+        console.log(posTop);
+        if (Number(posY + secMargin) > 400) {
+          posTop = posY - menuHeight - secMargin + "px";
+        }
         unit.style.left = posLeft;
         unit.style.top = posTop;
         unit.style.display = "block";
@@ -723,64 +746,88 @@ export default class ListFrom extends Vue {
     if (enteredDirectory == "") {
       const dir: string[] = this.fromDir.split("\\");
       dir.pop();
+      if (dir.length == 1) {
+        Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: `상위 경로 이동은 권한이 없습니다.`,
+          showConfirmButton: false,
+          timer: 1000,
+        });
+        return;
+      }
       this.changeDir(dir.join("\\"));
     } else {
       this.changeDir(this.fromDir + "\\" + enteredDirectory);
     }
-    this.getFrom(this.fromDir);
+    try {
+      this.getFrom(this.fromDir);
+    } catch (e) {
+      console.log(e);
+    }
   }
   async renewFrom() {
     this.getFrom(this.fromDir);
     this.filterState = "전체보기";
   }
   async getFrom(dir: string) {
-    const fileList: string[] = fs.readdirSync(dir);
-    const fileSortList: SortList = { directories: [], files: [] };
-    fileList.forEach((name: string) => {
-      const fileSplit = name.split(".");
-      if (fs.lstatSync(this.fromDir + "/" + name).isDirectory()) {
-        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
-        const updatedTime = Math.max(
-          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
-          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
-        );
-        fileSortList.directories.push({
-          name: name,
-          birthTime: birthTime,
-          updatedTime: updatedTime,
-        });
-      } else {
-        const fileType = fileSplit[fileSplit.length - 1].toLowerCase();
-        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
-        const updatedTime = Math.max(
-          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
-          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
-        );
-        let iconPath = this.fromDir + "/" + name;
-        if (name.includes(".lnk")) {
-          try {
-            iconPath = shell.readShortcutLink(iconPath).target;
-          } catch {
-            iconPath = this.fromDir + "/" + name;
+    try {
+      const fileList: string[] = fs.readdirSync(dir);
+      const fileSortList: SortList = { directories: [], files: [] };
+      fileList.forEach((name: string) => {
+        const fileSplit = name.split(".");
+        if (fs.lstatSync(this.fromDir + "/" + name).isDirectory()) {
+          const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
+          const updatedTime = Math.max(
+            fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+            fs.lstatSync(this.fromDir + "/" + name).ctimeMs
+          );
+          fileSortList.directories.push({
+            name: name,
+            birthTime: birthTime,
+            updatedTime: updatedTime,
+          });
+        } else {
+          const fileType = fileSplit[fileSplit.length - 1].toLowerCase();
+          const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
+          const updatedTime = Math.max(
+            fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+            fs.lstatSync(this.fromDir + "/" + name).ctimeMs
+          );
+          let iconPath = this.fromDir + "/" + name;
+          if (name.includes(".lnk")) {
+            try {
+              iconPath = shell.readShortcutLink(iconPath).target;
+            } catch {
+              iconPath = this.fromDir + "/" + name;
+            }
           }
+          let realIcon = "";
+          const file = {
+            name: name,
+            fileType: fileType,
+            birthTime: birthTime,
+            updatedTime: updatedTime,
+            icon: "",
+          };
+          app.getFileIcon(iconPath).then((fileIcon) => {
+            realIcon = fileIcon.toDataURL();
+            file["icon"] = realIcon;
+          });
+          fileSortList.files.push(file);
         }
-        let realIcon = "";
-        const file = {
-          name: name,
-          fileType: fileType,
-          birthTime: birthTime,
-          updatedTime: updatedTime,
-          icon: "",
-        };
-        app.getFileIcon(iconPath).then((fileIcon) => {
-          realIcon = fileIcon.toDataURL();
-          file["icon"] = realIcon;
-        });
-        fileSortList.files.push(file);
-      }
-    });
-    this.changeFileSortList(fileSortList);
-    this.changeFileList(fileList);
+      });
+      this.changeFileSortList(fileSortList);
+      this.changeFileList(fileList);
+    } catch (error) {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: `"${dir}"의 이동은 권한이 없습니다.`,
+        showConfirmButton: false,
+        timer: 1000,
+      });
+    }
   }
 
   get dirPath() {

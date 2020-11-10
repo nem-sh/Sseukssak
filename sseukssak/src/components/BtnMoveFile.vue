@@ -61,6 +61,7 @@ import { mapState, mapMutations } from "vuex";
 
 import { BUS } from "./EventBus.js";
 import { file } from "googleapis/build/src/apis/file";
+import Swal from "sweetalert2";
 
 const { shell } = require("electron").remote;
 const { app } = require("electron").remote;
@@ -328,9 +329,13 @@ export default class BtnMoveFile extends Vue {
             if (this.compareTitle(idx.name, directory.titleTags)) {
               if (type == "." + idx.fileType) {
                 if (fs.existsSync(directory.path + "\\" + idx.name)) {
-                  alert(
-                    "중복된 이름의 파일이 존재하여 자동 리네임 되었습니다."
-                  );
+                  Swal.fire({
+                    position: "center",
+                    icon: "warning",
+                    title: "중복된 이름의 파일이 존재하여 자동 리네임 되었습니다",
+                    showConfirmButton: false,
+                    timer: 1000,
+                  });
                   a.push([
                     this.fromDir + "\\" + idx.name,
                     directory.path + "\\" + "[중복]" + idx.name,
@@ -374,7 +379,13 @@ export default class BtnMoveFile extends Vue {
       }
     }
     // this.dialog = false;
-    alert("정리가 완료되었습니다.");
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "정리가 완료되었습니다.",
+      showConfirmButton: false,
+      timer: 3000,
+    });
 
     BUS.$emit("bus:refreshfile");
   }

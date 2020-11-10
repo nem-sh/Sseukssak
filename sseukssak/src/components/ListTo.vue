@@ -16,7 +16,7 @@
             <v-select
               :items="toLibraryNameList"
               v-model="selectedToName"
-              label="Select rule"
+              label="Select Group"
               dense
               outlined
             ></v-select>
@@ -75,6 +75,7 @@
                 <v-list-item-title>
                   <strong>{{ getDirectoryName(item.path) }}</strong>
                 </v-list-item-title>
+                <div class="item-path">{{ item.path }}</div>
               </v-list-item-content>
               <v-list-item-action>
                 <v-row align="center" justify="center" class="pa-0">
@@ -85,17 +86,15 @@
                           <i class="fas fa-ellipsis-v-alt"></i
                         ></v-btn>
                       </template>
+
                       <v-list>
                         <!-- 수정하기 -->
-                        <!-- <v-list-item link>
+                        <v-list-item link>
                           <v-list-item-title
-                            ><i
-                              class="fas fa-pen mr-2"
-                              style="color: #009688"
-                            ></i
-                            >수정하기</v-list-item-title
-                          >
-                        </v-list-item> -->
+                            ><ModalModifyToLibraryDirectory
+                              :propDirectory="item"
+                          /></v-list-item-title>
+                        </v-list-item>
                         <v-list-item
                           link
                           @click.stop="deleteToLibraryDirectory(item.path)"
@@ -150,7 +149,7 @@ import Swal from "sweetalert2";
 
 import ModalCreateToLibrary from "@/components/ModalCreateToLibrary.vue";
 import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.vue";
-// import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
+import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
 
 import { shell } from "electron";
 
@@ -172,7 +171,7 @@ interface ToLibraryDirectory {
   components: {
     ModalCreateToLibrary,
     ModalAddToLibraryDirectory,
-    // ModalModifyToLibraryDirectory,
+    ModalModifyToLibraryDirectory,
   },
   computed: mapState(["toLibraryList", "toLibraryNameList", "fromDir"]),
   methods: mapMutations([
@@ -188,7 +187,13 @@ export default class ListTo extends Vue {
       if (this.fromDir) {
         newPath = path.replace("%from%", this.fromDir);
       } else {
-        alert("이 폴더를 열기 위해선 from을 먼저 지정해주세요!");
+        Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: "이 폴더를 열기 위해선 from을 먼저 지정해주세요!",
+          showConfirmButton: false,
+          timer: 1000,
+        });
       }
     }
     if (!fs.existsSync(newPath)) {
@@ -263,12 +268,24 @@ export default class ListTo extends Vue {
     for (const f of event.dataTransfer.files) {
       console.log(f);
       if (this.selectedToName == "") {
-        alert("라이브러리 먼저 선택 ㄱㄱ");
+        Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: "라이브러리를 선택해주세요",
+          showConfirmButton: false,
+          timer: 1000,
+        });
       } else {
         if (fs.statSync(f.path).isDirectory()) {
           this.changeDropToDir(f.path);
         } else {
-          alert("디렉토리가 아닙니다");
+          Swal.fire({
+            position: "center",
+            icon: "warning",
+            title: "디렉토리가 아닙니다",
+            showConfirmButton: false,
+            timer: 1000,
+          });
         }
       }
     }
@@ -491,5 +508,10 @@ export default class ListTo extends Vue {
 
 .theme--light.v-label {
   color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.item-path {
+  font-size: 12px;
+  color: #7a8186;
 }
 </style>

@@ -1,13 +1,20 @@
 <template>
   <div>
-    <v-btn
+    <i
+      class="fas fa-pen mr-2"
+      style="color: #009688"
+      v-if="selectedToName"
+      @click="dialog = true"
+    ></i
+    >수정하기
+    <!-- <v-btn
       icon
       color="success"
       dark
       v-if="selectedToName"
       @click="dialog = true"
       ><i class="fas fa-pencil-alt"></i
-    ></v-btn>
+    ></v-btn> -->
     <v-dialog
       width="500px"
       v-model="dialog"
@@ -124,6 +131,8 @@ import { mapMutations, mapState } from "vuex";
 
 const { dialog } = require("electron").remote;
 
+import Swal from "sweetalert2";
+
 interface ToLibrary {
   name: string;
   directories: ToLibraryDirectory[];
@@ -153,12 +162,14 @@ const AppProps = Vue.extend({
 export default class ModalModifyToLibraryDirectory extends AppProps {
   // data
   initalDirectory: ToLibraryDirectory = this.propDirectory;
-  dates: string[] = [];
-  selectedTypeTags: string[] = this.initalDirectory.typeTags;
-  selectedDateTags: string[] = this.initalDirectory.dateTags;
-  libraryDirectories: ToLibraryDirectory[] = [];
+  selectedTypeTags: string[] = this.initalDirectory.typeTags.slice();
+  selectedDateTags: string[] = this.initalDirectory.dateTags.slice();
 
   directoryDir: string = this.initalDirectory.path;
+
+  dates: string[] = [];
+  libraryDirectories: ToLibraryDirectory[] = [];
+
   dialog: boolean = false;
   dialog2: boolean = false;
   typeAddName: string = "";
@@ -177,8 +188,8 @@ export default class ModalModifyToLibraryDirectory extends AppProps {
       )
     )
   );
-  titleTags: string[] = this.initalDirectory.titleTags;
-  selectedTitleTags: string[] = this.initalDirectory.titleTags;
+  titleTags: string[] = this.initalDirectory.titleTags.slice();
+  selectedTitleTags: string[] = this.initalDirectory.titleTags.slice();
 
   selectedTotalTags: string[] = this.selectedTypeTags.concat(
     this.selectedDateTags.concat(this.selectedTitleTags)
@@ -194,9 +205,6 @@ export default class ModalModifyToLibraryDirectory extends AppProps {
   changeDropToDir!: (dir: string) => void;
   changeToLibraryList!: (newList: ToLibrary[]) => void;
 
-  clickAlert() {
-    alert("click");
-  }
   titleAdd() {
     this.selectedTitleTags.push(this.titleAddName);
     this.titleTags.push(this.titleAddName);
@@ -204,7 +212,13 @@ export default class ModalModifyToLibraryDirectory extends AppProps {
   }
   dateAdd() {
     if (this.dates.length != 2) {
-      alert("날짜를 먼저 선택하거라");
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "날짜를 먼저 선택해주세요",
+        showConfirmButton: false,
+        timer: 1000,
+      });
       return;
     }
     this.selectedDateTags.push(this.dates[0] + "~" + this.dates[1]);
@@ -222,10 +236,11 @@ export default class ModalModifyToLibraryDirectory extends AppProps {
   }
   closeModal() {
     this.libraryDirectories = [];
-    this.directoryDir = "";
-    this.selectedTypeTags = [];
-    this.selectedDateTags = [];
-
+    this.directoryDir = this.initalDirectory.path;
+    this.selectedTypeTags = this.initalDirectory.typeTags.slice();
+    this.selectedDateTags = this.initalDirectory.dateTags.slice();
+    this.titleTags = this.initalDirectory.titleTags.slice();
+    this.selectedTitleTags = this.initalDirectory.titleTags.slice();
     this.dialog = false;
   }
 
@@ -256,13 +271,18 @@ export default class ModalModifyToLibraryDirectory extends AppProps {
               JSON.stringify(tempLibraryList)
             );
 
-            this.libraryDirectories = [];
-            this.directoryDir = "";
-            this.selectedTypeTags = [];
-            this.selectedDateTags = [];
-            this.selectedTitleTags = [];
-
-            alert("수정되었습니다.");
+            // this.libraryDirectories = [];
+            // this.directoryDir = "";
+            // this.selectedTypeTags = [];
+            // this.selectedDateTags = [];
+            // this.selectedTitleTags = [];
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "수정되었습니다",
+              showConfirmButton: false,
+              timer: 1000,
+            });
 
             this.dialog = false;
             return;

@@ -237,6 +237,7 @@ export default class App extends Vue {
     });
   }
 }
+// font-family: "Nanum Myeongjo", serif;
 </script>
 
 <style>
