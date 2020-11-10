@@ -1,5 +1,5 @@
 <template>
-  <v-container class="OuterDiv" fluid at-0>
+  <v-container class="IntroBox" fluid at-0>
     <v-row class="ImagePart">
       <img :src="require(`@/assets/${picture}`)" class="snapshot">
       </v-row>
@@ -26,6 +26,12 @@ export default {
 </script>
 
 <style>
+.IntroBox {
+  height: 85vh;
+  margin-bottom: 10vh;
+  padding-top: 0;
+  width: 65vw;;
+}
 .snapshot {
   height: 100%;
   width: 100%;

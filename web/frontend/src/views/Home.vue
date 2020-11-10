@@ -64,12 +64,6 @@ export default class Home extends Vue {
   height: 100vh;
   background-color: lightblue;
 }
-.OuterDiv {
-  height: 85vh;
-  margin-bottom: 10vh;
-  padding-top: 0;
-  width: 65vw;;
-}
 .slide {
   justify-content: center;
 }

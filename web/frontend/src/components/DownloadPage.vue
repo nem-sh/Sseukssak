@@ -30,7 +30,8 @@
 </template>
 
 <script>
-import myLogo from "../assets/myLogo.png"
+import Before from "../assets/Before.png"
+import After from "../assets/After.png"
 import fileDownload from "js-file-download"
 
 export default {
@@ -66,13 +67,19 @@ export default {
             // link.setAttribute("download", "File_Name.png")
             // document.body.appendChild(link);
             // link.click();
-            fileDownload(myLogo, "Sseukssak Setup")
+            fileDownload(Before, "Sseukssak Setup")
         },
     }
 }
 </script>
 
 <style>
+.OuterDiv {
+  height: 85vh;
+  margin-bottom: 10vh;
+  padding-top: 0;
+  width: 65vw;
+}
 .TopRow {
     height: 60%;
     display: flex;
