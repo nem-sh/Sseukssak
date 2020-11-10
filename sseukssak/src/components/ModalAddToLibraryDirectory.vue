@@ -127,13 +127,7 @@
                   ></v-overflow-btn>
                 </v-col>
               </v-row>
-              <div
-                id="type"
-                v-show="
-                  selectedFilter === '파일 유형' &&
-                  selectedType === '확장자 직접 입력'
-                "
-              >
+              <div id="type" v-show="selectedFilter === '파일 유형' && selectedType === '확장자 직접 입력'">
                 <div>
                   <v-text-field
                     v-model="typeAddName"
@@ -145,13 +139,7 @@
                   </v-text-field>
                 </div>
               </div>
-              <div
-                id="date"
-                v-show="
-                  selectedFilter === '날짜' &&
-                  selectedDate === '날짜 범위 직접 선택'
-                "
-              >
+              <div id="date" v-show="selectedFilter === '날짜' && selectedDate === '날짜 범위 직접 선택'">
                 <div>
                   <v-dialog v-model="dialog2" max-width="290">
                     <template v-slot:activator="{ on, attrs }">
@@ -164,7 +152,7 @@
                         v-bind="attrs"
                         v-on="on"
                         @click="dates = []"
-                      >
+                        >
                       </v-text-field>
                     </template>
                     <v-date-picker
@@ -328,6 +316,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
       this.selectedTitleTags.push(this.titleAddName);
     }
     this.titleAddName = "";
+    this.addInitialize()
   }
   dateAdd() {
     if (this.dates.length != 2) {
@@ -344,6 +333,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
       this.selectedDateTags.push(this.dates[0] + "~" + this.dates[1]);
     }
     this.dates = [];
+    this.addInitialize()
   }
   typeAdd() {
     if (this.typeAddName === "") {
@@ -364,6 +354,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
       this.selectedTypeTags.push(addName);
     }
     this.typeAddName = "";
+    this.addInitialize()
   }
 
   clickAddBtn() {
@@ -386,7 +377,8 @@ export default class ModalAddToLibraryDirectory extends Vue {
         this.typeAdd();
       } else {
         if (this.dupCheckFilter(this.selectedType)) {
-          this.selectedTypeTags.push(this.selectedType);
+          this.selectedTypeTags.push(this.selectedType)
+          this.addInitialize()
         }
       }
     } else if (this.selectedFilter === "날짜") {
@@ -394,15 +386,19 @@ export default class ModalAddToLibraryDirectory extends Vue {
         this.dateAdd();
       } else {
         if (this.dupCheckFilter(this.selectedDate)) {
-          this.selectedDateTags.push(this.selectedDate);
+          this.selectedDateTags.push(this.selectedDate)
+          this.addInitialize()
         }
       }
     } else if (this.selectedFilter === "파일명") {
       this.titleAdd();
     }
-    this.selectedFilter = this.selectedType = this.selectedDate = "";
-    this.titleAddName = this.typeAddName = "";
-    this.dates = [];
+  }
+
+  addInitialize() {
+    this.selectedFilter = this.selectedType = this.selectedDate = ""
+    this.titleAddName = this.typeAddName = ""
+    this.dates = []
   }
 
   dupCheckFilter(i) {

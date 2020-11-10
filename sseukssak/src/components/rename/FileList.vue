@@ -1,27 +1,52 @@
 <template>
-  <v-col :class="partMode" style="position:relative;">
+  <v-col :class="partMode" class="position-p">
     <div :class="partTitleMode">
-      <h4 class="text-center">1. 변경할 폴더/파일 선택</h4>
+      <h4 class="text-center">1. 변경할 파일/폴더 선택</h4>
     </div>
-    <div class="d-flex justify-space-between mt-2">
-        <v-checkbox :style="{visibility: visibility}" v-model="selectCheck" color="#7288da" class="my-1" label="전체 선택"></v-checkbox>
-        <div class="font-weight-bold">
-          {{ shortDir }}
-          <v-btn icon @click="read()">
-            <i class="far fa-folder-open fa-2x" :class="folderMode"></i>
-          </v-btn>
-        </div>
+    <div>
+      <div class="font-weight-bold d-flex justify-end">
+        <v-breadcrumbs :items="dirItems" class="pa-3">
+          <template v-slot:divider>
+            <v-icon>mdi-forward</v-icon>
+          </template>
+        </v-breadcrumbs>
+        <v-btn icon @click="read()">
+          <img class="mt-2" height="25px" src="@/assets/folder2.png" />
+          <!-- <i class="far fa-folder-open fa-2x" :class="folderMode"></i> -->
+        </v-btn>
+      </div>
+      <div v-show="this.renameFileList.length > 0">
+        <v-checkbox
+          v-model="selectCheck"
+          color="#7288da"
+          class="ma-0 pa-0"
+          label="전체 선택"
+        ></v-checkbox>
+        <v-divider class="pb-3"></v-divider>
+      </div>
     </div>
-    <div v-if="renameFileList.length <= 0" align="center" style="position:absolute; top:50%; left:50%; transform: translate(-50%, -50%);">
-      <lottie-player src="https://assets4.lottiefiles.com/packages/lf20_GlZGOi.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+    <div
+      v-if="renameFileList.length <= 0"
+      align="center"
+      class="position-c"
+    >
+      <lottie-player
+        src="https://assets4.lottiefiles.com/packages/lf20_GlZGOi.json"
+        background="transparent"
+        speed="1"
+        style="width: 330px; height: 330px;"
+        loop
+        autoplay
+      ></lottie-player>
       <h3 class="mt-2">파일 및 폴더가 없습니다 :(</h3>
     </div>
+    <div v-if="renameFileList.length <= 0" class="mb-15 pb-2"></div>
     <v-virtual-scroll
       class="file-scroller"
       :bench="benched"
       :items="renameFileList"
-      height="330"
-      max-height="330"
+      height="300"
+      max-height="300"
       item-height="40"
     >
       <template v-slot:default="{ item }">
@@ -33,15 +58,25 @@
           :value="item"
           color="#7288da"
         >
-        <template v-slot:label>
-          <div v-if="item.type" class="d-flex">
-            <img height="20px" :src="item.icon" alt="icon" class="mr-1"/><span>{{item.name}}</span>
-          </div>
-          <div v-else class="d-flex">
-            <img height="20px" src="@/assets/folder-icon.png" alt="icon" class="mr-1"/><span>{{item.name}}</span>
-          </div>
-        </template>
-      </v-checkbox>
+          <template v-slot:label>
+            <div v-if="item.type" class="d-flex">
+              <img
+                height="20px"
+                :src="item.icon"
+                alt="icon"
+                class="mr-1"
+              /><span>{{ item.name }}</span>
+            </div>
+            <div v-else class="d-flex">
+              <img
+                height="20px"
+                src="@/assets/folder-icon.png"
+                alt="icon"
+                class="mr-1"
+              /><span>{{ item.name }}</span>
+            </div>
+          </template>
+        </v-checkbox>
       </template>
     </v-virtual-scroll>
   </v-col>
@@ -52,8 +87,8 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import fs from "fs";
 import path from "path";
-import { mapMutations, mapState } from 'vuex';
-import { Watch } from 'vue-property-decorator';
+import { mapMutations, mapState } from "vuex";
+import { Watch } from "vue-property-decorator";
 const { dialog } = require("electron").remote;
 const { shell } = require("electron").remote;
 const { app } = require("electron").remote;
@@ -68,11 +103,29 @@ interface FileInfo {
   icon: string;
 }
 
-@Component({
-  computed: mapState(["renameDir", "renameFileList", "beforeItems", "allSelect"]),
-  methods: mapMutations(["changeRenameDir", "changeAllSelect", "sortRenameFileList", "changeBeforeItems", "changePreview", "sortBeforeItems", "changeRenameFileList", "initailizeRename"])
-})
+interface Breadcrumbs {
+  text: string;
+  disabled: boolean;
+}
 
+@Component({
+  computed: mapState([
+    "renameDir",
+    "renameFileList",
+    "beforeItems",
+    "allSelect",
+  ]),
+  methods: mapMutations([
+    "changeRenameDir",
+    "changeAllSelect",
+    "sortRenameFileList",
+    "changeBeforeItems",
+    "changePreview",
+    "sortBeforeItems",
+    "changeRenameFileList",
+    "initailizeRename",
+  ]),
+})
 export default class Rename extends Vue {
   dialog: boolean = false;
   benched: number = 0;
@@ -92,22 +145,25 @@ export default class Rename extends Vue {
   changeRenameDir!: (newDir: string) => void;
 
   get partTitleMode() {
-    return this.$vuetify.theme.dark? "part-title-d" : "part-title"
+    return this.$vuetify.theme.dark ? "part-title-d" : "part-title";
   }
   get partMode() {
-    return this.$vuetify.theme.dark? "rename-part-bg-d" : "rename-part-bg"
+    return this.$vuetify.theme.dark ? "rename-part-bg-d" : "rename-part-bg";
   }
   get folderMode() {
-    return this.$vuetify.theme.dark? "folder-d" : "folder"
+    return this.$vuetify.theme.dark ? "folder-d" : "folder";
   }
 
-  get visibility() {
-    return this.renameFileList.length > 0 ? 'visible' : 'hidden'
-  }
-
-  get shortDir() {
-    const dirs = this.renameDir.split("\\")
-    return dirs[dirs.length - 1]
+  get dirItems() {
+    const dirs = this.renameDir.split("\\");
+    const item: Breadcrumbs[] = [];
+    dirs.forEach((dir) => {
+      item.push({
+        text: dir,
+        disabled: true,
+      });
+    });
+    return item;
   }
 
   async read() {
@@ -115,19 +171,19 @@ export default class Rename extends Vue {
       properties: ["openDirectory"],
     });
     if (!rs) return;
-    const dir = rs[0]
-    this.changeRenameDir(dir)
+    const dir = rs[0];
+    this.changeRenameDir(dir);
     const files = fs.readdirSync(dir);
     this.choiceList = [];
-    this.selectCheck = false
+    this.selectCheck = false;
     const tmpFileList: FileInfo[] = [];
     for (const v of files) {
       const p = path.join(dir, v);
       const stat = fs.lstatSync(p);
       // 확장자
-      let _fileType = ""
+      let _fileType = "";
       if (!stat.isDirectory()) {
-        const tmp = v.split(".")
+        const tmp = v.split(".");
         _fileType = tmp[tmp.length - 1].toLowerCase();
       }
       const item = {
@@ -152,31 +208,42 @@ export default class Rename extends Vue {
       app.getFileIcon(iconPath).then((fileIcon) => {
         realIcon = fileIcon.toDataURL();
         item["icon"] = realIcon;
-        });
-      tmpFileList.push(item)
+      });
+      tmpFileList.push(item);
     }
     await this.changeRenameFileList(tmpFileList);
-    await this.changeBeforeItems([])
-    await this.sortRenameFileList()
+    await this.changeBeforeItems([]);
+    await this.sortRenameFileList();
   }
   changeSelect() {
-    this.changeBeforeItems(this.choiceList)
-    this.sortBeforeItems()
+    this.changeBeforeItems(this.choiceList);
+    this.sortBeforeItems();
   }
   mounted() {
-    this.choiceList = this.beforeItems
-    this.selectCheck = this.allSelect
+    this.choiceList = this.beforeItems;
+    this.selectCheck = this.allSelect;
   }
 
   @Watch("selectCheck")
   watchAllSelect() {
     if (this.selectCheck === true) {
-      this.choiceList = this.renameFileList
+      this.choiceList = this.renameFileList;
     } else {
-      this.choiceList = []
+      this.choiceList = [];
     }
-    this.changeBeforeItems(this.choiceList)
-    this.changeAllSelect()
+    this.changeBeforeItems(this.choiceList);
+    this.changeAllSelect();
   }
 }
 </script>
+<style>
+.position-p {
+  position: relative;
+}
+.position-c {
+  position:absolute; 
+  top:50%; 
+  left:50%; 
+  transform: translate(-50%, -50%);
+}
+</style>
