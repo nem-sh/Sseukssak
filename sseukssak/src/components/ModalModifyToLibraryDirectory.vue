@@ -131,6 +131,8 @@ import { mapMutations, mapState } from "vuex";
 
 const { dialog } = require("electron").remote;
 
+import Swal from "sweetalert2";
+
 interface ToLibrary {
   name: string;
   directories: ToLibraryDirectory[];
@@ -203,9 +205,6 @@ export default class ModalModifyToLibraryDirectory extends AppProps {
   changeDropToDir!: (dir: string) => void;
   changeToLibraryList!: (newList: ToLibrary[]) => void;
 
-  clickAlert() {
-    alert("click");
-  }
   titleAdd() {
     this.selectedTitleTags.push(this.titleAddName);
     this.titleTags.push(this.titleAddName);
@@ -213,7 +212,13 @@ export default class ModalModifyToLibraryDirectory extends AppProps {
   }
   dateAdd() {
     if (this.dates.length != 2) {
-      alert("날짜를 먼저 선택하거라");
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "날짜를 먼저 선택해주세요",
+        showConfirmButton: false,
+        timer: 1000,
+      });
       return;
     }
     this.selectedDateTags.push(this.dates[0] + "~" + this.dates[1]);
@@ -271,8 +276,13 @@ export default class ModalModifyToLibraryDirectory extends AppProps {
             // this.selectedTypeTags = [];
             // this.selectedDateTags = [];
             // this.selectedTitleTags = [];
-
-            alert("수정되었습니다.");
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "수정되었습니다",
+              showConfirmButton: false,
+              timer: 1000,
+            });
 
             this.dialog = false;
             return;
