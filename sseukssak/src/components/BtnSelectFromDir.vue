@@ -1,6 +1,6 @@
 <template>
   <v-btn icon @click="read(true)">
-    <i class="far fa-folder-open fa-2x"></i>
+    <img height="25px" src="@/assets/folder2.png" alt="icon" class="mr-1" />
   </v-btn>
 </template>
 

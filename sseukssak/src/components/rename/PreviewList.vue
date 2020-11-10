@@ -7,12 +7,10 @@
     </div>
     <v-row>
       <v-col cols="5.5" class="position-p">
-        <p class="text-center font-weight-bold" :class="partTitleMode">변경 전</p>
-        <div
-          v-if="beforeItems.length <= 0"
-          align="center"
-          class="position-c"
-        >
+        <p class="text-center font-weight-bold" :class="partTitleMode">
+          변경 전
+        </p>
+        <div v-if="beforeItems.length <= 0" align="center" class="position-c">
           <p class="mt-2">파일/폴더를 선택하세요 :(</p>
         </div>
         <v-virtual-scroll
@@ -25,7 +23,9 @@
           <template v-slot:default="{ item }">
             <v-list-item :key="beforeItems.indexOf(item)">
               <v-list-item-content>
-                <p class="text-next-line font-weight-bold">{{ beforeItems.indexOf(item) + 1 }}.{{ item.name }}</p>
+                <p class="text-next-line font-weight-bold">
+                  {{ beforeItems.indexOf(item) + 1 }}.{{ item.name }}
+                </p>
               </v-list-item-content>
             </v-list-item>
           </template>
@@ -38,6 +38,9 @@
           align="center"
           class="position-c"
         >
+          변경 후
+        </p>
+        <div v-if="afterItems.length <= 0" align="center" class="position-c">
           <p class="mt-2">파일/폴더를 선택하세요 :(</p>
         </div>
         <v-virtual-scroll
@@ -60,7 +63,14 @@
         <v-btn dark rounded class="mr-4 mb-2" @click="rename" color="#7288da">
           변경
         </v-btn>
-        <v-btn rounded class="mr-4" style="color:white" @click="logBack" :disabled="logBackCheck === false" color="red accent-2">
+        <v-btn
+          rounded
+          class="mr-4"
+          style="color: white"
+          @click="logBack"
+          :disabled="logBackCheck === false"
+          color="red accent-2"
+        >
           <i class="fas fa-redo-alt"></i>
         </v-btn>
       </v-col>
@@ -74,9 +84,9 @@ import Component from "vue-class-component";
 import { Watch } from "vue-property-decorator";
 import fs from "fs";
 import path from "path";
-import { mapMutations, mapState } from 'vuex';
+import { mapMutations, mapState } from "vuex";
 
-import Swal from "sweetalert2"
+import Swal from "sweetalert2";
 import { BUS } from "../EventBus.js";
 
 interface FileInfo {
@@ -89,10 +99,29 @@ interface FileInfo {
 }
 
 @Component({
-  computed: mapState(["filterFront", "filterMiddle", "filterBack", "frontName", "middleName", "backName", "renameFileList", "beforeItems", "afterItems", "dupCheck", "renameHistory", "logBackCheck"]),
-  methods: mapMutations(["changeRenameDir", "changePreview", "changeRenameHistory", "changeRenameHistory2", "changeLogBackCheck", "initailizeRename"])
+  computed: mapState([
+    "filterFront",
+    "filterMiddle",
+    "filterBack",
+    "frontName",
+    "middleName",
+    "backName",
+    "renameFileList",
+    "beforeItems",
+    "afterItems",
+    "dupCheck",
+    "renameHistory",
+    "logBackCheck",
+  ]),
+  methods: mapMutations([
+    "changeRenameDir",
+    "changePreview",
+    "changeRenameHistory",
+    "changeRenameHistory2",
+    "changeLogBackCheck",
+    "initailizeRename",
+  ]),
 })
-
 export default class Rename extends Vue {
   filterFront!: string;
   filterMiddle!: string;
@@ -115,10 +144,10 @@ export default class Rename extends Vue {
   changeRenameDir!: (newDir: string) => void;
 
   get partTitleMode() {
-    return this.$vuetify.theme.dark? "part-title-d" : "part-title"
+    return this.$vuetify.theme.dark ? "part-title-d" : "part-title";
   }
   get partMode() {
-    return this.$vuetify.theme.dark? "rename-part-bg-d" : "rename-part-bg"
+    return this.$vuetify.theme.dark ? "rename-part-bg-d" : "rename-part-bg";
   }
 
   rename() {
@@ -156,7 +185,7 @@ export default class Rename extends Vue {
       });
     } else {
       // 특수문자 예외처리
-      const specialC =  /[?:|*<>\\/"]/gi;
+      const specialC = /[?:|*<>\\/"]/gi;
       this.afterItems.forEach((item) => {
         if (item.name.search(specialC) !== -1) {
           Swal.fire({
@@ -167,8 +196,8 @@ export default class Rename extends Vue {
             timer: 1000,
           });
         }
-        return
-      })
+        return;
+      });
       // 베타버전 주의 알림
       Swal.fire({
         position: "center",
@@ -179,82 +208,125 @@ export default class Rename extends Vue {
         confirmButtonText: `Yes`,
       }).then((result) => {
         if (result.isConfirmed) {
-        // 예외처리 하기(변경할 파일명이 이미 기존 폴더 내에 존재하는 경우)
-        const dupTmp: Array<FileInfo> = []
-        const dupTmpChange: Array<string> = []
-        const logData: Array<object> = []
-        const workTime: number = new Date().setTime(Date.now())
+          // 예외처리 하기(변경할 파일명이 이미 기존 폴더 내에 존재하는 경우)
+          const dupTmp: Array<FileInfo> = [];
+          const dupTmpChange: Array<string> = [];
+          const logData: Array<object> = [];
+          const workTime: number = new Date().setTime(Date.now());
 
-        this.afterItems.forEach((item, i) => {
-          const dupIdx = this.dupCheck.indexOf(item.name)
-          // 확장자
-          let _fileType = ""
-          if (item.type !== "") {
-            _fileType = "." + item.type
-          }
-          // 자기 자신은 제외
-          if (dupIdx !== -1 && this.renameFileList[dupIdx].ctime !== item.ctime) {
-            dupTmp.push(this.beforeItems[i]);
-            // 중복되지 않는 파일명 생성
-            let cnt = 1
-            let noDupName = item.name.substring(0, item.name.length - _fileType.length) + "(" + cnt + ")" + _fileType
-            do {
-              noDupName = item.name.substring(0, item.name.length - _fileType.length) + "(" + cnt++ + ")" + _fileType
-            } while (noDupName in this.dupCheck)
-            dupTmpChange.push(noDupName)
-          } else {
-            const o = path.join(item.dir, this.beforeItems[i].name);
-            const n = path.join(item.dir, item.name);
-            if (o !== n) {
-              fs.renameSync(o, n);
-              logData.push([this.beforeItems[i].name + " => " + item.name, 1, o, n, workTime, 3])
-              this.changeRenameHistory2([this.beforeItems[i].name + " => " + item.name, 1, o, n, workTime, 3])
+          this.afterItems.forEach((item, i) => {
+            const dupIdx = this.dupCheck.indexOf(item.name);
+            // 확장자
+            let _fileType = "";
+            if (item.type !== "") {
+              _fileType = "." + item.type;
             }
-          }
-        });
-        if (dupTmp.length > 0) {
-          const text = dupTmp
-            .map(function (item, index) {
-              return item.name + " => " + dupTmpChange[index];
-            })
-            .join(" , ");
-          Swal.fire({
-            position: "center",
-            icon: "warning",
-            title: "바꾸려는 파일명이 해당 디렉토리에 이미 존재합니다. 다음과 같이 변경하시겠습니까?",
-            text: text,
-            showCancelButton: true,
-            confirmButtonText: `Yes`,
-          }).then((result) => {
-            if (result.isConfirmed) {
-              dupTmp.forEach((item, i) => {
-                const o = path.join(item.dir, item.name);
-                const n = path.join(item.dir, dupTmpChange[i]);
+            // 자기 자신은 제외
+            if (
+              dupIdx !== -1 &&
+              this.renameFileList[dupIdx].ctime !== item.ctime
+            ) {
+              dupTmp.push(this.beforeItems[i]);
+              // 중복되지 않는 파일명 생성
+              let cnt = 1;
+              let noDupName =
+                item.name.substring(0, item.name.length - _fileType.length) +
+                "(" +
+                cnt +
+                ")" +
+                _fileType;
+              do {
+                noDupName =
+                  item.name.substring(0, item.name.length - _fileType.length) +
+                  "(" +
+                  cnt++ +
+                  ")" +
+                  _fileType;
+              } while (noDupName in this.dupCheck);
+              dupTmpChange.push(noDupName);
+            } else {
+              const o = path.join(item.dir, this.beforeItems[i].name);
+              const n = path.join(item.dir, item.name);
+              if (o !== n) {
                 fs.renameSync(o, n);
-                logData.push([item + " => " + dupTmpChange[i], 1, o, n, workTime, 3])
-                this.changeRenameHistory2([this.beforeItems[i].name + " => " + item.name, 1, o, n, workTime, 3])
-                this.$emit("finish")
-                this.initailizeRename()
-                BUS.$emit("bus:refreshfilter");
-              })
+                logData.push([
+                  this.beforeItems[i].name + " => " + item.name,
+                  1,
+                  o,
+                  n,
+                  workTime,
+                  3,
+                ]);
+                this.changeRenameHistory2([
+                  this.beforeItems[i].name + " => " + item.name,
+                  1,
+                  o,
+                  n,
+                  workTime,
+                  3,
+                ]);
+              }
             }
-          })
-        } else {
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "파일명이 변경되었습니다",
-            showConfirmButton: false,
-            timer: 1000,
           });
-          this.$emit("finish")
-          this.initailizeRename()
-          BUS.$emit("bus:refreshfilter");
+          if (dupTmp.length > 0) {
+            const text = dupTmp
+              .map(function (item, index) {
+                return item.name + " => " + dupTmpChange[index];
+              })
+              .join(" , ");
+            Swal.fire({
+              position: "center",
+              icon: "warning",
+              title:
+                "바꾸려는 파일명이 해당 디렉토리에 이미 존재합니다. 다음과 같이 변경하시겠습니까?",
+              text: text,
+              showCancelButton: true,
+              confirmButtonText: `Yes`,
+            }).then((result) => {
+              if (result.isConfirmed) {
+                dupTmp.forEach((item, i) => {
+                  const o = path.join(item.dir, item.name);
+                  const n = path.join(item.dir, dupTmpChange[i]);
+                  fs.renameSync(o, n);
+                  logData.push([
+                    item + " => " + dupTmpChange[i],
+                    1,
+                    o,
+                    n,
+                    workTime,
+                    3,
+                  ]);
+                  this.changeRenameHistory2([
+                    this.beforeItems[i].name + " => " + item.name,
+                    1,
+                    o,
+                    n,
+                    workTime,
+                    3,
+                  ]);
+                  this.$emit("finish");
+                  this.initailizeRename();
+                  BUS.$emit("bus:refreshfilter");
+                });
+              }
+            });
+          } else {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "파일명이 변경되었습니다",
+              showConfirmButton: false,
+              timer: 1000,
+            });
+            this.$emit("finish");
+            this.initailizeRename();
+            BUS.$emit("bus:refreshfilter");
+          }
+          this.changeRenameHistory(logData);
+          this.changeLogBackCheck(true);
+          this.changeRenameDir("");
         }
-        this.changeRenameHistory(logData)
-        this.changeLogBackCheck(true)
-        this.changeRenameDir("")
-      }})
+      });
     }
   }
 
@@ -267,15 +339,16 @@ export default class Rename extends Vue {
       confirmButtonText: `Yes`,
     }).then((result) => {
       if (result.isConfirmed) {
-        this.changeLogBackCheck(false)
-        const lastLog = this.renameHistory[this.renameHistory.length - 1]
-        lastLog.forEach(log => {
+        this.changeLogBackCheck(false);
+        const lastLog = this.renameHistory[this.renameHistory.length - 1];
+        lastLog.forEach((log) => {
           // 예외처리(해당 폴더에 되돌리려는 파일명이 존재하면 -> 덮어씌어지지 않게)
           if (fs.existsSync(log[2])) {
             Swal.fire({
               position: "center",
               icon: "warning",
-              title: "되돌리려는 파일명과 같은 파일명이 존재합니다. 덮어씌우시겠습니까?",
+              title:
+                "되돌리려는 파일명과 같은 파일명이 존재합니다. 덮어씌우시겠습니까?",
               text: log[2],
               showCancelButton: true,
               confirmButtonText: `Yes`,
@@ -294,7 +367,7 @@ export default class Rename extends Vue {
                   });
                 }
               }
-            })
+            });
           } else {
             try {
               fs.renameSync(log[3], log[2]);
@@ -309,10 +382,11 @@ export default class Rename extends Vue {
             }
           }
         });
-        this.initailizeRename()
-      }})
+        this.initailizeRename();
+      }
+    });
   }
-  
+
   @Watch("beforeItems")
   watchFileList() {
     this.changePreview();
