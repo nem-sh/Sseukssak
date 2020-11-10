@@ -117,6 +117,7 @@ export default {
   height: 100%;
   width: 100%;
   background: url("../assets/After.png") no-repeat;
+  background-size: cover;
   /* background: url("images/car.jpg") no-repeat; */
 }
 .wrapper .images .img-2{
@@ -125,6 +126,7 @@ export default {
   width: 98%;
   /* filter: blur(5px); */
   background: url("../assets/Before.png") no-repeat;
+  background-size: cover;
   /* background: url("images/car.png") no-repeat; */
 }
 .wrapper .ImgSlider{
