@@ -77,15 +77,15 @@ function createLoadingScreen() {
   loadingScreen.setAlwaysOnTop(true);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
-    /* if (loadingScreen !== null) {
+    if (loadingScreen !== null) {
       console.log(__dirname);
-      loadingScreen.loadURL("file://" + __dirname + "/bundled/loading.html");
-      loadingScreen.once("ready-to-show", () => {
-        if (loadingScreen !== null) {
-          loadingScreen.show();
-        }
-      });
-    }*/
+      // loadingScreen.loadURL("file://" + __dirname + "/bundled/loading.html");
+      // loadingScreen.once("ready-to-show", () => {
+      //   if (loadingScreen !== null) {
+      //     loadingScreen.show();
+      //   }
+      // });
+    }
   } else {
     createProtocol("app");
     loadingScreen.loadURL("app://./loading.html");
@@ -147,6 +147,7 @@ function createWindow() {
   });
 
   win.on("closed", function() {
+    tray = null;
     win = null;
   });
 

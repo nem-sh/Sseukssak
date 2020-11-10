@@ -10,8 +10,8 @@
       <div class="select-folder">
         <v-row>
           <v-col cols="2" class="to-name">
-            <h3><span>To</span></h3></v-col
-          >
+            <img src="@/assets/titleImg/ToImg.png" alt="" height="47"
+          /></v-col>
           <v-col cols="8" align="center" justify="center" class="mt-5">
             <v-select
               :items="toLibraryNameList"
@@ -513,5 +513,9 @@ export default class ListTo extends Vue {
 .item-path {
   font-size: 12px;
   color: #7a8186;
+}
+
+.to-name {
+  padding-top: 10px;
 }
 </style>
