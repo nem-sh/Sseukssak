@@ -3,7 +3,7 @@
     <div class="window-operations-container">
       <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
       <div class="operations">
-        <BtnLoginGoogle class="mr-1"/>
+        <BtnLoginGoogle class="mr-1" />
         <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
         <!-- <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i> -->
         <!-- <i
@@ -140,7 +140,7 @@ const { ipcRenderer, shell } = window.require("electron");
 @Component({
   components: {
     Home,
-    BtnLoginGoogle,
+    BtnLoginGoogle
   },
   data() {
     return {
@@ -150,20 +150,20 @@ const { ipcRenderer, shell } = window.require("electron");
           id: 2,
           title: "Rename",
           icon: "fas fa-pencil fa-lg",
-          path: "rename",
+          path: "rename"
         },
         {
           id: 3,
           title: "Restore",
           icon: "fa fa-history fa-lg",
-          path: "restore",
-        },
-      ],
+          path: "restore"
+        }
+      ]
     };
   },
   created() {
     this.$router.push({ name: "Home" });
-  },
+  }
 })
 export default class App extends Vue {
   activeTab: string = "Home";
@@ -177,15 +177,15 @@ export default class App extends Vue {
       this.activeTab = "Rename";
       this.$router.push({ name: "Rename" });
     } else if (idx === 3 && this.$route.name !== "Restore") {
-      Swal.fire({
-        position: "center",
-        icon: "warning",
-        title: "준비중 입니다 :)",
-        showConfirmButton: false,
-        timer: 1000,
-      });
-      // this.activeTab = "Restore";
-      // this.$router.push({ name: "Restore" });
+      // Swal.fire({
+      //   position: "center",
+      //   icon: "warning",
+      //   title: "준비중 입니다 :)",
+      //   showConfirmButton: false,
+      //   timer: 1000,
+      // });
+      this.activeTab = "Restore";
+      this.$router.push({ name: "Restore" });
     }
   }
 
@@ -233,7 +233,7 @@ export default class App extends Vue {
       icon: "warning",
       title: "준비중 입니다 :)",
       showConfirmButton: false,
-      timer: 1000,
+      timer: 1000
     });
   }
 }
