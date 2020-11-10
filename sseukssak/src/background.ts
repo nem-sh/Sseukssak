@@ -29,7 +29,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 function createTray() {
-  let appIcon = new Tray(path.join(__static, "sweeping2.png"));
+  let appIcon = new Tray(path.join(__static, "sweeping.png"));
   const contextMenu = Menu.buildFromTemplate([
     {
       label: "Show",
@@ -53,7 +53,7 @@ function createTray() {
     }
   });
 
-  appIcon.setToolTip("SseukSsak");
+  appIcon.setToolTip("쓱싹");
   appIcon.setContextMenu(contextMenu);
 
   return appIcon;

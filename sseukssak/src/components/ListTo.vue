@@ -16,7 +16,7 @@
             <v-select
               :items="toLibraryNameList"
               v-model="selectedToName"
-              label="Select rule"
+              label="Select Group"
               dense
               outlined
             ></v-select>
