@@ -10,8 +10,8 @@
       <div class="select-folder">
         <v-row>
           <v-col cols="2" class="to-name">
-            <h3><span>To</span></h3></v-col
-          >
+            <img src="@/assets/titleImg/ToImg.png" alt="" height="47"
+          /></v-col>
           <v-col cols="8" align="center" justify="center" class="mt-5">
             <v-select
               :items="toLibraryNameList"
@@ -52,10 +52,10 @@
         >
           <template v-slot:default="{ item }">
             <v-list-item
+              two-line
               link
               :key="item.path"
-              @click.stop="openShell(item.path)"
-            >
+              @click.stop="openShell(item.path)">
               <v-list-item-action>
                 <v-img
                   src="@/assets/folder-icon.png"
@@ -79,7 +79,21 @@
                 <v-list-item-title>
                   <strong>{{ getDirectoryName(item.path) }}</strong>
                 </v-list-item-title>
-                <div class="item-path">{{ item.path }}</div>
+                <!-- <div class="item-path">
+                  {{ item.path }}
+                </div> -->
+                <v-list-item-subtitle color="#7288da">
+                  <span
+                    v-for="tag in getTagLists(
+                      item.typeTags,
+                      item.dateTags,
+                      item.titleTags
+                    )"
+                    :key="tag"
+                    class="mr-2"
+                    >{{ tag }}
+                  </span>
+                </v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
                 <v-row align="center" justify="center" class="pa-0">
@@ -90,7 +104,6 @@
                           <i class="fas fa-ellipsis-v-alt"></i
                         ></v-btn>
                       </template>
-
                       <v-list>
                         <!-- 수정하기 
                         <v-list-item link>
@@ -485,6 +498,14 @@ export default class ListTo extends Vue {
     this.changeDirectoryLength(name);
   }
 
+  getTagLists(type, date, title) {
+    const tagLists = [];
+    Array.prototype.push.apply(tagLists, type);
+    Array.prototype.push.apply(tagLists, date);
+    Array.prototype.push.apply(tagLists, title);
+    return tagLists;
+  }
+
   @Watch("selectedToName")
   watchSelectedToName() {
     this.changeSelectedToName(this.selectedToName);
@@ -517,5 +538,9 @@ export default class ListTo extends Vue {
 .item-path {
   font-size: 12px;
   color: #7a8186;
+}
+
+.to-name {
+  padding-top: 10px;
 }
 </style>
