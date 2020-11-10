@@ -267,7 +267,7 @@
       >
         <li>
           <a
-            @click="enterDirectory(fromDir + '\\' + selectedData.name)"
+            @click="enterDirectory(selectedData.name)"
             style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
@@ -736,6 +736,7 @@ export default class ListFrom extends Vue {
   }
   async enterDirectory(enteredDirectory: string) {
     this.filterState = "전체보기";
+    console.log(enteredDirectory, 987);
     if (enteredDirectory == "") {
       const dir: string[] = this.fromDir.split("\\");
       dir.pop();
