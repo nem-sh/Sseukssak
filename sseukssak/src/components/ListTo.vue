@@ -129,9 +129,9 @@
         autoplay
         class="mt-5"
       ></lottie-player>
-      <h3 class="mt-3">정리 규칙을 선택해주세요</h3>
+      <h3 class="mt-3">정리 그룹을 선택해주세요</h3>
       <div style="font-size: 12px" class="mt-2">
-        나만의 정리 규칙을 만들어 사용해보세요!
+        나만의 정리 그룹을 만들어 사용해보세요!
       </div>
     </div>
     <!-- <div v-if="selectedToName" class="to-part-third">
