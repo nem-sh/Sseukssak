@@ -555,7 +555,13 @@ export default class ListFrom extends Vue {
   };
 
   clickclick() {
-    alert("준비중^__^");
+    Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: "준비중입니다",
+      showConfirmButton: false,
+      timer: 1000,
+    });
     console.log(
       fs.createReadStream(this.fromDir + "\\" + this.selectedData["name"])
     );
@@ -593,7 +599,13 @@ export default class ListFrom extends Vue {
       this.fromDir + "\\" + this.renameValue
     );
     this.renewFrom();
-    alert("수정됨^__^");
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "수정되었습니다",
+      showConfirmButton: false,
+      timer: 1000,
+    });
     this.dialog2 = false;
   }
   openShell() {
