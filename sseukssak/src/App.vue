@@ -55,7 +55,7 @@
                   <span><i class="fas fa-pencil fa-lg"></i></span>
                 </div>
               </template>
-              <span>Rename</span>
+              <span>파일/폴더명 변경</span>
             </v-tooltip>
             <v-tooltip right>
               <template v-slot:activator="{ on, attrs }">
@@ -69,7 +69,7 @@
                   <span><i class="far fa-history fa-lg"></i></span>
                 </div>
               </template>
-              <span>History</span>
+              <span>히스토리</span>
             </v-tooltip>
 
             <!-- 다크모드 -->

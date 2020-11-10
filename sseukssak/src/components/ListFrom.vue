@@ -80,7 +80,7 @@
         <v-virtual-scroll
           v-if="fileScrollList.length !== 0"
           :items="fileScrollList"
-          height="420"
+          height="400"
           item-height="90"
           class="file-scroller"
         >
@@ -387,7 +387,7 @@
           >
         </li>
         <li>
-          <BtnUploadGoogleDrive v-bind:fileName="selectedData.name" />
+          <BtnUploadGoogleDrive v-bind:fileName="selectedData.name" v-if="isLogin" />
         </li>
         <li>
           <a @click="getInfo()" style="display: flex; align-items: center"
@@ -519,7 +519,7 @@ interface Directory {
     ListFromBreadcrumbs,
     ListFromFilter,
   },
-  computed: mapState(["fileSortList", "fromDir", "fileList"]),
+  computed: mapState(["fileSortList", "fromDir", "fileList","isLogin"]),
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
 })
 export default class ListFrom extends Vue {
