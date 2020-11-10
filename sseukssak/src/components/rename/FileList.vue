@@ -174,58 +174,59 @@ export default class Rename extends Vue {
     });
     if (!rs) return;
     const dir = rs[0];
-    if (dir === 'C:\\') {
+    try {
+      const files = fs.readdirSync(dir);
+      this.choiceList = [];
+      this.selectCheck = false;
+      const tmpFileList: FileInfo[] = [];
+      for (const v of files) {
+        const p = path.join(dir, v);
+        const stat = fs.lstatSync(p);
+        // 확장자
+        let _fileType = "";
+        if (!stat.isDirectory()) {
+          const tmp = v.split(".");
+          _fileType = tmp[tmp.length - 1].toLowerCase();
+        }
+        const item = {
+          name: v,
+          path: p,
+          ctime: stat.birthtime,
+          mtime: stat.mtime,
+          type: _fileType,
+          dir: dir,
+          icon: "",
+        };
+        // 파일 아이콘
+        let iconPath = dir + "/" + v;
+        if (v.includes(".lnk")) {
+          try {
+            iconPath = shell.readShortcutLink(iconPath).target;
+          } catch {
+            iconPath = dir + "/" + v;
+          }
+        }
+        let realIcon = "";
+        app.getFileIcon(iconPath).then((fileIcon) => {
+          realIcon = fileIcon.toDataURL();
+          item["icon"] = realIcon;
+        });
+        tmpFileList.push(item);
+      }
+      this.changeRenameDir(dir);
+      await this.changeRenameFileList(tmpFileList);
+      await this.changeBeforeItems([]);
+      await this.sortRenameFileList();
+    } catch {
       Swal.fire({
         position: "center",
         icon: "warning",
-        title: "접근 권한이 없습니다",
+        title: "해당 폴더에 접근 권한이 없습니다",
         showConfirmButton: false,
         timer: 1000,
       });
       return
     }
-    this.changeRenameDir(dir);
-    const files = fs.readdirSync(dir);
-    this.choiceList = [];
-    this.selectCheck = false;
-    const tmpFileList: FileInfo[] = [];
-    for (const v of files) {
-      const p = path.join(dir, v);
-      const stat = fs.lstatSync(p);
-      // 확장자
-      let _fileType = "";
-      if (!stat.isDirectory()) {
-        const tmp = v.split(".");
-        _fileType = tmp[tmp.length - 1].toLowerCase();
-      }
-      const item = {
-        name: v,
-        path: p,
-        ctime: stat.birthtime,
-        mtime: stat.mtime,
-        type: _fileType,
-        dir: dir,
-        icon: "",
-      };
-      // 파일 아이콘
-      let iconPath = dir + "/" + v;
-      if (v.includes(".lnk")) {
-        try {
-          iconPath = shell.readShortcutLink(iconPath).target;
-        } catch {
-          iconPath = dir + "/" + v;
-        }
-      }
-      let realIcon = "";
-      app.getFileIcon(iconPath).then((fileIcon) => {
-        realIcon = fileIcon.toDataURL();
-        item["icon"] = realIcon;
-      });
-      tmpFileList.push(item);
-    }
-    await this.changeRenameFileList(tmpFileList);
-    await this.changeBeforeItems([]);
-    await this.sortRenameFileList();
   }
   changeSelect() {
     this.changeBeforeItems(this.choiceList);
