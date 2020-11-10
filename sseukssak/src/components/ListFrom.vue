@@ -48,7 +48,7 @@
         <v-virtual-scroll
           v-if="fileScrollList.length !== 0"
           :items="fileScrollList"
-          height="390"
+          height="420"
           item-height="90"
           class="file-scroller"
         >
@@ -918,5 +918,9 @@ export default class ListFrom extends Vue {
 
 #contextmenu li:hover a {
   color: #ffffff;
+}
+
+.v-label {
+  font-size: 14px;
 }
 </style>
