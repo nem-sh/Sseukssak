@@ -310,19 +310,9 @@
             />디렉토리 지우기</a
           >
         </li>
-        <!-- <li>
-          <a @click="dialog2 = true" style="display: flex; align-items: center">
-            <v-img
-              class="mr-2"
-              max-width="25"
-              contain
-              height="100%"
-              src="./../assets/googleDriveLogo.png"
-              alt="googleDrive"
-            />
-            구글 드라이브 백업</a
-          >
-        </li> -->
+        <li>
+          <BtnUploadGoogleDriveFolder v-bind:folderName="selectedData.name" v-if="isLogin" />
+        </li>
         <li>
           <a @click="openShell()" style="display: flex; align-items: center"
             ><v-img
@@ -486,6 +476,8 @@ import ListFromBreadcrumbs from "@/components/listFrom/ListFromBreadcrumbs.vue";
 import ListFromFilter from "@/components/listFrom/ListFromFilter.vue";
 
 import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.vue";
+import BtnUploadGoogleDriveFolder from "@/components/googleDrive/BtnUploadGoogleDriveFolder.vue";
+
 import Swal from "sweetalert2";
 // import { shell } from "electron";
 const { shell } = require("electron").remote;
@@ -516,6 +508,7 @@ interface Directory {
     BtnSelectFromDir,
     BtnDupCheck,
     BtnUploadGoogleDrive,
+    BtnUploadGoogleDriveFolder,
     ListFromBreadcrumbs,
     ListFromFilter,
   },
