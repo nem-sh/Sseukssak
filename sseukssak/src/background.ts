@@ -21,7 +21,7 @@ let win: BrowserWindow | null;
 let loadingScreen: BrowserWindow | null;
 let tray: Tray | null;
 const browserWidth = 1000;
-const browserHeight = 600;
+const browserHeight = 650;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
