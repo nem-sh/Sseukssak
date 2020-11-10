@@ -1,7 +1,7 @@
 <template>
-    <v-container class="OuterDiv">
+    <v-container class="OuterDiv" fluid at-0>
       <v-row class="TopRow">
-        <img src="../assets/myLogo.png" alt="Image Gone!!" class="LogoImage"/>
+        Sseukssak
       </v-row>
       <v-row class="BottomRow">
         <v-col
@@ -66,18 +66,13 @@ export default {
             // link.setAttribute("download", "File_Name.png")
             // document.body.appendChild(link);
             // link.click();
-            fileDownload(myLogo, "myFileBabe.png")
+            fileDownload(myLogo, "Sseukssak Setup")
         },
     }
 }
 </script>
 
 <style>
-.OuterDiv {
-    height: 100vh;
-    width: 100vw;
-    background-color: lightblue;
-}
 .TopRow {
     height: 60%;
     display: flex;
