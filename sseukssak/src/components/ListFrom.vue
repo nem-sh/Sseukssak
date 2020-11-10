@@ -80,7 +80,7 @@
         <v-virtual-scroll
           v-if="fileScrollList.length !== 0"
           :items="fileScrollList"
-          height="420"
+          height="400"
           item-height="90"
           class="file-scroller"
         >

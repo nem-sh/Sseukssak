@@ -60,6 +60,8 @@ const AppProps = Vue.extend({
 export default class ListFromFilter extends AppProps {
   radioGroup: number = 1;
   selected: string = "전체보기";
+  filterState: string = this.state;
+
   @Watch("radioGroup")
   watchRadioGroup() {
     if (this.radioGroup === 1) {

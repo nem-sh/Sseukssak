@@ -3,7 +3,7 @@
     <div class="window-operations-container">
       <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
       <div class="operations">
-        <BtnLoginGoogle class="mr-1"/>
+        <BtnLoginGoogle class="mr-1" />
         <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
         <!-- <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i> -->
         <!-- <i
@@ -55,7 +55,7 @@
                   <span><i class="fas fa-pencil fa-lg"></i></span>
                 </div>
               </template>
-              <span>Rename</span>
+              <span>파일/폴더명 변경</span>
             </v-tooltip>
             <v-tooltip right>
               <template v-slot:activator="{ on, attrs }">
@@ -69,7 +69,7 @@
                   <span><i class="far fa-history fa-lg"></i></span>
                 </div>
               </template>
-              <span>History</span>
+              <span>히스토리</span>
             </v-tooltip>
 
             <!-- 다크모드 -->

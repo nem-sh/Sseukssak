@@ -46,8 +46,7 @@
                     <v-card>
                       <v-card-title>
                         <!-- <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_pTnS7W/Empty Folder.json"  background="transparent"  speed="1"  style="width: 100px; height: 100px;"  loop  autoplay></lottie-player> -->
-                        정리할 폴더(From 폴더) 내에 해당 폴더가 자동
-                          생성됩니다.
+                        정리할 폴더(From 폴더) 내에 해당 폴더가 자동 생성됩니다.
                         <!-- <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
                           <i style="color:grey" v-bind="attrs" v-on="on" class="far fa-question-circle fa-2x"></i>
@@ -71,7 +70,7 @@
                       <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn
-                          color="green darken-1"
+                          color="red darken-1"
                           text
                           @click="dialog3 = false"
                         >
@@ -83,7 +82,7 @@
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
-                  <BtnCreateGoogleFolder/>
+                  <!--<BtnCreateGoogleFolder/>-->
                 </div>
                 <div class="ml-3 mb-3 font-weight-bold d-flex align-center">
                   <img
@@ -128,62 +127,79 @@
                   ></v-overflow-btn>
                 </v-col>
               </v-row>
-                <div id="type" v-show="selectedFilter === '파일 유형' && selectedType === '확장자 직접 입력'">
-                  <div>
-                    <v-text-field
-                      v-model="typeAddName"
-                      label="확장자 직접 입력(ex. jpg, ppt)"
-                      prepend-icon="mdi-pencil"
-                      class="pt-0"
-                      @keypress.enter="clickAddBtn"
-                    >
-                    </v-text-field>
-                  </div>
+              <div
+                id="type"
+                v-show="
+                  selectedFilter === '파일 유형' &&
+                  selectedType === '확장자 직접 입력'
+                "
+              >
+                <div>
+                  <v-text-field
+                    v-model="typeAddName"
+                    label="확장자 직접 입력(ex. jpg, ppt)"
+                    prepend-icon="mdi-pencil"
+                    class="pt-0"
+                    @keypress.enter="clickAddBtn"
+                  >
+                  </v-text-field>
                 </div>
-                <div id="date" v-show="selectedFilter === '날짜' && selectedDate === '날짜 범위 직접 선택'">
-                  <div>
-                    <v-dialog v-model="dialog2" max-width="290">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          class="pt-0"
-                          v-model="dateRangeText"
-                          label="날짜 범위 직접 선택"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                          @click="dates = []"
-                          >
-                        </v-text-field>
-                      </template>
-                      <v-date-picker
-                        header-color="var(--color-purple)"
-                        v-model="dates"
-                        range
+              </div>
+              <div
+                id="date"
+                v-show="
+                  selectedFilter === '날짜' &&
+                  selectedDate === '날짜 범위 직접 선택'
+                "
+              >
+                <div>
+                  <v-dialog v-model="dialog2" max-width="290">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        class="pt-0"
+                        v-model="dateRangeText"
+                        label="날짜 범위 직접 선택"
+                        prepend-icon="mdi-calendar"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                        @click="dates = []"
                       >
-                        <v-spacer></v-spacer>
-                        <v-btn text color="primary" @click="dialog2 = false">
-                          Cancel
-                        </v-btn>
-                      </v-date-picker>
-                    </v-dialog>
-                  </div>
-                </div>
-                <div id="name" v-show="selectedFilter === '파일명'">
-                  <div>
-                    <v-text-field
-                      v-model="titleAddName"
-                      label="파일명에 포함되는 문자 입력"
-                      class="pt-0"
-                      prepend-icon="mdi-pencil"
-                      @keypress.enter="clickAddBtn"
+                      </v-text-field>
+                    </template>
+                    <v-date-picker
+                      header-color="var(--color-purple)"
+                      v-model="dates"
+                      range
                     >
-                    </v-text-field>
-                  </div>
+                      <v-spacer></v-spacer>
+                      <v-btn text color="primary" @click="dialog2 = false">
+                        Cancel
+                      </v-btn>
+                    </v-date-picker>
+                  </v-dialog>
                 </div>
+              </div>
+              <div id="name" v-show="selectedFilter === '파일명'">
+                <div>
+                  <v-text-field
+                    v-model="titleAddName"
+                    label="파일명에 포함되는 문자 입력"
+                    class="pt-0"
+                    prepend-icon="mdi-pencil"
+                    @keypress.enter="clickAddBtn"
+                  >
+                  </v-text-field>
+                </div>
+              </div>
               <div class="text-right pb-5">
                 <v-btn
-                  v-show="selectedFilter !== '' && ((selectedFilter === '파일 유형' && selectedType !== '') || (selectedFilter === '날짜' && selectedDate !== '') || (selectedFilter === '파일명'))"
+                  v-show="
+                    selectedFilter !== '' &&
+                    ((selectedFilter === '파일 유형' && selectedType !== '') ||
+                      (selectedFilter === '날짜' && selectedDate !== '') ||
+                      selectedFilter === '파일명')
+                  "
                   color="white"
                   class="text--primary"
                   fab
@@ -223,7 +239,7 @@
 import { Vue, Component, Watch } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
 import Swal from "sweetalert2";
-import BtnCreateGoogleFolder from "@/components/googleDrive/BtnCreateGoogleFolder.vue"
+import BtnCreateGoogleFolder from "@/components/googleDrive/BtnCreateGoogleFolder.vue";
 
 const { dialog } = require("electron").remote;
 
@@ -248,7 +264,7 @@ interface ToLibraryDirectory {
   ]),
   methods: mapMutations(["changeToLibraryList", "changeDropToDir"]),
   components: {
-    BtnCreateGoogleFolder
+    BtnCreateGoogleFolder,
   },
 })
 export default class ModalAddToLibraryDirectory extends Vue {
@@ -272,14 +288,14 @@ export default class ModalAddToLibraryDirectory extends Vue {
     "#Video",
     "#Audio",
     "#Compressed",
-    "확장자 직접 입력"
+    "확장자 직접 입력",
   ];
   dateTags: string[] = [
     "#Today",
     "#This week",
     "#This month",
     "#Every new file",
-    "날짜 범위 직접 선택"
+    "날짜 범위 직접 선택",
   ];
   titleTags: string[] = [];
   selectedTitleTags: string[] = [];
@@ -288,7 +304,6 @@ export default class ModalAddToLibraryDirectory extends Vue {
   readFromDirName: string = "";
   selectedType: string = "";
   selectedDate: string = "";
-
 
   //vuex
   toLibraryList!: ToLibrary[];
@@ -352,7 +367,11 @@ export default class ModalAddToLibraryDirectory extends Vue {
   }
 
   clickAddBtn() {
-    if (this.selectedFilter === "" || (this.selectedFilter === "파일 유형" && this.selectedType === "") || (this.selectedFilter === "날짜" && this.selectedDate === "")) {
+    if (
+      this.selectedFilter === "" ||
+      (this.selectedFilter === "파일 유형" && this.selectedType === "") ||
+      (this.selectedFilter === "날짜" && this.selectedDate === "")
+    ) {
       Swal.fire({
         position: "center",
         icon: "warning",
@@ -360,30 +379,30 @@ export default class ModalAddToLibraryDirectory extends Vue {
         showConfirmButton: false,
         timer: 1000,
       });
-      return
+      return;
     }
     if (this.selectedFilter === "파일 유형") {
       if (this.selectedType === "확장자 직접 입력") {
-        this.typeAdd()
+        this.typeAdd();
       } else {
         if (this.dupCheckFilter(this.selectedType)) {
-          this.selectedTypeTags.push(this.selectedType)
+          this.selectedTypeTags.push(this.selectedType);
         }
       }
     } else if (this.selectedFilter === "날짜") {
       if (this.selectedDate === "날짜 범위 직접 선택") {
-        this.dateAdd()
+        this.dateAdd();
       } else {
         if (this.dupCheckFilter(this.selectedDate)) {
-          this.selectedDateTags.push(this.selectedDate)
+          this.selectedDateTags.push(this.selectedDate);
         }
       }
     } else if (this.selectedFilter === "파일명") {
-      this.titleAdd()
+      this.titleAdd();
     }
-    this.selectedFilter = this.selectedType = this.selectedDate = ""
-    this.titleAddName = this.typeAddName = ""
-    this.dates = []
+    this.selectedFilter = this.selectedType = this.selectedDate = "";
+    this.titleAddName = this.typeAddName = "";
+    this.dates = [];
   }
 
   dupCheckFilter(i) {
@@ -395,9 +414,9 @@ export default class ModalAddToLibraryDirectory extends Vue {
         showConfirmButton: false,
         timer: 1000,
       });
-      return false
+      return false;
     }
-    return true
+    return true;
   }
 
   closeModal() {
@@ -409,8 +428,9 @@ export default class ModalAddToLibraryDirectory extends Vue {
     this.readFromDirName = "";
     this.directoryDir = "";
     this.selectedFilter = "";
-    this.selectedType = this.selectedDate = this.titleAddName = this.typeAddName = ""
-    this.dates = []
+    this.selectedType = this.selectedDate = this.titleAddName = this.typeAddName =
+      "";
+    this.dates = [];
     this.dialog = false;
   }
   readDir() {
