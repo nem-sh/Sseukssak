@@ -1,12 +1,13 @@
 <template>
   <div>
-    <i
-      class="fas fa-pen mr-2"
-      style="color: #009688"
-      v-if="selectedToName"
-      @click="dialog = true"
-    ></i
-    >수정하기
+    <div @click.stop="dialog = true">
+      <i
+        class="fas fa-pen mr-2"
+        style="color: #009688"
+        v-if="selectedToName"
+      ></i
+      >수정하기
+    </div>
     <!-- <v-btn
       icon
       color="success"

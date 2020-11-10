@@ -710,6 +710,7 @@ export default class ListFrom extends Vue {
 
     for (const f of event.dataTransfer.files) {
       fs.renameSync(f.path, this.fromDir + "/" + f.name);
+      this.renewFrom();
     }
   }
   mounted() {
