@@ -1,9 +1,9 @@
 {
   "history": {
     "workcode": {
-      "1": "Move",
-      "2": "Check Duplicated Files",
-      "3": "Rename"
+      "1": "파일 이동",
+      "2": "중복 파일 체크",
+      "3": "파일 이름 변경"
     },
     "success": {
       "0": "실패",
