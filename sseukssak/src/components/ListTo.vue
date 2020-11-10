@@ -85,17 +85,15 @@
                           <i class="fas fa-ellipsis-v-alt"></i
                         ></v-btn>
                       </template>
+
                       <v-list>
                         <!-- 수정하기 -->
-                        <!-- <v-list-item link>
+                        <v-list-item link>
                           <v-list-item-title
-                            ><i
-                              class="fas fa-pen mr-2"
-                              style="color: #009688"
-                            ></i
-                            >수정하기</v-list-item-title
-                          >
-                        </v-list-item> -->
+                            ><ModalModifyToLibraryDirectory
+                              :propDirectory="item"
+                          /></v-list-item-title>
+                        </v-list-item>
                         <v-list-item
                           link
                           @click.stop="deleteToLibraryDirectory(item.path)"
@@ -150,7 +148,7 @@ import Swal from "sweetalert2";
 
 import ModalCreateToLibrary from "@/components/ModalCreateToLibrary.vue";
 import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.vue";
-// import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
+import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
 
 import { shell } from "electron";
 
@@ -172,7 +170,7 @@ interface ToLibraryDirectory {
   components: {
     ModalCreateToLibrary,
     ModalAddToLibraryDirectory,
-    // ModalModifyToLibraryDirectory,
+    ModalModifyToLibraryDirectory,
   },
   computed: mapState(["toLibraryList", "toLibraryNameList", "fromDir"]),
   methods: mapMutations([
