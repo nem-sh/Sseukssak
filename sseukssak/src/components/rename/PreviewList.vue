@@ -40,7 +40,6 @@
           변경 후
         </p>
         <div v-if="afterItems.length <= 0" align="center" class="position-c">
-          변경 후
           <p class="mt-2">파일/폴더를 선택하세요 :(</p>
         </div>
         <v-virtual-scroll
