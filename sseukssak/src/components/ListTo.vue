@@ -51,7 +51,11 @@
           class="file-scroller"
         >
           <template v-slot:default="{ item }">
-            <v-list-item link :key="item.path" @click="openShell(item.path)">
+            <v-list-item
+              link
+              :key="item.path"
+              @click.stop="openShell(item.path)"
+            >
               <v-list-item-action>
                 <v-img
                   src="@/assets/folder-icon.png"
