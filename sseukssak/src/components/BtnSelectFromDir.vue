@@ -14,6 +14,7 @@ const { dialog } = require("electron").remote;
 import { shell } from "electron";
 const { app } = require("electron").remote;
 
+import Swal from "sweetalert2";
 const homeDir = require("os").homedir();
 const desktopDir = `${homeDir}\\Desktop`;
 
@@ -63,52 +64,63 @@ export default class BtnSelectFromDir extends Vue {
     } else {
       this.changeDir(desktopDir);
     }
-    const fileList = fs.readdirSync(this.fromDir);
+    try {
+      const fileList = fs.readdirSync(this.fromDir);
 
-    const fileSortList: SortList = { directories: [], files: [] };
-    fileList.forEach((name: string) => {
-      const fileSplit = name.split(".");
-      if (fs.lstatSync(this.fromDir + "/" + name).isDirectory()) {
-        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
-        const updatedTime = Math.max(
-          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
-          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
-        );
-        fileSortList.directories.push({
-          name: name,
-          birthTime: birthTime,
-          updatedTime: updatedTime,
-        });
-      } else {
-        const fileType = fileSplit[fileSplit.length - 1].toLowerCase();
-        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
-        const updatedTime = Math.max(
-          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
-          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
-        );
-        let iconPath = this.fromDir + "/" + name;
-        if (name.includes(".lnk")) {
-          try {
-            iconPath = shell.readShortcutLink(iconPath).target;
-          } catch {
-            iconPath = this.fromDir + "/" + name;
-          }
-        }
-        let realIcon = "";
-        app.getFileIcon(iconPath).then((fileIcon) => {
-          realIcon = fileIcon.toDataURL();
-          fileSortList.files.push({
+      const fileSortList: SortList = { directories: [], files: [] };
+      fileList.forEach((name: string) => {
+        const fileSplit = name.split(".");
+        if (fs.lstatSync(this.fromDir + "/" + name).isDirectory()) {
+          const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
+          const updatedTime = Math.max(
+            fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+            fs.lstatSync(this.fromDir + "/" + name).ctimeMs
+          );
+          fileSortList.directories.push({
             name: name,
-            fileType: fileType,
             birthTime: birthTime,
             updatedTime: updatedTime,
-            icon: realIcon,
           });
-        });
-      }
-    });
-    this.changeFileSortList(fileSortList);
-    this.changeFileList(fileList);
+        } else {
+          const fileType = fileSplit[fileSplit.length - 1].toLowerCase();
+          const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
+          const updatedTime = Math.max(
+            fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+            fs.lstatSync(this.fromDir + "/" + name).ctimeMs
+          );
+          let iconPath = this.fromDir + "/" + name;
+          if (name.includes(".lnk")) {
+            try {
+              iconPath = shell.readShortcutLink(iconPath).target;
+            } catch {
+              iconPath = this.fromDir + "/" + name;
+            }
+          }
+          let realIcon = "";
+          app.getFileIcon(iconPath).then((fileIcon) => {
+            realIcon = fileIcon.toDataURL();
+            fileSortList.files.push({
+              name: name,
+              fileType: fileType,
+              birthTime: birthTime,
+              updatedTime: updatedTime,
+              icon: realIcon,
+            });
+          });
+        }
+      });
+      this.changeFileSortList(fileSortList);
+      this.changeFileList(fileList);
+    } catch (error) {
+      this.changeDir(desktopDir);
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: `해당 경로는 권한이 없습니다.`,
+        showConfirmButton: false,
+        timer: 1000,
+      });
+    }
   }
   mounted() {
     if (this.firstOpen) {
