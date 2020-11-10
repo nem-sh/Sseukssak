@@ -75,6 +75,7 @@
                 <v-list-item-title>
                   <strong>{{ getDirectoryName(item.path) }}</strong>
                 </v-list-item-title>
+                <div class="item-path">{{ item.path }}</div>
               </v-list-item-content>
               <v-list-item-action>
                 <v-row align="center" justify="center" class="pa-0">
@@ -507,5 +508,10 @@ export default class ListTo extends Vue {
 
 .theme--light.v-label {
   color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.item-path {
+  font-size: 12px;
+  color: #7a8186;
 }
 </style>
