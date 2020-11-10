@@ -3,7 +3,6 @@
     <br />
     <br />
     <br />
-    <p>현재 중복파일 체크 내역만 확인 가능함</p>
     <v-btn @click="resetHistory()">내역 초기화</v-btn>
 
     <hr />
@@ -122,34 +121,12 @@ export default class Restore extends Vue {
 
     let localHistory;
     try {
-      localHistory = fs.readFileSync(
-        path.resolve(
-          __dirname,
-          "..",
-          "..",
-          "..",
-          "..",
-          "..",
-          "..",
-          "history_test.json"
-        )
-      );
+      localHistory = fs.readFileSync("history_test.json");
     } catch (error) {
       fs.writeFileSync("history_test.json", nulldata2);
     }
 
-    localHistory = fs.readFileSync(
-      path.resolve(
-        __dirname,
-        "..",
-        "..",
-        "..",
-        "..",
-        "..",
-        "..",
-        "history_test.json"
-      )
-    );
+    localHistory = fs.readFileSync("history_test.json");
 
     // console.log(this.duplicatedList.length);
     const mm = JSON.parse(localHistory.toString());
