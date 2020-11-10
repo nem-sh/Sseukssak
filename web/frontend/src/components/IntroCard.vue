@@ -1,5 +1,5 @@
 <template>
-  <v-container class="IntroBox" fluid at-0>
+  <v-container class="IntroBox">
     <v-row class="ImagePart">
       <img :src="require(`@/assets/${picture}`)" class="snapshot">
       </v-row>
