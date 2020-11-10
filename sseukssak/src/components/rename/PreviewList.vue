@@ -6,14 +6,20 @@
       </div>
     </div>
     <v-row>
-      <v-col cols="5.5">
-        <p class="text-center font-weight-bold" :class="partTitleMode">Before</p>
-        <!-- <v-divider></v-divider> -->
+      <v-col cols="5.5" class="position-p">
+        <p class="text-center font-weight-bold" :class="partTitleMode">변경 전</p>
+        <div
+          v-if="beforeItems.length <= 0"
+          align="center"
+          class="position-c"
+        >
+          <p class="mt-2">파일/폴더를 선택하세요 :(</p>
+        </div>
         <v-virtual-scroll
           class="file-scroller"
           :bench="benched"
           :items="beforeItems"
-          height="120"
+          height="130"
           item-height="40"
         >
           <template v-slot:default="{ item }">
@@ -25,14 +31,20 @@
           </template>
         </v-virtual-scroll>
       </v-col>
-      <v-col cols="5.5">
-        <p class="text-center font-weight-bold" style="color:blue" :class="partTitleMode">After</p>
-        <!-- <v-divider></v-divider> -->
+      <v-col cols="5.5" class="position-p">
+        <p class="text-center font-weight-bold" style="color:blue" :class="partTitleMode">변경 후</p>
+        <div
+          v-if="afterItems.length <= 0"
+          align="center"
+          class="position-c"
+        >
+          <p class="mt-2">파일/폴더를 선택하세요 :(</p>
+        </div>
         <v-virtual-scroll
           class="file-scroller"
           :bench="benched"
           :items="afterItems"
-          height="120"
+          height="130"
           item-height="40"
         >
           <template v-slot:default="{ item }">
@@ -45,10 +57,10 @@
         </v-virtual-scroll>
       </v-col>
       <v-col cols="1" class="d-flex flex-column my-auto align-center">
-        <v-btn dark rounded class="mr-3 mb-2" @click="rename" color="#7288da">
+        <v-btn dark rounded class="mr-4 mb-2" @click="rename" color="#7288da">
           변경
         </v-btn>
-        <v-btn rounded dark class="mr-3" @click="logBack" :disabled="logBackCheck === false" color="red accent-2">
+        <v-btn rounded class="mr-4" style="color:white" @click="logBack" :disabled="logBackCheck === false" color="red accent-2">
           <i class="fas fa-redo-alt"></i>
         </v-btn>
       </v-col>
@@ -78,7 +90,7 @@ interface FileInfo {
 
 @Component({
   computed: mapState(["filterFront", "filterMiddle", "filterBack", "frontName", "middleName", "backName", "renameFileList", "beforeItems", "afterItems", "dupCheck", "renameHistory", "logBackCheck"]),
-  methods: mapMutations(["changePreview", "changeRenameHistory", "changeRenameHistory2", "changeLogBackCheck", "initailizeRename"])
+  methods: mapMutations(["changeRenameDir", "changePreview", "changeRenameHistory", "changeRenameHistory2", "changeLogBackCheck", "initailizeRename"])
 })
 
 export default class Rename extends Vue {
@@ -100,6 +112,7 @@ export default class Rename extends Vue {
   changeRenameHistory2!: (newHistory: any[]) => void;
   changeLogBackCheck!: (newCheck: boolean) => void;
   initailizeRename!: () => void;
+  changeRenameDir!: (newDir: string) => void;
 
   get partTitleMode() {
     return this.$vuetify.theme.dark? "part-title-d" : "part-title"
@@ -137,7 +150,7 @@ export default class Rename extends Vue {
       Swal.fire({
         position: "center",
         icon: "warning",
-        title: "변경할 파일이 없습니다",
+        title: "변경할 파일/폴더가 없습니다",
         showConfirmButton: false,
         timer: 1000,
       });
@@ -240,6 +253,7 @@ export default class Rename extends Vue {
         }
         this.changeRenameHistory(logData)
         this.changeLogBackCheck(true)
+        this.changeRenameDir("")
       }})
     }
   }

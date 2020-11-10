@@ -1,6 +1,6 @@
 <template>
   <v-container class="screen" :class="bgMode">
-    <div class="mt-10">
+    <div class="mt-10 mb-2">
       <h3 :class="titleMode"><span>RENAME</span></h3>
     </div>
 
@@ -15,7 +15,7 @@
             </v-col>
             <v-col cols="11">
               <FileList v-show="n === 1" />
-              <v-row style="margin: 2px" v-show="n === 2">
+              <v-row class="px-2" v-show="n === 2">
                 <FilterList />
                 <PreviewList @finish="e1 = 1" />
               </v-row>
@@ -98,15 +98,15 @@ export default class Rename extends Vue {
 }
 .rename-title span {
   display: block;
-  font-size: 30px;
-  line-height: 30px;
+  font-size: 40px;
+  line-height: 40px;
   color: #7288da;
 }
 .rename-title-d span {
   display: block;
   margin: 0 0 17px 10px;
-  font-size: 30px;
-  line-height: 30px;
+  font-size: 40px;
+  line-height: 40px;
   color: #7288da;
   text-shadow: 0 13.36px 8.896px black, 0 -2px 1px rgb(122, 120, 120);
   letter-spacing: -4px;

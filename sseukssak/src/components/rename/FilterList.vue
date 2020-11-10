@@ -1,7 +1,7 @@
 <template>
   <v-row :class="partMode"> 
     <v-col cols="12 pb-0">
-      <h4 class="text-center" :class="partTitleMode">2. 변경할 형식 설정</h4>
+      <h4 class="text-center" :class="partTitleMode">2. 형식 설정</h4>
     </v-col>
     <v-col cols="4" class="text-center pb-0">
       <p class="font-weight-bold" :class="partTitleMode">머리말</p>
@@ -22,7 +22,7 @@
       </v-radio-group>
     </v-col>
     <v-col cols="4" class="text-center pb-0">
-      <p class="font-weight-bold" :class="partTitleMode">폴더/파일명</p>
+      <p class="font-weight-bold" :class="partTitleMode">파일/폴더명</p>
       <v-radio-group v-model="middle" @change="filterChange(2)">
         <v-radio label="기존 이름" value="1" color="#7288da"></v-radio>
         <v-radio label="사용자 입력" value="2" color="#7288da"></v-radio>
@@ -33,7 +33,7 @@
           @input="nameChange(2)"
           :rules="nameRules"
           :counter="20"
-          label="변경할 파일명"
+          label="변경할 이름"
           required
         ></v-text-field>
       </v-radio-group>
