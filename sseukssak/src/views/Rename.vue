@@ -17,7 +17,7 @@
               <FileList v-show="n === 1" />
               <v-row class="px-2" v-show="n === 2">
                 <FilterList />
-                <PreviewList @finish="e1 = 1" />
+                <PreviewList />
               </v-row>
             </v-col>
             <v-col cols="1" v-show="n === 1" class="text-center px-0 my-auto">

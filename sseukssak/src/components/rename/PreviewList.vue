@@ -32,10 +32,11 @@
         </v-virtual-scroll>
       </v-col>
       <v-col cols="5.5" class="position-p">
-        <p
-          class="text-center font-weight-bold"
-          style="color: blue"
-          :class="partTitleMode"
+        <p class="text-center font-weight-bold" style="color:#7288da" :class="partTitleMode">변경 후</p>
+        <div
+          v-if="afterItems.length <= 0"
+          align="center"
+          class="position-c"
         >
           변경 후
         </p>
@@ -52,9 +53,7 @@
           <template v-slot:default="{ item }">
             <v-list-item :key="afterItems.indexOf(item)">
               <v-list-item-content>
-                <p class="text-next-line font-weight-bold" style="color: blue">
-                  {{ afterItems.indexOf(item) + 1 }}.{{ item.name }}
-                </p>
+                <p class="text-next-line font-weight-bold" style="color:#7288da">{{ afterItems.indexOf(item) + 1 }}.{{ item.name }}</p>
               </v-list-item-content>
             </v-list-item>
           </template>
