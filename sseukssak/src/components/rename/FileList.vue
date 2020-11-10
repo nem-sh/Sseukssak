@@ -93,6 +93,8 @@ const { dialog } = require("electron").remote;
 const { shell } = require("electron").remote;
 const { app } = require("electron").remote;
 
+import Swal from "sweetalert2";
+
 interface FileInfo {
   name: string;
   path: string;
@@ -172,6 +174,16 @@ export default class Rename extends Vue {
     });
     if (!rs) return;
     const dir = rs[0];
+    if (dir === 'C:\\') {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "접근 권한이 없습니다",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+      return
+    }
     this.changeRenameDir(dir);
     const files = fs.readdirSync(dir);
     this.choiceList = [];
