@@ -105,6 +105,7 @@ export default class BtnLoginGoogle extends Vue {
               }              
               savedToken['access_token'] = tokens['access_token']
               fs.writeFileSync(this.tokenPath,savedToken)
+              this.oAuth2Client.setCredentials(savedToken)
             })
           }
         })
