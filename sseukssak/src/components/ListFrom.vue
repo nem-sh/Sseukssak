@@ -387,7 +387,10 @@
           >
         </li>
         <li>
-          <BtnUploadGoogleDrive v-bind:fileName="selectedData.name" v-if="isLogin" />
+          <BtnUploadGoogleDrive
+            v-bind:fileName="selectedData.name"
+            v-if="isLogin"
+          />
         </li>
         <li>
           <a @click="getInfo()" style="display: flex; align-items: center"
@@ -519,7 +522,7 @@ interface Directory {
     ListFromBreadcrumbs,
     ListFromFilter,
   },
-  computed: mapState(["fileSortList", "fromDir", "fileList","isLogin"]),
+  computed: mapState(["fileSortList", "fromDir", "fileList", "isLogin"]),
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
 })
 export default class ListFrom extends Vue {
@@ -647,15 +650,16 @@ export default class ListFrom extends Vue {
     this.selectedData = value;
     const winWidth = window.outerWidth;
     const winHeight = window.outerHeight;
-    const posX: number = e.pageX - 65;
+    const posX: number = e.pageX - 90;
     const posY = e.pageY;
     const unit = document.getElementById("contextmenu");
     if (unit) {
       const menuWidth: number = unit.clientWidth;
-      const menuHeight: number = unit.clientWidth;
+      const menuHeight: number = unit.clientHeight;
       const secMargin = 10;
       let posLeft = "";
       let posTop = "";
+      console.log(posX, posY, menuWidth, menuHeight, winWidth, winHeight);
       if (
         posX + menuWidth + secMargin >= winWidth &&
         posY + menuHeight + secMargin >= winHeight
@@ -672,9 +676,15 @@ export default class ListFrom extends Vue {
         posLeft = posX + secMargin + "px";
         posTop = posY + secMargin + "px";
       }
+
+      console.log(posLeft, posTop);
       if (posLeft && posTop) {
-        posLeft = posX + secMargin + "px";
         posTop = posY + secMargin + "px";
+        posLeft = posX + secMargin + "px";
+        console.log(posTop);
+        if (Number(posY + secMargin) > 400) {
+          posTop = posY - menuHeight - secMargin + "px";
+        }
         unit.style.left = posLeft;
         unit.style.top = posTop;
         unit.style.display = "block";
