@@ -8,7 +8,7 @@
         class="mt-3"
       />
     </div>
-    <v-stepper v-model="e1">
+    <v-stepper v-model="e1" :class="stepperMode">
       <v-stepper-items>
         <v-stepper-content v-for="n in steps" :key="`${n}-content`" :step="n">
           <v-row>
@@ -70,6 +70,9 @@ export default class Rename extends Vue {
   }
   get partMode() {
     return this.$vuetify.theme.dark ? "rename-part-bg-d" : "rename-part-bg";
+  }
+  get stepperMode() {
+    return this.$vuetify.theme.dark ? "rename-step-bg-d" : "rename-step-bg";
   }
 
   nextStep(n) {
@@ -145,5 +148,11 @@ export default class Rename extends Vue {
 }
 .screen::-webkit-scrollbar {
   display: none;
+}
+.rename-step-bg-d {
+  background-color:#24303a !important;
+}
+.rename-step-bg {
+  background-color: white;
 }
 </style>

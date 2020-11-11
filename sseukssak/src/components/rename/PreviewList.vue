@@ -17,7 +17,7 @@
           class="file-scroller"
           :bench="benched"
           :items="beforeItems"
-          height="130"
+          height="140"
           item-height="40"
         >
           <template v-slot:default="{ item }">
@@ -46,7 +46,7 @@
           class="file-scroller"
           :bench="benched"
           :items="afterItems"
-          height="130"
+          height="140"
           item-height="40"
         >
           <template v-slot:default="{ item }">
