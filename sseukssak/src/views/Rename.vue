@@ -94,8 +94,6 @@ export default class Rename extends Vue {
 }
 .rename-title,
 .rename-title-d {
-  /* margin: 20px; */
-  /* font-family: "Paytone One" !important; */
   color: #202020;
   text-transform: uppercase;
   letter-spacing: -2px;

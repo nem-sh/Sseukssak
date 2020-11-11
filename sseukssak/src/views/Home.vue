@@ -10,6 +10,7 @@
               md="6"
               sm="6"
               class="from fill-height d-flex flex-column"
+              :class="fromBgMode"
             >
               <ListFrom />
             </v-col>
@@ -19,6 +20,7 @@
               md="6"
               sm="6"
               class="to fill-height d-flex flex-column"
+              :class="toBgMode"
             >
               <ListTo />
             </v-col>
@@ -40,7 +42,6 @@ import ListFrom from "@/components/ListFrom.vue";
 
 import BtnDupCheck from "@/components/BtnDupCheck.vue";
 
-
 import { mapState } from "vuex";
 
 @Component({
@@ -53,6 +54,13 @@ import { mapState } from "vuex";
   },
   computed: mapState(["fromDir"]),
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  get fromBgMode() {
+    return this.$vuetify.theme.dark ? "from-d" : "from";
+  }
+  get toBgMode() {
+    return this.$vuetify.theme.dark ? "to-d" : "to";
+  }
+}
 </script>
 
