@@ -1,7 +1,6 @@
 <template>
   <div style="display: inline">
     <v-btn
-      class="mr-5"
       color="var(--color-purple)"
       dark
       rounded
@@ -409,6 +408,12 @@ export default class BtnMoveFile extends Vue {
     });
 
     BUS.$emit("bus:refreshfile");
+  }
+
+  mounted() {
+    BUS.$on("bus:moveFile", () => {
+      this.moveFile();
+    })
   }
 }
 </script>

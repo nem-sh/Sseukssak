@@ -3,14 +3,14 @@
     <div class="window-operations-container">
       <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
       <div class="operations">
-        <BtnLoginGoogle class="mr-1" />
+        <BtnLoginGoogle v-if="!mini" class="mr-1" />
         <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
-        <!-- <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i> -->
-        <!-- <i
+        <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i>
+        <i
           v-if="!mini"
           class="fas fa-compress-alt"
           @click="resizeSmallWindow"
-        ></i> -->
+        ></i>
         <i class="fas fa-times close" @click="closeWindow"></i>
       </div>
     </div>

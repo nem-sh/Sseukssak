@@ -9,8 +9,8 @@
       <div class="select-folder">
         <v-row>
           <v-col cols="4" class="from-to-name">
-            <h3><span>From</span></h3></v-col
-          >
+            <img src="@/assets/titleImg/FromImg.png" alt="" height="45" />
+          </v-col>
           <v-col cols="6" class="d-flex align-center justify-center"
             ><div v-if="fromDir">
               <v-tooltip bottom>
@@ -29,39 +29,7 @@
           </v-col>
         </v-row>
       </div>
-      <!-- <div class="select-date" align="center">
-        <v-btn-toggle v-model="text" tile color="#7288da" group>
-          <v-btn
-            @click="select = 0"
-            class="rounded-xl"
-            small
-            rounded
-            value="left"
-          >
-            전체보기
-          </v-btn>
-          <v-btn
-            @click="select = 1"
-            class="rounded-xl"
-            small
-            rounded
-            value="center"
-          >
-            오늘 생성된
-          </v-btn>
-          <v-btn
-            @click="select = 2"
-            class="rounded-xl"
-            small
-            rounded
-            value="right"
-          >
-            오늘 수정된
-          </v-btn>
-        </v-btn-toggle>
-      </div> -->
     </div>
-
     <div class="from-part-second">
       <div class="d-flex justify-end">
         <ListFromFilter @filter-date="filterDate" :state="filterState" />
@@ -80,12 +48,12 @@
         <v-virtual-scroll
           v-if="fileScrollList.length !== 0"
           :items="fileScrollList"
-          height="400"
+          height="420"
           item-height="90"
           class="file-scroller"
         >
           <template v-slot:default="{ item }">
-            <div :key="item.name" class="d-flex align-start mx-5 pt-3">
+            <div :key="item.name" class="d-flex align-start mx-5">
               <div
                 v-if="fileScrollList.indexOf(item) === 0"
                 class="pa-2 file-box"
@@ -311,7 +279,10 @@
           >
         </li>
         <li>
-          <BtnUploadGoogleDriveFolder v-bind:folderName="selectedData.name" v-if="isLogin" />
+          <BtnUploadGoogleDriveFolder
+            v-bind:folderName="selectedData.name"
+            v-if="isLogin"
+          />
         </li>
         <li>
           <a @click="openShell()" style="display: flex; align-items: center"
@@ -948,5 +919,9 @@ export default class ListFrom extends Vue {
 
 #contextmenu li:hover a {
   color: #ffffff;
+}
+
+.v-label {
+  font-size: 14px;
 }
 </style>

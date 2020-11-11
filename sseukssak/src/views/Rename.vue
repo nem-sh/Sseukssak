@@ -1,9 +1,13 @@
 <template>
   <v-container class="screen" :class="bgMode">
-    <div class="mt-10 mb-2">
-      <h3 :class="titleMode"><span>RENAME</span></h3>
+    <div class="mt-4">
+      <img
+        src="@/assets/titleImg/RenameImg.png"
+        alt=""
+        height="45"
+        class="mt-3"
+      />
     </div>
-
     <v-stepper v-model="e1">
       <v-stepper-items>
         <v-stepper-content v-for="n in steps" :key="`${n}-content`" :step="n">
