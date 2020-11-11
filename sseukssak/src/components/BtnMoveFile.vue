@@ -1,7 +1,7 @@
 <template>
   <div style="display: inline">
     <v-btn
-      class="mr-5 play-btn"
+      class="mr-5 play-btn mt-3"
       color="var(--color-purple)"
       dark
       rounded
@@ -12,14 +12,34 @@
     <v-dialog v-if="!mini" v-model="dialog" persistent max-width="400px">
       <v-card align="center">
         <v-card-text>
-          <lottie-player src="https://assets6.lottiefiles.com/packages/lf20_AvXSwT.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+          <lottie-player
+            src="https://assets6.lottiefiles.com/packages/lf20_AvXSwT.json"
+            background="transparent"
+            speed="1"
+            style="width: 300px; height: 300px"
+            loop
+            autoplay
+          ></lottie-player>
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog v-else v-model="dialog" persistent max-width="250px" max-height="150px">
+    <v-dialog
+      v-else
+      v-model="dialog"
+      persistent
+      max-width="250px"
+      max-height="150px"
+    >
       <v-card align="center">
         <v-card-text>
-          <lottie-player src="https://assets1.lottiefiles.com/datafiles/bEYvzB8QfV3EM9a/data.json"  background="transparent"  speed="1"  style="width: 200px; height: 150px; padding: 0;"  loop  autoplay></lottie-player>
+          <lottie-player
+            src="https://assets1.lottiefiles.com/datafiles/bEYvzB8QfV3EM9a/data.json"
+            background="transparent"
+            speed="1"
+            style="width: 200px; height: 150px; padding: 0"
+            loop
+            autoplay
+          ></lottie-player>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -40,7 +60,7 @@ const { shell } = require("electron").remote;
 const { app } = require("electron").remote;
 // 알림창
 import { remote } from "electron";
-const notifier = remote.require('node-notifier');
+const notifier = remote.require("node-notifier");
 declare const __static: string;
 import path from "path";
 
@@ -75,7 +95,7 @@ interface File {
     "selectedToName",
     "toLibraryList",
     "moveHistory",
-    "mini"
+    "mini",
   ]),
   methods: mapMutations([
     "changeMoveHistory",
@@ -243,7 +263,6 @@ export default class BtnMoveFile extends Vue {
   }
 
   moveFile() {
-    
     // console.log(this.toLibraryList);
     // let timerInterval;
     // Swal.fire({
@@ -289,7 +308,7 @@ export default class BtnMoveFile extends Vue {
     }
 
     this.dialog = true;
-    
+
     const directories: ToLibraryDirectory[] = JSON.parse(
       JSON.stringify(selectedFrom)
     );
@@ -398,14 +417,12 @@ export default class BtnMoveFile extends Vue {
 
     setTimeout(() => {
       this.dialog = false;
-      notifier.notify(
-        {
-          title: '쓱싹 알림',
-          message: '정리가 완료되었습니다!',
-          icon: path.join(__static, "sweeping.png"),
-          sound: true,
-        },
-      );
+      notifier.notify({
+        title: "쓱싹 알림",
+        message: "정리가 완료되었습니다!",
+        icon: path.join(__static, "sweeping.png"),
+        sound: true,
+      });
     }, 2000);
     // Swal.fire({
     //   position: "center",
@@ -421,7 +438,7 @@ export default class BtnMoveFile extends Vue {
   mounted() {
     BUS.$on("bus:moveFile", () => {
       this.moveFile();
-    })
+    });
   }
 }
 </script>

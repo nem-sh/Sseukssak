@@ -1,12 +1,19 @@
 <template>
   <v-container>
-    <br />
-    <br />
-    <br />
-    <v-btn @click="resetHistory()">내역 초기화</v-btn>
-
-    <hr />
-    <div v-if="isLoading" style="overflow:scroll; height:400px;">
+    <div class="mt-4">
+      <img
+        src="@/assets/titleImg/HistoryImg.png"
+        alt=""
+        height="40"
+        class="mt-4"
+      />
+    </div>
+    <div
+      v-if="isLoading"
+      style="overflow: scroll; height: 480px"
+      :class="scrollerBgMode"
+      class="mt-4"
+    >
       <div v-if="historyList.length != 0">
         <v-list
           v-for="historychunk in historyList"
@@ -28,6 +35,9 @@
           </div>
         </v-list>
       </div>
+    </div>
+    <div align="right" class="mt-3">
+      <v-btn color="#7288da" rounded dark @click="resetHistory()">초기화</v-btn>
     </div>
   </v-container>
 </template>
@@ -80,7 +90,7 @@ import constants from "@/assets/constants.json";
     "duplicatedList",
     "fileList",
     "renameHistory2",
-    "moveHistory"
+    "moveHistory",
   ]),
 
   methods: mapMutations([
@@ -89,8 +99,8 @@ import constants from "@/assets/constants.json";
     "changeFileSortList",
     "changeDuplicatedList",
     "changeRenameHistory2",
-    "changeMoveHistory"
-  ])
+    "changeMoveHistory",
+  ]),
 })
 export default class Restore extends Vue {
   changeDuplicatedList!: (newList: [][]) => void;
@@ -103,6 +113,9 @@ export default class Restore extends Vue {
   isLoading!: boolean;
   historyList: (string | number)[][] = [[]];
 
+  get scrollerBgMode() {
+    return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
+  }
   mounted() {
     // console.log(this.duplicatedList);
     // console.log(constants);
@@ -115,7 +128,7 @@ export default class Restore extends Vue {
   readHistory() {
     // console.log(this.duplicatedList);
     const nulldata = {
-      datas: {}
+      datas: {},
     };
     const nulldata2 = JSON.stringify(nulldata);
 
@@ -149,7 +162,7 @@ export default class Restore extends Vue {
             before: null,
             after: null,
             date: null,
-            workcode: null
+            workcode: null,
           };
         }
         // console.log(mm);
@@ -182,7 +195,7 @@ export default class Restore extends Vue {
             before: null,
             after: null,
             date: null,
-            workcode: null
+            workcode: null,
           };
         }
         mm["datas"][tmpL + n]["filename"] = this.moveHistory[n][0];
@@ -211,7 +224,7 @@ export default class Restore extends Vue {
             before: null,
             after: null,
             date: null,
-            workcode: null
+            workcode: null,
           };
         }
         mm["datas"][tmpL + c]["filename"] = this.renameHistory2[c][0];
@@ -246,7 +259,7 @@ export default class Restore extends Vue {
           mm["datas"][a]["before"],
           mm["datas"][a]["after"],
           mm["datas"][a]["date"],
-          mm["datas"][a]["workcode"]
+          mm["datas"][a]["workcode"],
         ]);
       } catch (err) {
         console.log("error", err);
@@ -254,7 +267,7 @@ export default class Restore extends Vue {
     }
 
     // 날짜순으로 정렬
-    sortingarr.sort(function(a, b) {
+    sortingarr.sort(function (a, b) {
       return a[4] > b[4] ? -1 : a[4] < b[4] ? 1 : 0;
     });
     // console.log(sortingarr);
@@ -276,7 +289,7 @@ export default class Restore extends Vue {
           before: null,
           after: null,
           date: null,
-          workcode: null
+          workcode: null,
         };
 
         mm["datas"][k]["filename"] = this.historyList[k][0];
@@ -305,7 +318,7 @@ export default class Restore extends Vue {
   resetHistory() {
     this.isLoading = false;
     const nulldata = {
-      datas: {}
+      datas: {},
     };
     const nulldata2 = JSON.stringify(nulldata);
     this.historyList = [];

@@ -11,7 +11,7 @@
         >
           새로운 정리 그룹 추가
           <v-spacer></v-spacer>
-          <v-btn text color="white" @click="dialog = false">
+          <v-btn icon dark @click="dialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -25,8 +25,8 @@
             >
             </v-text-field>
             <div class="text-right">
-              <v-btn color="#7288da" rounded dark @click="createLibrary">
-                추가
+              <v-btn color="#7288da" rounded dark large @click="createLibrary">
+                <i class="fas fa-plus mr-2"></i>그룹 추가
               </v-btn>
             </div>
           </div>

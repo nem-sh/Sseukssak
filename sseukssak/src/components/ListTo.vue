@@ -48,7 +48,7 @@
           :items="toLibrary.directories"
           height="370"
           item-height="84"
-          class="file-scroller"
+          :class="scrollerBgMode"
         >
           <template v-slot:default="{ item }">
             <v-list-item
@@ -99,9 +99,19 @@
               <v-list-item-action>
                 <v-row align="center" justify="center" class="pa-0">
                   <v-col cols="6" class="pa-0">
-                    <v-menu top :offset-y="offset" :value="shown" :close-on-content-click="false">
+                    <v-menu
+                      top
+                      :offset-y="offset"
+                      :value="shown"
+                      :close-on-content-click="false"
+                    >
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn icon v-bind="attrs" v-on="on" @click="shown=true">
+                        <v-btn
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                          @click="shown = true"
+                        >
                           <i class="fas fa-ellipsis-v-alt"></i
                         ></v-btn>
                       </template>
@@ -110,7 +120,8 @@
                         <v-list-item link>
                           <v-list-item-title
                             ><ModalModifyToLibraryDirectory
-                              :propDirectory="item" @closeMenu="closeMenu"
+                              :propDirectory="item"
+                              @closeMenu="closeMenu"
                           /></v-list-item-title>
                         </v-list-item>
                         <v-list-item
@@ -199,10 +210,10 @@ interface ToLibraryDirectory {
   ]),
 })
 export default class ListTo extends Vue {
-  shown: boolean = false
+  shown: boolean = false;
 
   closeMenu() {
-    this.shown = false
+    this.shown = false;
   }
   openShell(path: string) {
     let newPath = path;
@@ -525,6 +536,9 @@ export default class ListTo extends Vue {
   watchSelectedToName() {
     this.changeSelectedToName(this.selectedToName);
     this.changeDirectoryLength(this.selectedToName);
+  }
+  get scrollerBgMode() {
+    return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
   }
 }
 </script>

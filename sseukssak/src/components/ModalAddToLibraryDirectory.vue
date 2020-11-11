@@ -23,30 +23,37 @@
           </v-btn>
         </v-card-title>
 
-        <v-card-text class="file-scroller" style="height: 100%">
+        <v-card-text :class="scrollerBgMode" style="height: 100%">
           <v-container>
             <div style="width: 100%; margin: auto">
               <div>
                 <h2 class="mt-4">1. 폴더 선택</h2>
                 <div class="text-right mb-1">
-                  <v-btn @click="readDir" text color="green"
+                  <v-btn @click="readDir" text rounded color="green"
                     ><i class="fas fa-search mr-2"></i>폴더 찾기</v-btn
                   >
                   <v-dialog
-                    class="file-scroller"
+                    :class="scrollerBgMode"
                     v-model="dialog3"
                     persistent
                     max-width="500"
                   >
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn color="green" text v-bind="attrs" v-on="on">
-                        <i class="fas fa-folder-plus mr-2"></i>폴더 추가
+                      <v-btn
+                        color="green"
+                        text
+                        rounded
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <i class="fas fa-folder-plus mr-2"></i>새 폴더 추가
                       </v-btn>
                     </template>
-                    <v-card>
+                    <v-card class="pa-2">
                       <v-card-title>
                         <!-- <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_pTnS7W/Empty Folder.json"  background="transparent"  speed="1"  style="width: 100px; height: 100px;"  loop  autoplay></lottie-player> -->
-                        정리할 폴더 내에 해당 폴더가 추가됩니다.
+                        <i class="fal fa-info-circle fa-lg mr-2 pb-1"></i>정리할
+                        폴더 내에 새 폴더가 추가됩니다.
                         <!-- <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
                           <i style="color:grey" v-bind="attrs" v-on="on" class="far fa-question-circle fa-2x"></i>
@@ -55,9 +62,7 @@
                       </v-tooltip> -->
                       </v-card-title>
                       <v-card-text>
-                        <div>
-                          (같은 폴더명 존재 시, 해당 폴더에 정리됩니다.)
-                        </div>
+                        <div>같은 폴더명 존재 시, 해당 폴더에 정리됩니다.</div>
                       </v-card-text>
                       <v-card-text>
                         <v-text-field
@@ -70,14 +75,16 @@
 
                       <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn
-                          color="red darken-1"
-                          text
-                          @click="dialog3 = false"
-                        >
+                        <v-btn text rounded @click="dialog3 = false">
                           취소
                         </v-btn>
-                        <v-btn color="green darken-1" text @click="readFromDir">
+                        <v-btn
+                          color="var(--color-purple)"
+                          rounded
+                          dark
+                          class="mr-3"
+                          @click="readFromDir"
+                        >
                           추가
                         </v-btn>
                       </v-card-actions>
@@ -224,7 +231,8 @@
                 filled
               ></v-select>
               <div class="text-right">
-                <v-btn dark color="#7288da" rounded @click="createLibrary">
+                <v-btn dark color="#7288da" large rounded @click="createLibrary"
+                  ><i class="fas fa-plus mr-2"></i>
                   폴더 추가
                 </v-btn>
               </div>
@@ -622,6 +630,9 @@ export default class ModalAddToLibraryDirectory extends Vue {
           this.selectedTitleTags.splice(this.selectedTitleTags.indexOf(tag), 1);
       }
     });
+  }
+  get scrollerBgMode() {
+    return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
   }
 }
 </script>

@@ -197,7 +197,7 @@
             </div>
           </template>
         </v-virtual-scroll>
-        <div v-else class="d-flex flex-column mx-5 pt-3" height="380">
+        <div v-else class="d-flex flex-column mx-5" height="380">
           <div v-if="fromDir" class="pa-2" :class="fileBoxBgMode">
             <div align="center" @click="enterDirectory('')">
               <div class="folder--icon">
@@ -734,7 +734,8 @@ export default class ListFrom extends Vue {
         Swal.fire({
           position: "center",
           icon: "warning",
-          title: `상위 경로 이동은 권한이 없습니다.`,
+          title: `권한이 없습니다!`,
+          text: "상위 경로에는 이동 권한이 없습니다.",
           showConfirmButton: false,
           timer: 1000,
         });
@@ -807,7 +808,8 @@ export default class ListFrom extends Vue {
       Swal.fire({
         position: "center",
         icon: "warning",
-        title: `"${dir}"의 이동은 권한이 없습니다.`,
+        title: `권한이 없습니다!`,
+        text: `"${dir}"의 이동은 권한이 없습니다.`,
         showConfirmButton: false,
         timer: 1000,
       });

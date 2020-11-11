@@ -150,7 +150,7 @@ export default class Rename extends Vue {
   display: none;
 }
 .rename-step-bg-d {
-  background-color:#24303a !important;
+  background-color: #24303a !important;
 }
 .rename-step-bg {
   background-color: white;
