@@ -105,13 +105,13 @@
                         ></v-btn>
                       </template>
                       <v-list>
-                        <!-- 수정하기 
+                        <!-- 수정하기-->
                         <v-list-item link>
                           <v-list-item-title
                             ><ModalModifyToLibraryDirectory
                               :propDirectory="item" @closeMenu="closeMenu"
                           /></v-list-item-title>
-                        </v-list-item> -->
+                        </v-list-item>
                         <v-list-item
                           link
                           @click="deleteToLibraryDirectory(item.path)"
@@ -166,7 +166,7 @@ import Swal from "sweetalert2";
 
 import ModalCreateToLibrary from "@/components/ModalCreateToLibrary.vue";
 import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.vue";
-// import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
+import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
 
 import { shell } from "electron";
 
@@ -188,7 +188,7 @@ interface ToLibraryDirectory {
   components: {
     ModalCreateToLibrary,
     ModalAddToLibraryDirectory,
-    // ModalModifyToLibraryDirectory,
+    ModalModifyToLibraryDirectory,
   },
   computed: mapState(["toLibraryList", "toLibraryNameList", "fromDir"]),
   methods: mapMutations([
