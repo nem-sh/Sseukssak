@@ -83,7 +83,7 @@
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
-                  <!--<BtnCreateGoogleFolder/>-->
+                  <BtnCreateGoogleFolder/>
                 </div>
                 <div class="ml-3 mb-3 font-weight-bold d-flex align-center">
                   <img
