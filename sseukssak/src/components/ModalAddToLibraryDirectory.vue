@@ -333,7 +333,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
       Swal.fire({
         position: "center",
         icon: "warning",
-        title: "빈칸을 입력해주세요",
+        title: "파일을 입력해주세요",
         showConfirmButton: false,
         timer: 1000,
       });
@@ -367,7 +367,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
       Swal.fire({
         position: "center",
         icon: "warning",
-        title: "빈칸을 입력해주세요",
+        title: "확장자를 입력해주세요",
         showConfirmButton: false,
         timer: 1000,
       });
@@ -473,44 +473,54 @@ export default class ModalAddToLibraryDirectory extends Vue {
       });
     } else {
       const tempLibraryList: ToLibrary[] = this.toLibraryList;
-
-      for (let index = 0; index < this.toLibraryNameList.length; index++) {
-        if (tempLibraryList[index].name == this.selectedToName) {
-          tempLibraryList[index].directories.push({
-            path: this.directoryDir,
-            typeTags: this.selectedTypeTags,
-            dateTags: this.selectedDateTags,
-            titleTags: this.selectedTitleTags,
-          });
-          break;
+      if (
+        this.selectedTypeTags.length === 0 &&
+        this.selectedDateTags.length === 0 &&
+        this.selectedTitleTags.length === 0
+      ) {
+        Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: "정리할 기준을 추가해주세요!",
+          showConfirmButton: false,
+          timer: 1000,
+        });
+      } else {
+        for (let index = 0; index < this.toLibraryNameList.length; index++) {
+          if (tempLibraryList[index].name == this.selectedToName) {
+            tempLibraryList[index].directories.push({
+              path: this.directoryDir,
+              typeTags: this.selectedTypeTags,
+              dateTags: this.selectedDateTags,
+              titleTags: this.selectedTitleTags,
+            });
+            break;
+          }
         }
+        this.changeToLibraryList(tempLibraryList);
+
+        window.localStorage.setItem(
+          "selectedFromData",
+          JSON.stringify(tempLibraryList)
+        );
+        this.libraryDirectories = [];
+        this.directoryDir = "";
+        this.selectedTypeTags = [];
+        this.selectedDateTags = [];
+        this.selectedTitleTags = [];
+        this.readFromDirName = "";
+        this.directoryDir = "";
+        this.selectedFilter = "";
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "추가되었습니다!",
+          showConfirmButton: false,
+          timer: 1000,
+        });
+
+        this.dialog = false;
       }
-
-      this.changeToLibraryList(tempLibraryList);
-
-      window.localStorage.setItem(
-        "selectedFromData",
-        JSON.stringify(tempLibraryList)
-      );
-
-      this.libraryDirectories = [];
-      this.directoryDir = "";
-      this.selectedTypeTags = [];
-      this.selectedDateTags = [];
-      this.selectedTitleTags = [];
-      this.readFromDirName = "";
-      this.directoryDir = "";
-      this.selectedFilter = "";
-
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "추가되었습니다",
-        showConfirmButton: false,
-        timer: 1000,
-      });
-
-      this.dialog = false;
     }
   }
 
