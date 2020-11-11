@@ -34,19 +34,19 @@
         src="https://assets4.lottiefiles.com/packages/lf20_GlZGOi.json"
         background="transparent"
         speed="1"
-        style="width: 330px; height: 330px;"
+        style="width: 320px; height: 320px;"
         loop
         autoplay
       ></lottie-player>
       <h3 class="mt-2">파일 및 폴더가 없습니다 :(</h3>
     </div>
-    <div v-if="renameFileList.length <= 0" class="mb-15 pb-2"></div>
+    <div v-if="renameFileList.length <= 0" class="mb-15"></div>
     <v-virtual-scroll
       class="file-scroller"
       :bench="benched"
       :items="renameFileList"
-      height="300"
-      max-height="300"
+      height="360"
+      max-height="360"
       item-height="40"
     >
       <template v-slot:default="{ item }">
