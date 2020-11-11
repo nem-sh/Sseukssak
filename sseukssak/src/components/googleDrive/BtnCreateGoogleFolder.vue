@@ -72,8 +72,8 @@ export default class BtnCreateGoogleFolder extends Vue {
           icon:'success',
           title:'폴더를 생성했습니다.'
         })
-      }
-    );
+      }}
+    )
   }
 }
 </script>
