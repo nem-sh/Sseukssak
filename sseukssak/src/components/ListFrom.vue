@@ -50,13 +50,14 @@
           :items="fileScrollList"
           height="420"
           item-height="90"
-          class="file-scroller"
+          :class="scrollerBgMode"
         >
           <template v-slot:default="{ item }">
             <div :key="item.name" class="d-flex align-start mx-5">
               <div
                 v-if="fileScrollList.indexOf(item) === 0"
-                class="pa-2 file-box"
+                class="pa-2"
+                :class="fileBoxBgMode"
               >
                 <div align="center" @click="enterDirectory('')">
                   <div class="folder--icon">
@@ -65,7 +66,12 @@
                 </div>
                 <div class="file-name" align="center">상위 폴더</div>
               </div>
-              <div v-for="file in item" :key="file.name" class="pa-2 file-box">
+              <div
+                v-for="file in item"
+                :key="file.name"
+                class="pa-2"
+                :class="fileBoxBgMode"
+              >
                 <div
                   v-if="
                     select == 0 ||
@@ -192,7 +198,7 @@
           </template>
         </v-virtual-scroll>
         <div v-else class="d-flex flex-column mx-5 pt-3" height="380">
-          <div v-if="fromDir" class="pa-2 file-box">
+          <div v-if="fromDir" class="pa-2" :class="fileBoxBgMode">
             <div align="center" @click="enterDirectory('')">
               <div class="folder--icon">
                 <i class="fas fa-long-arrow-up fa-2x mx-auto"></i>
@@ -226,12 +232,12 @@
       <BtnDupCheck mr-5 />
       <BtnMoveFile />
     </div>
-
     <div>
       <ul
         v-if="!selectedData.fileType"
         id="contextmenu"
-        class="pa-0 contextmenu"
+        class="pa-0"
+        :class="bgMode"
       >
         <li>
           <a
@@ -244,7 +250,7 @@
               height="100%"
               src="./../assets/openDirectory.png"
               alt="OpenDirectory"
-            />디렉토리 열기</a
+            />폴더 열기</a
           >
         </li>
         <li>
@@ -261,7 +267,7 @@
               height="100%"
               src="./../assets/rename.png"
               alt="rename"
-            />파일 리네임</a
+            />폴더명 바꾸기</a
           >
         </li>
         <li>
@@ -275,7 +281,7 @@
               height="100%"
               src="./../assets/delete.png"
               alt="delete"
-            />디렉토리 지우기</a
+            />폴더 지우기</a
           >
         </li>
         <li>
@@ -300,9 +306,10 @@
       <ul
         v-if="selectedData.fileType"
         id="contextmenu"
-        class="pa-0 contextmenu"
+        class="pa-0"
+        :class="bgMode"
       >
-        <li>
+        <li class="rename-d">
           <a
             @click="openFile(selectedData.name)"
             style="display: flex; align-items: center"
@@ -330,7 +337,7 @@
               height="100%"
               src="./../assets/rename.png"
               alt="rename"
-            />파일 리네임</a
+            />파일명 바꾸기</a
           >
         </li>
         <li>
@@ -593,29 +600,41 @@ export default class ListFrom extends Vue {
     this.dialog = true;
   }
   deleteThis(path, isFinal) {
-    if (fs.lstatSync(path).isDirectory()) {
-      const fileList = fs.readdirSync(path);
-      fileList.forEach((name: string) => {
-        this.deleteThis(path + "\\" + name, false);
-      });
-      (async () => {
-        await trash([path]);
-      })();
-    } else {
-      (async () => {
-        await trash([path]);
-      })();
-    }
-    if (isFinal) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "삭제되었습니다",
-        showConfirmButton: false,
-        timer: 1000,
-      });
-      this.renewFrom();
-    }
+    Swal.fire({
+      title: "삭제하시겠습니까?",
+      text: "해당 폴더 및 파일은 휴지통으로 이동됩니다.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "네, 삭제합니다!",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (fs.lstatSync(path).isDirectory()) {
+          const fileList = fs.readdirSync(path);
+          fileList.forEach((name: string) => {
+            this.deleteThis(path + "\\" + name, false);
+          });
+          (async () => {
+            await trash([path]);
+            this.renewFrom();
+          })();
+        } else {
+          (async () => {
+            await trash([path]);
+            this.renewFrom();
+          })();
+        }
+        if (isFinal) {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "삭제되었습니다.",
+            showConfirmButton: false,
+            timer: 1000,
+          });
+        }
+      }
+    });
   }
   closeContextMenu() {
     const unit = document.getElementById("contextmenu");
@@ -679,7 +698,6 @@ export default class ListFrom extends Vue {
   }
   mounted() {
     BUS.$on("bus:refreshfile", () => {
-      console.log("refresh file");
       this.renewFrom();
     });
     BUS.$on("bus:closecontextmenu", () => {
@@ -859,6 +877,15 @@ export default class ListFrom extends Vue {
       this.changeFileSortList(fileSortList);
     }
   }
+  get bgMode() {
+    return this.$vuetify.theme.dark ? "contextmenu-d" : "contextmenu";
+  }
+  get scrollerBgMode() {
+    return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
+  }
+  get fileBoxBgMode() {
+    return this.$vuetify.theme.dark ? "file-box-d" : "file-box";
+  }
 }
 </script>
 
@@ -898,7 +925,16 @@ export default class ListFrom extends Vue {
   box-shadow: 0 15px 35px rgba(50, 50, 90, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
   overflow: hidden;
   z-index: 999999;
+  font-size: 14px;
 }
+
+.contextmenu-d {
+  background: #24303a !important;
+  color: #ffffff !important;
+  box-shadow: 0 15px 35px rgba(107, 107, 190, 0.1),
+    0 5px 15px rgba(233, 233, 233, 0.07) !important;
+}
+
 #contextmenu li {
   border-left: 3px solid transparent;
   transition: ease 0.2s;

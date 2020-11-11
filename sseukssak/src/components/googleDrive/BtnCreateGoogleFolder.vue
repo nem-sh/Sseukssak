@@ -17,22 +17,13 @@
         생성할 구글 드라이브 폴더 명을 입력해 주세요
       </v-card-title>
       <v-card-text>
-        <v-text-field
-          v-model="folderName"
-          label="새 폴더명 입력"
-        >
+        <v-text-field v-model="folderName" label="새 폴더명 입력">
         </v-text-field>
       </v-card-text>
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn
-          color="red darken-1"
-          text
-          @click="dialog = false"
-        >
-          취소
-        </v-btn>
+        <v-btn color="red darken-1" text @click="dialog = false"> 취소 </v-btn>
         <v-btn color="green darken-1" text @click="makeGoogleFolder">
           추가
         </v-btn>
@@ -42,30 +33,26 @@
 </template>
 
 <script lang='ts'>
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import fs from 'fs'
-import { mapState } from 'vuex'
-import { google } from 'googleapis';
-
+import Vue from "vue";
+import Component from "vue-class-component";
+import fs from "fs";
+import { mapState } from "vuex";
+import { google } from "googleapis";
+import Swal from "sweetalert2";
 
 @Component({
-  computed:mapState([
-    "oAuth2Client",
-    "isLogin"
-  ]),
+  computed: mapState(["oAuth2Client", "isLogin"]),
 })
-
 export default class BtnCreateGoogleFolder extends Vue {
-  dialog: boolean = false
-  folderName: string = ''
-  isLogin!: boolean
-  oAuth2Client!: any
+  dialog: boolean = false;
+  folderName: string = "";
+  isLogin!: boolean;
+  oAuth2Client!: any;
   // drive: any = google.drive({version: 'v3', auth: this.oAuth2Client})
 
-  makeGoogleFolder(){
-    console.log(this.oAuth2Client)
-    const drive = google.drive({version: 'v3', auth: this.oAuth2Client})
+  makeGoogleFolder() {
+    console.log(this.oAuth2Client);
+    const drive = google.drive({ version: "v3", auth: this.oAuth2Client });
     const fileMetadata = {
       'name': this.folderName,
       'mimeType': 'application/vnd.google-apps.folder'
@@ -75,15 +62,17 @@ export default class BtnCreateGoogleFolder extends Vue {
       fields: 'id'
     }, (err, file) => {
       if (err){
-        alert('폴더 생성에 실패했습니다.')
+        Swal.fire({
+          icon:'error',
+          title:'폴더 생성에 실패했습니다.'
+        })
       }else{
-        console.log(file)
-        alert('폴더 생성에 성공했습니다.')
-      }
-      this.dialog = false
-    })
+        Swal.fire({
+          icon:'success',
+          title:'폴더를 생성했습니다.'
+        })
+      }}
+    )
   }
-
-
 }
 </script>

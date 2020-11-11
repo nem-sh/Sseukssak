@@ -61,7 +61,6 @@ export default class MiniMode extends Vue {
 /* triangle */
 .play-btn::after {
   /* content: "정리"; */
-  font-weight: bold;
   color: white;
   position: absolute;
   left: 50%;

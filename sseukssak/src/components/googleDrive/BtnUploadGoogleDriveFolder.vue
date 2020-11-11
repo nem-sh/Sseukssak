@@ -21,6 +21,7 @@ import fs from 'fs'
 import { google } from 'googleapis';
 import axios from 'axios'
 import mime from 'mime-types'
+import Swal from 'sweetalert2'
 
 const BtnUploadGoogleDriveProps = Vue.extend({
   props: {
@@ -68,9 +69,15 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
             }
             axios.patch(PATCH_URL+`${res.data.id}?uploadType=multipart&addParents=${this.folderId}`,data,{headers:patchHeaders})
             .then(() => this.fileLog.push(`${fileName}`))
-            .catch(err=>alert(`구글 드라이브로 업로드에 실패했습니다. ${err}`))
+            .catch(err=>Swal.fire({
+              icon:'error',
+              title:'구글 드라이브 업로드에 실패했습니다.'
+            }))
         })
-        .catch(err=>alert(`구글 드라이브로 업로드에 실패했습니다. ${err}`))
+        .catch(err=>Swal.fire({
+              icon:'error',
+              title:'구글 드라이브 업로드에 실패했습니다.'
+            }))
     }
 
 
@@ -85,7 +92,10 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
         fields: 'id'
         }, (err, file) => {
         if (err){
-            alert('업로드에 실패했습니다.')
+            Swal.fire({
+              icon:'error',
+              title:'구글 드라이브 업로드에 실패했습니다.'
+            })
         }else{
             console.log(file.data.id)
             this.folderId  = file.data.id
@@ -104,7 +114,10 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
                           console.log('lstatSync fail')
                         }
                     })
-                    alert('업로드가 완료되었습니다.')
+                    Swal.fire({
+              icon:'success',
+              title:'구글 드라이브 업로드에 성공했습니다.'
+            })
                 }
             })
         }

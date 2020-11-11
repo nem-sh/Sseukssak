@@ -11,7 +11,7 @@
         >
           새로운 정리 그룹 추가
           <v-spacer></v-spacer>
-          <v-btn class="pr-0" text color="white" @click="dialog = false">
+          <v-btn text color="white" @click="dialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -82,7 +82,7 @@ export default class ModalCreateToLibrary extends Vue {
       Swal.fire({
         position: "center",
         icon: "warning",
-        title: "정리 규칙명을 입력해주세요",
+        title: "정리 그룹명을 입력해주세요",
         showConfirmButton: false,
         timer: 1000,
       });

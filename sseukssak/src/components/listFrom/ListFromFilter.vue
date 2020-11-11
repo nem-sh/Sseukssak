@@ -13,7 +13,7 @@
         <i class="fas fa-angle-down mr-2"></i>{{ selected }}
       </v-btn>
     </template>
-    <div class="drop-down">
+    <div :class="dropdownBgMode">
       <v-radio-group v-model="radioGroup" class="mx-4">
         <v-radio
           v-for="item in items"
@@ -61,6 +61,9 @@ export default class ListFromFilter extends AppProps {
   radioGroup: number = 1;
   selected: string = "전체보기";
   filterState: string = this.state;
+  get dropdownBgMode() {
+    return this.$vuetify.theme.dark ? "drop-down-d" : "drop-down";
+  }
 
   @Watch("radioGroup")
   watchRadioGroup() {
@@ -90,6 +93,10 @@ export default class ListFromFilter extends AppProps {
 <style>
 .drop-down {
   background-color: white;
+}
+.drop-down-d {
+  background-color: #24303a;
+  color: white;
 }
 </style>
 
