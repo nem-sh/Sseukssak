@@ -1,5 +1,5 @@
 <template>
-  <a @click="uploadFolder(oAuth2Client, folderName)"  style="display: flex; align-items: center">
+  <a @click="uploadFolder(oAuth2Client, folderName, fromDir, false)"  style="display: flex; align-items: center">
     <v-img
               class="mr-2"
               max-width="25"
@@ -41,16 +41,15 @@ const BtnUploadGoogleDriveProps = Vue.extend({
 export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
     oAuth2Client!: object
     fromDir!: string
-    folderId: string = ''
     fileLog: string[] = []
 
-    async uploadFile(auth,fileName) {
+    async uploadFile(auth, fileName, isLast, folderId, fromDir) {
         const accessToken = auth.credentials.access_token
         const UPLOAD_URL = "https://www.googleapis.com/upload/drive/v3/files?uploadType=media"
         const PATCH_URL = "https://www.googleapis.com/drive/v3/files/"
 
         const contentType = mime.lookup(fileName)
-        const file = fs.readFileSync(this.fromDir+'\\'+this.folderName+'\\'+fileName)
+        const file = fs.readFileSync(fromDir+'\\'+fileName)
 
         const headers = {
         Authorization: 'Bearer '+accessToken,
@@ -62,13 +61,19 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
             const data={
             name: fileName
             }
-            console.log(data)
             const patchHeaders = {
             Authorization: 'Bearer '+accessToken,
             'Content-Type':'application/json'
             }
-            axios.patch(PATCH_URL+`${res.data.id}?uploadType=multipart&addParents=${this.folderId}`,data,{headers:patchHeaders})
-            .then(() => this.fileLog.push(`${fileName}`))
+            axios.patch(PATCH_URL+`${res.data.id}?uploadType=multipart&addParents=${folderId}`,data,{headers:patchHeaders})
+            .then(() => {
+              if (isLast){
+                Swal.fire({
+                  icon:'success',
+                  title:'구글 드라이브 업로드에 성공했습니다.'
+                })
+              }
+            })
             .catch(err=>Swal.fire({
               icon:'error',
               title:'구글 드라이브 업로드에 실패했습니다.'
@@ -81,12 +86,22 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
     }
 
 
-    uploadFolder(auth,folderName){
+    uploadFolder(auth, folderName, fromDir, parentsId){
         const drive = google.drive({version: 'v3', auth: auth})
-        const fileMetadata = {
-        'name': folderName,
-        'mimeType': 'application/vnd.google-apps.folder'
+        let fileMetadata
+        if (parentsId){
+          fileMetadata = {
+            'name': folderName,
+            'mimeType': 'application/vnd.google-apps.folder',
+            'parents':[parentsId]
+          }
+        } else{
+          fileMetadata = {
+            'name': folderName,
+            'mimeType': 'application/vnd.google-apps.folder'
+          }
         }
+
         drive.files.create({
         requestBody : fileMetadata,
         fields: 'id'
@@ -98,26 +113,27 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
             })
         }else{
             console.log(file.data.id)
-            this.folderId  = file.data.id
-            fs.readdir(this.fromDir+'\\'+folderName,(err,files) => {
+            const folderId  = file.data.id
+            fs.readdir(fromDir+'\\'+folderName,(err,files) => {
                 if (err){
                     console.log('readdir error')
                     console.log(err)
                 }else{
                     console.log('readdir pass')
                     console.log(files)
-                    files.forEach((file)=>{
-                        if (fs.lstatSync(this.fromDir+'\\'+folderName+'\\'+file).isFile()){
-                            console.log('lstatSync pass')
-                            this.uploadFile(auth,file)
-                        }else{
-                          console.log('lstatSync fail')
+                    files.forEach((file, idx, array)=>{
+                        if (fs.lstatSync(fromDir+'\\'+folderName+'\\'+file).isFile()){
+                          
+                          if (idx === (array.length - 1)){
+                            this.uploadFile(auth, file, true, folderId,fromDir+'\\'+folderName)                            
+                          }else{
+                            this.uploadFile(auth, file, false, folderId,fromDir+'\\'+folderName)
+                          }
+                        }else if(fs.lstatSync(fromDir+'\\'+folderName+'\\'+file).isDirectory()){
+                          this.uploadFolder(auth, file, fromDir+'\\'+folderName, folderId)
                         }
                     })
-                    Swal.fire({
-              icon:'success',
-              title:'구글 드라이브 업로드에 성공했습니다.'
-            })
+                    
                 }
             })
         }
