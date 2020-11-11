@@ -333,7 +333,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
       Swal.fire({
         position: "center",
         icon: "warning",
-        title: "파일명을 입력해주세요",
+        title: "파일을 입력해주세요",
         showConfirmButton: false,
         timer: 1000,
       });
