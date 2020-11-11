@@ -39,6 +39,9 @@ interface DirState {
   tokenPath: string;
   oAuth2Client: any;
   isLogin: boolean;
+
+  // 미니모드
+  mini: boolean;
 }
 interface ToLibrary {
   name: string;
@@ -121,7 +124,10 @@ export default new Vuex.Store({
       'xErwUWs1A-ohs2fgcFFqdulF',
       'urn:ietf:wg:oauth:2.0:oob'
     ),
-    isLogin: false
+    isLogin: false,
+
+    // 미니모드
+    mini: false,
   },
   mutations: {
     changeModifyDirectroy(
@@ -236,6 +242,9 @@ export default new Vuex.Store({
     changeRenameHistory2(state: DirState, newHistory: []) {
       state.renameHistory2.push(newHistory);
     },
+    changeMiniState(state: DirState, value: boolean) {
+      state.mini = value
+    }
   },
   actions: {},
   getters: {

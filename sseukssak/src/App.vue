@@ -114,6 +114,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Swal from "sweetalert2";
+import { mapState, mapMutations } from "vuex";
 import Component from "vue-class-component";
 import Home from "@/views/Home.vue";
 import "./components/styles/main.scss";
@@ -129,10 +130,13 @@ const { ipcRenderer, shell } = window.require("electron");
   created() {
     this.$router.push({ name: "Home" });
   },
+  computed: mapState(["mini"]),
+  methods: mapMutations(["changeMiniState"]),
 })
 export default class App extends Vue {
   activeTab: string = "Home";
-  mini: boolean = false;
+  mini!: boolean;
+  changeMiniState!: (value: boolean) => void;
 
   goMenu(idx) {
     if (idx === 1 && this.$route.name !== "Home") {
@@ -160,7 +164,7 @@ export default class App extends Vue {
   }
 
   resizeSmallWindow() {
-    this.mini = true;
+    this.changeMiniState(true)
     ipcRenderer.send("resize-me-smaller-please");
     if (this.$route.name !== "MiniMode") {
       this.activeTab = "MiniMode";
@@ -169,7 +173,7 @@ export default class App extends Vue {
   }
 
   resizeBigWindow() {
-    this.mini = false;
+    this.changeMiniState(false)
     ipcRenderer.send("resize-me-bigger-please");
     if (this.$route.name !== "Home") {
       this.activeTab = "Home";
