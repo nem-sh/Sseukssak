@@ -262,6 +262,7 @@ body::-webkit-scrollbar {
   color: white;
   z-index: 5;
   -webkit-app-region: drag;
+  // border-bottom: 0.5px white solid;
 }
 
 .window-operations-container i {
@@ -390,4 +391,9 @@ body::-webkit-scrollbar {
   to {
     transform: rotate(360deg);
   }
+}
+
+.swal2-popup {
+  font-size: 13px !important;
+  font-family: "Nanum Gothic", sans-serif !important;
 }

@@ -46,7 +46,7 @@
                     <v-card>
                       <v-card-title>
                         <!-- <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_pTnS7W/Empty Folder.json"  background="transparent"  speed="1"  style="width: 100px; height: 100px;"  loop  autoplay></lottie-player> -->
-                        정리할 폴더(From 폴더) 내에 해당 폴더가 자동 생성됩니다.
+                        정리할 폴더 내에 해당 폴더가 추가됩니다.
                         <!-- <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
                           <i style="color:grey" v-bind="attrs" v-on="on" class="far fa-question-circle fa-2x"></i>
