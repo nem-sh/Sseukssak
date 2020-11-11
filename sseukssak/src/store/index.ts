@@ -173,6 +173,15 @@ export default new Vuex.Store({
     changeMoveHistory(state: DirState, newHistory: [][]) {
       state.moveHistory.push(newHistory);
     },
+    // 1111 임시 추가
+    resetMoveHistory(state: DirState) {
+      state.moveHistory = [[]];
+    },
+
+    resetRenameHistory(state: DirState) {
+      state.renameHistory = [[]];
+    },
+    //
     changePreview(state: DirState) {
       state.afterItems = [];
       state.beforeItems.forEach((item, i) => {

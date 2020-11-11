@@ -72,6 +72,8 @@
               <span>히스토리</span>
             </v-tooltip>
 
+            <FeatHistory />
+
             <!-- 다크모드 -->
             <!-- <div>
           <div
@@ -134,40 +136,16 @@ import Component from "vue-class-component";
 import Home from "@/views/Home.vue";
 import "./components/styles/main.scss";
 import BtnLoginGoogle from "@/components/googleDrive/BtnLoginGoogle.vue";
+import FeatHistory from "@/components/history/FeatHistory.vue";
 
 const { ipcRenderer, shell } = window.require("electron");
-
-// restore쪽 코드
-import { mapMutations, mapState } from "vuex";
-import constants from "constants.json";
-//
 
 @Component({
   components: {
     Home,
-    BtnLoginGoogle
+    BtnLoginGoogle,
+    FeatHistory
   },
-  // restore쪽 코드
-  computed: mapState([
-    "fileSortList",
-    "fromDir",
-    "duplicatedList",
-    "fileList",
-    "renameHistory2",
-    "moveHistory",
-    "HistoryList"
-  ]),
-  methods: mapMutations([
-    "changeDir",
-    "changeFileList",
-    "changeFileSortList",
-    "changeDuplicatedList",
-    "changeRenameHistory2",
-    "changeMoveHistory",
-    "changeHistoryList"
-  ]),
-  //
-
   data() {
     return {
       items: [
@@ -194,18 +172,6 @@ import constants from "constants.json";
 export default class App extends Vue {
   activeTab: string = "Home";
   mini: boolean = false;
-  //
-  changeDuplicatedList!: (newList: [][]) => void;
-  changeRenameHistory2!: (newList: [][]) => void;
-  changeMoveHistory!: (newList: [][]) => void;
-  localHistory: any[] = [];
-  duplicatedList!: any[][];
-  renameHistory2!: any[][];
-  moveHistory!: any[][];
-  isLoading!: boolean;
-  historyList: (string | number)[][] = [[]];
-
-  //
 
   goMenu(idx) {
     if (idx === 1 && this.$route.name !== "Home") {
@@ -220,7 +186,7 @@ export default class App extends Vue {
       //   icon: "warning",
       //   title: "준비중 입니다 :)",
       //   showConfirmButton: false,
-      //   timer: 1000,
+      //   timer: 1000
       // });
       this.activeTab = "Restore";
       this.$router.push({ name: "Restore" });
