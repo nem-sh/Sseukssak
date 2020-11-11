@@ -262,6 +262,7 @@ body::-webkit-scrollbar {
   color: white;
   z-index: 5;
   -webkit-app-region: drag;
+  // background-color: #677ac0;
   // border-bottom: 0.5px white solid;
 }
 
@@ -396,4 +397,14 @@ body::-webkit-scrollbar {
 .swal2-popup {
   font-size: 13px !important;
   font-family: "Nanum Gothic", sans-serif !important;
+}
+
+.swal2-styled.swal2-cancel {
+  background-color: #ef5350;
+  border-radius: 28px;
+}
+
+.swal2-styled.swal2-confirm {
+  background-color: var(--color-purple);
+  border-radius: 28px;
 }

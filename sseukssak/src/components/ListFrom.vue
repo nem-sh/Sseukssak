@@ -244,7 +244,7 @@
               height="100%"
               src="./../assets/openDirectory.png"
               alt="OpenDirectory"
-            />디렉토리 열기</a
+            />폴더 열기</a
           >
         </li>
         <li>
@@ -261,7 +261,7 @@
               height="100%"
               src="./../assets/rename.png"
               alt="rename"
-            />파일 리네임</a
+            />폴더명 바꾸기</a
           >
         </li>
         <li>
@@ -275,7 +275,7 @@
               height="100%"
               src="./../assets/delete.png"
               alt="delete"
-            />디렉토리 지우기</a
+            />폴더 지우기</a
           >
         </li>
         <li>
@@ -330,7 +330,7 @@
               height="100%"
               src="./../assets/rename.png"
               alt="rename"
-            />파일 리네임</a
+            />파일명 바꾸기</a
           >
         </li>
         <li>
@@ -593,29 +593,41 @@ export default class ListFrom extends Vue {
     this.dialog = true;
   }
   deleteThis(path, isFinal) {
-    if (fs.lstatSync(path).isDirectory()) {
-      const fileList = fs.readdirSync(path);
-      fileList.forEach((name: string) => {
-        this.deleteThis(path + "\\" + name, false);
-      });
-      (async () => {
-        await trash([path]);
-      })();
-    } else {
-      (async () => {
-        await trash([path]);
-      })();
-    }
-    if (isFinal) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "삭제되었습니다",
-        showConfirmButton: false,
-        timer: 1000,
-      });
-      this.renewFrom();
-    }
+    Swal.fire({
+      title: "삭제하시겠습니까?",
+      text: "해당 폴더 및 파일은 휴지통으로 이동됩니다.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "네, 삭제합니다!",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (fs.lstatSync(path).isDirectory()) {
+          const fileList = fs.readdirSync(path);
+          fileList.forEach((name: string) => {
+            this.deleteThis(path + "\\" + name, false);
+          });
+          (async () => {
+            await trash([path]);
+            this.renewFrom();
+          })();
+        } else {
+          (async () => {
+            await trash([path]);
+            this.renewFrom();
+          })();
+        }
+        if (isFinal) {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "삭제되었습니다.",
+            showConfirmButton: false,
+            timer: 1000,
+          });
+        }
+      }
+    });
   }
   closeContextMenu() {
     const unit = document.getElementById("contextmenu");
@@ -679,7 +691,6 @@ export default class ListFrom extends Vue {
   }
   mounted() {
     BUS.$on("bus:refreshfile", () => {
-      console.log("refresh file");
       this.renewFrom();
     });
     BUS.$on("bus:closecontextmenu", () => {

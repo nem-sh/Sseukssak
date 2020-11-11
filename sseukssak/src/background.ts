@@ -88,7 +88,7 @@ function createLoadingScreen() {
     }
   } else {
     createProtocol("app");
-    loadingScreen.loadURL("app://./loading.html");
+    loadingScreen.loadURL("app://./loading_v2.html");
     loadingScreen.once("ready-to-show", () => {
       if (loadingScreen !== null) {
         loadingScreen.show();
@@ -147,7 +147,9 @@ function createWindow() {
   });
 
   win.on("closed", function() {
-    tray = null;
+    if (tray !== null) {
+      tray.destroy();
+    }
     win = null;
   });
 
