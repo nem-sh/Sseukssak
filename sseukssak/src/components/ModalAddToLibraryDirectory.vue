@@ -528,7 +528,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
       Swal.fire({
         position: "center",
         icon: "warning",
-        title: "특수문자 안된다고",
+        title: "특수문자는 사용하실 수 없습니다",
         showConfirmButton: false,
         timer: 1000,
       });
