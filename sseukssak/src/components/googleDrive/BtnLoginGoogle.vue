@@ -40,10 +40,12 @@
 </template>
 
 <script lang='ts'>
-import Vue from "vue";
-import Component from "vue-class-component";
-import fs from "fs";
-import { mapGetters, mapMutations, mapState } from "vuex";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import fs from 'fs'
+import { mapGetters, mapMutations, mapState } from 'vuex'
+import Swal from 'sweetalert2'
+
 
 const { shell } = require("electron").remote;
 
@@ -97,28 +99,44 @@ export default class BtnLoginGoogle extends Vue {
     });
   }
 
-  logout() {
-    fs.unlink(this.tokenPath, (err) => {
-      if (err) return alert(`구글 드라이브 연동 해제에 실패했습니다.${err}`);
-      this.changeLoginState(false);
-      alert("구글 드라이브 연동 해제에 성공했습니다.");
-    });
+  
+  logout(){    
+    fs.unlink(this.tokenPath, (err)=>{
+      if (err) return Swal.fire({
+          icon:'error',
+          title:'구글 드라이브 연동 해제에 실패했습니다.'
+        });
+      this.changeLoginState(false)
+      Swal.fire({
+        icon:'success',
+        title:'구글 드라이브 연동을 해제했습니다.'
+      })
+    })
   }
 
-  setCode(oAuth2Client, TOKEN_PATH) {
-    this.dialog = false;
-    this.changeLoginState(true);
-    oAuth2Client.getToken(this.code, (err, token) => {
-      if (err) return alert("잘못된 코드입니다. 다시 확인해주세요.");
+  setCode(oAuth2Client,TOKEN_PATH){
+      this.dialog = false
+      this.changeLoginState(true)
+      oAuth2Client.getToken(this.code, (err, token) => {
+          if (err) return Swal.fire({
+          icon:'error',
+          title:'잘못된 코드입니다. 코드를 다시 확인해주세요.'
+        });
+          
+          oAuth2Client.setCredentials(token);
+          
+          fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+              if (err) return Swal.fire({
+          icon:'error',
+          title:'로그인 정보 저장에 실패했습니다.'
+        });
+          });
 
-      oAuth2Client.setCredentials(token);
-
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-        if (err) return alert("토큰 저장에 실패했습니다.");
-      });
-
-      alert("구글 드라이브를 연동에 성공했습니다.");
-    });
+          Swal.fire({
+          icon:'success',
+          title:'구글 드라이브 연동에 성공했습니다.'
+        });
+      })
   }
 }
 </script>

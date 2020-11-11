@@ -33,11 +33,13 @@
 </template>
 
 <script lang='ts'>
-import Vue from "vue";
-import Component from "vue-class-component";
-import fs from "fs";
-import { mapState } from "vuex";
-import { google } from "googleapis";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import fs from 'fs'
+import { mapState } from 'vuex'
+import { google } from 'googleapis'
+import Swal from 'sweetalert2'
+
 
 @Component({
   computed: mapState(["oAuth2Client", "isLogin"]),
@@ -53,22 +55,23 @@ export default class BtnCreateGoogleFolder extends Vue {
     console.log(this.oAuth2Client);
     const drive = google.drive({ version: "v3", auth: this.oAuth2Client });
     const fileMetadata = {
-      name: this.folderName,
-      mimeType: "application/vnd.google-apps.folder",
-    };
-    drive.files.create(
-      {
-        requestBody: fileMetadata,
-        fields: "id",
-      },
-      (err, file) => {
-        if (err) {
-          alert("폴더 생성에 실패했습니다.");
-        } else {
-          console.log(file);
-          alert("폴더 생성에 성공했습니다.");
-        }
-        this.dialog = false;
+      'name': this.folderName,
+      'mimeType': 'application/vnd.google-apps.folder'
+    }
+    drive.files.create({
+      requestBody : fileMetadata,
+      fields: 'id'
+    }, (err, file) => {
+      if (err){
+        Swal.fire({
+          icon:'error',
+          title:'폴더 생성에 실패했습니다.'
+        })
+      }else{
+        Swal.fire({
+          icon:'success',
+          title:'폴더를 생성했습니다.'
+        })
       }
     );
   }
