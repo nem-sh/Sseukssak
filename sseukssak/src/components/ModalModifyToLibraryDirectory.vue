@@ -36,7 +36,7 @@
           </v-btn>
         </v-card-title>
 
-<v-card-text class="file-scroller" style="height: 100%">
+        <v-card-text class="file-scroller" style="height: 100%">
           <v-container>
             <div style="width: 100%; margin: auto">
               <div>
@@ -454,8 +454,7 @@ export default class ModalAddToLibraryDirectory extends AppProps {
   closeModal() {
     this.readFromDirName = "";
     this.selectedFilter = "";
-    this.selectedType = this.selectedDate = this.titleAddName = this.typeAddName =
-      "";
+    this.selectedType = this.selectedDate = this.titleAddName = this.typeAddName = "";
     this.dates = [];
     this.directoryDir = this.initalDirectory.path;
     this.dialog = false;
@@ -507,7 +506,9 @@ export default class ModalAddToLibraryDirectory extends AppProps {
               showConfirmButton: false,
               timer: 1000,
             });
-
+            this.selectedFilter = "";
+            this.selectedType = this.selectedDate = this.titleAddName = this.typeAddName = "";
+            this.dates = [];
             this.dialog = false;
             this.$emit("closeMenu")
             return;

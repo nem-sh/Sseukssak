@@ -1,22 +1,127 @@
 <template>
-  <v-container class="mini-mode"> </v-container>
+  <v-container class="mini-mode position-p">
+    <!-- <div class="position-c d-flex flex-column align-center"> -->
+    <div class="position-c d-flex">
+      <!-- <lottie-player src="https://assets5.lottiefiles.com/datafiles/EZvv2E9wJ8wrf2w/data.json"  background="transparent"  speed="1"  style="width: 300px; height: 130px;"  loop  autoplay></lottie-player> -->
+      <!-- <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_g1YJeb.json"  background="transparent"  speed="1"  style="width: 300px; height: 130px;"  loop  autoplay></lottie-player> -->
+      <!-- <lottie-player src="https://assets1.lottiefiles.com/datafiles/hbH6QPrq1tYdkZw6SEEfWXLXjNCL6HZYtD4GfNfs/FileTransfer/FileTransfer.json"  background="transparent"  speed="1"  style="width: 300px; height: 130px;"  loop  autoplay></lottie-player> -->
+      <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_h59xofz0.json"  background="transparent"  speed="1"  style="width: 250px; height: 200px;"  loop  autoplay></lottie-player>
+      <div class="my-auto">
+        <!-- <button class="play-btn" @click="moveFile"></button> -->
+        <v-btn
+          class="play-btn"
+          color="var(--color-purple)"
+          dark
+          rounded
+          @click="moveFile"
+        >
+          정리
+        </v-btn>
+      </div>
+    </div>
+  </v-container>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
 
+import { BUS } from "../components/EventBus.js";
+
 @Component({
   components: {},
 })
-export default class MiniMode extends Vue {}
+
+export default class MiniMode extends Vue {
+  moveFile() {
+    BUS.$emit("bus:moveFile");
+  }
+
+}
 </script>
-<style scoped>
+<style>
 .mini-mode {
   padding-top: 28px;
-  background-color: var(--color-purple);
+  /* background-color: var(--color-purple); */
   width: 100%;
   height: 100%;
 }
-</style>
 
+.play-btn {
+  /* width: 70px; */
+  /* height: 70px; */
+  /* background: radial-gradient( var(--color-purple), 60%, rgba(255, 255, 255, 1) 62%); */
+  /* border-radius: 50%; */
+  position: relative;
+  display: block;
+  font-weight: bold;
+  box-shadow: 0px 0px 25px 3px var(--color-purple);
+}
+
+/* triangle */
+.play-btn::after {
+  /* content: "정리"; */
+  font-weight: bold;
+  color: white;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+}
+
+/* pulse wave */
+.play-btn:before {
+  content: "";
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  -webkit-animation-delay: 0s;
+  animation-delay: 0s;
+  -webkit-animation: pulsate1 2s;
+  animation: pulsate1 2s;
+  -webkit-animation-direction: forwards;
+  animation-direction: forwards;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-timing-function: steps;
+  animation-timing-function: steps;
+  opacity: 1;
+  border-radius: 28px;
+  border: 5px solid rgba(255, 255, 255, .75);
+  top: -25%;
+  left: -25%;
+  background: rgba(198, 16, 0, 0);
+}
+
+@-webkit-keyframes pulsate1 {
+  0% {
+    -webkit-transform: scale(0.6);
+    transform: scale(0.6);
+    opacity: 1;
+    box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75), 0px 0px 25px 10px rgba(255, 255, 255, 0.75);
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 0;
+    box-shadow: none;
+
+  }
+}
+
+@keyframes pulsate1 {
+  0% {
+    -webkit-transform: scale(0.6);
+    transform: scale(0.6);
+    opacity: 1;
+    box-shadow: inset 0px 0px 25px 3px rgba(255, 255, 255, 0.75), 0px 0px 25px 10px rgba(255, 255, 255, 0.75);
+  }
+  100% {
+    -webkit-transform: scale(1, 1);
+    transform: scale(1);
+    opacity: 0;
+    box-shadow: none;
+
+  }
+}
+</style>
