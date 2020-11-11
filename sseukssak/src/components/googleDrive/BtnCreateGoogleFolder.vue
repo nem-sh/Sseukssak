@@ -46,7 +46,8 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import fs from 'fs'
 import { mapState } from 'vuex'
-import { google } from 'googleapis';
+import { google } from 'googleapis'
+import Swal from 'sweetalert2'
 
 
 @Component({
@@ -75,10 +76,15 @@ export default class BtnCreateGoogleFolder extends Vue {
       fields: 'id'
     }, (err, file) => {
       if (err){
-        alert('폴더 생성에 실패했습니다.')
+        Swal.fire({
+          icon:'error',
+          title:'폴더 생성에 실패했습니다.'
+        })
       }else{
-        console.log(file)
-        alert('폴더 생성에 성공했습니다.')
+        Swal.fire({
+          icon:'success',
+          title:'폴더를 생성했습니다.'
+        })
       }
       this.dialog = false
     })
