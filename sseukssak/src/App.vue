@@ -71,39 +71,23 @@
               </template>
               <span>히스토리</span>
             </v-tooltip>
-
-            <!-- 다크모드 -->
-            <!-- <div>
-          <div
-            v-show="this.$vuetify.theme.dark"
-            class="menu--icon"
-            @click="changeMode"
-          >
-            <span><i class="fas fa-sun fa-lg"></i></span>
-          </div>
-          <div
-            v-show="!this.$vuetify.theme.dark"
-            class="menu--icon"
-            @click="changeMode"
-          >
-            <span><i class="fas fa-moon fa-lg"></i></span>
-          </div>
-        </div> -->
           </div>
           <div v-if="!mini" class="menu-second">
-            <v-tooltip right>
-              <template v-slot:activator="{ on, attrs }">
-                <div
-                  class="menu--settings"
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="goSettingsPage"
-                >
-                  <span><i class="far fa-cog fa-lg"></i></span>
-                </div>
-              </template>
-              <span>환경설정</span>
-            </v-tooltip>
+            <div
+              v-show="this.$vuetify.theme.dark"
+              class="menu--settings"
+              @click="changeMode"
+            >
+              <span><i class="fas fa-sun fa-lg"></i></span>
+            </div>
+            <div
+              v-show="!this.$vuetify.theme.dark"
+              class="menu--settings"
+              @click="changeMode"
+            >
+              <span><i class="fas fa-moon fa-lg"></i></span>
+            </div>
+
             <v-tooltip right>
               <template v-slot:activator="{ on, attrs }">
                 <div
@@ -120,7 +104,7 @@
           </div>
         </div>
       </div>
-      <div class="main">
+      <div class="main" :class="bgMode">
         <router-view></router-view>
       </div>
     </div>
@@ -142,25 +126,6 @@ const { ipcRenderer, shell } = window.require("electron");
     Home,
     BtnLoginGoogle,
   },
-  data() {
-    return {
-      items: [
-        { id: 1, title: "Home", icon: "fas fa-folders fa-lg", path: "/" },
-        {
-          id: 2,
-          title: "Rename",
-          icon: "fas fa-pencil fa-lg",
-          path: "rename",
-        },
-        {
-          id: 3,
-          title: "Restore",
-          icon: "fa fa-history fa-lg",
-          path: "restore",
-        },
-      ],
-    };
-  },
   created() {
     this.$router.push({ name: "Home" });
   },
@@ -177,15 +142,8 @@ export default class App extends Vue {
       this.activeTab = "Rename";
       this.$router.push({ name: "Rename" });
     } else if (idx === 3 && this.$route.name !== "Restore") {
-      Swal.fire({
-        position: "center",
-        icon: "warning",
-        title: "준비중 입니다 :)",
-        showConfirmButton: false,
-        timer: 1000,
-      });
-      //this.activeTab = "Restore";
-      //this.$router.push({ name: "Restore" });
+      this.activeTab = "Restore";
+      this.$router.push({ name: "Restore" });
     }
   }
 
@@ -227,6 +185,10 @@ export default class App extends Vue {
     this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
   }
 
+  get bgMode() {
+    return this.$vuetify.theme.dark ? "rename-bg-d" : "rename-bg";
+  }
+
   goSettingsPage() {
     Swal.fire({
       position: "center",
@@ -237,7 +199,6 @@ export default class App extends Vue {
     });
   }
 }
-// font-family: "Nanum Myeongjo", serif;
 </script>
 
 <style>
@@ -247,7 +208,8 @@ export default class App extends Vue {
   -moz-osx-font-smoothing: grayscale !important;
   color: #2c3e50;
 }
-.swal2-popup {
-  color: rebeccapurple;
+.rename-bg-d {
+  background-color: #24303a;
+  color: white;
 }
 </style>

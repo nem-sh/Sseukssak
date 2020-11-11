@@ -49,6 +49,28 @@ body::-webkit-scrollbar {
   box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.5);
 }
 
+.file-scroller-d::-webkit-scrollbar {
+  background-color: #24303a;
+  width: 0.6em;
+}
+.file-scroller-d::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+.file-scroller-d::-webkit-scrollbar-thumb:window-inactive {
+  background: var(--color-purple);
+}
+.file-scroller-d::-webkit-scrollbar-thumb {
+  background: var(--color-purple);
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
 .app-main {
   height: 100vh;
   display: flex;
@@ -299,47 +321,30 @@ body::-webkit-scrollbar {
 }
 
 .from {
-  border-right: var(--color-grey-dark) solid 1px;
+  border-right: var(--color-grey-light) solid 1px;
   padding: 0 !important;
+}
+
+.from-d {
+  border-right: var(--color-grey-light) solid 1px;
+  padding: 0 !important;
+  background-color: #24303a;
+  color: white;
 }
 
 .to {
   padding: 0 !important;
 }
 
+.to-d {
+  padding: 0 !important;
+  background-color: #24303a;
+  color: white;
+}
+
 .from-to {
   padding: 0;
   height: 100%;
-}
-
-.from-to-name h3 {
-  /* margin: 20px; */
-  // font-family: "Paytone One" !important;
-  color: #202020;
-  text-transform: uppercase;
-  letter-spacing: -2px;
-}
-
-.from-to-name h3 span {
-  display: block;
-  font-size: 40px;
-  line-height: 40px;
-  color: #7288da;
-}
-
-.to-name h3 {
-  /* margin: 20px; */
-  /* font-family: "Paytone One" !important; */
-  color: #202020;
-  text-transform: uppercase;
-  letter-spacing: -2px;
-}
-
-.to-name h3 span {
-  display: block;
-  font-size: 40px;
-  line-height: 40px;
-  color: #7288da;
 }
 
 .menu--update {
@@ -372,6 +377,16 @@ body::-webkit-scrollbar {
   &:hover {
     border-radius: 10%;
     background: var(--color-grey-lighter);
+    font-weight: bolder;
+    cursor: pointer;
+  }
+}
+
+.file-box-d {
+  width: 97px !important;
+  &:hover {
+    border-radius: 10%;
+    background: var(--color-grey-dark);
     font-weight: bolder;
     cursor: pointer;
   }

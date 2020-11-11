@@ -50,13 +50,14 @@
           :items="fileScrollList"
           height="420"
           item-height="90"
-          class="file-scroller"
+          :class="scrollerBgMode"
         >
           <template v-slot:default="{ item }">
             <div :key="item.name" class="d-flex align-start mx-5">
               <div
                 v-if="fileScrollList.indexOf(item) === 0"
-                class="pa-2 file-box"
+                class="pa-2"
+                :class="fileBoxBgMode"
               >
                 <div align="center" @click="enterDirectory('')">
                   <div class="folder--icon">
@@ -65,7 +66,12 @@
                 </div>
                 <div class="file-name" align="center">상위 폴더</div>
               </div>
-              <div v-for="file in item" :key="file.name" class="pa-2 file-box">
+              <div
+                v-for="file in item"
+                :key="file.name"
+                class="pa-2"
+                :class="fileBoxBgMode"
+              >
                 <div
                   v-if="
                     select == 0 ||
@@ -192,7 +198,7 @@
           </template>
         </v-virtual-scroll>
         <div v-else class="d-flex flex-column mx-5 pt-3" height="380">
-          <div v-if="fromDir" class="pa-2 file-box">
+          <div v-if="fromDir" class="pa-2" :class="fileBoxBgMode">
             <div align="center" @click="enterDirectory('')">
               <div class="folder--icon">
                 <i class="fas fa-long-arrow-up fa-2x mx-auto"></i>
@@ -226,12 +232,12 @@
       <BtnDupCheck mr-5 />
       <BtnMoveFile />
     </div>
-
     <div>
       <ul
         v-if="!selectedData.fileType"
         id="contextmenu"
-        class="pa-0 contextmenu"
+        class="pa-0"
+        :class="bgMode"
       >
         <li>
           <a
@@ -300,9 +306,10 @@
       <ul
         v-if="selectedData.fileType"
         id="contextmenu"
-        class="pa-0 contextmenu"
+        class="pa-0"
+        :class="bgMode"
       >
-        <li>
+        <li class="rename-d">
           <a
             @click="openFile(selectedData.name)"
             style="display: flex; align-items: center"
@@ -870,6 +877,15 @@ export default class ListFrom extends Vue {
       this.changeFileSortList(fileSortList);
     }
   }
+  get bgMode() {
+    return this.$vuetify.theme.dark ? "contextmenu-d" : "contextmenu";
+  }
+  get scrollerBgMode() {
+    return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
+  }
+  get fileBoxBgMode() {
+    return this.$vuetify.theme.dark ? "file-box-d" : "file-box";
+  }
 }
 </script>
 
@@ -909,7 +925,16 @@ export default class ListFrom extends Vue {
   box-shadow: 0 15px 35px rgba(50, 50, 90, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
   overflow: hidden;
   z-index: 999999;
+  font-size: 14px;
 }
+
+.contextmenu-d {
+  background: #24303a !important;
+  color: #ffffff !important;
+  box-shadow: 0 15px 35px rgba(107, 107, 190, 0.1),
+    0 5px 15px rgba(233, 233, 233, 0.07) !important;
+}
+
 #contextmenu li {
   border-left: 3px solid transparent;
   transition: ease 0.2s;

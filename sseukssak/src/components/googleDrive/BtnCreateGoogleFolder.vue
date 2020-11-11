@@ -33,13 +33,12 @@
 </template>
 
 <script lang='ts'>
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import fs from 'fs'
-import { mapState } from 'vuex'
-import { google } from 'googleapis'
-import Swal from 'sweetalert2'
-
+import Vue from "vue";
+import Component from "vue-class-component";
+import fs from "fs";
+import { mapState } from "vuex";
+import { google } from "googleapis";
+import Swal from "sweetalert2";
 
 @Component({
   computed: mapState(["oAuth2Client", "isLogin"]),
