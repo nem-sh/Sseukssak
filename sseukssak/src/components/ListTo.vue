@@ -55,7 +55,8 @@
               two-line
               link
               :key="item.path"
-              @click.stop="openShell(item.path)">
+              @click.stop="openShell(item.path)"
+            >
               <v-list-item-action>
                 <v-img
                   src="@/assets/folder-icon.png"
@@ -114,7 +115,7 @@
                         </v-list-item> -->
                         <v-list-item
                           link
-                          @click.stop="deleteToLibraryDirectory(item.path)"
+                          @click="deleteToLibraryDirectory(item.path)"
                         >
                           <v-list-item-title
                             ><i
@@ -220,13 +221,21 @@ export default class ListTo extends Vue {
   }
   deleteToLibraryDirectory(directoryPath, event) {
     Swal.fire({
-      position: "center",
-      icon: "warning",
       title: "삭제하시겠습니까?",
+      text: "정리 그룹에서 해당 폴더 및 적용된 기준이 삭제됩니다.",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: `Yes`,
+      confirmButtonText: "네, 삭제합니다!",
+      cancelButtonText: "취소",
     }).then((result) => {
       if (result.isConfirmed) {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "삭제되었습니다.",
+          showConfirmButton: false,
+          timer: 1000,
+        });
         const tempToLibraryList = this.toLibraryList;
         for (let index1 = 0; index1 < tempToLibraryList.length; index1++) {
           if (tempToLibraryList[index1].name == this.selectedToName) {
@@ -473,6 +482,7 @@ export default class ListTo extends Vue {
   selectedDir!: ToLibraryDirectory[];
   fromDir!: string;
   offset: boolean = true;
+  menuOpened: boolean = false;
 
   getDirectoryName(path) {
     const pathList = path.split("\\");

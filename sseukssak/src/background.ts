@@ -79,16 +79,16 @@ function createLoadingScreen() {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     if (loadingScreen !== null) {
       console.log(__dirname);
-      // loadingScreen.loadURL("file://" + __dirname + "/bundled/loading.html");
-      // loadingScreen.once("ready-to-show", () => {
-      //   if (loadingScreen !== null) {
-      //     loadingScreen.show();
-      //   }
-      // });
+      loadingScreen.loadURL("file://" + __dirname + "/bundled/loading.html");
+      loadingScreen.once("ready-to-show", () => {
+        if (loadingScreen !== null) {
+          loadingScreen.show();
+        }
+      });
     }
   } else {
     createProtocol("app");
-    loadingScreen.loadURL("app://./loading.html");
+    loadingScreen.loadURL("app://./loading_v2.html");
     loadingScreen.once("ready-to-show", () => {
       if (loadingScreen !== null) {
         loadingScreen.show();
@@ -147,7 +147,9 @@ function createWindow() {
   });
 
   win.on("closed", function() {
-    tray = null;
+    if (tray !== null) {
+      tray.destroy();
+    }
     win = null;
   });
 
