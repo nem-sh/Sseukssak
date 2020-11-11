@@ -137,11 +137,37 @@ import BtnLoginGoogle from "@/components/googleDrive/BtnLoginGoogle.vue";
 
 const { ipcRenderer, shell } = window.require("electron");
 
+// restore쪽 코드
+import { mapMutations, mapState } from "vuex";
+import constants from "constants.json";
+//
+
 @Component({
   components: {
     Home,
-    BtnLoginGoogle,
+    BtnLoginGoogle
   },
+  // restore쪽 코드
+  computed: mapState([
+    "fileSortList",
+    "fromDir",
+    "duplicatedList",
+    "fileList",
+    "renameHistory2",
+    "moveHistory",
+    "HistoryList"
+  ]),
+  methods: mapMutations([
+    "changeDir",
+    "changeFileList",
+    "changeFileSortList",
+    "changeDuplicatedList",
+    "changeRenameHistory2",
+    "changeMoveHistory",
+    "changeHistoryList"
+  ]),
+  //
+
   data() {
     return {
       items: [
@@ -150,24 +176,36 @@ const { ipcRenderer, shell } = window.require("electron");
           id: 2,
           title: "Rename",
           icon: "fas fa-pencil fa-lg",
-          path: "rename",
+          path: "rename"
         },
         {
           id: 3,
           title: "Restore",
           icon: "fa fa-history fa-lg",
-          path: "restore",
-        },
-      ],
+          path: "restore"
+        }
+      ]
     };
   },
   created() {
     this.$router.push({ name: "Home" });
-  },
+  }
 })
 export default class App extends Vue {
   activeTab: string = "Home";
   mini: boolean = false;
+  //
+  changeDuplicatedList!: (newList: [][]) => void;
+  changeRenameHistory2!: (newList: [][]) => void;
+  changeMoveHistory!: (newList: [][]) => void;
+  localHistory: any[] = [];
+  duplicatedList!: any[][];
+  renameHistory2!: any[][];
+  moveHistory!: any[][];
+  isLoading!: boolean;
+  historyList: (string | number)[][] = [[]];
+
+  //
 
   goMenu(idx) {
     if (idx === 1 && this.$route.name !== "Home") {
@@ -177,15 +215,15 @@ export default class App extends Vue {
       this.activeTab = "Rename";
       this.$router.push({ name: "Rename" });
     } else if (idx === 3 && this.$route.name !== "Restore") {
-      Swal.fire({
-        position: "center",
-        icon: "warning",
-        title: "준비중 입니다 :)",
-        showConfirmButton: false,
-        timer: 1000,
-      });
-      //this.activeTab = "Restore";
-      //this.$router.push({ name: "Restore" });
+      // Swal.fire({
+      //   position: "center",
+      //   icon: "warning",
+      //   title: "준비중 입니다 :)",
+      //   showConfirmButton: false,
+      //   timer: 1000,
+      // });
+      this.activeTab = "Restore";
+      this.$router.push({ name: "Restore" });
     }
   }
 
@@ -233,7 +271,7 @@ export default class App extends Vue {
       icon: "warning",
       title: "준비중 입니다 :)",
       showConfirmButton: false,
-      timer: 1000,
+      timer: 1000
     });
   }
 }

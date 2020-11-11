@@ -203,7 +203,7 @@ export default class Restore extends Vue {
     // console.log(tmpL);
     console.log(this.renameHistory2);
     for (let c = 0; c < this.renameHistory2.length; c++) {
-      if (this.renameHistory2[c].length != 0) {
+      if (this.renameHistory2[c].length > 1) {
         if (mm["datas"][tmpL + c] == undefined) {
           mm["datas"][tmpL + c] = {
             filename: null,

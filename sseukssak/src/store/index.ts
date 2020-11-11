@@ -1,8 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import { google } from 'googleapis';
-import { stat } from 'fs';
+import { google } from "googleapis";
+import { stat } from "fs";
 
 Vue.use(Vuex);
 
@@ -20,6 +20,8 @@ interface DirState {
   modifyDirectroy: ToLibraryDirectory;
   renameHistory: any[][];
   renameHistory2: any[][];
+
+  HistoryList: any[][];
 
   moveHistory: any[][];
   renameFileList: FileInfo[];
@@ -85,7 +87,7 @@ export default new Vuex.Store({
     fileList: [],
     fileSortList: {
       directories: [],
-      files: [],
+      files: []
     },
     toLibraryList: [],
     toLibraryNameList: [],
@@ -96,8 +98,9 @@ export default new Vuex.Store({
       path: "",
       typeTags: [],
       dateTags: [],
-      titleTags: [],
+      titleTags: []
     },
+    HistoryList: [],
     renameHistory: [],
     renameHistory2: [],
     moveHistory: [],
@@ -108,18 +111,18 @@ export default new Vuex.Store({
     filterMiddle: "1",
     filterBack: "3",
     dupCheck: [],
-    frontName: '',
-    middleName: '',
-    backName: '',
+    frontName: "",
+    middleName: "",
+    backName: "",
     allSelect: false,
-    renameDir: '',
-    
+    renameDir: "",
+
     // google dive
     tokenPath: "token.json",
     oAuth2Client: new google.auth.OAuth2(
-      '957933273560-84cubajfji0djc5k9r9n2okck14sribj.apps.googleusercontent.com',
-      'xErwUWs1A-ohs2fgcFFqdulF',
-      'urn:ietf:wg:oauth:2.0:oob'
+      "957933273560-84cubajfji0djc5k9r9n2okck14sribj.apps.googleusercontent.com",
+      "xErwUWs1A-ohs2fgcFFqdulF",
+      "urn:ietf:wg:oauth:2.0:oob"
     ),
     isLogin: false
   },
@@ -161,6 +164,9 @@ export default new Vuex.Store({
     changeLogBackCheck(state: DirState, newCheck: boolean) {
       state.logBackCheck = newCheck;
     },
+    changeHistoryList(state: DirState, History: [][]) {
+      state.HistoryList.push(History);
+    },
     changeRenameHistory(state: DirState, newHistory: [][]) {
       state.renameHistory.push(newHistory);
     },
@@ -174,7 +180,7 @@ export default new Vuex.Store({
           name:
             this.getters["front"](item) +
             this.getters["middle"](item) +
-            this.getters["back"](item, i + 1),
+            this.getters["back"](item, i + 1)
         });
         state.afterItems.push(tmp);
       });
@@ -225,17 +231,17 @@ export default new Vuex.Store({
       state.backName = newName;
     },
     changeAllSelect(state: DirState) {
-      state.allSelect = !state.allSelect
+      state.allSelect = !state.allSelect;
     },
     changeRenameDir(state: DirState, newDir: string) {
-      state.renameDir = newDir
+      state.renameDir = newDir;
     },
-    changeLoginState(state: DirState, value: boolean){
-      state.isLogin = value
+    changeLoginState(state: DirState, value: boolean) {
+      state.isLogin = value;
     },
     changeRenameHistory2(state: DirState, newHistory: []) {
       state.renameHistory2.push(newHistory);
-    },
+    }
   },
   actions: {},
   getters: {
@@ -284,9 +290,9 @@ export default new Vuex.Store({
     authUrl: (state) => {
       return state.oAuth2Client.generateAuthUrl({
         accessType: "offline",
-        scope: ["https://www.googleapis.com/auth/drive"],
+        scope: ["https://www.googleapis.com/auth/drive"]
       });
-    },
+    }
   },
-  modules: {},
+  modules: {}
 });
