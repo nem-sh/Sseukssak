@@ -1,6 +1,7 @@
 <template>
   <div style="display: inline">
     <v-btn
+      class="mr-5"
       color="var(--color-purple)"
       dark
       rounded
@@ -8,8 +9,8 @@
     >
       정리
     </v-btn>
-    <!-- <v-dialog v-model="dialog" persistent max-width="400px">
-      <template v-slot:activator="{ on, attrs }">
+    <v-dialog v-model="dialog" persistent max-width="400px">
+      <!-- <template v-slot:activator="{ on, attrs }">
         <v-btn
           class="mr-5"
           color="var(--color-purple)"
@@ -21,34 +22,35 @@
         >
           정리
         </v-btn>
-      </template>
+      </template> -->
       <v-card align="center">
         <v-card-text>
-          <lottie-player
+          <!-- <lottie-player
             src="https://assets7.lottiefiles.com/packages/lf20_7PhD2J.json"
             background="transparent"
             speed="1"
             style="width: 300px; height: 300px"
             loop
             autoplay
-          ></lottie-player>
-          <lottie-player
+          ></lottie-player> -->
+          <!-- <lottie-player
             src="https://assets6.lottiefiles.com/packages/lf20_AvXSwT.json"
             background="transparent"
             speed="1"
             style="width: 300px; height: 300px"
             loop
             autoplay
-          ></lottie-player>
+          ></lottie-player> -->
+          <lottie-player src="https://assets6.lottiefiles.com/packages/lf20_AvXSwT.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
         </v-card-text>
-        <v-card-actions>
+        <!-- <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="var(--color-purple)" text @click="dialog = false">
             취소
           </v-btn>
-        </v-card-actions>
+        </v-card-actions> -->
       </v-card>
-    </v-dialog> -->
+    </v-dialog>
   </div>
 </template>
 
@@ -64,6 +66,12 @@ import Swal from "sweetalert2";
 
 const { shell } = require("electron").remote;
 const { app } = require("electron").remote;
+// 알림창
+import { remote } from "electron";
+const notifier = remote.require('node-notifier');
+declare const __static: string;
+import path from "path";
+
 interface ToLibrary {
   name: string;
   directories: ToLibraryDirectory[];
@@ -215,6 +223,7 @@ export default class BtnMoveFile extends Vue {
   changeFileList!: (newList: string[]) => void;
   changeFileSortList!: (newList: SortList) => void;
   changeMoveHistory!: (newList: any[]) => void;
+
   compareTitle(file: string, titleTags: string[]) {
     if (titleTags.length == 0) {
       return true;
@@ -260,22 +269,22 @@ export default class BtnMoveFile extends Vue {
   }
 
   moveFile() {
-    // this.dialog = true;
-    console.log(this.toLibraryList);
-    let timerInterval;
-    Swal.fire({
-      title: "정리 중...",
-      timer: 200000,
-      willOpen: () => {
-        Swal.showLoading();
-        timerInterval = setInterval(() => {
-          const content = Swal.getContent();
-        }, 100);
-      },
-      onClose: () => {
-        clearInterval(timerInterval);
-      },
-    });
+    this.dialog = true;
+    // console.log(this.toLibraryList);
+    // let timerInterval;
+    // Swal.fire({
+    //   title: "정리 중...",
+    //   timer: 200000,
+    //   willOpen: () => {
+    //     Swal.showLoading();
+    //     timerInterval = setInterval(() => {
+    //       const content = Swal.getContent();
+    //     }, 100);
+    //   },
+    //   onClose: () => {
+    //     clearInterval(timerInterval);
+    //   },
+    // });
 
     BUS.$emit("bus:refreshfile");
     BUS.$emit("bus:dupcheck");
@@ -398,14 +407,24 @@ export default class BtnMoveFile extends Vue {
         fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
       }
     }
-    this.dialog = false;
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "정리가 완료되었습니다.",
-      showConfirmButton: false,
-      timer: 3000,
-    });
+    setTimeout(() => {
+      this.dialog = false;
+      notifier.notify(
+        {
+          title: '쓱싹 알림',
+          message: '정리가 완료되었습니다!',
+          icon: path.join(__static, "sweeping.png"),
+          sound: true,
+        },
+      );
+    }, 2000);
+    // Swal.fire({
+    //   position: "center",
+    //   icon: "success",
+    //   title: "정리가 완료되었습니다.",
+    //   showConfirmButton: false,
+    //   timer: 3000,
+    // });
 
     BUS.$emit("bus:refreshfile");
   }
