@@ -38,13 +38,18 @@ import { mapMutations, mapState } from "vuex";
     "changeFileSortList",
     "changeDuplicatedList",
     "changeRenameHistory2",
-    "changeMoveHistory"
+    "changeMoveHistory",
+    "resetMoveHistory",
+    "resetRenameHistory"
   ])
 })
 export default class Restore extends Vue {
   changeDuplicatedList!: (newList: [][]) => void;
   changeRenameHistory2!: (newList: [][]) => void;
   changeMoveHistory!: (newList: [][]) => void;
+  resetMoveHistory!: (newList: [][]) => void;
+  resetRenameHistory!: (newList: [][]) => void;
+
   localHistory: any[] = [];
   duplicatedList!: any[][];
   renameHistory2!: any[][];
@@ -123,9 +128,9 @@ export default class Restore extends Vue {
     if (type == 1) {
       this.changeDuplicatedList([[]]);
     } else if (type == 2) {
-      this.changeRenameHistory2([[]]);
+      this.resetRenameHistory([[]]);
     } else if (type == 3) {
-      this.changeMoveHistory([[]]);
+      this.resetMoveHistory([[]]);
     }
   }
 

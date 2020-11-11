@@ -185,7 +185,7 @@ export default new Vuex.Store({
     },
 
     resetRenameHistory(state: DirState) {
-      state.renameHistory = [[]];
+      state.renameHistory2 = [[]];
     },
     //
     changePreview(state: DirState) {

@@ -11,21 +11,21 @@
       <div v-if="historyList.length != 0">
         <v-list
           v-for="historychunk in historyList"
-          :key="historychunk.filename"
+          :key="historychunk.filename + historychunk.date + Math.random()"
         >
-          <div class="chunkfail" v-if="historychunk[1] == 0">
+          <div class="chunkfail" v-if="historychunk.success == 0">
             <p>
-              <b>파일명 : {{ historychunk[0] }}</b>
+              <b>파일명 : {{ historychunk.filename }}</b>
             </p>
-            <p>실행시간 : {{ historychunk[4] }}</p>
-            <p>작업코드 : {{ historychunk[5] }}</p>
+            <p>실행시간 : {{ historychunk.date }}</p>
+            <p>작업코드 : {{ historychunk.workcode }}</p>
           </div>
-          <div class="chunksucc" v-if="historychunk[1] == 1">
+          <div class="chunksucc" v-if="historychunk.success == 1">
             <p>
-              <b>파일명 : {{ historychunk[0] }}</b>
+              <b>파일명 : {{ historychunk.filename }}</b>
             </p>
-            <p>실행시간 : {{ historychunk[4] }}</p>
-            <p>작업코드 : {{ historychunk[5] }}</p>
+            <p>실행시간 : {{ historychunk.date }}</p>
+            <p>작업코드 : {{ historychunk.workcode }}</p>
           </div>
         </v-list>
       </div>
@@ -103,17 +103,10 @@ export default class Restore extends Vue {
   renameHistory2!: any[][];
   moveHistory!: any[][];
   isLoading!: boolean;
-  historyList: (string | number)[][] = [[]];
+  historyList: any[][] = [[]];
   inputs: string = "";
 
-  // @Watch("inputs")
-  // onPropertyChanged(value: string, oldValue: string) {
-  //   console.log(value, oldValue);
-  // }
-
   mounted() {
-    // console.log(this.duplicatedList);
-    // console.log(constants);
     this.readHistory();
   }
   get succfail() {
@@ -121,7 +114,6 @@ export default class Restore extends Vue {
   }
 
   readHistory() {
-    // console.log(this.duplicatedList);
     const nulldata = [];
     const nulldata2 = JSON.stringify(nulldata);
 
@@ -136,11 +128,8 @@ export default class Restore extends Vue {
 
     // console.log(this.duplicatedList.length);
     const mm = JSON.parse(localHistory.toString());
-    // console.log(mm);
-    console.log(mm);
 
     const mm2 = Buffer.from(JSON.stringify(mm));
-    // console.log(mm2);
 
     this.jsontest(mm2);
   }
@@ -148,44 +137,35 @@ export default class Restore extends Vue {
   jsontest(changedHistory: object) {
     const sortingarr: any[] = [];
     const mm = JSON.parse(changedHistory.toString());
-    // console.log(changedHistory);
-    console.log(mm);
-    //arr에 담기
 
-    for (let a = 0; a < Object.keys(mm.datas).length; a++) {
+    //arr에 담기
+    mm.forEach(function(chunk: any) {
+      console.log(chunk);
       try {
-        // console.log(a);
-        sortingarr.push([
-          mm["datas"][a]["filename"],
-          mm["datas"][a]["success"],
-          mm["datas"][a]["before"],
-          mm["datas"][a]["after"],
-          mm["datas"][a]["date"],
-          mm["datas"][a]["workcode"]
-        ]);
+        if (chunk.date != undefined) {
+          sortingarr.push(chunk);
+        }
       } catch (err) {
-        console.log("error", err);
+        console.log(err);
       }
-    }
+    });
 
     // 날짜순으로 정렬
     sortingarr.sort(function(a, b) {
-      return a[4] > b[4] ? -1 : a[4] < b[4] ? 1 : 0;
+      return a.date > b.date ? -1 : a.date < b.date ? 1 : 0;
     });
     // console.log(sortingarr);
 
     //historylist 변경
-    // constants 기준으로 출력할 값 바꾸기
-    for (let h = 0; h < this.historyList.length; h++) {
-      const d = new Date(this.historyList[h][4]);
-      this.historyList[h][4] = d.toString();
-      const wc = this.historyList[h][5];
-      this.historyList[h][5] = constants.history.workcode[wc];
-    }
+    this.historyList = sortingarr.slice(0, 100);
 
-    const newdata = JSON.stringify(mm);
-    fs.writeFileSync("history_test.json", newdata);
-    // console.log('saved');
+    this.historyList.forEach(function(history: any) {
+      // console.log(history);
+      const d = new Date(history.date);
+      history.date = d.toString();
+      const wc = history.workcode;
+      history.workcode = constants.history.workcode[wc];
+    });
   }
 
   resetHistory() {
@@ -199,10 +179,7 @@ export default class Restore extends Vue {
   }
 
   created() {
-    console.log(this.moveHistory);
-    console.log(this.renameHistory2);
     this.isLoading = true;
-    // console.log(this.isLoading);
   }
 }
 </script>
