@@ -80,9 +80,9 @@
               <v-list-item-action>
                 <v-row align="center" justify="center" class="pa-0">
                   <v-col cols="6" class="pa-0">
-                    <v-menu top :offset-y="offset">
+                    <v-menu top :offset-y="offset" :value="shown" :close-on-content-click="false">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn icon v-bind="attrs" v-on="on">
+                        <v-btn icon v-bind="attrs" v-on="on" @click="shown=true">
                           <i class="fas fa-ellipsis-v-alt"></i
                         ></v-btn>
                       </template>
@@ -92,12 +92,12 @@
                         <v-list-item link>
                           <v-list-item-title
                             ><ModalModifyToLibraryDirectory
-                              :propDirectory="item"
+                              :propDirectory="item" @closeMenu="closeMenu"
                           /></v-list-item-title>
                         </v-list-item>
                         <v-list-item
                           link
-                          @click.stop="deleteToLibraryDirectory(item.path)"
+                          @click="deleteToLibraryDirectory(item.path)"
                         >
                           <v-list-item-title
                             ><i
@@ -181,6 +181,11 @@ interface ToLibraryDirectory {
   ]),
 })
 export default class ListTo extends Vue {
+  shown: boolean = false
+
+  closeMenu() {
+    this.shown = false
+  }
   openShell(path: string) {
     let newPath = path;
     if (path.includes("%from%")) {
