@@ -23,7 +23,7 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="red darken-1" text @click="dialog = false"> 취소 </v-btn>
+        <v-btn color="red darken-1" text @click="dialog=false"> 취소 </v-btn>
         <v-btn color="green darken-1" text @click="makeGoogleFolder">
           추가
         </v-btn>
@@ -71,8 +71,18 @@ export default class BtnCreateGoogleFolder extends Vue {
           icon:'success',
           title:'폴더를 생성했습니다.'
         })
-      }}
+        console.log(file)
+        this.$emit('create-google-folder',this.folderName+'\\'+file.data.id)
+      }
+      this.dialog=false
+      }
     )
+    
+  }
+
+
+  closeDialog3() {
+    this.$emit('close-dialog3')
   }
 }
 </script>
