@@ -1,6 +1,6 @@
 {
   "name": "sseukssak",
-  "version": "0.1.0",
+  "version": "0.1.31",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -17,6 +17,7 @@
     "core-js": "^3.6.5",
     "googleapis": "^62.0.0",
     "shell-context-menu": "^1.0.2",
+    "node-notifier": "^8.0.0",
     "trash": "^6.1.1",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",

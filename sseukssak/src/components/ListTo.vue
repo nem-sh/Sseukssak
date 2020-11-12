@@ -9,15 +9,18 @@
     <div class="to-part-first">
       <div class="select-folder">
         <v-row>
-          <v-col cols="3" class="to-name">
-            <h3><span>To</span></h3></v-col
-          >
-          <v-col cols="7" align="center" justify="center" class="mt-5">
+          <v-col cols="2" class="to-name">
+            <img src="@/assets/titleImg/ToImg.png" alt="" height="47"
+          /></v-col>
+          <v-col cols="8" align="center" justify="center" class="mt-5">
             <v-select
               :items="toLibraryNameList"
               v-model="selectedToNameValue"
-              label="Select rule"
+              label="Select Group"
+              v-model="selectedToName"
+              label="Select Group"
               dense
+              outlined
             ></v-select>
           </v-col>
           <v-col cols="2" class="d-flex flex-column">
@@ -47,10 +50,15 @@
           :items="toLibrary.directories"
           height="370"
           item-height="84"
-          class="file-scroller"
+          :class="scrollerBgMode"
         >
           <template v-slot:default="{ item }">
-            <v-list-item link :key="item.path" @click="openShell(item.path)">
+            <v-list-item
+              two-line
+              link
+              :key="item.path"
+              @click.stop="openShell(item.path)"
+            >
               <v-list-item-action>
                 <v-img
                   src="@/assets/folder-icon.png"
@@ -74,36 +82,56 @@
                 <v-list-item-title>
                   <strong>{{ getDirectoryName(item.path) }}</strong>
                 </v-list-item-title>
+                <div class="item-path">
+                  {{ item.path }}
+                </div>
+                <!-- <v-list-item-subtitle color="#7288da" class="item-path">
+                  <span
+                    v-for="tag in getTagLists(
+                      item.typeTags,
+                      item.dateTags,
+                      item.titleTags
+                    )"
+                    :key="tag"
+                    class="mr-2"
+                    >{{ tag }}
+                  </span>
+                  <ListFromBreadcrumbs
+                    :fromDir="item.path"
+                    :className="'bread-to'"
+                  />
+                </v-list-item-subtitle> -->
               </v-list-item-content>
               <v-list-item-action>
                 <v-row align="center" justify="center" class="pa-0">
-                  <!-- <v-col cols="4" class="pa-0">
-                    <ModalCheckDirectoryTags />
-                  </v-col> -->
-                  <!-- <v-col cols="6" class="pa-0">
-                    <ModalModifyToLibraryDirectory :propDirectory="item"/>
-                  </v-col> -->
                   <v-col cols="6" class="pa-0">
-                    <v-menu top :offset-y="offset">
+                    <v-menu
+                      top
+                      :offset-y="offset"
+                      :value="shown"
+                      :close-on-content-click="false"
+                    >
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn icon v-bind="attrs" v-on="on">
+                        <v-btn
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                          @click="shown = true"
+                        >
                           <i class="fas fa-ellipsis-v-alt"></i
                         ></v-btn>
                       </template>
                       <v-list>
-                        <!-- 수정하기 -->
-                        <!-- <v-list-item link>
+                        <v-list-item link>
                           <v-list-item-title
-                            ><i
-                              class="fas fa-pen mr-2"
-                              style="color: #009688"
-                            ></i
-                            >수정하기</v-list-item-title
-                          >
-                        </v-list-item> -->
+                            ><ModalModifyToLibraryDirectory
+                              :propDirectory="item"
+                              @closeMenu="closeMenu"
+                          /></v-list-item-title>
+                        </v-list-item>
                         <v-list-item
                           link
-                          @click.stop="deleteToLibraryDirectory(item.path)"
+                          @click="deleteToLibraryDirectory(item.path)"
                         >
                           <v-list-item-title
                             ><i
@@ -134,16 +162,11 @@
         autoplay
         class="mt-5"
       ></lottie-player>
-      <h3 class="mt-3">정리 규칙을 선택해주세요</h3>
+      <h3 class="mt-3">정리 그룹을 선택해주세요</h3>
       <div style="font-size: 12px" class="mt-2">
-        나만의 정리 규칙을 만들어 사용해보세요!
+        나만의 정리 그룹을 만들어 사용해보세요!
       </div>
     </div>
-    <!-- <div v-if="selectedToName" class="to-part-third">
-      <div align="right">
-        <ModalAddToLibraryDirectory v-if="selectedToName" />
-      </div>
-    </div> -->
   </v-container>
 </template>
 
@@ -155,8 +178,8 @@ import Swal from "sweetalert2";
 
 import ModalCreateToLibrary from "@/components/ModalCreateToLibrary.vue";
 import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.vue";
-// import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
-import ModalCheckDirectoryTags from "@/components/ModalCheckDirectoryTags.vue";
+import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
+import ListFromBreadcrumbs from "@/components/listFrom/ListFromBreadcrumbs.vue";
 
 import { shell } from "electron";
 
@@ -179,8 +202,8 @@ interface ToLibraryDirectory {
   components: {
     ModalCreateToLibrary,
     ModalAddToLibraryDirectory,
-    // ModalModifyToLibraryDirectory,
-    ModalCheckDirectoryTags,
+    ModalModifyToLibraryDirectory,
+    ListFromBreadcrumbs,
   },
   computed: mapState([
     "toLibraryList",
@@ -197,13 +220,24 @@ interface ToLibraryDirectory {
 export default class ListTo extends Vue {
   selectedToName!: string;
   selectedToNameValue: string = "";
+  shown: boolean = false;
+
+  closeMenu() {
+    this.shown = false;
+  }
   openShell(path: string) {
     let newPath = path;
     if (path.includes("%from%")) {
       if (this.fromDir) {
         newPath = path.replace("%from%", this.fromDir);
       } else {
-        alert("이 폴더를 열기 위해선 from을 먼저 지정해주세요!");
+        Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: "이 폴더를 열기 위해선 from을 먼저 지정해주세요!",
+          showConfirmButton: false,
+          timer: 1000,
+        });
       }
     }
     if (!fs.existsSync(newPath)) {
@@ -213,13 +247,21 @@ export default class ListTo extends Vue {
   }
   deleteToLibraryDirectory(directoryPath, event) {
     Swal.fire({
-      position: "center",
-      icon: "warning",
       title: "삭제하시겠습니까?",
+      text: "정리 그룹에서 해당 폴더 및 적용된 기준이 삭제됩니다.",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: `Yes`,
+      confirmButtonText: "네, 삭제합니다!",
+      cancelButtonText: "취소",
     }).then((result) => {
       if (result.isConfirmed) {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "삭제되었습니다.",
+          showConfirmButton: false,
+          timer: 1000,
+        });
         const tempToLibraryList = this.toLibraryList;
         for (let index1 = 0; index1 < tempToLibraryList.length; index1++) {
           if (tempToLibraryList[index1].name == this.selectedToName) {
@@ -278,12 +320,24 @@ export default class ListTo extends Vue {
     for (const f of event.dataTransfer.files) {
       console.log(f);
       if (this.selectedToName == "") {
-        alert("라이브러리 먼저 선택 ㄱㄱ");
+        Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: "라이브러리를 선택해주세요",
+          showConfirmButton: false,
+          timer: 1000,
+        });
       } else {
         if (fs.statSync(f.path).isDirectory()) {
           this.changeDropToDir(f.path);
         } else {
-          alert("디렉토리가 아닙니다");
+          Swal.fire({
+            position: "center",
+            icon: "warning",
+            title: "디렉토리가 아닙니다",
+            showConfirmButton: false,
+            timer: 1000,
+          });
         }
       }
     }
@@ -456,6 +510,7 @@ export default class ListTo extends Vue {
   selectedDir!: ToLibraryDirectory[];
   fromDir!: string;
   offset: boolean = true;
+  menuOpened: boolean = false;
 
   getDirectoryName(path) {
     const pathList = path.split("\\");
@@ -480,6 +535,14 @@ export default class ListTo extends Vue {
     this.changeDirectoryLength(name);
   }
 
+  getTagLists(type, date, title) {
+    const tagLists = [];
+    Array.prototype.push.apply(tagLists, type);
+    Array.prototype.push.apply(tagLists, date);
+    Array.prototype.push.apply(tagLists, title);
+    return tagLists;
+  }
+
   @Watch("selectedToName")
   watchSelectedToName() {
     this.selectedToNameValue = this.selectedToName;
@@ -491,37 +554,20 @@ export default class ListTo extends Vue {
     this.changeSelectedToName(this.selectedToNameValue);
     this.changeDirectoryLength(this.selectedToName);
   }
+  get scrollerBgMode() {
+    return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
+  }
 }
 </script>
 
 <style>
-.to-name h3 {
-  /* margin: 20px; */
-  /* font-family: "Paytone One" !important; */
-  color: #202020;
-  text-transform: uppercase;
-  letter-spacing: -2px;
-}
-
-.to-name h3 span {
-  display: block;
-  margin: 0 0 17px 10px;
-  font-size: 40px;
-  line-height: 40px;
-  color: #7288da;
-  text-shadow: 0 13.36px 8.896px #c4b59d, 0 -2px 1px #fff;
-  letter-spacing: -4px;
-}
-
 .to-part-first {
-  padding-top: 28px;
+  padding-top: 20px;
   width: 100%;
-  height: 25%;
 }
 
 .to-part-second {
   width: 100%;
-  height: 70%;
   padding: 10px 0 10px 0;
 }
 
@@ -533,5 +579,14 @@ export default class ListTo extends Vue {
 
 .theme--light.v-label {
   color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.item-path {
+  font-size: 12px !important;
+  color: #7a8186;
+}
+
+.to-name {
+  padding-top: 10px;
 }
 </style>

@@ -49,6 +49,28 @@ body::-webkit-scrollbar {
   box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.5);
 }
 
+.file-scroller-d::-webkit-scrollbar {
+  background-color: #24303a;
+  width: 0.6em;
+}
+.file-scroller-d::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+.file-scroller-d::-webkit-scrollbar-thumb:window-inactive {
+  background: var(--color-purple);
+}
+.file-scroller-d::-webkit-scrollbar-thumb {
+  background: var(--color-purple);
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
 .app-main {
   height: 100vh;
   display: flex;
@@ -57,11 +79,25 @@ body::-webkit-scrollbar {
 .menu {
   background: var(--color-purple);
   height: 100%;
+  padding-top: 0;
+}
+
+.menu-first {
+  height: 50vh;
   width: 72px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 12px;
+  padding-top: 10px;
+}
+
+.menu-second {
+  height: 50vh;
+  width: 72px;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  padding-bottom: 10px;
 }
 
 .menu--logo {
@@ -128,6 +164,41 @@ body::-webkit-scrollbar {
     border-radius: 20%;
     background: var(--color-purple);
   }
+}
+
+.menu--settings {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  color: white;
+  position: relative;
+  &.active {
+    &:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 13px;
+      background: white;
+      height: 46px;
+      border-radius: 33px;
+      margin-left: -19px;
+    }
+  }
+  &:hover {
+    border-radius: 20%;
+    background: var(--color-grey-light);
+  }
+}
+
+.menu--settings img {
+  width: 75%;
+  height: 75%;
 }
 
 .menu--icon img {
@@ -213,6 +284,8 @@ body::-webkit-scrollbar {
   color: white;
   z-index: 5;
   -webkit-app-region: drag;
+  // background-color: #677ac0;
+  // border-bottom: 0.5px white solid;
 }
 
 .window-operations-container i {
@@ -248,35 +321,30 @@ body::-webkit-scrollbar {
 }
 
 .from {
-  border-right: var(--color-grey-dark) solid 1px;
+  border-right: var(--color-grey-light) solid 1px;
   padding: 0 !important;
+}
+
+.from-d {
+  border-right: var(--color-grey-light) solid 1px;
+  padding: 0 !important;
+  background-color: #24303a;
+  color: white;
 }
 
 .to {
   padding: 0 !important;
 }
 
+.to-d {
+  padding: 0 !important;
+  background-color: #24303a;
+  color: white;
+}
+
 .from-to {
   padding: 0;
   height: 100%;
-}
-
-.from-to-name h3 {
-  /* margin: 20px; */
-  // font-family: "Paytone One" !important;
-  color: #202020;
-  text-transform: uppercase;
-  letter-spacing: -2px;
-}
-
-.from-to-name h3 span {
-  display: block;
-  margin: 0 0 17px 10px;
-  font-size: 40px;
-  line-height: 40px;
-  color: #7288da;
-  text-shadow: 0 13.36px 8.896px #c4b59d, 0 -2px 1px #fff;
-  letter-spacing: -4px;
 }
 
 .menu--update {
@@ -314,6 +382,16 @@ body::-webkit-scrollbar {
   }
 }
 
+.file-box-d {
+  width: 97px !important;
+  &:hover {
+    border-radius: 10%;
+    background: var(--color-grey-dark);
+    font-weight: bolder;
+    cursor: pointer;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .app-logo {
     &:hover {
@@ -329,4 +407,19 @@ body::-webkit-scrollbar {
   to {
     transform: rotate(360deg);
   }
+}
+
+.swal2-popup {
+  font-size: 13px !important;
+  font-family: "Nanum Gothic", sans-serif !important;
+}
+
+.swal2-styled.swal2-cancel {
+  background-color: #ef5350;
+  border-radius: 28px;
+}
+
+.swal2-styled.swal2-confirm {
+  background-color: var(--color-purple);
+  border-radius: 28px;
 }

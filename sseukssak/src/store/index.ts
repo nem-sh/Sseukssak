@@ -1,16 +1,92 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import { DirState, ToLibrary, ToLibraryDirectory, SortList, FileInfo, RestoreMoveListUnit } from "../api/interface";
-import { google } from 'googleapis';
+import Vue from "vue";
+import Vuex from "vuex";
+
+import { google } from "googleapis";
+import { stat } from "fs";
 
 Vue.use(Vuex);
 
+interface DirState {
+  firstOpen: boolean;
+  fromDir: string;
+  fileList: string[];
+  fileSortList: SortList;
+  toLibraryList: ToLibrary[];
+  toLibraryNameList: string[];
+  selectedToName: string;
+  logBackCheck: boolean;
+  duplicatedList: [][];
+  dropToDir: string;
+  modifyDirectroy: ToLibraryDirectory;
+  renameHistory: any[][];
+  renameHistory2: any[][];
+
+  HistoryList: any[][];
+
+  moveHistory: any[][];
+  renameFileList: FileInfo[];
+  beforeItems: FileInfo[];
+  afterItems: FileInfo[];
+  filterFront: string;
+  filterMiddle: string;
+  filterBack: string;
+  dupCheck: string[];
+  frontName: string;
+  middleName: string;
+  backName: string;
+  allSelect: boolean;
+  renameDir: string;
+
+  // Google Auth
+  tokenPath: string;
+  oAuth2Client: any;
+  isLogin: boolean;
+
+  // 미니모드
+  mini: boolean;
+}
+interface ToLibrary {
+  name: string;
+  directories: ToLibraryDirectory[];
+}
+interface ToLibraryDirectory {
+  path: string;
+  typeTags: string[];
+  dateTags: string[];
+  titleTags: string[];
+}
+interface SortList {
+  directories: Directory[];
+  files: File[];
+}
+interface File {
+  fileType: string;
+  name: string;
+  birthTime: number;
+  updatedTime: number;
+  icon: string;
+}
+interface Directory {
+  name: string;
+  birthTime: number;
+  updatedTime: number;
+}
+
+interface FileInfo {
+  name: string;
+  path: string;
+  ctime: Date;
+  mtime: Date;
+  type: string;
+  dir: string;
+  icon: string;
+}
 
 export default new Vuex.Store({
   state: {
-    restoreMoveList: [],
-    dropToDir: '',
-    fromDir: '',
+    firstOpen: true,
+    dropToDir: "",
+    fromDir: "",
     fileList: [],
     fileSortList: {
       directories: [],
@@ -18,35 +94,43 @@ export default new Vuex.Store({
     },
     toLibraryList: [],
     toLibraryNameList: [],
-    selectedToName: '',
+    selectedToName: "",
     logBackCheck: false,
     duplicatedList: [[]],
     modifyDirectroy: {
-      path: '',
+      path: "",
       typeTags: [],
       dateTags: [],
       titleTags: []
     },
+    HistoryList: [],
     renameHistory: [],
-
+    renameHistory2: [],
     moveHistory: [],
     renameFileList: [],
     beforeItems: [],
     afterItems: [],
-    filterFront: '3',
-    filterMiddle: '1',
-    filterBack: '3',
+    filterFront: "3",
+    filterMiddle: "1",
+    filterBack: "3",
     dupCheck: [],
-    frontName: '',
-    middleName: '',
-    backName: '',
+    frontName: "",
+    middleName: "",
+    backName: "",
+    allSelect: false,
+    renameDir: "",
+
     // google dive
-    tokenPath: 'token.json',
+    tokenPath: "token.json",
     oAuth2Client: new google.auth.OAuth2(
-      '957933273560-84cubajfji0djc5k9r9n2okck14sribj.apps.googleusercontent.com',
-      'xErwUWs1A-ohs2fgcFFqdulF',
-      'urn:ietf:wg:oauth:2.0:oob'
-    )
+      "957933273560-84cubajfji0djc5k9r9n2okck14sribj.apps.googleusercontent.com",
+      "xErwUWs1A-ohs2fgcFFqdulF",
+      "urn:ietf:wg:oauth:2.0:oob"
+    ),
+    isLogin: false,
+
+    // 미니모드
+    mini: false
   },
   mutations: {
     changeModifyDirectroy(
@@ -60,6 +144,9 @@ export default new Vuex.Store({
     },
     changeDir(state: DirState, newDir: string) {
       state.fromDir = newDir;
+    },
+    changeFirstOpenValue(state: DirState) {
+      state.firstOpen = false;
     },
     changeFileList(state: DirState, newList: string[]) {
       state.fileList = newList;
@@ -83,20 +170,32 @@ export default new Vuex.Store({
     changeLogBackCheck(state: DirState, newCheck: boolean) {
       state.logBackCheck = newCheck;
     },
+    changeHistoryList(state: DirState, History: [][]) {
+      state.HistoryList.push(History);
+    },
     changeRenameHistory(state: DirState, newHistory: [][]) {
       state.renameHistory.push(newHistory);
     },
     changeMoveHistory(state: DirState, newHistory: [][]) {
       state.moveHistory.push(newHistory);
     },
+    // 1111 임시 추가
+    resetMoveHistory(state: DirState) {
+      state.moveHistory = [[]];
+    },
+
+    resetRenameHistory(state: DirState) {
+      state.renameHistory2 = [[]];
+    },
+    //
     changePreview(state: DirState) {
       state.afterItems = [];
       state.beforeItems.forEach((item, i) => {
         const tmp = Object.assign({}, item, {
           name:
-            this.getters['front'](item) +
-            this.getters['middle'](item) +
-            this.getters['back'](item, i + 1)
+            this.getters["front"](item) +
+            this.getters["middle"](item) +
+            this.getters["back"](item, i + 1)
         });
         state.afterItems.push(tmp);
       });
@@ -114,8 +213,8 @@ export default new Vuex.Store({
         state.dupCheck.push(item.name);
       });
     },
-    changeRenameFileList(state: DirState, item: FileInfo) {
-      state.renameFileList.push(item);
+    changeRenameFileList(state: DirState, newlist: FileInfo[]) {
+      state.renameFileList = newlist;
     },
     changeBeforeItems(state: DirState, newItems: FileInfo[]) {
       state.beforeItems = newItems;
@@ -123,10 +222,10 @@ export default new Vuex.Store({
     initailizeRename(state: DirState) {
       state.renameFileList = state.beforeItems = state.afterItems = [];
       state.dupCheck = [];
-      state.filterFront = '3';
-      state.filterMiddle = '1';
-      state.filterBack = '3';
-      state.frontName = state.middleName = state.backName = '';
+      state.filterFront = "3";
+      state.filterMiddle = "1";
+      state.filterBack = "3";
+      state.frontName = state.middleName = state.backName = "";
     },
     changeFilterFront(state: DirState, newFront: string) {
       state.filterFront = newFront;
@@ -146,30 +245,42 @@ export default new Vuex.Store({
     changeBackName(state: DirState, newName: string) {
       state.backName = newName;
     },
-    changeRestoreMoveList(state: DirState, restoreMoveList: RestoreMoveListUnit[]) {
-      state.restoreMoveList = restoreMoveList;
+    changeAllSelect(state: DirState) {
+      state.allSelect = !state.allSelect;
+    },
+    changeRenameDir(state: DirState, newDir: string) {
+      state.renameDir = newDir;
+    },
+    changeLoginState(state: DirState, value: boolean) {
+      state.isLogin = value;
+    },
+    changeRenameHistory2(state: DirState, newHistory: []) {
+      state.renameHistory2.push(newHistory);
+    },
+    changeMiniState(state: DirState, value: boolean) {
+      state.mini = value;
     }
   },
   actions: {},
   getters: {
     front: (state) => (item: FileInfo) => {
-      if (state.filterFront == '1') {
+      if (state.filterFront == "1") {
         const sYear = item.ctime.getFullYear();
         let sMonth: string | number = item.ctime.getMonth() + 1;
         let sDate: string | number = item.ctime.getDate();
-        sMonth = sMonth > 9 ? sMonth : '0' + sMonth;
-        sDate = sDate > 9 ? sDate : '0' + sDate;
+        sMonth = sMonth > 9 ? sMonth : "0" + sMonth;
+        sDate = sDate > 9 ? sDate : "0" + sDate;
         const _date = String(sYear).substring(2, 4) + sMonth + sDate;
-        return _date + '_';
-      } else if (state.filterFront == '2') {
+        return _date + "_";
+      } else if (state.filterFront == "2") {
         return state.frontName;
       } else {
-        return '';
+        return "";
       }
     },
     middle: (state) => (item: FileInfo) => {
-      if (state.filterMiddle == '1') {
-        if (item.type !== '') {
+      if (state.filterMiddle == "1") {
+        if (item.type !== "") {
           return item.name.substring(
             0,
             item.name.length - (item.type.length + 1)
@@ -182,22 +293,22 @@ export default new Vuex.Store({
       }
     },
     back: (state) => (item: FileInfo, i: number) => {
-      let _fileType = '';
-      if (item.type !== '') {
-        _fileType = '.' + item.type;
+      let _fileType = "";
+      if (item.type !== "") {
+        _fileType = "." + item.type;
       }
-      if (state.filterBack == '1') {
-        return '_' + i + _fileType;
-      } else if (state.filterBack == '2') {
+      if (state.filterBack == "1") {
+        return "_" + i + _fileType;
+      } else if (state.filterBack == "2") {
         return state.backName + _fileType;
       } else {
-        return '' + _fileType;
+        return "" + _fileType;
       }
     },
     authUrl: (state) => {
       return state.oAuth2Client.generateAuthUrl({
-        accessType: 'offline',
-        scope: ['https://www.googleapis.com/auth/drive']
+        accessType: "offline",
+        scope: ["https://www.googleapis.com/auth/drive"]
       });
     }
   },

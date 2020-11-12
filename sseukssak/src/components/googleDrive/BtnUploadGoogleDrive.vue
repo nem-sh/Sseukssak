@@ -20,6 +20,7 @@ import fs from 'fs'
 import { mapState } from 'vuex'
 import axios from 'axios'
 import mime from 'mime-types'
+import Swal from 'sweetalert2'
 
 const BtnUploadGoogleDriveProps = Vue.extend({
   props: {
@@ -56,8 +57,6 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
 
       axios.post(UPLOAD_URL,file,{headers:headers})
         .then(res=>{
-          console.log('hack!')
-          console.log(res.data)
           const data={
             name:this.fileName
           }
@@ -66,10 +65,19 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
             'Content-Type':'application/json'
           }
           axios.patch(PATCH_URL+`${res.data.id}?uploadType=multipart`,data,{headers:patchHeaders})
-            .then(res=>console.log(res))
-            .catch(err=>console.log(err))
+            .then(() => Swal.fire({
+              icon:'success',
+              title:'구글 드라이브 업로드에 성공했습니다.'
+            }))
+            .catch(err=>Swal.fire({
+              icon:'error',
+              title:'구글 드라이브 업로드에 실패했습니다.'
+            }))
         })
-        .catch(err=>console.log(err))
+        .catch(err=>Swal.fire({
+              icon:'error',
+              title:'구글 드라이브 업로드에 실패했습니다.'
+            }))
     }
 
 }

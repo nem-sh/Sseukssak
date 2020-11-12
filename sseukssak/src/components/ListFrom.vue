@@ -9,8 +9,8 @@
       <div class="select-folder">
         <v-row>
           <v-col cols="4" class="from-to-name">
-            <h3><span>From</span></h3></v-col
-          >
+            <img src="@/assets/titleImg/FromImg.png" alt="" height="45" />
+          </v-col>
           <v-col cols="6" class="d-flex align-center justify-center"
             ><div v-if="fromDir">
               <v-tooltip bottom>
@@ -24,63 +24,44 @@
               <h3>폴더를 선택해주세요!</h3>
             </div>
           </v-col>
-          <v-col cols="1" class="d-flex align-center justify-center"
+          <v-col cols="2" class="d-flex align-center justify-center"
             ><BtnSelectFromDir />
-          </v-col>
-          <v-col cols="1" class="d-flex align-center justify-center"
-            ><v-btn icon @click="renewFrom">
-              <i class="fas fa-sync-alt fa-2x"></i>
-            </v-btn>
           </v-col>
         </v-row>
       </div>
-
-      <!-- <div class="select-date" align="center">
-        <v-btn-toggle v-model="text" tile color="#7288da" group>
-          <v-btn
-            @click="select = 0"
-            class="rounded-xl"
-            small
-            rounded
-            value="left"
-          >
-            전체보기
-          </v-btn>
-          <v-btn
-            @click="select = 1"
-            class="rounded-xl"
-            small
-            rounded
-            value="center"
-          >
-            오늘 생성된
-          </v-btn>
-          <v-btn
-            @click="select = 2"
-            class="rounded-xl"
-            small
-            rounded
-            value="right"
-          >
-            오늘 수정된
-          </v-btn>
-        </v-btn-toggle>
-      </div> -->
     </div>
-
     <div class="from-part-second">
-      <div class="rounded-xl" height="100%">
-        <v-virtual-scroll
-          v-if="fileList.length !== 0"
-          :items="fileList"
-          height="380"
-          item-height="90"
-          class="file-scroller"
+      <div class="d-flex justify-end">
+        <ListFromFilter @filter-date="filterDate" :state="filterState" />
+        <v-btn
+          class="mx-2 my-0"
+          outlined
+          rounded
+          small
+          color="var(--color-purple)"
+          @click="renewFrom"
         >
-          <div v-if="fileList.length === 0">Nono</div>
+          <i class="fas fa-sync-alt mr-2"></i>새로고침
+        </v-btn>
+      </div>
+      <div class="rounded-xl" height="100%">
+        <div>
+          <ListFromBreadcrumbs :fromDir="fromDir" :className="'bread-from'" />
+        </div>
+        <v-virtual-scroll
+          v-if="fileScrollList.length !== 0"
+          :items="fileScrollList"
+          height="400"
+          item-height="90"
+          :class="scrollerBgMode"
+        >
           <template v-slot:default="{ item }">
-            <div :key="item.name" class="d-flex align-start mx-5 pt-3">
-              <div v-if="fileList.indexOf(item) === 0" class="pa-2 file-box">
+            <div :key="item.name" class="d-flex align-start mx-5">
+              <div
+                v-if="fileScrollList.indexOf(item) === 0"
+                class="pa-2"
+                :class="fileBoxBgMode"
+              >
                 <div align="center" @click="enterDirectory('')">
                   <div class="folder--icon">
                     <i class="fas fa-long-arrow-up fa-2x mx-auto"></i>
@@ -88,7 +69,12 @@
                 </div>
                 <div class="file-name" align="center">상위 폴더</div>
               </div>
-              <div v-for="file in item" :key="file.name" class="pa-2 file-box">
+              <div
+                v-for="file in item"
+                :key="file.name"
+                class="pa-2"
+                :class="fileBoxBgMode"
+              >
                 <div
                   v-if="
                     select == 0 ||
@@ -214,8 +200,8 @@
             </div>
           </template>
         </v-virtual-scroll>
-        <div v-else class="d-flex flex-column mx-5 pt-3" height="380">
-          <div v-if="fromDir" class="pa-2 file-box">
+        <div v-else class="d-flex flex-column mx-5" height="380">
+          <div v-if="fromDir" class="pa-2" :class="fileBoxBgMode">
             <div align="center" @click="enterDirectory('')">
               <div class="folder--icon">
                 <i class="fas fa-long-arrow-up fa-2x mx-auto"></i>
@@ -241,20 +227,24 @@
       </div>
     </div>
 
-    <div v-if="fileList.length !== 0" class="from-part-third" align="right">
+    <div
+      v-if="fileScrollList.length !== 0"
+      class="from-part-third"
+      align="right"
+    >
       <BtnDupCheck mr-5 />
       <BtnMoveFile />
     </div>
-
     <div>
       <ul
         v-if="!selectedData.fileType"
         id="contextmenu"
-        class="pa-0 contextmenu"
+        class="pa-0"
+        :class="bgMode"
       >
         <li>
           <a
-            @click="enterDirectory(fromDir + '\\' + selectedData.name)"
+            @click="enterDirectory(selectedData.name)"
             style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
@@ -263,7 +253,7 @@
               height="100%"
               src="./../assets/openDirectory.png"
               alt="OpenDirectory"
-            />디렉토리 열기</a
+            />폴더 열기</a
           >
         </li>
         <li>
@@ -280,7 +270,7 @@
               height="100%"
               src="./../assets/rename.png"
               alt="rename"
-            />파일 리네임</a
+            />폴더명 바꾸기</a
           >
         </li>
         <li>
@@ -294,22 +284,15 @@
               height="100%"
               src="./../assets/delete.png"
               alt="delete"
-            />디렉토리 지우기</a
+            />폴더 지우기</a
           >
         </li>
-        <!-- <li>
-          <a @click="dialog2 = true" style="display: flex; align-items: center">
-            <v-img
-              class="mr-2"
-              max-width="25"
-              contain
-              height="100%"
-              src="./../assets/googleDriveLogo.png"
-              alt="googleDrive"
-            />
-            구글 드라이브 백업</a
-          >
-        </li> -->
+        <li>
+          <BtnUploadGoogleDriveFolder
+            v-bind:folderName="selectedData.name"
+            v-if="isLogin"
+          />
+        </li>
         <li>
           <a @click="openShell()" style="display: flex; align-items: center"
             ><v-img
@@ -326,9 +309,10 @@
       <ul
         v-if="selectedData.fileType"
         id="contextmenu"
-        class="pa-0 contextmenu"
+        class="pa-0"
+        :class="bgMode"
       >
-        <li>
+        <li class="rename-d">
           <a
             @click="openFile(selectedData.name)"
             style="display: flex; align-items: center"
@@ -356,7 +340,7 @@
               height="100%"
               src="./../assets/rename.png"
               alt="rename"
-            />파일 리네임</a
+            />파일명 바꾸기</a
           >
         </li>
         <li>
@@ -374,7 +358,10 @@
           >
         </li>
         <li>
-          <!-- <BtnUploadGoogleDrive v-bind:fileName="selectedData.name"/> -->
+          <BtnUploadGoogleDrive
+            v-bind:fileName="selectedData.name"
+            v-if="isLogin"
+          />
         </li>
         <li>
           <a @click="getInfo()" style="display: flex; align-items: center"
@@ -469,8 +456,12 @@ import { BUS } from "./EventBus.js";
 import BtnMoveFile from "@/components/BtnMoveFile.vue";
 import BtnSelectFromDir from "@/components/BtnSelectFromDir.vue";
 import BtnDupCheck from "@/components/BtnDupCheck.vue";
+import ListFromBreadcrumbs from "@/components/listFrom/ListFromBreadcrumbs.vue";
+import ListFromFilter from "@/components/listFrom/ListFromFilter.vue";
 
-// import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.vue"
+import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.vue";
+import BtnUploadGoogleDriveFolder from "@/components/googleDrive/BtnUploadGoogleDriveFolder.vue";
+
 import Swal from "sweetalert2";
 // import { shell } from "electron";
 const { shell } = require("electron").remote;
@@ -500,9 +491,12 @@ interface Directory {
     BtnMoveFile,
     BtnSelectFromDir,
     BtnDupCheck,
-    // BtnUploadGoogleDrive
+    BtnUploadGoogleDrive,
+    BtnUploadGoogleDriveFolder,
+    ListFromBreadcrumbs,
+    ListFromFilter,
   },
-  computed: mapState(["fileSortList", "fromDir", "fileList"]),
+  computed: mapState(["fileSortList", "fromDir", "fileList", "isLogin"]),
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
 })
 export default class ListFrom extends Vue {
@@ -517,6 +511,7 @@ export default class ListFrom extends Vue {
   fileSortList!: SortList[];
   dialog: boolean = false;
   dialog2: boolean = false;
+  filterState: string = "";
   rules: object = {
     required: (value) => !!value || "Required.",
     speical: (v) =>
@@ -532,8 +527,15 @@ export default class ListFrom extends Vue {
         v.indexOf("\\") == -1) ||
       '\\ / : * ? " < > | 은 사용 불가능합니다',
   };
+
   clickclick() {
-    alert("준비중^__^");
+    Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: "준비중입니다",
+      showConfirmButton: false,
+      timer: 1000,
+    });
     console.log(
       fs.createReadStream(this.fromDir + "\\" + this.selectedData["name"])
     );
@@ -571,7 +573,13 @@ export default class ListFrom extends Vue {
       this.fromDir + "\\" + this.renameValue
     );
     this.renewFrom();
-    alert("수정됨^__^");
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "수정되었습니다",
+      showConfirmButton: false,
+      timer: 1000,
+    });
     this.dialog2 = false;
   }
   openShell() {
@@ -595,29 +603,41 @@ export default class ListFrom extends Vue {
     this.dialog = true;
   }
   deleteThis(path, isFinal) {
-    if (fs.lstatSync(path).isDirectory()) {
-      const fileList = fs.readdirSync(path);
-      fileList.forEach((name: string) => {
-        this.deleteThis(path + "\\" + name, false);
-      });
-      (async () => {
-        await trash([path]);
-      })();
-    } else {
-      (async () => {
-        await trash([path]);
-      })();
-    }
-    if (isFinal) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "삭제되었습니다",
-        showConfirmButton: false,
-        timer: 1000,
-      });
-      this.renewFrom();
-    }
+    Swal.fire({
+      title: "삭제하시겠습니까?",
+      text: "해당 폴더 및 파일은 휴지통으로 이동됩니다.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "네, 삭제합니다!",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (fs.lstatSync(path).isDirectory()) {
+          const fileList = fs.readdirSync(path);
+          fileList.forEach((name: string) => {
+            this.deleteThis(path + "\\" + name, false);
+          });
+          (async () => {
+            await trash([path]);
+            this.renewFrom();
+          })();
+        } else {
+          (async () => {
+            await trash([path]);
+            this.renewFrom();
+          })();
+        }
+        if (isFinal) {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "삭제되었습니다.",
+            showConfirmButton: false,
+            timer: 1000,
+          });
+        }
+      }
+    });
   }
   closeContextMenu() {
     const unit = document.getElementById("contextmenu");
@@ -629,15 +649,16 @@ export default class ListFrom extends Vue {
     this.selectedData = value;
     const winWidth = window.outerWidth;
     const winHeight = window.outerHeight;
-    const posX: number = e.pageX - 65;
+    const posX: number = e.pageX - 90;
     const posY = e.pageY;
     const unit = document.getElementById("contextmenu");
     if (unit) {
       const menuWidth: number = unit.clientWidth;
-      const menuHeight: number = unit.clientWidth;
+      const menuHeight: number = unit.clientHeight;
       const secMargin = 10;
       let posLeft = "";
       let posTop = "";
+      console.log(posX, posY, menuWidth, menuHeight, winWidth, winHeight);
       if (
         posX + menuWidth + secMargin >= winWidth &&
         posY + menuHeight + secMargin >= winHeight
@@ -654,9 +675,15 @@ export default class ListFrom extends Vue {
         posLeft = posX + secMargin + "px";
         posTop = posY + secMargin + "px";
       }
+
+      console.log(posLeft, posTop);
       if (posLeft && posTop) {
-        posLeft = posX + secMargin + "px";
         posTop = posY + secMargin + "px";
+        posLeft = posX + secMargin + "px";
+        console.log(posTop);
+        if (Number(posY + secMargin) > 400) {
+          posTop = posY - menuHeight - secMargin + "px";
+        }
         unit.style.left = posLeft;
         unit.style.top = posTop;
         unit.style.display = "block";
@@ -669,11 +696,11 @@ export default class ListFrom extends Vue {
 
     for (const f of event.dataTransfer.files) {
       fs.renameSync(f.path, this.fromDir + "/" + f.name);
+      this.renewFrom();
     }
   }
   mounted() {
     BUS.$on("bus:refreshfile", () => {
-      console.log("refresh file");
       this.renewFrom();
     });
     BUS.$on("bus:closecontextmenu", () => {
@@ -701,71 +728,95 @@ export default class ListFrom extends Vue {
     return false;
   }
   async enterDirectory(enteredDirectory: string) {
+    this.filterState = "전체보기";
+    console.log(enteredDirectory, 987);
     if (enteredDirectory == "") {
       const dir: string[] = this.fromDir.split("\\");
       dir.pop();
+      if (dir.length == 1) {
+        Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: `권한이 없습니다!`,
+          text: "상위 경로에는 이동 권한이 없습니다.",
+          showConfirmButton: false,
+          timer: 1000,
+        });
+        return;
+      }
       this.changeDir(dir.join("\\"));
     } else {
       this.changeDir(this.fromDir + "\\" + enteredDirectory);
     }
-    this.getFrom(this.fromDir);
+    try {
+      this.getFrom(this.fromDir);
+    } catch (e) {
+      console.log(e);
+    }
   }
   async renewFrom() {
     this.getFrom(this.fromDir);
+    this.filterState = "전체보기";
   }
   async getFrom(dir: string) {
-    const fileList: string[] = fs.readdirSync(dir);
-    const fileSortList: SortList = { directories: [], files: [] };
-    fileList.forEach((name: string) => {
-      const fileSplit = name.split(".");
-      if (fs.lstatSync(this.fromDir + "/" + name).isDirectory()) {
-        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
-        const updatedTime = Math.max(
-          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
-          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
-        );
-        fileSortList.directories.push({
-          name: name,
-          birthTime: birthTime,
-          updatedTime: updatedTime,
-        });
-      } else {
-        const fileType = fileSplit[fileSplit.length - 1].toLowerCase();
-        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
-        const updatedTime = Math.max(
-          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
-          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
-        );
-        let iconPath = this.fromDir + "/" + name;
-        if (name.includes(".lnk")) {
-          try {
-            iconPath = shell.readShortcutLink(iconPath).target;
-          } catch {
-            iconPath = this.fromDir + "/" + name;
+    try {
+      const fileList: string[] = fs.readdirSync(dir);
+      const fileSortList: SortList = { directories: [], files: [] };
+      fileList.forEach((name: string) => {
+        const fileSplit = name.split(".");
+        if (fs.lstatSync(this.fromDir + "/" + name).isDirectory()) {
+          const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
+          const updatedTime = Math.max(
+            fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+            fs.lstatSync(this.fromDir + "/" + name).ctimeMs
+          );
+          fileSortList.directories.push({
+            name: name,
+            birthTime: birthTime,
+            updatedTime: updatedTime,
+          });
+        } else {
+          const fileType = fileSplit[fileSplit.length - 1].toLowerCase();
+          const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
+          const updatedTime = Math.max(
+            fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+            fs.lstatSync(this.fromDir + "/" + name).ctimeMs
+          );
+          let iconPath = this.fromDir + "/" + name;
+          if (name.includes(".lnk")) {
+            try {
+              iconPath = shell.readShortcutLink(iconPath).target;
+            } catch {
+              iconPath = this.fromDir + "/" + name;
+            }
           }
+          let realIcon = "";
+          const file = {
+            name: name,
+            fileType: fileType,
+            birthTime: birthTime,
+            updatedTime: updatedTime,
+            icon: "",
+          };
+          app.getFileIcon(iconPath).then((fileIcon) => {
+            realIcon = fileIcon.toDataURL();
+            file["icon"] = realIcon;
+          });
+          fileSortList.files.push(file);
         }
-        let realIcon = "";
-        const file = {
-          name: name,
-          fileType: fileType,
-          birthTime: birthTime,
-          updatedTime: updatedTime,
-          icon: "",
-        };
-        app.getFileIcon(iconPath).then((fileIcon) => {
-          realIcon = fileIcon.toDataURL();
-          file["icon"] = realIcon;
-        });
-        fileSortList.files.push(file);
-      }
-    });
-
-    this.changeFileSortList(fileSortList);
-    this.changeFileList(fileList);
-  }
-
-  get items() {
-    return Array.from({ length: this.fromListLen }, (k, v) => v + 1);
+      });
+      this.changeFileSortList(fileSortList);
+      this.changeFileList(fileList);
+    } catch (error) {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: `권한이 없습니다!`,
+        text: `"${dir}"의 이동은 권한이 없습니다.`,
+        showConfirmButton: false,
+        timer: 1000,
+      });
+    }
   }
 
   get dirPath() {
@@ -791,16 +842,61 @@ export default class ListFrom extends Vue {
     return totalFileForScroll;
   }
 
-  get fileList() {
-    const fileList = this.makeListForScroll();
-    return fileList;
+  get fileScrollList() {
+    const fileScrollList = this.makeListForScroll();
+    return fileScrollList;
+  }
+  filterDate(id) {
+    const fileSortList: SortList = { directories: [], files: [] };
+    if (id === 1) {
+      this.getFrom(this.fromDir);
+    } else {
+      for (let i = 0; i < this.fileSortList["directories"].length; i++) {
+        if (
+          this.compareTime(this.fileSortList["directories"][i].birthTime) &&
+          id === 2
+        ) {
+          fileSortList.directories.push(this.fileSortList["directories"][i]);
+        }
+        if (
+          this.compareTime(this.fileSortList["directories"][i].updatedTime) &&
+          id === 3
+        ) {
+          fileSortList.directories.push(this.fileSortList["directories"][i]);
+        }
+      }
+      for (let i = 0; i < this.fileSortList["files"].length; i++) {
+        if (
+          this.compareTime(this.fileSortList["files"][i].birthTime) &&
+          id === 2
+        ) {
+          fileSortList.files.push(this.fileSortList["files"][i]);
+        }
+        if (
+          this.compareTime(this.fileSortList["files"][i].updatedTime) &&
+          id === 3
+        ) {
+          fileSortList.files.push(this.fileSortList["files"][i]);
+        }
+      }
+      this.changeFileSortList(fileSortList);
+    }
+  }
+  get bgMode() {
+    return this.$vuetify.theme.dark ? "contextmenu-d" : "contextmenu";
+  }
+  get scrollerBgMode() {
+    return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
+  }
+  get fileBoxBgMode() {
+    return this.$vuetify.theme.dark ? "file-box-d" : "file-box";
   }
 }
 </script>
 
 <style>
 .from-part-first {
-  padding-top: 28px;
+  padding-top: 20px;
   width: 100%;
 }
 
@@ -834,7 +930,16 @@ export default class ListFrom extends Vue {
   box-shadow: 0 15px 35px rgba(50, 50, 90, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
   overflow: hidden;
   z-index: 999999;
+  font-size: 14px;
 }
+
+.contextmenu-d {
+  background: #24303a !important;
+  color: #ffffff !important;
+  box-shadow: 0 15px 35px rgba(107, 107, 190, 0.1),
+    0 5px 15px rgba(233, 233, 233, 0.07) !important;
+}
+
 #contextmenu li {
   border-left: 3px solid transparent;
   transition: ease 0.2s;
@@ -855,5 +960,9 @@ export default class ListFrom extends Vue {
 
 #contextmenu li:hover a {
   color: #ffffff;
+}
+
+.v-label {
+  font-size: 14px;
 }
 </style>

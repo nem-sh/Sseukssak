@@ -38,8 +38,8 @@ interface File {
     "changeDir",
     "changeFileList",
     "changeFileSortList",
-    "changeDuplicatedList",
-  ]),
+    "changeDuplicatedList"
+  ])
 })
 export default class DupCheck extends Vue {
   mounted() {
@@ -55,6 +55,8 @@ export default class DupCheck extends Vue {
   fileList!: string[];
   fileSortList!: SortList;
 
+  makedupFolder: boolean = false;
+
   changeDuplicatedList!: (newList: any[][]) => void;
 
   flag: boolean = false;
@@ -67,7 +69,7 @@ export default class DupCheck extends Vue {
 
   read() {
     const rs = dialog.showOpenDialogSync({
-      properties: ["openDirectory"],
+      properties: ["openDirectory"]
     });
     if (!rs) return;
 
@@ -112,6 +114,7 @@ export default class DupCheck extends Vue {
       }
       if (tmpduplist.length > 1) {
         duplist.push(tmpduplist);
+        this.makedupFolder = true;
       }
     }
     console.log(duplist);
@@ -120,10 +123,14 @@ export default class DupCheck extends Vue {
   }
   MoveDupedFiles(dupedfilelist: string[][]) {
     const dupedhistory: any[][] = [[]];
-    if (!fs.existsSync(this.fromDir + "\\" + "duplicated files")) {
-      // duped files 폴더 생성 부분
-      fs.mkdirSync(this.fromDir + "\\" + "duplicated files");
+
+    if (this.makedupFolder) {
+      if (!fs.existsSync(this.fromDir + "\\" + "duplicated files")) {
+        // duped files 폴더 생성 부분
+        fs.mkdirSync(this.fromDir + "\\" + "duplicated files");
+      }
     }
+
     // let movedfiles = 0;
     // let alreadyexistfiles = 0;
     for (let f1 = 1; f1 < dupedfilelist.length; f1++) {
@@ -158,7 +165,7 @@ export default class DupCheck extends Vue {
               "\\" +
               dupedfilelist[f1][f2],
             d,
-            2,
+            2
           ]);
         } else {
           console.log("dup fail");
@@ -168,7 +175,7 @@ export default class DupCheck extends Vue {
             this.fromDir + "\\" + dupedfilelist[f1][f2],
             this.fromDir + "\\" + dupedfilelist[f1][f2],
             d,
-            2,
+            2
           ]);
         }
       }

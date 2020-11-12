@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>Sseukssak </v-app-bar>
+    <v-app-bar app color="primary" dark class="appBar">Sseukssak</v-app-bar>
 
     <v-main>
       <router-view />

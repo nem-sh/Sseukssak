@@ -4,54 +4,109 @@
     <div class="window-operations-container">
       <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
       <div class="operations">
-        <!-- <BtnLoginGoogle /> -->
+        <BtnLoginGoogle v-if="!mini" class="mr-1" />
         <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
-        <!-- <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i> -->
-        <!-- <i
+        <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i>
+        <i
           v-if="!mini"
           class="fas fa-compress-alt"
           @click="resizeSmallWindow"
-        ></i> -->
+        ></i>
         <i class="fas fa-times close" @click="closeWindow"></i>
       </div>
     </div>
     <div class="app-main">
-      <div v-if="!mini" class="menu">
-        <div class="top-space"></div>
-        <div class="menu--logo" @click="goInfoPage">
-          <img class="app-logo" src="@/assets/sweeping.png" alt="" />
-        </div>
-        <div class="menu--separator"></div>
-        <div
-          class="menu--icon"
-          v-for="item in items"
-          :key="item.title"
-          :to="item.path == '#' ? '' : item.path"
-          @click="goMenu(item.id)"
-          :class="{ active: activeTab === item.title }"
-        >
-          <span><i :class="item.icon"></i></span>
-        </div>
-        <!-- 다크모드 -->
-        <!-- <div>
-          <div
-            v-show="this.$vuetify.theme.dark"
-            class="menu--icon"
-            @click="changeMode"
-          >
-            <span><i class="fas fa-sun fa-lg"></i></span>
+      <div>
+        <div class="menu">
+          <div v-if="!mini" class="menu-first">
+            <div class="top-space"></div>
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <div class="menu--logo" v-bind="attrs" v-on="on">
+                  <img class="app-logo" src="@/assets/sweeping.png" alt="" />
+                </div>
+              </template>
+              <span>쓱싹</span>
+            </v-tooltip>
+
+            <div class="menu--separator"></div>
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  class="menu--icon"
+                  @click="goMenu(1)"
+                  v-bind="attrs"
+                  v-on="on"
+                  :class="{ active: activeTab === 'Home' }"
+                >
+                  <span><i class="fas fa-folders fa-lg"></i></span>
+                </div>
+              </template>
+              <span>파일 정리</span>
+            </v-tooltip>
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  class="menu--icon"
+                  @click="goMenu(2)"
+                  v-bind="attrs"
+                  v-on="on"
+                  :class="{ active: activeTab === 'Rename' }"
+                >
+                  <span><i class="fas fa-pencil fa-lg"></i></span>
+                </div>
+              </template>
+              <span>파일/폴더명 변경</span>
+            </v-tooltip>
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  class="menu--icon"
+                  @click="goMenu(3)"
+                  v-bind="attrs"
+                  v-on="on"
+                  :class="{ active: activeTab === 'Restore' }"
+                >
+                  <span><i class="far fa-history fa-lg"></i></span>
+                </div>
+              </template>
+              <span>히스토리</span>
+            </v-tooltip>
           </div>
-          <div
-            v-show="!this.$vuetify.theme.dark"
-            class="menu--icon"
-            @click="changeMode"
-          >
-            <span><i class="fas fa-moon fa-lg"></i></span>
+          <div v-if="!mini" class="menu-second">
+            <div
+              v-show="this.$vuetify.theme.dark"
+              class="menu--settings"
+              @click="changeMode"
+            >
+              <span><i class="fas fa-sun fa-lg"></i></span>
+            </div>
+            <div
+              v-show="!this.$vuetify.theme.dark"
+              class="menu--settings"
+              @click="changeMode"
+            >
+              <span><i class="fas fa-moon fa-lg"></i></span>
+            </div>
+
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  class="menu--settings"
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="goInfoPage"
+                >
+                  <span><i class="far fa-question fa-lg"></i></span>
+                </div>
+              </template>
+              <span>도움말</span>
+            </v-tooltip>
           </div>
-        </div> -->
+        </div>
       </div>
-      <div class="main">
-        <!-- <div class="top-space"></div> -->
+      <FeatHistory />
+      <div class="main" :class="bgMode">
         <router-view></router-view>
       </div>
     </div>
@@ -60,12 +115,15 @@
 
 <script lang="ts">
 import Vue from "vue";
+import Swal from "sweetalert2";
+import { mapState, mapMutations } from "vuex";
 import Component from "vue-class-component";
 import Home from "@/views/Home.vue";
 
 // import Quick from "@/views/Quick.vue";
 import "./components/styles/main.scss";
 import BtnLoginGoogle from "@/components/googleDrive/BtnLoginGoogle.vue";
+import FeatHistory from "@/components/history/FeatHistory.vue";
 
 const { ipcRenderer, shell } = window.require("electron");
 
@@ -73,34 +131,18 @@ const { ipcRenderer, shell } = window.require("electron");
   components: {
     Home,
     BtnLoginGoogle,
-    // Quick,
-  },
-  data() {
-    return {
-      items: [
-        { id: 1, title: "Home", icon: "fas fa-folders fa-lg", path: "/" },
-        {
-          id: 2,
-          title: "Rename",
-          icon: "fas fa-pencil fa-lg",
-          path: "rename",
-        },
-        // {
-        //   id: 3,
-        //   title: 'Restore',
-        //   icon: 'fa fa-history fa-lg',
-        //   path: 'restore'
-        // }
-      ],
-    };
+    FeatHistory
   },
   created() {
     this.$router.push({ name: "Home" });
   },
+  computed: mapState(["mini"]),
+  methods: mapMutations(["changeMiniState"])
 })
 export default class App extends Vue {
   activeTab: string = "Home";
-  mini: boolean = false;
+  mini!: boolean;
+  changeMiniState!: (value: boolean) => void;
 
   goMenu(idx) {
     if (idx === 1 && this.$route.name !== "Home") {
@@ -128,7 +170,7 @@ export default class App extends Vue {
   }
 
   resizeSmallWindow() {
-    this.mini = true;
+    this.changeMiniState(true);
     ipcRenderer.send("resize-me-smaller-please");
     if (this.$route.name !== "MiniMode") {
       this.activeTab = "MiniMode";
@@ -137,7 +179,7 @@ export default class App extends Vue {
   }
 
   resizeBigWindow() {
-    this.mini = false;
+    this.changeMiniState(false);
     ipcRenderer.send("resize-me-bigger-please");
     if (this.$route.name !== "Home") {
       this.activeTab = "Home";
@@ -152,6 +194,20 @@ export default class App extends Vue {
   changeMode() {
     this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
   }
+
+  get bgMode() {
+    return this.$vuetify.theme.dark ? "rename-bg-d" : "rename-bg";
+  }
+
+  goSettingsPage() {
+    Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: "준비중 입니다 :)",
+      showConfirmButton: false,
+      timer: 1000
+    });
+  }
 }
 </script>
 
@@ -161,5 +217,9 @@ export default class App extends Vue {
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
   color: #2c3e50;
+}
+.rename-bg-d {
+  background-color: #24303a;
+  color: white;
 }
 </style>

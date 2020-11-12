@@ -1,28 +1,34 @@
 <template>
   <div class="pl-0">
     <v-btn color="#7288da" rounded dark @click="dialog = true">추가</v-btn>
-    <v-dialog
-      v-model="dialog"
-      max-width="400"
-    >
+    <v-dialog v-model="dialog" max-width="400">
       <v-card>
-        <v-card-title dark color="#7288da" style="background-color:#7288da; color:white">
-          새로운 정리 규칙 생성
+        <v-card-title
+          class="pr-3"
+          dark
+          color="#7288da"
+          style="background-color: #7288da; color: white"
+        >
+          새로운 정리 그룹 추가
           <v-spacer></v-spacer>
-          <v-btn
-            color="white"
-            class="text--primary"
-            fab
-            small
-            @click="createLibrary"
-          >
-            <v-icon>mdi-plus</v-icon>
+          <v-btn icon dark @click="dialog = false">
+            <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
         <v-card-text class="pt-4">
           <div>
-            <v-text-field @keypress.enter="createLibrary" label="정리 규칙명" v-model="libraryTitle">
+            <v-text-field
+              :rules="rules"
+              @keypress.enter="createLibrary"
+              label="정리 그룹명"
+              v-model="libraryTitle"
+            >
             </v-text-field>
+            <div class="text-right">
+              <v-btn color="#7288da" rounded dark large @click="createLibrary">
+                <i class="fas fa-plus mr-2"></i>그룹 추가
+              </v-btn>
+            </div>
           </div>
         </v-card-text>
       </v-card>
@@ -33,8 +39,7 @@
 <script lang='ts'>
 import { Vue, Component } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
-import Swal from "sweetalert2"
-
+import Swal from "sweetalert2";
 
 interface ToLibrary {
   name: string;
@@ -58,6 +63,8 @@ export default class ModalCreateToLibrary extends Vue {
   libraryTitle: string = "";
   dialog: boolean = false;
 
+  rules: object = [(v) => !!v || "It is required"];
+
   //vuex
   toLibraryList!: ToLibrary[];
   toLibraryNameList!: string[];
@@ -75,11 +82,11 @@ export default class ModalCreateToLibrary extends Vue {
       Swal.fire({
         position: "center",
         icon: "warning",
-        title: "정리 규칙명을 입력해주세요",
+        title: "정리 그룹명을 입력해주세요",
         showConfirmButton: false,
         timer: 1000,
       });
-      return
+      return;
     }
     const tempLibraryList: ToLibrary[] = this.toLibraryList;
 
@@ -111,7 +118,7 @@ export default class ModalCreateToLibrary extends Vue {
       JSON.stringify(tempLibraryList)
     );
 
-    this.$emit("create", this.libraryTitle)
+    this.$emit("create", this.libraryTitle);
     this.libraryTitle = "";
     this.libraryDirectories = [];
     Swal.fire({

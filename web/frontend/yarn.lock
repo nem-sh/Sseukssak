@@ -2570,6 +2570,11 @@ coa@^2.0.2:
     chalk "^2.4.1"
     q "^1.1.2"
 
+cocoen@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/cocoen/-/cocoen-2.0.5.tgz#ebceef99e245bc1b2e6dea009d3a1d0aa4535b3f"
+  integrity sha512-uY8FGId3Lq5PoBh24Hp5pq6Gg3Po4eot/5sIzFpM1/Tnkq1D8lKYj+LMlmr9SeEKHeYEpkT046XK4Au3YcOOqw==
+
 collection-visit@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npm.taobao.org/collection-visit/download/collection-visit-1.0.0.tgz#4bc0373c164bc3291b4d368c829cf1a80a59dca0"
@@ -2784,7 +2789,7 @@ core-js-compat@^3.6.2, core-js-compat@^3.6.5:
     browserslist "^4.8.5"
     semver "7.0.0"
 
-core-js@^3.6.5:
+core-js@^3.1.2, core-js@^3.6.5:
   version "3.6.5"
   resolved "https://registry.npm.taobao.org/core-js/download/core-js-3.6.5.tgz#7395dc273af37fb2e50e9bd3d9fe841285231d1a"
   integrity sha1-c5XcJzrzf7LlDpvT2f6EEoUjHRo=
@@ -2904,6 +2909,11 @@ css-declaration-sorter@^4.0.1:
   dependencies:
     postcss "^7.0.1"
     timsort "^0.3.0"
+
+css-element-queries@^1.0.2:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/css-element-queries/-/css-element-queries-1.2.3.tgz#e14940b1fcd4bf0da60ea4145d05742d7172e516"
+  integrity sha512-QK9uovYmKTsV2GXWQiMOByVNrLn2qz6m3P7vWpOR4IdD6I3iXoDw5qtgJEN3Xq7gIbdHVKvzHjdAtcl+4Arc4Q==
 
 css-loader@^3.5.3:
   version "3.6.0"
@@ -7486,6 +7496,11 @@ slice-ansi@^2.1.0:
     astral-regex "^1.0.0"
     is-fullwidth-code-point "^2.0.0"
 
+slider-before-after@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/slider-before-after/-/slider-before-after-1.0.0.tgz#52eb452bf02a28d2523e4a8b5061ddee3d63a22b"
+  integrity sha512-aw4Kq5/fHlkHuBvT8EktkkQne8nBWr1GSdoqD6TlHzROpEJHYAzAeplA8Ha+va349MN1zdd/HcCbdkDGPfx21g==
+
 snapdragon-node@^2.0.1:
   version "2.1.1"
   resolved "https://registry.npm.taobao.org/snapdragon-node/download/snapdragon-node-2.1.1.tgz#6c175f86ff14bdb0724563e8f3c1b021a286853b"
@@ -8445,6 +8460,15 @@ vue-cli-plugin-vuetify@~2.0.7:
     semver "^7.1.2"
     shelljs "^0.8.3"
 
+vue-compare-image@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/vue-compare-image/-/vue-compare-image-0.2.0.tgz#0cdb05326ab959187e8420aa02b0d3d62176de99"
+  integrity sha512-5gJRpbWzgWk3URustGmHtTs8ipxFbd8m46u/rn/iOGePubvlLxG9hJ22QiRL89gcwvgwCCIM0OT9J39zPceK7A==
+  dependencies:
+    core-js "^3.1.2"
+    css-element-queries "^1.0.2"
+    vue "^2.5.17"
+
 vue-eslint-parser@^7.0.0:
   version "7.1.1"
   resolved "https://registry.npm.taobao.org/vue-eslint-parser/download/vue-eslint-parser-7.1.1.tgz#c43c1c715ff50778b9a7e9a4e16921185f3425d3"
@@ -8527,7 +8551,7 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.npm.taobao.org/vue-template-es2015-compiler/download/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha1-HuO8mhbsv1EYvjNLsV+cRvgvWCU=
 
-vue@^2.6.11:
+vue@^2.5.17, vue@^2.6.11:
   version "2.6.12"
   resolved "https://registry.npm.taobao.org/vue/download/vue-2.6.12.tgz?cache=0&sync_timestamp=1603226233171&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvue%2Fdownload%2Fvue-2.6.12.tgz#f5ebd4fa6bd2869403e29a896aed4904456c9123"
   integrity sha1-9evU+mvShpQD4pqJau1JBEVskSM=

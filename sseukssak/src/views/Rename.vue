@@ -1,28 +1,14 @@
 <template>
   <v-container class="screen" :class="bgMode">
-    <div class="mt-10">
-      <h3 :class="titleMode"><span>통일한 폴더/파일명 변경</span></h3>
+    <div class="mt-4">
+      <img
+        src="@/assets/titleImg/RenameImg.png"
+        alt=""
+        height="45"
+        class="mt-3"
+      />
     </div>
-
-    <v-stepper v-model="e1">
-      <!-- <v-stepper-header>
-        <template v-for="n in steps">
-          <v-stepper-step
-            :key="`${n}-step`"
-            :complete="e1 > n"
-            :step="n"
-            editable
-          >
-            {{ title[n-1] }}
-          </v-stepper-step>
-
-          <v-divider
-            v-if="n !== steps"
-            :key="n"
-          ></v-divider>
-        </template>
-      </v-stepper-header> -->
-
+    <v-stepper v-model="e1" :class="stepperMode">
       <v-stepper-items>
         <v-stepper-content v-for="n in steps" :key="`${n}-content`" :step="n">
           <v-row>
@@ -33,13 +19,19 @@
             </v-col>
             <v-col cols="11">
               <FileList v-show="n === 1" />
-              <v-row style="margin: 2px" v-show="n === 2">
+              <v-row class="px-2" v-show="n === 2">
                 <FilterList />
-                <PreviewList @finish="e1 = 1" />
+                <PreviewList />
               </v-row>
             </v-col>
             <v-col cols="1" v-show="n === 1" class="text-center px-0 my-auto">
-              <v-btn dark text color="#7288da" @click="nextStep(n)" class="px-0">
+              <v-btn
+                dark
+                text
+                color="#7288da"
+                @click="nextStep(n)"
+                class="px-0"
+              >
                 <i class="fas fa-angle-double-right fa-3x"></i>
               </v-btn>
             </v-col>
@@ -47,14 +39,6 @@
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
-    <!-- <div>
-      <FilterList/>
-      <v-row style="margin:2px">
-        <FileList/>
-        <div class="mx-1" :class="partMode"></div>
-        <PreviewList/>
-      </v-row>
-    </div> -->
   </v-container>
 </template>
 
@@ -87,6 +71,9 @@ export default class Rename extends Vue {
   get partMode() {
     return this.$vuetify.theme.dark ? "rename-part-bg-d" : "rename-part-bg";
   }
+  get stepperMode() {
+    return this.$vuetify.theme.dark ? "rename-step-bg-d" : "rename-step-bg";
+  }
 
   nextStep(n) {
     if (n === this.steps) {
@@ -110,20 +97,15 @@ export default class Rename extends Vue {
 }
 .rename-title,
 .rename-title-d {
-  /* margin: 20px; */
-  /* font-family: "Paytone One" !important; */
   color: #202020;
   text-transform: uppercase;
   letter-spacing: -2px;
 }
 .rename-title span {
   display: block;
-  margin: 0 0 17px 10px;
   font-size: 40px;
   line-height: 40px;
   color: #7288da;
-  text-shadow: 0 13.36px 8.896px #c4b59d, 0 -2px 1px #fff;
-  letter-spacing: -4px;
 }
 .rename-title-d span {
   display: block;
@@ -166,5 +148,11 @@ export default class Rename extends Vue {
 }
 .screen::-webkit-scrollbar {
   display: none;
+}
+.rename-step-bg-d {
+  background-color: #24303a !important;
+}
+.rename-step-bg {
+  background-color: white;
 }
 </style>

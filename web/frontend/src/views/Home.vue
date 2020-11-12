@@ -6,10 +6,19 @@
       </div>
       <div class="section">
         <div class="slide">
-          <Intro1 />
+          <IntroCard :picture="pic1" :descriptions="des1" />
         </div>
-        <div class="slide"><Intro2 /></div>
-        <div class="slide"><Intro3 /></div>  
+        <div class="slide">
+          <IntroCard :picture="pic2" :descriptions="des2" />
+        </div>
+      </div>
+      <div class="section">
+        <div class="slide">
+          <IntroCard :picture="pic3" :descriptions="des3" />
+        </div>
+        <div class="slide">
+          <IntroCard :picture="pic4" :descriptions="des4" />
+        </div>
       </div>
     </full-page>
   </div>
@@ -18,18 +27,29 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import DownloadPage from "@/components/DownloadPage.vue";
-import Intro1 from "@/components/Intro1.vue"
-import Intro2 from "@/components/Intro2.vue"
-import Intro3 from "@/components/Intro3.vue"
+import IntroCard from "@/components/IntroCard.vue";
 
 
 @Component({
   name: "Home",
   components: {
     DownloadPage,
+    IntroCard,
   },
 })
 export default class Home extends Vue {
+  data () {
+    return {
+      pic1: "FromToPic.png",
+      pic2: "FromToPic2.png",
+      pic3: "RenamePic.png",
+      pic4: "RenamePic2.png",
+      des1: "정리를 원하는 폴더와 해당 폴더의 파일들이 이동할 폴더들을 지정합니다.",
+      des2: "어떤 조건의 파일들을 어떤 폴더로 이동시킬 것인지 자유롭게 설정할 수 있습니다.",
+      des3: "특정 폴더에서 이름 변경을 원하는 파일들을 선택합니다.",
+      des4: "머릿말, 꼬릿말 등을 통해 체계적으로 파일 이름을 관리할 수 있습니다."
+    }
+  }
   options = {
     licenseKey: "OPEN-SOURCE-GPLV3-LICENSE",
     autoScrolling: true,
@@ -41,5 +61,10 @@ export default class Home extends Vue {
 <style>
 .home {
   font-family: 'Jua', sans-serif;;
+  height: 100vh;
+  background-color: lightblue;
+}
+.slide {
+  justify-content: center;
 }
 </style>
