@@ -201,12 +201,12 @@ export default new Vuex.Store({
       });
     },
     sortBeforeItems(state: DirState) {
-      state.beforeItems.sort(function(a, b) {
+      state.beforeItems.sort(function (a, b) {
         return a.mtime > b.mtime ? 1 : -1;
       });
     },
     sortRenameFileList(state: DirState) {
-      state.renameFileList.sort(function(a, b) {
+      state.renameFileList.sort(function (a, b) {
         return a.mtime > b.mtime ? 1 : -1;
       });
       state.renameFileList.forEach((item) => {

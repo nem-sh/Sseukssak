@@ -5,6 +5,15 @@
       color="var(--color-purple)"
       dark
       rounded
+      @click="RestoreMoveFile"
+    >
+      되돌리기
+    </v-btn>
+    <v-btn
+      class="mr-5"
+      color="var(--color-purple)"
+      dark
+      rounded
       @click="moveFile"
     >
       정리
@@ -23,26 +32,6 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog
-      v-else
-      v-model="dialog"
-      persistent
-      max-width="250px"
-      max-height="150px"
-    >
-      <v-card align="center">
-        <v-card-text>
-          <lottie-player
-            src="https://assets1.lottiefiles.com/datafiles/bEYvzB8QfV3EM9a/data.json"
-            background="transparent"
-            speed="1"
-            style="width: 200px; height: 150px; padding: 0"
-            loop
-            autoplay
-          ></lottie-player>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
@@ -51,10 +40,11 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import fs from "fs";
 import { mapState, mapMutations } from "vuex";
-
+import { tagToTypeList } from "../api/tagToType";
 import { BUS } from "./EventBus.js";
 import { file } from "googleapis/build/src/apis/file";
 import Swal from "sweetalert2";
+import mime from "mime-types";
 
 const { shell } = require("electron").remote;
 const { app } = require("electron").remote;
@@ -63,29 +53,14 @@ import { remote } from "electron";
 const notifier = remote.require("node-notifier");
 declare const __static: string;
 import path from "path";
-
-interface ToLibrary {
-  name: string;
-  directories: ToLibraryDirectory[];
-}
-interface ToLibraryDirectory {
-  path: string;
-  typeTags: string[];
-  dateTags: string[];
-  titleTags: string[];
-  types: string[];
-}
-interface SortList {
-  directories: object[];
-  files: File[];
-}
-interface File {
-  fileType: string;
-  name: string;
-  birthTime: number;
-  updatedTime: number;
-  icon: string;
-}
+import Axios from "axios";
+import {
+  ToLibrary2,
+  ToLibraryDirectory2,
+  SortList,
+  RestoreMoveListUnit,
+  FileUnit,
+} from "../api/interface";
 
 @Component({
   computed: mapState([
@@ -96,14 +71,17 @@ interface File {
     "toLibraryList",
     "moveHistory",
     "mini",
+    "oAuth2Client",
   ]),
   methods: mapMutations([
     "changeMoveHistory",
     "changeFileSortList",
     "changeFileList",
+    "changeRestoreMoveList",
   ]),
 })
 export default class BtnMoveFile extends Vue {
+  restoreMoveList!: RestoreMoveListUnit[];
   fileList!: object;
   dialog: boolean = false;
   now: Date = new Date();
@@ -122,98 +100,14 @@ export default class BtnMoveFile extends Vue {
     "#This month": new Date(this.now.getFullYear(), this.now.getMonth()),
     "#Every new file": new Date(0),
   };
-  tagToType: object = {
-    "#Document": [
-      ".ppt",
-      ".pptx",
-      ".doc",
-      ".docx",
-      ".xls",
-      ".xlsx",
-      ".pdf",
-      ".ai",
-      ".pad",
-      ".hwp",
-      ".txt",
-      ".md",
-      ".hwpx",
-      ".hwt",
-      ".hwtx",
-      ".frm",
-      ".odt",
-      ".hna",
-      ".kwp",
-      ".hwd",
-      ".jbw",
-      ".wps",
-      ".xml",
-      ".hml",
-      ".rtf",
-      ".dbf",
-      ".gul",
-      ".html",
-      ".htm",
-      ".asp",
-      ".php",
-      ".2b",
-    ],
-    "#Image": [
-      ".jpg",
-      ".jpeg",
-      ".jpe",
-      ".gif",
-      ".png",
-      ".bmp",
-      ".rle",
-      ".dib",
-      ".psd",
-      ".pdd",
-      ".raw",
-      ".dcm",
-      ".dc3",
-      ".dic",
-      ".eps",
-      ".psb",
-      ".pct",
-      ".pict",
-      ".pxr",
-      ".pbm",
-      ".pgm",
-      ".pnm",
-      ".pfm",
-      ".pam",
-      ".tiff",
-      ".tif",
-      ".cr2",
-      ".srw",
-      ".nrw",
-    ],
-    "#Video": [
-      ".avi",
-      ".mpg",
-      ".mpeg",
-      ".mpe",
-      ".wmv",
-      ".asf",
-      ".asx",
-      ".flv",
-      ".rm",
-      ".mov",
-      ".dat",
-      ".mkv",
-      ".flv",
-      ".mov",
-      ".mp4",
-    ],
-    "#Audio": [".wav", ".wma", ".mp3"],
-    "#Compressed": [".zip", ".apk", ".rar", ".7z", ".tar"],
-  };
+  tagToType: object = tagToTypeList;
   fromDir!: string;
-  toLibraryList!: ToLibrary[];
+  toLibraryList!: ToLibrary2[];
   selectedToName!: string;
   fileSortList!: SortList;
   duplicatedList!: any[][];
   mini!: boolean;
+  oAuth2Client!: any;
   changeFileList!: (newList: string[]) => void;
   changeFileSortList!: (newList: SortList) => void;
   changeMoveHistory!: (newList: any[]) => void;
@@ -262,6 +156,57 @@ export default class BtnMoveFile extends Vue {
     return true;
   }
 
+  moveToGoogleDrive(filePath, folderId, fileName) {
+    const accessToken = this.oAuth2Client.credentials.access_token;
+    const UPLOAD_URL =
+      "https://www.googleapis.com/upload/drive/v3/files?uploadType=media";
+    const PATCH_URL = "https://www.googleapis.com/drive/v3/files/";
+
+    const contentType = mime.lookup(filePath);
+    const file = fs.readFileSync(filePath);
+
+    const headers = {
+      Authorization: "Bearer " + accessToken,
+      "Content-Type": contentType,
+    };
+
+    Axios.post(UPLOAD_URL, file, { headers: headers })
+      .then((res) => {
+        const data = {
+          name: fileName,
+        };
+        const patchHeaders = {
+          Authorization: "Bearer " + accessToken,
+          "Content-Type": "application/json",
+        };
+
+        Axios.patch(
+          PATCH_URL +
+            `${res.data.id}?uploadType=multipart&addParents=${folderId}`,
+          data,
+          { headers: patchHeaders }
+        )
+          .then(() =>
+            Swal.fire({
+              icon: "success",
+              title: "구글 드라이브 업로드에 성공했습니다.",
+            })
+          )
+          .catch((err) =>
+            Swal.fire({
+              icon: "error",
+              title: "구글 드라이브 업로드에 실패했습니다.",
+            })
+          );
+      })
+      .catch((err) =>
+        Swal.fire({
+          icon: "error",
+          title: "구글 드라이브 업로드에 실패했습니다.",
+        })
+      );
+  }
+
   moveFile() {
     // console.log(this.toLibraryList);
     // let timerInterval;
@@ -290,11 +235,18 @@ export default class BtnMoveFile extends Vue {
       });
       return;
     } else {
+      // 로딩
+      if (this.mini === true) {
+        BUS.$emit("bus:miniLoading");
+      } else {
+        this.dialog = true;
+      }
+
       BUS.$emit("bus:refreshfile");
       BUS.$emit("bus:dupcheck");
       BUS.$emit("bus:refreshfile");
 
-      let selectedFrom: ToLibraryDirectory[] = [];
+      let selectedFrom: ToLibraryDirectory2[] = [];
 
       for (let index = 0; index < this.toLibraryList.length; index++) {
         if (this.toLibraryList[index].name == this.selectedToName) {
@@ -306,9 +258,7 @@ export default class BtnMoveFile extends Vue {
         return;
       }
 
-      this.dialog = true;
-
-      const directories: ToLibraryDirectory[] = JSON.parse(
+      const directories: ToLibraryDirectory2[] = JSON.parse(
         JSON.stringify(selectedFrom)
       );
 
@@ -323,7 +273,7 @@ export default class BtnMoveFile extends Vue {
           fs.mkdirSync(directories[index].path);
         }
       }
-      directories.forEach((directory: ToLibraryDirectory) => {
+      directories.forEach((directory: ToLibraryDirectory2) => {
         directory.types = [];
         directory.typeTags.forEach((typeTag) => {
           if (typeTag[0] == "#") {
@@ -349,7 +299,7 @@ export default class BtnMoveFile extends Vue {
           ]);
           continue;
         }
-        directories.forEach((directory: ToLibraryDirectory) => {
+        directories.forEach((directory: ToLibraryDirectory2) => {
           if (this.compareDate(new Date(idx.birthTime), directory.dateTags)) {
             if (this.compareTitle(idx.name, directory.titleTags)) {
               console.log(idx.name);
@@ -411,19 +361,25 @@ export default class BtnMoveFile extends Vue {
             new Date().getTime(),
             1,
           ]);
+          //555555555555
           fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
         }
       }
 
       setTimeout(() => {
-        this.dialog = false;
+        // 로딩
+        if (this.mini === true) {
+          BUS.$emit("bus:miniLoadingEnd");
+        } else {
+          this.dialog = false;
+        }
         notifier.notify({
           title: "쓱싹 알림",
           message: "정리가 완료되었습니다!",
           icon: path.join(__static, "sweeping.png"),
           sound: true,
         });
-      }, 5000);
+      }, 1000);
       // Swal.fire({
       //   position: "center",
       //   icon: "success",
@@ -435,11 +391,16 @@ export default class BtnMoveFile extends Vue {
       BUS.$emit("bus:refreshfile");
     }
   }
-
-  mounted() {
-    BUS.$on("bus:moveFile", () => {
-      this.moveFile();
-    });
+  RestoreMoveFile() {
+    for (let index = 0; index < this.restoreMoveList.length; index++) {
+      const element = this.restoreMoveList[index];
+      if (element["type"] == "move") {
+        console.log(123);
+      } else if (element["type"] == "copy") {
+        console.log(123);
+      }
+    }
+    console.log(1);
   }
 }
 </script>
