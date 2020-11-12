@@ -17,8 +17,6 @@
               :items="toLibraryNameList"
               v-model="selectedToNameValue"
               label="Select Group"
-              v-model="selectedToName"
-              label="Select Group"
               dense
               outlined
             ></v-select>
