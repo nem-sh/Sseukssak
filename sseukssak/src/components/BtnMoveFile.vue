@@ -23,26 +23,6 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog
-      v-else
-      v-model="dialog"
-      persistent
-      max-width="250px"
-      max-height="150px"
-    >
-      <v-card align="center">
-        <v-card-text>
-          <lottie-player
-            src="https://assets1.lottiefiles.com/datafiles/bEYvzB8QfV3EM9a/data.json"
-            background="transparent"
-            speed="1"
-            style="width: 200px; height: 150px; padding: 0"
-            loop
-            autoplay
-          ></lottie-player>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
@@ -334,6 +314,13 @@ export default class BtnMoveFile extends Vue {
       });
       return;
     } else {
+      // 로딩
+      if (this.mini === true) {
+        BUS.$emit("bus:miniLoading");
+      } else {
+        this.dialog = true;
+      }
+
       BUS.$emit("bus:refreshfile");
       BUS.$emit("bus:dupcheck");
       BUS.$emit("bus:refreshfile");
@@ -350,7 +337,6 @@ export default class BtnMoveFile extends Vue {
         return;
       }
 
-      this.dialog = true;
 
       const directories: ToLibraryDirectory[] = JSON.parse(
         JSON.stringify(selectedFrom)
@@ -461,14 +447,19 @@ export default class BtnMoveFile extends Vue {
       }
 
       setTimeout(() => {
-        this.dialog = false;
+        // 로딩
+        if (this.mini === true) {
+          BUS.$emit("bus:miniLoadingEnd");
+        } else {
+          this.dialog = false;
+        }
         notifier.notify({
           title: "쓱싹 알림",
           message: "정리가 완료되었습니다!",
           icon: path.join(__static, "sweeping.png"),
           sound: true,
         });
-      }, 5000);
+      }, 1000);
       // Swal.fire({
       //   position: "center",
       //   icon: "success",
@@ -479,12 +470,6 @@ export default class BtnMoveFile extends Vue {
 
       BUS.$emit("bus:refreshfile");
     }
-  }
-
-  mounted() {
-    BUS.$on("bus:moveFile", () => {
-      this.moveFile();
-    });
   }
 }
 </script>

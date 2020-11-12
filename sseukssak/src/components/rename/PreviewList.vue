@@ -17,7 +17,7 @@
           :class="scrollerBgMode"
           :bench="benched"
           :items="beforeItems"
-          height="140"
+          height="130"
           item-height="40"
         >
           <template v-slot:default="{ item }">
@@ -46,7 +46,7 @@
           :class="scrollerBgMode"
           :bench="benched"
           :items="afterItems"
-          height="140"
+          height="130"
           item-height="40"
         >
           <template v-slot:default="{ item }">
