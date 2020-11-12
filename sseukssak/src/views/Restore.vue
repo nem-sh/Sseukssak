@@ -1,64 +1,64 @@
 <template>
   <v-container>
-    <br />
-    <br />
-    <br />
-    <!-- <input type="text" v-model="inputs" /> -->
-    <v-btn @click="resetHistory()">내역 초기화</v-btn>
-
+    <div class="mt-4">
+      <img
+        src="@/assets/titleImg/HistoryImg.png"
+        alt=""
+        height="40"
+        class="mt-4"
+      />
+    </div>
     <hr />
-    <!-- <div v-if="isLoading" style="overflow:scroll; height:400px;">
-      <div v-if="historyList.length != 0">
-        <v-list
-          v-for="historychunk in historyList"
-          :key="historychunk.filename + historychunk.date + Math.random()"
-        >
-          <div class="chunkfail" v-if="historychunk.success == 0">
-            <p>
-              <b>파일명 : {{ historychunk.filename }}</b>
-            </p>
-            <p>실행시간 : {{ historychunk.date }}</p>
-            <p>작업코드 : {{ historychunk.workcode }}</p>
-          </div>
-          <div class="chunksucc" v-if="historychunk.success == 1">
-            <p>
-              <b>파일명 : {{ historychunk.filename }}</b>
-            </p>
-
-            <p>실행시간 : {{ historychunk.date }}</p>
-            <p>작업코드 : {{ historychunk.workcode }}</p>
-          </div>
-        </v-list>
-      </div>
-    </div> -->
-    <div style="overflow:scroll; height:400px;">
-      <v-list
-        v-for="(timechunk, time) in timesortedList"
-        :key="time"
-        class="chunk"
-      >
-        <!-- {{ time }} -->
-        <h1>{{ convertTime(time) }}</h1>
-        <br />
-        <div v-for="chunk in timechunk" :key="chunk + Math.random()">
-          <div class="chunkfail" v-if="chunk.success == 0">
-            <p>
-              <b>파일명 : {{ chunk.filename }}</b>
-            </p>
-            <p>작업코드 : {{ chunk.workcode }}</p>
-            <p>이전위치 : {{ chunk.before }}</p>
-            <p>나중위치 : {{ chunk.after }}</p>
-          </div>
-
-          <div class="chunksucc" v-if="chunk.success == 1">
-            <p>
-              <b>파일명 : {{ chunk.filename }}</b>
-            </p>
-            <p>작업코드 : {{ chunk.workcode }}</p>
-            <p>이전위치 : {{ chunk.before }}</p>
-            <p>나중위치 : {{ chunk.after }}</p>
-          </div>
-        </div>
+    <div
+      style="overflow-x:hidden; overflow-y:scroll; width:100%; height:400px;"
+    >
+      <v-list v-for="(timechunk, time) in timesortedList" :key="time">
+        <v-expansion-panels color="grey lighten-4" style="chunk">
+          <br />
+          <!-- 시간대별로 묶어놓았으며, 그 기준에 따른 시간 표시 -->
+          <span>{{ convertTime(time) }}</span>
+          <br />
+          <br />
+          <v-expansion-panel
+            v-for="chunk in timechunk"
+            :key="chunk + Math.random()"
+          >
+            <!-- 성공 실패에 따른 카드 색상 변경 -->
+            <v-expansion-panel-header
+              :class="{ ss: chunk.success == 1, ff: chunk.success == 0 }"
+            >
+              <span
+                class="d-inline-block text-truncate"
+                style="max-width: 300px;"
+                >파일명 : {{ chunk.filename }}</span
+              >
+              <span style="text-align: right;"
+                >작업분류 : {{ chunk.workcode }}</span
+              >
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <span>
+                {{ chunk.success == 1 ? "해당 작업 성공" : "" }}
+                {{ chunk.success == 0 ? "해당 작업 실패" : "" }}
+                {{ chunk.success == -1 ? "복구 작업 성공" : "" }}
+              </span>
+              <br />
+              <!-- 텍스트 길이가 길어지면 ...으로 표현하도록 하였음 -->
+              <!-- 해당 속성은 text-truncate이며 필요없다면 삭제 -->
+              <span
+                class="d-inline-block text-truncate"
+                style="max-width: 700px;"
+                >이동 전 위치 : {{ chunk.before }}</span
+              >
+              <br />
+              <span
+                class="d-inline-block text-truncate"
+                style="max-width: 700px;"
+                >이동 후 위치 : {{ chunk.after }}</span
+              >
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-list>
     </div>
     <div align="right" class="mt-3">
@@ -72,31 +72,32 @@
   float: right;
   width: 500px;
 }
+/* 성공:ss, 실패:ff, 복구:rr로 할 예정 */
+.ss {
+  background-color: #6699ff;
+}
+
+.ff {
+  background-color: #ff6699;
+}
+
+.smallchunk {
+  padding: 7px;
+  /* border: 1px black solid; */
+  font-size: 10px;
+  line-height: 8px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
 
 .chunk {
-  padding: 2px;
-  border: 3px black solid;
-  color: black;
-  font-size: 10px;
+  padding: 3px;
+  /* border: 3px black solid; */
+  font-size: 20px;
   line-height: 8px;
-  /* background-color: #cceeff; */
-}
-.chunksucc {
-  padding: 2px;
-  border: 1px black solid;
-  color: black;
-  font-size: 10px;
-  line-height: 8px;
-  background-color: #cceeff;
-}
-
-.chunkfail {
-  padding: 2px;
-  border: 1px black solid;
-  color: black;
-  font-size: 10px;
-  line-height: 8px;
-  background-color: #e0eb4c;
+  /* margin: 8px; */
+  /* margin-top: 8px;
+  margin-bottom: 8px; */
 }
 </style>
 <script lang="ts">
@@ -178,11 +179,11 @@ export default class Restore extends Vue {
   }
 
   convertTime(time: string) {
-    // console.log(time)
+    return ":: " + new Date(Number(time)).toString();
+  }
 
-    // let t = new Date(time);
-    // console.log(t);
-    return new Date(Number(time)).toString();
+  selectchunk(t) {
+    console.log(t);
   }
 
   jsontest(changedHistory: object) {
