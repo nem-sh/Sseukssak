@@ -90,7 +90,7 @@
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
-                  <BtnCreateGoogleFolder/>
+                  <BtnCreateGoogleFolder @create-google-folder="createGoogleFolder"/>
                 </div>
                 <div class="ml-3 mb-3 font-weight-bold d-flex align-center">
                   <img
@@ -555,6 +555,12 @@ export default class ModalAddToLibraryDirectory extends Vue {
     }
     this.directoryDir = "%from%" + "\\" + this.readFromDirName;
     this.dialog3 = false;
+  }
+  createGoogleFolder(data) {
+    
+    this.directoryDir = "%drive%" + "\\" + data;
+    this.dialog3 = false;
+
   }
 
   get dateRangeText() {
