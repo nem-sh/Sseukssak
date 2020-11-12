@@ -57,7 +57,7 @@
               :key="item.path"
               @click.stop="openShell(item.path)"
             >
-              <v-list-item-action>
+              <v-list-item-action class="mr-3">
                 <v-img
                   src="@/assets/folder-icon.png"
                   alt=""
@@ -78,13 +78,28 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  <strong>{{ getDirectoryName(item.path) }}</strong>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <strong v-bind="attrs" v-on="on">{{
+                        getDirectoryName(item.path)
+                      }}</strong>
+                    </template>
+                    <span>{{ item.path }}</span>
+                  </v-tooltip>
                 </v-list-item-title>
-                <div class="item-path">
+                <!-- <div class="item-path">
                   {{ item.path }}
-                </div>
-                <!-- <v-list-item-subtitle color="#7288da" class="item-path">
-                  <span
+                </div> -->
+
+                <v-list-item-subtitle
+                  v-if="
+                    getTagLists(item.typeTags, item.dateTags, item.titleTags)
+                      .length <= 3
+                  "
+                  color="#7288da"
+                  class="item-path"
+                >
+                  <v-chip
                     v-for="tag in getTagLists(
                       item.typeTags,
                       item.dateTags,
@@ -92,13 +107,48 @@
                     )"
                     :key="tag"
                     class="mr-2"
+                    small
+                    chip
                     >{{ tag }}
-                  </span>
-                  <ListFromBreadcrumbs
+                  </v-chip>
+                  <!-- <ListFromBreadcrumbs
                     :fromDir="item.path"
                     :className="'bread-to'"
-                  />
-                </v-list-item-subtitle> -->
+                  /> -->
+                </v-list-item-subtitle>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-list-item-subtitle
+                      v-if="
+                        getTagLists(
+                          item.typeTags,
+                          item.dateTags,
+                          item.titleTags
+                        ).length > 3
+                      "
+                      color="#7288da"
+                      class="item-path"
+                    >
+                      <v-chip
+                        v-for="tag in getTagLists(
+                          item.typeTags,
+                          item.dateTags,
+                          item.titleTags
+                        )"
+                        :key="tag"
+                        class="mr-2"
+                        small
+                        chip
+                        v-bind="attrs"
+                        v-on="on"
+                        >{{ tag }}
+                      </v-chip>
+                    </v-list-item-subtitle>
+                  </template>
+                  <span>{{
+                    getTagString(item.typeTags, item.dateTags, item.titleTags)
+                  }}</span>
+                </v-tooltip>
               </v-list-item-content>
               <v-list-item-action>
                 <v-row align="center" justify="center" class="pa-0">
@@ -532,6 +582,15 @@ export default class ListTo extends Vue {
     return tagLists;
   }
 
+  getTagString(type, date, title) {
+    const tagLists = this.getTagLists(type, date, title);
+    let tagListStr = "";
+    for (let i = 0; i < tagLists.length; i++) {
+      tagListStr += "  " + tagLists[i];
+    }
+    return tagListStr;
+  }
+
   @Watch("selectedToName")
   watchSelectedToName() {
     this.changeSelectedToName(this.selectedToName);
@@ -565,8 +624,12 @@ export default class ListTo extends Vue {
 }
 
 .item-path {
-  font-size: 12px !important;
+  font-size: 13px !important;
   color: #7a8186;
+}
+
+.item-path-tag {
+  background: #7288da;
 }
 
 .to-name {
