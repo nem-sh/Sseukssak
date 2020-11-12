@@ -1,12 +1,15 @@
 import Vue from "vue";
 import Vuex from "vuex";
-
+import {
+  RestoreMoveListUnit,
+} from "../api/interface";
 import { google } from "googleapis";
-import { stat } from "fs";
+// import { stat } from "fs";
 
 Vue.use(Vuex);
 
 interface DirState {
+  restoreMoveList: RestoreMoveListUnit[];
   firstOpen: boolean;
   fromDir: string;
   fileList: string[];
@@ -84,6 +87,7 @@ interface FileInfo {
 
 export default new Vuex.Store({
   state: {
+    restoreMoveList: [],
     firstOpen: true,
     dropToDir: "",
     fromDir: "",
@@ -259,7 +263,10 @@ export default new Vuex.Store({
     },
     changeMiniState(state: DirState, value: boolean) {
       state.mini = value;
-    }
+    },
+    changeRestoreMoveList(state: DirState, value: RestoreMoveListUnit[]) {
+      state.restoreMoveList = value;
+    },
   },
   actions: {},
   getters: {
