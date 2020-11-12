@@ -1,7 +1,17 @@
 <template>
   <div style="display: inline">
     <v-btn
-      class="mr-5 play-btn mt-3"
+      v-if="restoreMoveList.length != 0"
+      class="mr-5"
+      color="red"
+      dark
+      rounded
+      @click="RestoreMoveFile"
+    >
+      <i class="fas fa-redo-alt"></i>
+    </v-btn>
+    <v-btn
+      class="mr-5"
       color="var(--color-purple)"
       dark
       rounded
@@ -31,43 +41,23 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import fs from "fs";
 import { mapState, mapMutations } from "vuex";
-
+import { tagToTypeList } from "../api/tagToType";
 import { BUS } from "./EventBus.js";
-import { file } from "googleapis/build/src/apis/file";
 import Swal from "sweetalert2";
-import mime from 'mime-types'
+import mime from "mime-types";
 
-const { shell } = require("electron").remote;
-const { app } = require("electron").remote;
 // 알림창
 import { remote } from "electron";
 const notifier = remote.require("node-notifier");
 declare const __static: string;
 import path from "path";
 import Axios from "axios";
-
-interface ToLibrary {
-  name: string;
-  directories: ToLibraryDirectory[];
-}
-interface ToLibraryDirectory {
-  path: string;
-  typeTags: string[];
-  dateTags: string[];
-  titleTags: string[];
-  types: string[];
-}
-interface SortList {
-  directories: object[];
-  files: File[];
-}
-interface File {
-  fileType: string;
-  name: string;
-  birthTime: number;
-  updatedTime: number;
-  icon: string;
-}
+import {
+  ToLibrary2,
+  ToLibraryDirectory2,
+  SortList,
+  RestoreMoveListUnit,
+} from "../api/interface";
 
 @Component({
   computed: mapState([
@@ -79,14 +69,17 @@ interface File {
     "moveHistory",
     "mini",
     "oAuth2Client",
+    "restoreMoveList",
   ]),
   methods: mapMutations([
     "changeMoveHistory",
     "changeFileSortList",
     "changeFileList",
+    "changeRestoreMoveList",
   ]),
 })
 export default class BtnMoveFile extends Vue {
+  restoreMoveList!: RestoreMoveListUnit[];
   fileList!: object;
   dialog: boolean = false;
   now: Date = new Date();
@@ -105,103 +98,18 @@ export default class BtnMoveFile extends Vue {
     "#This month": new Date(this.now.getFullYear(), this.now.getMonth()),
     "#Every new file": new Date(0),
   };
-  tagToType: object = {
-    "#Document": [
-      ".ppt",
-      ".pptx",
-      ".doc",
-      ".docx",
-      ".xls",
-      ".xlsx",
-      ".pdf",
-      ".ai",
-      ".pad",
-      ".hwp",
-      ".txt",
-      ".md",
-      ".hwpx",
-      ".hwt",
-      ".hwtx",
-      ".frm",
-      ".odt",
-      ".hna",
-      ".kwp",
-      ".hwd",
-      ".jbw",
-      ".wps",
-      ".xml",
-      ".hml",
-      ".rtf",
-      ".dbf",
-      ".gul",
-      ".html",
-      ".htm",
-      ".asp",
-      ".php",
-      ".2b",
-    ],
-    "#Image": [
-      ".jpg",
-      ".jpeg",
-      ".jpe",
-      ".gif",
-      ".png",
-      ".bmp",
-      ".rle",
-      ".dib",
-      ".psd",
-      ".pdd",
-      ".raw",
-      ".dcm",
-      ".dc3",
-      ".dic",
-      ".eps",
-      ".psb",
-      ".pct",
-      ".pict",
-      ".pxr",
-      ".pbm",
-      ".pgm",
-      ".pnm",
-      ".pfm",
-      ".pam",
-      ".tiff",
-      ".tif",
-      ".cr2",
-      ".srw",
-      ".nrw",
-    ],
-    "#Video": [
-      ".avi",
-      ".mpg",
-      ".mpeg",
-      ".mpe",
-      ".wmv",
-      ".asf",
-      ".asx",
-      ".flv",
-      ".rm",
-      ".mov",
-      ".dat",
-      ".mkv",
-      ".flv",
-      ".mov",
-      ".mp4",
-    ],
-    "#Audio": [".wav", ".wma", ".mp3"],
-    "#Compressed": [".zip", ".apk", ".rar", ".7z", ".tar"],
-  };
+  tagToType: object = tagToTypeList;
   fromDir!: string;
-  toLibraryList!: ToLibrary[];
+  toLibraryList!: ToLibrary2[];
   selectedToName!: string;
   fileSortList!: SortList;
   duplicatedList!: any[][];
   mini!: boolean;
-  oAuth2Client!: any
+  oAuth2Client!: any;
   changeFileList!: (newList: string[]) => void;
   changeFileSortList!: (newList: SortList) => void;
   changeMoveHistory!: (newList: any[]) => void;
-
+  changeRestoreMoveList!: (newList: RestoreMoveListUnit[]) => void;
   compareTitle(file: string, titleTags: string[]) {
     if (titleTags.length == 0) {
       return true;
@@ -246,45 +154,56 @@ export default class BtnMoveFile extends Vue {
     return true;
   }
 
-  moveToGoogleDrive(filePath, folderId, fileName){
-      const accessToken = this.oAuth2Client.credentials.access_token
-      const UPLOAD_URL = "https://www.googleapis.com/upload/drive/v3/files?uploadType=media"
-      const PATCH_URL = "https://www.googleapis.com/drive/v3/files/"
+  moveToGoogleDrive(filePath, folderId, fileName) {
+    const accessToken = this.oAuth2Client.credentials.access_token;
+    const UPLOAD_URL =
+      "https://www.googleapis.com/upload/drive/v3/files?uploadType=media";
+    const PATCH_URL = "https://www.googleapis.com/drive/v3/files/";
 
-      const contentType = mime.lookup(filePath)
-      const file = fs.readFileSync(filePath)
+    const contentType = mime.lookup(filePath);
+    const file = fs.readFileSync(filePath);
 
-      const headers = {
-        Authorization: 'Bearer '+accessToken,
-        'Content-Type':contentType
-      }
+    const headers = {
+      Authorization: "Bearer " + accessToken,
+      "Content-Type": contentType,
+    };
 
-      Axios.post(UPLOAD_URL,file,{headers:headers})
-        .then(res=>{
-          const data={
-            name:fileName
-          }
-          const patchHeaders = {
-            Authorization: 'Bearer '+accessToken,
-            'Content-Type':'application/json'
-          }
-          
-          Axios.patch(PATCH_URL+`${res.data.id}?uploadType=multipart&addParents=${folderId}`,data,{headers:patchHeaders})
-            .then(() => Swal.fire({
-              icon:'success',
-              title:'구글 드라이브 업로드에 성공했습니다.'
-            }))
-            .catch(err=>Swal.fire({
-              icon:'error',
-              title:'구글 드라이브 업로드에 실패했습니다.'
-            }))
+    Axios.post(UPLOAD_URL, file, { headers: headers })
+      .then((res) => {
+        const data = {
+          name: fileName,
+        };
+        const patchHeaders = {
+          Authorization: "Bearer " + accessToken,
+          "Content-Type": "application/json",
+        };
+
+        Axios.patch(
+          PATCH_URL +
+            `${res.data.id}?uploadType=multipart&addParents=${folderId}`,
+          data,
+          { headers: patchHeaders }
+        )
+          .then(() =>
+            Swal.fire({
+              icon: "success",
+              title: "구글 드라이브 업로드에 성공했습니다.",
+            })
+          )
+          .catch((err) =>
+            Swal.fire({
+              icon: "error",
+              title: "구글 드라이브 업로드에 실패했습니다.",
+            })
+          );
+      })
+      .catch((err) =>
+        Swal.fire({
+          icon: "error",
+          title: "구글 드라이브 업로드에 실패했습니다.",
         })
-        .catch(err=>Swal.fire({
-          icon:'error',
-          title:'구글 드라이브 업로드에 실패했습니다.'
-        })
-      )
-    }
+      );
+  }
 
   moveFile() {
     // console.log(this.toLibraryList);
@@ -325,7 +244,9 @@ export default class BtnMoveFile extends Vue {
       BUS.$emit("bus:dupcheck");
       BUS.$emit("bus:refreshfile");
 
-      let selectedFrom: ToLibraryDirectory[] = [];
+      const tempRestoreMoveList: RestoreMoveListUnit[] = [];
+
+      let selectedFrom: ToLibraryDirectory2[] = [];
 
       for (let index = 0; index < this.toLibraryList.length; index++) {
         if (this.toLibraryList[index].name == this.selectedToName) {
@@ -337,23 +258,19 @@ export default class BtnMoveFile extends Vue {
         return;
       }
 
-
-      const directories: ToLibraryDirectory[] = JSON.parse(
+      const directories: ToLibraryDirectory2[] = JSON.parse(
         JSON.stringify(selectedFrom)
       );
 
       for (let index = 0; index < directories.length; index++) {
         const element = directories[index];
-        directories[index].path = directories[index].path.replace(
-          "%from%",
-          this.fromDir
-        );
+        element.path = element.path.replace("%from%", this.fromDir);
 
-        if (!fs.existsSync(directories[index].path)) {
-          fs.mkdirSync(directories[index].path);
+        if (!fs.existsSync(element.path)) {
+          fs.mkdirSync(element.path);
         }
       }
-      directories.forEach((directory: ToLibraryDirectory) => {
+      directories.forEach((directory: ToLibraryDirectory2) => {
         directory.types = [];
         directory.typeTags.forEach((typeTag) => {
           if (typeTag[0] == "#") {
@@ -379,7 +296,7 @@ export default class BtnMoveFile extends Vue {
           ]);
           continue;
         }
-        directories.forEach((directory: ToLibraryDirectory) => {
+        directories.forEach((directory: ToLibraryDirectory2) => {
           if (this.compareDate(new Date(idx.birthTime), directory.dateTags)) {
             if (this.compareTitle(idx.name, directory.titleTags)) {
               console.log(idx.name);
@@ -431,6 +348,11 @@ export default class BtnMoveFile extends Vue {
               new Date().getTime(),
               1,
             ]);
+            tempRestoreMoveList.push({
+              type: "copy",
+              from: a[step][0],
+              to: a[step][1],
+            });
             fs.copyFileSync(a[step][0], a[step][1]);
           }
           this.changeMoveHistory([
@@ -441,10 +363,18 @@ export default class BtnMoveFile extends Vue {
             new Date().getTime(),
             1,
           ]);
+
+          tempRestoreMoveList.push({
+            type: "move",
+            from: a[step][0],
+            to: a[step][1],
+          });
           //555555555555
           fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
         }
       }
+
+      this.changeRestoreMoveList(tempRestoreMoveList);
 
       setTimeout(() => {
         // 로딩
@@ -470,6 +400,61 @@ export default class BtnMoveFile extends Vue {
 
       BUS.$emit("bus:refreshfile");
     }
+  }
+  RestoreMoveFile() {
+    console.log(this.restoreMoveList);
+    for (let index = 0; index < this.restoreMoveList.length; index++) {
+      const element = this.restoreMoveList[index];
+      console.log(element);
+      const filePathSplit = element["to"].split("\\");
+      console.log(filePathSplit);
+      if (element["type"] == "move") {
+        try {
+          fs.renameSync(element["to"], element["from"]);
+
+          this.changeMoveHistory([
+            filePathSplit[filePathSplit.length - 1],
+            1,
+            element["to"],
+            element["from"],
+            new Date().getTime(),
+            -1,
+          ]);
+        } catch (error) {
+          this.changeMoveHistory([
+            filePathSplit[filePathSplit.length - 1],
+            0,
+            element["to"],
+            element["from"],
+            new Date().getTime(),
+            -1,
+          ]);
+        }
+      } else if (element["type"] == "copy") {
+        try {
+          fs.unlinkSync(element["to"]);
+          this.changeMoveHistory([
+            filePathSplit[filePathSplit.length - 1],
+            1,
+            element["to"],
+            "delete",
+            new Date().getTime(),
+            -1,
+          ]);
+        } catch (error) {
+          this.changeMoveHistory([
+            filePathSplit[filePathSplit.length - 1],
+            0,
+            element["to"],
+            "delete",
+            new Date().getTime(),
+            -1,
+          ]);
+        }
+      }
+    }
+    this.changeRestoreMoveList([]);
+    BUS.$emit("bus:refreshfile");
   }
 }
 </script>

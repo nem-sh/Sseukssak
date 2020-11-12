@@ -7,7 +7,7 @@
     max-width="500"
   >
     <template v-slot:activator="{ on, attrs }">
-      <v-btn color="green" text v-bind="attrs" v-on="on">
+      <v-btn color="green" rounded text v-bind="attrs" v-on="on">
         <i class="fab fa-google-drive mr-2"></i>구글 드라이브
       </v-btn>
     </template>

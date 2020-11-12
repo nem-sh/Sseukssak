@@ -15,7 +15,7 @@
           <v-col cols="8" align="center" justify="center" class="mt-5">
             <v-select
               :items="toLibraryNameList"
-              v-model="selectedToName"
+              v-model="selectedToNameValue"
               label="Select Group"
               dense
               outlined
@@ -57,7 +57,7 @@
               :key="item.path"
               @click.stop="openShell(item.path)"
             >
-              <v-list-item-action>
+              <v-list-item-action class="mr-3">
                 <v-img
                   src="@/assets/folder-icon.png"
                   alt=""
@@ -78,13 +78,28 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  <strong>{{ getDirectoryName(item.path) }}</strong>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <strong v-bind="attrs" v-on="on">{{
+                        getDirectoryName(item.path)
+                      }}</strong>
+                    </template>
+                    <span>{{ item.path }}</span>
+                  </v-tooltip>
                 </v-list-item-title>
-                <div class="item-path">
+                <!-- <div class="item-path">
                   {{ item.path }}
-                </div>
-                <!-- <v-list-item-subtitle color="#7288da" class="item-path">
-                  <span
+                </div> -->
+
+                <v-list-item-subtitle
+                  v-if="
+                    getTagLists(item.typeTags, item.dateTags, item.titleTags)
+                      .length <= 3
+                  "
+                  color="#7288da"
+                  class="item-path"
+                >
+                  <v-chip
                     v-for="tag in getTagLists(
                       item.typeTags,
                       item.dateTags,
@@ -92,13 +107,48 @@
                     )"
                     :key="tag"
                     class="mr-2"
+                    small
+                    chip
                     >{{ tag }}
-                  </span>
-                  <ListFromBreadcrumbs
+                  </v-chip>
+                  <!-- <ListFromBreadcrumbs
                     :fromDir="item.path"
                     :className="'bread-to'"
-                  />
-                </v-list-item-subtitle> -->
+                  /> -->
+                </v-list-item-subtitle>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-list-item-subtitle
+                      v-if="
+                        getTagLists(
+                          item.typeTags,
+                          item.dateTags,
+                          item.titleTags
+                        ).length > 3
+                      "
+                      color="#7288da"
+                      class="item-path"
+                    >
+                      <v-chip
+                        v-for="tag in getTagLists(
+                          item.typeTags,
+                          item.dateTags,
+                          item.titleTags
+                        )"
+                        :key="tag"
+                        class="mr-2"
+                        small
+                        chip
+                        v-bind="attrs"
+                        v-on="on"
+                        >{{ tag }}
+                      </v-chip>
+                    </v-list-item-subtitle>
+                  </template>
+                  <span>{{
+                    getTagString(item.typeTags, item.dateTags, item.titleTags)
+                  }}</span>
+                </v-tooltip>
               </v-list-item-content>
               <v-list-item-action>
                 <v-row align="center" justify="center" class="pa-0">
@@ -181,6 +231,7 @@ import ListFromBreadcrumbs from "@/components/listFrom/ListFromBreadcrumbs.vue";
 
 import { shell } from "electron";
 
+const shellContextMenu = require("shell-context-menu").remote;
 import { BUS } from "./EventBus.js";
 
 // const { shell } = require("electron").remote;
@@ -202,7 +253,12 @@ interface ToLibraryDirectory {
     ModalModifyToLibraryDirectory,
     ListFromBreadcrumbs,
   },
-  computed: mapState(["toLibraryList", "toLibraryNameList", "fromDir"]),
+  computed: mapState([
+    "toLibraryList",
+    "toLibraryNameList",
+    "fromDir",
+    "selectedToName",
+  ]),
   methods: mapMutations([
     "changeToLibraryList",
     "changeSelectedToName",
@@ -210,6 +266,8 @@ interface ToLibraryDirectory {
   ]),
 })
 export default class ListTo extends Vue {
+  selectedToName!: string;
+  selectedToNameValue: string = "";
   shown: boolean = false;
 
   closeMenu() {
@@ -332,7 +390,9 @@ export default class ListTo extends Vue {
       }
     }
   }
+
   created() {
+    this.selectedToNameValue = this.selectedToName;
     const mySettings = window.localStorage.getItem("selectedFromData"); // 로컬스토리지에서 해당 key 이름으로 되어있는 value 값 불러오기
     let mySettingObj: ToLibrary[] = [
       {
@@ -487,7 +547,7 @@ export default class ListTo extends Vue {
     // );
     // this.changeToLibraryList(tempToLibrary);
   }
-  selectedToName: string = "";
+
   toLibraryList!: ToLibrary[];
   toLibraryNameList!: string[];
   changeToLibraryList!: (newList: ToLibrary[]) => void;
@@ -519,7 +579,6 @@ export default class ListTo extends Vue {
   }
 
   changeSN(name) {
-    this.selectedToName = name;
     this.changeSelectedToName(name);
     this.changeDirectoryLength(name);
   }
@@ -532,9 +591,24 @@ export default class ListTo extends Vue {
     return tagLists;
   }
 
+  getTagString(type, date, title) {
+    const tagLists = this.getTagLists(type, date, title);
+    let tagListStr = "";
+    for (let i = 0; i < tagLists.length; i++) {
+      tagListStr += "  " + tagLists[i];
+    }
+    return tagListStr;
+  }
+
   @Watch("selectedToName")
   watchSelectedToName() {
-    this.changeSelectedToName(this.selectedToName);
+    this.selectedToNameValue = this.selectedToName;
+    this.changeDirectoryLength(this.selectedToName);
+  }
+
+  @Watch("selectedToNameValue")
+  watchSelectedToNameValue() {
+    this.changeSelectedToName(this.selectedToNameValue);
     this.changeDirectoryLength(this.selectedToName);
   }
   get scrollerBgMode() {
@@ -565,8 +639,12 @@ export default class ListTo extends Vue {
 }
 
 .item-path {
-  font-size: 12px !important;
+  font-size: 13px !important;
   color: #7a8186;
+}
+
+.item-path-tag {
+  background: #7288da;
 }
 
 .to-name {
