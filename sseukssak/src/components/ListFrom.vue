@@ -34,7 +34,7 @@
       <div class="d-flex justify-end">
         <ListFromFilter @filter-date="filterDate" :state="filterState" />
         <v-btn
-          class="ma-2"
+          class="mx-2 my-0"
           outlined
           rounded
           small
@@ -45,10 +45,13 @@
         </v-btn>
       </div>
       <div class="rounded-xl" height="100%">
+        <div>
+          <ListFromBreadcrumbs :fromDir="fromDir" :className="'bread-from'" />
+        </div>
         <v-virtual-scroll
           v-if="fileScrollList.length !== 0"
           :items="fileScrollList"
-          height="420"
+          height="400"
           item-height="90"
           :class="scrollerBgMode"
         >
