@@ -3,64 +3,66 @@
     <v-col cols="12 pb-0">
       <h4 class="text-center" :class="partTitleMode">2. 형식 설정</h4>
     </v-col>
-    <v-col cols="4" class="text-center pb-0">
-      <p class="font-weight-bold" :class="partTitleMode">머리말</p>
-      <v-radio-group v-model="front" @change="filterChange(1)">
-        <v-radio label="생성 날짜" value="1" color="#7288da"></v-radio>
-        <v-radio label="사용자 입력" value="2" color="#7288da"></v-radio>
-        <v-text-field
-          style="padding:3px 0px 0px 0px"
-          v-show="front == '2'"
-          v-model="fileName1"
-          @input="nameChange(1)"
-          :rules="nameRules"
-          :counter="10"
-          label="머리말 추가"
-          required
-        ></v-text-field>
-        <v-radio label="없음" value="3" color="#7288da"></v-radio>
-      </v-radio-group>
-    </v-col>
-    <v-col cols="4" class="text-center pb-0">
-      <p class="font-weight-bold" :class="partTitleMode">파일/폴더명</p>
-      <v-radio-group v-model="middle" @change="filterChange(2)">
-        <v-radio label="기존 이름" value="1" color="#7288da"></v-radio>
-        <v-radio label="사용자 입력" value="2" color="#7288da"></v-radio>
-        <v-text-field
-          style="padding:3px 0px 0px 0px"
-          v-show="middle == '2'"
-          v-model="fileName2"
-          @input="nameChange(2)"
-          :rules="nameRules"
-          :counter="20"
-          label="변경할 이름"
-          required
-        ></v-text-field>
-      </v-radio-group>
-    </v-col>
-    <v-col cols="4" class="text-center pb-0">
-      <p class="font-weight-bold" :class="partTitleMode">꼬리말</p>
-      <v-radio-group v-model="back" @change="filterChange(3)">
-        <v-radio label="숫자(수정 날짜 오름차순)" value="1" color="#7288da"></v-radio>
-        <v-radio
-          label="사용자 입력"
-          value="2"
-          :disabled="isDisabled"
-          color="#7288da"
-        ></v-radio>
-        <v-text-field
-          style="padding:3px 0px 0px 0px"
-          v-show="back == '2'"
-          v-model="fileName3"
-          @input="nameChange(3)"
-          :rules="nameRules"
-          :counter="10"
-          label="꼬리말 추가"
-          required
-        ></v-text-field>
-        <v-radio label="없음" value="3" :disabled="isDisabled" color="#7288da"></v-radio>
-      </v-radio-group>
-    </v-col>
+    <v-row style="height:227px" class="px-3">
+      <v-col cols="4" class="text-center pb-0">
+        <p class="font-weight-bold" :class="partTitleMode">머리말</p>
+        <v-radio-group v-model="front" @change="filterChange(1)">
+          <v-radio label="생성 날짜" value="1" color="#7288da"></v-radio>
+          <v-radio label="사용자 입력" value="2" color="#7288da"></v-radio>
+          <v-text-field
+            style="padding:3px 0px 0px 10px"
+            v-show="front == '2'"
+            v-model="fileName1"
+            @input="nameChange(1)"
+            :rules="nameRules"
+            :counter="10"
+            label="머리말 추가"
+            required
+          ></v-text-field>
+          <v-radio label="없음" value="3" color="#7288da"></v-radio>
+        </v-radio-group>
+      </v-col>
+      <v-col cols="4" class="text-center pb-0">
+        <p class="font-weight-bold" :class="partTitleMode">파일/폴더명</p>
+        <v-radio-group v-model="middle" @change="filterChange(2)">
+          <v-radio label="기존 이름" value="1" color="#7288da"></v-radio>
+          <v-radio label="사용자 입력" value="2" color="#7288da"></v-radio>
+          <v-text-field
+            style="padding:3px 0px 0px 10px"
+            v-show="middle == '2'"
+            v-model="fileName2"
+            @input="nameChange(2)"
+            :rules="nameRules"
+            :counter="20"
+            label="변경할 이름"
+            required
+          ></v-text-field>
+        </v-radio-group>
+      </v-col>
+      <v-col cols="4" class="text-center pb-0">
+        <p class="font-weight-bold" :class="partTitleMode">꼬리말</p>
+        <v-radio-group v-model="back" @change="filterChange(3)">
+          <v-radio label="숫자(수정 날짜 오름차순)" value="1" color="#7288da"></v-radio>
+          <v-radio
+            label="사용자 입력"
+            value="2"
+            :disabled="isDisabled"
+            color="#7288da"
+          ></v-radio>
+          <v-text-field
+            style="padding:3px 0px 0px 10px"
+            v-show="back == '2'"
+            v-model="fileName3"
+            @input="nameChange(3)"
+            :rules="nameRules"
+            :counter="10"
+            label="꼬리말 추가"
+            required
+          ></v-text-field>
+          <v-radio label="없음" value="3" :disabled="isDisabled" color="#7288da"></v-radio>
+        </v-radio-group>
+      </v-col>
+    </v-row>
   </v-row>
 </template>
 
