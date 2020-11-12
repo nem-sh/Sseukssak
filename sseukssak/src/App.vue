@@ -104,6 +104,7 @@
           </div>
         </div>
       </div>
+      <FeatHistory />
       <div class="main" :class="bgMode">
         <router-view></router-view>
       </div>
@@ -119,6 +120,7 @@ import Component from "vue-class-component";
 import Home from "@/views/Home.vue";
 import "./components/styles/main.scss";
 import BtnLoginGoogle from "@/components/googleDrive/BtnLoginGoogle.vue";
+import FeatHistory from "@/components/history/FeatHistory.vue";
 
 const { ipcRenderer, shell } = window.require("electron");
 
@@ -126,12 +128,13 @@ const { ipcRenderer, shell } = window.require("electron");
   components: {
     Home,
     BtnLoginGoogle,
+    FeatHistory
   },
   created() {
     this.$router.push({ name: "Home" });
   },
   computed: mapState(["mini"]),
-  methods: mapMutations(["changeMiniState"]),
+  methods: mapMutations(["changeMiniState"])
 })
 export default class App extends Vue {
   activeTab: string = "Home";
@@ -164,7 +167,7 @@ export default class App extends Vue {
   }
 
   resizeSmallWindow() {
-    this.changeMiniState(true)
+    this.changeMiniState(true);
     ipcRenderer.send("resize-me-smaller-please");
     if (this.$route.name !== "MiniMode") {
       this.activeTab = "MiniMode";
@@ -173,7 +176,7 @@ export default class App extends Vue {
   }
 
   resizeBigWindow() {
-    this.changeMiniState(false)
+    this.changeMiniState(false);
     ipcRenderer.send("resize-me-bigger-please");
     if (this.$route.name !== "Home") {
       this.activeTab = "Home";
@@ -199,7 +202,7 @@ export default class App extends Vue {
       icon: "warning",
       title: "준비중 입니다 :)",
       showConfirmButton: false,
-      timer: 1000,
+      timer: 1000
     });
   }
 }
