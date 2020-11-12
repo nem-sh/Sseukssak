@@ -16,6 +16,7 @@
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
     "googleapis": "^62.0.0",
+    "shell-context-menu": "^1.0.2",
     "node-notifier": "^8.0.0",
     "trash": "^6.1.1",
     "vue": "^2.6.11",

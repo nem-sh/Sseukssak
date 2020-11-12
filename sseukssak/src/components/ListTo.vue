@@ -15,6 +15,8 @@
           <v-col cols="8" align="center" justify="center" class="mt-5">
             <v-select
               :items="toLibraryNameList"
+              v-model="selectedToNameValue"
+              label="Select Group"
               v-model="selectedToName"
               label="Select Group"
               dense
@@ -181,6 +183,7 @@ import ListFromBreadcrumbs from "@/components/listFrom/ListFromBreadcrumbs.vue";
 
 import { shell } from "electron";
 
+const shellContextMenu = require("shell-context-menu").remote;
 import { BUS } from "./EventBus.js";
 
 // const { shell } = require("electron").remote;
@@ -202,7 +205,12 @@ interface ToLibraryDirectory {
     ModalModifyToLibraryDirectory,
     ListFromBreadcrumbs,
   },
-  computed: mapState(["toLibraryList", "toLibraryNameList", "fromDir"]),
+  computed: mapState([
+    "toLibraryList",
+    "toLibraryNameList",
+    "fromDir",
+    "selectedToName",
+  ]),
   methods: mapMutations([
     "changeToLibraryList",
     "changeSelectedToName",
@@ -210,6 +218,8 @@ interface ToLibraryDirectory {
   ]),
 })
 export default class ListTo extends Vue {
+  selectedToName!: string;
+  selectedToNameValue: string = "";
   shown: boolean = false;
 
   closeMenu() {
@@ -332,7 +342,9 @@ export default class ListTo extends Vue {
       }
     }
   }
+
   created() {
+    this.selectedToNameValue = this.selectedToName;
     const mySettings = window.localStorage.getItem("selectedFromData"); // 로컬스토리지에서 해당 key 이름으로 되어있는 value 값 불러오기
     let mySettingObj: ToLibrary[] = [
       {
@@ -487,7 +499,7 @@ export default class ListTo extends Vue {
     // );
     // this.changeToLibraryList(tempToLibrary);
   }
-  selectedToName: string = "";
+
   toLibraryList!: ToLibrary[];
   toLibraryNameList!: string[];
   changeToLibraryList!: (newList: ToLibrary[]) => void;
@@ -519,7 +531,6 @@ export default class ListTo extends Vue {
   }
 
   changeSN(name) {
-    this.selectedToName = name;
     this.changeSelectedToName(name);
     this.changeDirectoryLength(name);
   }
@@ -534,7 +545,13 @@ export default class ListTo extends Vue {
 
   @Watch("selectedToName")
   watchSelectedToName() {
-    this.changeSelectedToName(this.selectedToName);
+    this.selectedToNameValue = this.selectedToName;
+    this.changeDirectoryLength(this.selectedToName);
+  }
+
+  @Watch("selectedToNameValue")
+  watchSelectedToNameValue() {
+    this.changeSelectedToName(this.selectedToNameValue);
     this.changeDirectoryLength(this.selectedToName);
   }
   get scrollerBgMode() {

@@ -5,6 +5,15 @@
       color="var(--color-purple)"
       dark
       rounded
+      @click="RestoreMoveFile"
+    >
+      되돌리기
+    </v-btn>
+    <v-btn
+      class="mr-5"
+      color="var(--color-purple)"
+      dark
+      rounded
       @click="moveFile"
     >
       정리
@@ -31,7 +40,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import fs from "fs";
 import { mapState, mapMutations } from "vuex";
-
+import { tagToTypeList } from "../api/tagToType";
 import { BUS } from "./EventBus.js";
 import { file } from "googleapis/build/src/apis/file";
 import Swal from "sweetalert2";
@@ -84,9 +93,11 @@ interface File {
     "changeMoveHistory",
     "changeFileSortList",
     "changeFileList",
+    "changeRestoreMoveList",
   ]),
 })
 export default class BtnMoveFile extends Vue {
+  restoreMoveList!: RestoreMoveListUnit[];
   fileList!: object;
   dialog: boolean = false;
   now: Date = new Date();
@@ -105,94 +116,9 @@ export default class BtnMoveFile extends Vue {
     "#This month": new Date(this.now.getFullYear(), this.now.getMonth()),
     "#Every new file": new Date(0),
   };
-  tagToType: object = {
-    "#Document": [
-      ".ppt",
-      ".pptx",
-      ".doc",
-      ".docx",
-      ".xls",
-      ".xlsx",
-      ".pdf",
-      ".ai",
-      ".pad",
-      ".hwp",
-      ".txt",
-      ".md",
-      ".hwpx",
-      ".hwt",
-      ".hwtx",
-      ".frm",
-      ".odt",
-      ".hna",
-      ".kwp",
-      ".hwd",
-      ".jbw",
-      ".wps",
-      ".xml",
-      ".hml",
-      ".rtf",
-      ".dbf",
-      ".gul",
-      ".html",
-      ".htm",
-      ".asp",
-      ".php",
-      ".2b",
-    ],
-    "#Image": [
-      ".jpg",
-      ".jpeg",
-      ".jpe",
-      ".gif",
-      ".png",
-      ".bmp",
-      ".rle",
-      ".dib",
-      ".psd",
-      ".pdd",
-      ".raw",
-      ".dcm",
-      ".dc3",
-      ".dic",
-      ".eps",
-      ".psb",
-      ".pct",
-      ".pict",
-      ".pxr",
-      ".pbm",
-      ".pgm",
-      ".pnm",
-      ".pfm",
-      ".pam",
-      ".tiff",
-      ".tif",
-      ".cr2",
-      ".srw",
-      ".nrw",
-    ],
-    "#Video": [
-      ".avi",
-      ".mpg",
-      ".mpeg",
-      ".mpe",
-      ".wmv",
-      ".asf",
-      ".asx",
-      ".flv",
-      ".rm",
-      ".mov",
-      ".dat",
-      ".mkv",
-      ".flv",
-      ".mov",
-      ".mp4",
-    ],
-    "#Audio": [".wav", ".wma", ".mp3"],
-    "#Compressed": [".zip", ".apk", ".rar", ".7z", ".tar"],
-  };
+  tagToType: object = tagToTypeList;
   fromDir!: string;
-  toLibraryList!: ToLibrary[];
+  toLibraryList!: ToLibrary2[];
   selectedToName!: string;
   fileSortList!: SortList;
   duplicatedList!: any[][];
@@ -470,6 +396,17 @@ export default class BtnMoveFile extends Vue {
 
       BUS.$emit("bus:refreshfile");
     }
+  }
+  RestoreMoveFile() {
+    for (let index = 0; index < this.restoreMoveList.length; index++) {
+      const element = this.restoreMoveList[index];
+      if (element["type"] == "move") {
+        console.log(123);
+      } else if (element["type"] == "copy") {
+        console.log(123);
+      }
+    }
+    console.log(1);
   }
 }
 </script>
