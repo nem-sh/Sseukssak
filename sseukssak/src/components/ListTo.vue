@@ -15,7 +15,7 @@
           <v-col cols="7" align="center" justify="center" class="mt-5">
             <v-select
               :items="toLibraryNameList"
-              v-model="selectedToName"
+              v-model="selectedToNameValue"
               label="Select rule"
               dense
             ></v-select>
@@ -160,6 +160,7 @@ import ModalCheckDirectoryTags from "@/components/ModalCheckDirectoryTags.vue";
 
 import { shell } from "electron";
 
+const shellContextMenu = require("shell-context-menu").remote;
 import { BUS } from "./EventBus.js";
 
 // const { shell } = require("electron").remote;
@@ -181,7 +182,12 @@ interface ToLibraryDirectory {
     // ModalModifyToLibraryDirectory,
     ModalCheckDirectoryTags,
   },
-  computed: mapState(["toLibraryList", "toLibraryNameList", "fromDir"]),
+  computed: mapState([
+    "toLibraryList",
+    "toLibraryNameList",
+    "fromDir",
+    "selectedToName",
+  ]),
   methods: mapMutations([
     "changeToLibraryList",
     "changeSelectedToName",
@@ -189,6 +195,8 @@ interface ToLibraryDirectory {
   ]),
 })
 export default class ListTo extends Vue {
+  selectedToName!: string;
+  selectedToNameValue: string = "";
   openShell(path: string) {
     let newPath = path;
     if (path.includes("%from%")) {
@@ -280,7 +288,9 @@ export default class ListTo extends Vue {
       }
     }
   }
+
   created() {
+    this.selectedToNameValue = this.selectedToName;
     const mySettings = window.localStorage.getItem("selectedFromData"); // 로컬스토리지에서 해당 key 이름으로 되어있는 value 값 불러오기
     let mySettingObj: ToLibrary[] = [
       {
@@ -435,7 +445,7 @@ export default class ListTo extends Vue {
     // );
     // this.changeToLibraryList(tempToLibrary);
   }
-  selectedToName: string = "";
+
   toLibraryList!: ToLibrary[];
   toLibraryNameList!: string[];
   changeToLibraryList!: (newList: ToLibrary[]) => void;
@@ -466,14 +476,19 @@ export default class ListTo extends Vue {
   }
 
   changeSN(name) {
-    this.selectedToName = name;
     this.changeSelectedToName(name);
     this.changeDirectoryLength(name);
   }
 
   @Watch("selectedToName")
   watchSelectedToName() {
-    this.changeSelectedToName(this.selectedToName);
+    this.selectedToNameValue = this.selectedToName;
+    this.changeDirectoryLength(this.selectedToName);
+  }
+
+  @Watch("selectedToNameValue")
+  watchSelectedToNameValue() {
+    this.changeSelectedToName(this.selectedToNameValue);
     this.changeDirectoryLength(this.selectedToName);
   }
 }

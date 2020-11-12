@@ -1,5 +1,6 @@
 <template>
   <v-app id="app" class="app-container">
+    <!-- <Quick /> -->
     <div class="window-operations-container">
       <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
       <div class="operations">
@@ -61,6 +62,8 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import Home from "@/views/Home.vue";
+
+// import Quick from "@/views/Quick.vue";
 import "./components/styles/main.scss";
 import BtnLoginGoogle from "@/components/googleDrive/BtnLoginGoogle.vue";
 
@@ -70,6 +73,7 @@ const { ipcRenderer, shell } = window.require("electron");
   components: {
     Home,
     BtnLoginGoogle,
+    // Quick,
   },
   data() {
     return {

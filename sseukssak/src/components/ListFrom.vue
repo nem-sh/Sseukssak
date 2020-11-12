@@ -714,9 +714,7 @@ export default class ListFrom extends Vue {
     this.getFrom(this.fromDir);
   }
   async getFrom(dir: string) {
-    console.log(12);
     const fileList: string[] = fs.readdirSync(dir);
-    console.log(3);
     const fileSortList: SortList = { directories: [], files: [] };
     fileList.forEach((name: string) => {
       const fileSplit = name.split(".");

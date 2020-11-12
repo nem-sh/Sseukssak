@@ -1,77 +1,14 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-
+import { DirState, ToLibrary, ToLibraryDirectory, SortList, FileInfo, RestoreMoveListUnit } from "../api/interface";
 import { google } from 'googleapis';
 
 Vue.use(Vuex);
 
-interface DirState {
-  fromDir: string;
-  fileList: string[];
-  fileSortList: SortList;
-  toLibraryList: ToLibrary[];
-  toLibraryNameList: string[];
-  selectedToName: string;
-  logBackCheck: boolean;
-  duplicatedList: [][];
-  dropToDir: string;
-  modifyDirectroy: ToLibraryDirectory;
-  renameHistory: any[][];
-
-  moveHistory: any[][];
-  renameFileList: FileInfo[];
-  beforeItems: FileInfo[];
-  afterItems: FileInfo[];
-  filterFront: string;
-  filterMiddle: string;
-  filterBack: string;
-  dupCheck: string[];
-  frontName: string;
-  middleName: string;
-  backName: string;
-
-  // Google Auth
-  tokenPath: string;
-  oAuth2Client: any;
-}
-interface ToLibrary {
-  name: string;
-  directories: ToLibraryDirectory[];
-}
-interface ToLibraryDirectory {
-  path: string;
-  typeTags: string[];
-  dateTags: string[];
-  titleTags: string[];
-}
-interface SortList {
-  directories: Directory[];
-  files: File[];
-}
-interface File {
-  fileType: string;
-  name: string;
-  birthTime: number;
-  updatedTime: number;
-  icon: string;
-}
-interface Directory {
-  name: string;
-  birthTime: number;
-  updatedTime: number;
-}
-
-interface FileInfo {
-  name: string;
-  path: string;
-  ctime: Date;
-  mtime: Date;
-  type: string;
-  dir: string;
-}
 
 export default new Vuex.Store({
   state: {
+    restoreMoveList: [],
     dropToDir: '',
     fromDir: '',
     fileList: [],
@@ -165,12 +102,12 @@ export default new Vuex.Store({
       });
     },
     sortBeforeItems(state: DirState) {
-      state.beforeItems.sort(function(a, b) {
+      state.beforeItems.sort(function (a, b) {
         return a.mtime > b.mtime ? 1 : -1;
       });
     },
     sortRenameFileList(state: DirState) {
-      state.renameFileList.sort(function(a, b) {
+      state.renameFileList.sort(function (a, b) {
         return a.mtime > b.mtime ? 1 : -1;
       });
       state.renameFileList.forEach((item) => {
@@ -208,6 +145,9 @@ export default new Vuex.Store({
     },
     changeBackName(state: DirState, newName: string) {
       state.backName = newName;
+    },
+    changeRestoreMoveList(state: DirState, restoreMoveList: RestoreMoveListUnit[]) {
+      state.restoreMoveList = restoreMoveList;
     }
   },
   actions: {},

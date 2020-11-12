@@ -5,6 +5,15 @@
       color="var(--color-purple)"
       dark
       rounded
+      @click="RestoreMoveFile"
+    >
+      되돌리기
+    </v-btn>
+    <v-btn
+      class="mr-5"
+      color="var(--color-purple)"
+      dark
+      rounded
       @click="moveFile"
     >
       정리
@@ -58,34 +67,19 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import fs from "fs";
 import { mapState, mapMutations } from "vuex";
-
+import { tagToTypeList } from "../api/tagToType";
 import { BUS } from "./EventBus.js";
-import { file } from "googleapis/build/src/apis/file";
+import {
+  ToLibrary2,
+  ToLibraryDirectory2,
+  SortList,
+  RestoreMoveListUnit,
+} from "../api/interface";
+// import { file } from "googleapis/build/src/apis/file";
 
-const { shell } = require("electron").remote;
-const { app } = require("electron").remote;
-interface ToLibrary {
-  name: string;
-  directories: ToLibraryDirectory[];
-}
-interface ToLibraryDirectory {
-  path: string;
-  typeTags: string[];
-  dateTags: string[];
-  titleTags: string[];
-  types: string[];
-}
-interface SortList {
-  directories: object[];
-  files: File[];
-}
-interface File {
-  fileType: string;
-  name: string;
-  birthTime: number;
-  updatedTime: number;
-  icon: string;
-}
+// const { shell } = require("electron").remote;
+// const { app } = require("electron").remote;
+// const shellContextMenu = require("shell-context-menu").remote;
 
 @Component({
   computed: mapState([
@@ -95,14 +89,17 @@ interface File {
     "selectedToName",
     "toLibraryList",
     "moveHistory",
+    "restoreMoveList",
   ]),
   methods: mapMutations([
     "changeMoveHistory",
     "changeFileSortList",
     "changeFileList",
+    "changeRestoreMoveList",
   ]),
 })
 export default class BtnMoveFile extends Vue {
+  restoreMoveList!: RestoreMoveListUnit[];
   fileList!: object;
   dialog: boolean = false;
   now: Date = new Date();
@@ -121,100 +118,18 @@ export default class BtnMoveFile extends Vue {
     "#This month": new Date(this.now.getFullYear(), this.now.getMonth()),
     "#Every new file": new Date(0),
   };
-  tagToType: object = {
-    "#Document": [
-      ".ppt",
-      ".pptx",
-      ".doc",
-      ".docx",
-      ".xls",
-      ".xlsx",
-      ".pdf",
-      ".ai",
-      ".pad",
-      ".hwp",
-      ".txt",
-      ".md",
-      ".hwpx",
-      ".hwt",
-      ".hwtx",
-      ".frm",
-      ".odt",
-      ".hna",
-      ".kwp",
-      ".hwd",
-      ".jbw",
-      ".wps",
-      ".xml",
-      ".hml",
-      ".rtf",
-      ".dbf",
-      ".gul",
-      ".html",
-      ".htm",
-      ".asp",
-      ".php",
-      ".2b",
-    ],
-    "#Image": [
-      ".jpg",
-      ".jpeg",
-      ".jpe",
-      ".gif",
-      ".png",
-      ".bmp",
-      ".rle",
-      ".dib",
-      ".psd",
-      ".pdd",
-      ".raw",
-      ".dcm",
-      ".dc3",
-      ".dic",
-      ".eps",
-      ".psb",
-      ".pct",
-      ".pict",
-      ".pxr",
-      ".pbm",
-      ".pgm",
-      ".pnm",
-      ".pfm",
-      ".pam",
-      ".tiff",
-      ".tif",
-      ".cr2",
-      ".srw",
-      ".nrw",
-    ],
-    "#Video": [
-      ".avi",
-      ".mpg",
-      ".mpeg",
-      ".mpe",
-      ".wmv",
-      ".asf",
-      ".asx",
-      ".flv",
-      ".rm",
-      ".mov",
-      ".dat",
-      ".mkv",
-      ".flv",
-      ".mov",
-      ".mp4",
-    ],
-    "#Audio": [".wav", ".wma", ".mp3"],
-    "#Compressed": [".zip", ".apk", ".rar", ".7z", ".tar"],
-  };
+  tagToType: object = tagToTypeList;
   fromDir!: string;
-  toLibraryList!: ToLibrary[];
+  toLibraryList!: ToLibrary2[];
   selectedToName!: string;
   fileSortList!: SortList;
   duplicatedList!: any[][];
+
+  changeRestoreMoveList!: (newList: RestoreMoveListUnit[]) => void;
   changeFileList!: (newList: string[]) => void;
   changeFileSortList!: (newList: SortList) => void;
   changeMoveHistory!: (newList: any[]) => void;
+
   compareTitle(file: string, titleTags: string[]) {
     if (titleTags.length == 0) {
       return true;
@@ -265,9 +180,9 @@ export default class BtnMoveFile extends Vue {
     BUS.$emit("bus:refreshfile");
     BUS.$emit("bus:dupcheck");
     BUS.$emit("bus:refreshfile");
-
-    let selectedFrom: ToLibraryDirectory[] = [];
-
+    console.log(123);
+    let selectedFrom: ToLibraryDirectory2[] = [];
+    const tempRestoreMoveList: RestoreMoveListUnit[] = [];
     for (let index = 0; index < this.toLibraryList.length; index++) {
       if (this.toLibraryList[index].name == this.selectedToName) {
         selectedFrom = this.toLibraryList[index].directories;
@@ -278,24 +193,19 @@ export default class BtnMoveFile extends Vue {
       return;
     }
 
-    const directories: ToLibraryDirectory[] = JSON.parse(
+    const directories: ToLibraryDirectory2[] = JSON.parse(
       JSON.stringify(selectedFrom)
     );
 
-    console.log(directories, selectedFrom);
-
     for (let index = 0; index < directories.length; index++) {
       const element = directories[index];
-      directories[index].path = directories[index].path.replace(
-        "%from%",
-        this.fromDir
-      );
+      element.path = directories[index].path.replace("%from%", this.fromDir);
 
-      if (!fs.existsSync(directories[index].path)) {
-        fs.mkdirSync(directories[index].path);
+      if (!fs.existsSync(element.path)) {
+        fs.mkdirSync(element.path);
       }
     }
-    directories.forEach((directory: ToLibraryDirectory) => {
+    directories.forEach((directory: ToLibraryDirectory2) => {
       directory.types = [];
       directory.typeTags.forEach((typeTag) => {
         if (typeTag[0] == "#") {
@@ -305,11 +215,9 @@ export default class BtnMoveFile extends Vue {
         }
       });
     });
-    console.log(directories, selectedFrom);
     const fileSortList = this.fileSortList;
 
     for (const idx of fileSortList.files) {
-      console.log(fileSortList, 7);
       const a: string[][] = [];
       if (!fs.existsSync(this.fromDir + "\\" + idx.name)) {
         this.changeMoveHistory([
@@ -322,7 +230,7 @@ export default class BtnMoveFile extends Vue {
         ]);
         continue;
       }
-      directories.forEach((directory: ToLibraryDirectory) => {
+      directories.forEach((directory: ToLibraryDirectory2) => {
         directory.types.forEach((type) => {
           if (this.compareDate(new Date(idx.birthTime), directory.dateTags)) {
             if (this.compareTitle(idx.name, directory.titleTags)) {
@@ -347,36 +255,64 @@ export default class BtnMoveFile extends Vue {
           }
         });
       });
-      console.log(a, 1);
       let step;
       if (a.length > 0) {
         for (step = 0; step < a.length - 1; step++) {
-          // Runs 5 times, with values of step 0 through 4.
+          try {
+            fs.copyFileSync(a[step][0], a[step][1]);
+            this.changeMoveHistory([
+              idx.name,
+              1,
+              a[step][0],
+              a[step][1],
+              new Date().getTime(),
+              1,
+            ]);
+            tempRestoreMoveList.push({
+              type: "copy",
+              from: a[step][0],
+              to: a[step][1],
+            });
+          } catch (e) {
+            console.log("error!");
+          }
+        }
+        try {
+          fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
           this.changeMoveHistory([
             idx.name,
             1,
-            a[step][0],
-            a[step][1],
+            a[a.length - 1][0],
+            a[a.length - 1][1],
             new Date().getTime(),
             1,
           ]);
-          fs.copyFileSync(a[step][0], a[step][1]);
+          tempRestoreMoveList.push({
+            type: "move",
+            from: a[step][0],
+            to: a[step][1],
+          });
+        } catch (error) {
+          console.log("error!");
         }
-        this.changeMoveHistory([
-          idx.name,
-          1,
-          a[a.length - 1][0],
-          a[a.length - 1][1],
-          new Date().getTime(),
-          1,
-        ]);
-        fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
       }
     }
+    this.changeRestoreMoveList(tempRestoreMoveList);
     // this.dialog = false;
     alert("정리가 완료되었습니다.");
 
     BUS.$emit("bus:refreshfile");
+  }
+  RestoreMoveFile() {
+    for (let index = 0; index < this.restoreMoveList.length; index++) {
+      const element = this.restoreMoveList[index];
+      if (element["type"] == "move") {
+        console.log(123);
+      } else if (element["type"] == "copy") {
+        console.log(123);
+      }
+    }
+    console.log(1);
   }
 }
 </script>
