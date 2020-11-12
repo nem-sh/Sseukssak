@@ -25,16 +25,12 @@
         <v-divider class="pb-3"></v-divider>
       </div>
     </div>
-    <div
-      v-if="renameFileList.length <= 0"
-      align="center"
-      class="position-c"
-    >
+    <div v-if="renameFileList.length <= 0" align="center" class="position-c">
       <lottie-player
         src="https://assets4.lottiefiles.com/packages/lf20_GlZGOi.json"
         background="transparent"
         speed="1"
-        style="width: 320px; height: 320px;"
+        style="width: 320px; height: 320px"
         loop
         autoplay
       ></lottie-player>
@@ -42,7 +38,7 @@
     </div>
     <div v-if="renameFileList.length <= 0" class="mb-15"></div>
     <v-virtual-scroll
-      class="file-scroller"
+      :class="scrollerBgMode"
       :bench="benched"
       :items="renameFileList"
       height="360"
@@ -146,6 +142,10 @@ export default class Rename extends Vue {
   changeAllSelect!: () => void;
   changeRenameDir!: (newDir: string) => void;
 
+  get scrollerBgMode() {
+    return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
+  }
+
   get partTitleMode() {
     return this.$vuetify.theme.dark ? "part-title-d" : "part-title";
   }
@@ -225,7 +225,7 @@ export default class Rename extends Vue {
         showConfirmButton: false,
         timer: 1000,
       });
-      return
+      return;
     }
   }
   changeSelect() {
@@ -254,9 +254,9 @@ export default class Rename extends Vue {
   position: relative;
 }
 .position-c {
-  position:absolute; 
-  top:50%; 
-  left:50%; 
+  position: absolute;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
 }
 </style>

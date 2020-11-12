@@ -1,23 +1,30 @@
 <template>
   <v-container class="mini-mode position-p">
-    <!-- <div class="position-c d-flex flex-column align-center"> -->
     <div class="position-c d-flex">
-      <!-- <lottie-player src="https://assets5.lottiefiles.com/datafiles/EZvv2E9wJ8wrf2w/data.json"  background="transparent"  speed="1"  style="width: 300px; height: 130px;"  loop  autoplay></lottie-player> -->
-      <!-- <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_g1YJeb.json"  background="transparent"  speed="1"  style="width: 300px; height: 130px;"  loop  autoplay></lottie-player> -->
-      <!-- <lottie-player src="https://assets1.lottiefiles.com/datafiles/hbH6QPrq1tYdkZw6SEEfWXLXjNCL6HZYtD4GfNfs/FileTransfer/FileTransfer.json"  background="transparent"  speed="1"  style="width: 300px; height: 130px;"  loop  autoplay></lottie-player> -->
       <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_h59xofz0.json"  background="transparent"  speed="1"  style="width: 250px; height: 200px;"  loop  autoplay></lottie-player>
       <div class="my-auto">
-        <!-- <button class="play-btn" @click="moveFile"></button> -->
-        <v-btn
-          class="play-btn"
-          color="var(--color-purple)"
-          dark
-          rounded
-          @click="moveFile"
-        >
-          정리
-        </v-btn>
+        <BtnMoveFile/>
       </div>
+      <v-dialog
+        v-model="dialog"
+        persistent
+        max-width="250px"
+        max-height="120px"
+      >
+      <v-card align="center">
+        <v-card-text>
+          <lottie-player
+            class="pt-3"
+            src="https://assets1.lottiefiles.com/datafiles/bEYvzB8QfV3EM9a/data.json"
+            background="transparent"
+            speed="1"
+            style="width: 200px; height: 80px;"
+            loop
+            autoplay
+          ></lottie-player>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     </div>
   </v-container>
 </template>
@@ -28,15 +35,26 @@ import Component from "vue-class-component";
 
 import { BUS } from "../components/EventBus.js";
 
+import BtnMoveFile from "@/components/BtnMoveFile.vue";
+
 @Component({
-  components: {},
+  components: {
+    BtnMoveFile
+  },
 })
 
 export default class MiniMode extends Vue {
-  moveFile() {
-    BUS.$emit("bus:moveFile");
-  }
+  dialog: boolean = false;
 
+  mounted() {
+    BUS.$on("bus:miniLoading", () => {
+      this.dialog = true;
+    });
+
+    BUS.$on("bus:miniLoadingEnd", () => {
+      this.dialog = false;
+    });
+  }
 }
 </script>
 <style>

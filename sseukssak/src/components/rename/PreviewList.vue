@@ -14,10 +14,10 @@
           <p class="mt-2">파일/폴더를 선택하세요 :(</p>
         </div>
         <v-virtual-scroll
-          class="file-scroller"
+          :class="scrollerBgMode"
           :bench="benched"
           :items="beforeItems"
-          height="140"
+          height="130"
           item-height="40"
         >
           <template v-slot:default="{ item }">
@@ -43,10 +43,10 @@
           <p class="mt-2">파일/폴더를 선택하세요 :(</p>
         </div>
         <v-virtual-scroll
-          class="file-scroller"
+          :class="scrollerBgMode"
           :bench="benched"
           :items="afterItems"
-          height="140"
+          height="130"
           item-height="40"
         >
           <template v-slot:default="{ item }">
@@ -146,6 +146,10 @@ export default class Rename extends Vue {
   changeLogBackCheck!: (newCheck: boolean) => void;
   initailizeRename!: () => void;
   changeRenameDir!: (newDir: string) => void;
+
+  get scrollerBgMode() {
+    return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
+  }
 
   get partTitleMode() {
     return this.$vuetify.theme.dark ? "part-title-d" : "part-title";
