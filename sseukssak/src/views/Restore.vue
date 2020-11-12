@@ -1,6 +1,13 @@
 <template>
   <v-container>
-    <v-card-title>History</v-card-title>
+    <div class="mt-4">
+      <img
+        src="@/assets/titleImg/HistoryImg.png"
+        alt=""
+        height="40"
+        class="mt-4"
+      />
+    </div>
     <hr />
     <div
       style="overflow-x:hidden; overflow-y:scroll; width:100%; height:400px;"
@@ -8,6 +15,7 @@
       <v-list v-for="(timechunk, time) in timesortedList" :key="time">
         <v-expansion-panels color="grey lighten-4" style="chunk">
           <br />
+          <!-- 시간대별로 묶어놓았으며, 그 기준에 따른 시간 표시 -->
           <span>{{ convertTime(time) }}</span>
           <br />
           <br />
@@ -15,6 +23,7 @@
             v-for="chunk in timechunk"
             :key="chunk + Math.random()"
           >
+            <!-- 성공 실패에 따른 카드 색상 변경 -->
             <v-expansion-panel-header
               :class="{ ss: chunk.success == 1, ff: chunk.success == 0 }"
             >
@@ -34,6 +43,8 @@
                 {{ chunk.success == -1 ? "복구 작업 성공" : "" }}
               </span>
               <br />
+              <!-- 텍스트 길이가 길어지면 ...으로 표현하도록 하였음 -->
+              <!-- 해당 속성은 text-truncate이며 필요없다면 삭제 -->
               <span
                 class="d-inline-block text-truncate"
                 style="max-width: 700px;"
