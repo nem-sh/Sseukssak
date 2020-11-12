@@ -23,7 +23,7 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="red darken-1" text @click="dialog = false"> 취소 </v-btn>
+        <v-btn color="red darken-1" text @click="dialog=false"> 취소 </v-btn>
         <v-btn color="green darken-1" text @click="makeGoogleFolder">
           추가
         </v-btn>
@@ -54,28 +54,35 @@ export default class BtnCreateGoogleFolder extends Vue {
     console.log(this.oAuth2Client);
     const drive = google.drive({ version: "v3", auth: this.oAuth2Client });
     const fileMetadata = {
-      name: this.folderName,
-      mimeType: "application/vnd.google-apps.folder",
-    };
-    drive.files.create(
-      {
-        requestBody: fileMetadata,
-        fields: "id",
-      },
-      (err, file) => {
-        if (err) {
-          Swal.fire({
-            icon: "error",
-            title: "폴더 생성에 실패했습니다.",
-          });
-        } else {
-          Swal.fire({
-            icon: "success",
-            title: "폴더를 생성했습니다.",
-          });
-        }
+      'name': this.folderName,
+      'mimeType': 'application/vnd.google-apps.folder'
+    }
+    drive.files.create({
+      requestBody : fileMetadata,
+      fields: 'id'
+    }, (err, file) => {
+      if (err){
+        Swal.fire({
+          icon:'error',
+          title:'폴더 생성에 실패했습니다.'
+        })
+      }else{
+        Swal.fire({
+          icon:'success',
+          title:'폴더를 생성했습니다.'
+        })
+        console.log(file)
+        this.$emit('create-google-folder',this.folderName+'\\'+file.data.id)
       }
-    );
+      this.dialog=false
+      }
+    )
+    
+  }
+
+
+  closeDialog3() {
+    this.$emit('close-dialog3')
   }
 }
 </script>
