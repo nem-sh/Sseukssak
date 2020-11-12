@@ -55,6 +55,7 @@ import { mapState, mapMutations } from "vuex";
 import { BUS } from "./EventBus.js";
 import { file } from "googleapis/build/src/apis/file";
 import Swal from "sweetalert2";
+import mime from 'mime-types'
 
 const { shell } = require("electron").remote;
 const { app } = require("electron").remote;
@@ -63,6 +64,7 @@ import { remote } from "electron";
 const notifier = remote.require("node-notifier");
 declare const __static: string;
 import path from "path";
+import Axios from "axios";
 
 interface ToLibrary {
   name: string;
@@ -96,6 +98,7 @@ interface File {
     "toLibraryList",
     "moveHistory",
     "mini",
+    "oAuth2Client",
   ]),
   methods: mapMutations([
     "changeMoveHistory",
@@ -214,6 +217,7 @@ export default class BtnMoveFile extends Vue {
   fileSortList!: SortList;
   duplicatedList!: any[][];
   mini!: boolean;
+  oAuth2Client!: any
   changeFileList!: (newList: string[]) => void;
   changeFileSortList!: (newList: SortList) => void;
   changeMoveHistory!: (newList: any[]) => void;
@@ -261,6 +265,46 @@ export default class BtnMoveFile extends Vue {
     }
     return true;
   }
+
+  moveToGoogleDrive(filePath, folderId, fileName){
+      const accessToken = this.oAuth2Client.credentials.access_token
+      const UPLOAD_URL = "https://www.googleapis.com/upload/drive/v3/files?uploadType=media"
+      const PATCH_URL = "https://www.googleapis.com/drive/v3/files/"
+
+      const contentType = mime.lookup(filePath)
+      const file = fs.readFileSync(filePath)
+
+      const headers = {
+        Authorization: 'Bearer '+accessToken,
+        'Content-Type':contentType
+      }
+
+      Axios.post(UPLOAD_URL,file,{headers:headers})
+        .then(res=>{
+          const data={
+            name:fileName
+          }
+          const patchHeaders = {
+            Authorization: 'Bearer '+accessToken,
+            'Content-Type':'application/json'
+          }
+          
+          Axios.patch(PATCH_URL+`${res.data.id}?uploadType=multipart&addParents=${folderId}`,data,{headers:patchHeaders})
+            .then(() => Swal.fire({
+              icon:'success',
+              title:'구글 드라이브 업로드에 성공했습니다.'
+            }))
+            .catch(err=>Swal.fire({
+              icon:'error',
+              title:'구글 드라이브 업로드에 실패했습니다.'
+            }))
+        })
+        .catch(err=>Swal.fire({
+          icon:'error',
+          title:'구글 드라이브 업로드에 실패했습니다.'
+        })
+      )
+    }
 
   moveFile() {
     // console.log(this.toLibraryList);
@@ -411,6 +455,7 @@ export default class BtnMoveFile extends Vue {
             new Date().getTime(),
             1,
           ]);
+          //555555555555
           fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
         }
       }
