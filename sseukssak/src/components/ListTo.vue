@@ -48,7 +48,7 @@
           :items="toLibrary.directories"
           height="370"
           item-height="84"
-          class="file-scroller"
+          :class="scrollerBgMode"
         >
           <template v-slot:default="{ item }">
             <v-list-item
@@ -80,10 +80,10 @@
                 <v-list-item-title>
                   <strong>{{ getDirectoryName(item.path) }}</strong>
                 </v-list-item-title>
-                <!-- <div class="item-path">
+                <div class="item-path">
                   {{ item.path }}
-                </div> -->
-                <v-list-item-subtitle color="#7288da">
+                </div>
+                <!-- <v-list-item-subtitle color="#7288da" class="item-path">
                   <span
                     v-for="tag in getTagLists(
                       item.typeTags,
@@ -94,23 +94,37 @@
                     class="mr-2"
                     >{{ tag }}
                   </span>
-                </v-list-item-subtitle>
+                  <ListFromBreadcrumbs
+                    :fromDir="item.path"
+                    :className="'bread-to'"
+                  />
+                </v-list-item-subtitle> -->
               </v-list-item-content>
               <v-list-item-action>
                 <v-row align="center" justify="center" class="pa-0">
                   <v-col cols="6" class="pa-0">
-                    <v-menu top :offset-y="offset" :value="shown" :close-on-content-click="false">
+                    <v-menu
+                      top
+                      :offset-y="offset"
+                      :value="shown"
+                      :close-on-content-click="false"
+                    >
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn icon v-bind="attrs" v-on="on" @click="shown=true">
+                        <v-btn
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                          @click="shown = true"
+                        >
                           <i class="fas fa-ellipsis-v-alt"></i
                         ></v-btn>
                       </template>
                       <v-list>
-                        <!-- 수정하기-->
                         <v-list-item link>
                           <v-list-item-title
                             ><ModalModifyToLibraryDirectory
-                              :propDirectory="item" @closeMenu="closeMenu"
+                              :propDirectory="item"
+                              @closeMenu="closeMenu"
                           /></v-list-item-title>
                         </v-list-item>
                         <v-list-item
@@ -151,11 +165,6 @@
         나만의 정리 그룹을 만들어 사용해보세요!
       </div>
     </div>
-    <!-- <div v-if="selectedToName" class="to-part-third">
-      <div align="right">
-        <ModalAddToLibraryDirectory v-if="selectedToName" />
-      </div>
-    </div> -->
   </v-container>
 </template>
 
@@ -168,6 +177,7 @@ import Swal from "sweetalert2";
 import ModalCreateToLibrary from "@/components/ModalCreateToLibrary.vue";
 import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.vue";
 import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
+import ListFromBreadcrumbs from "@/components/listFrom/ListFromBreadcrumbs.vue";
 
 import { shell } from "electron";
 
@@ -190,6 +200,7 @@ interface ToLibraryDirectory {
     ModalCreateToLibrary,
     ModalAddToLibraryDirectory,
     ModalModifyToLibraryDirectory,
+    ListFromBreadcrumbs,
   },
   computed: mapState(["toLibraryList", "toLibraryNameList", "fromDir"]),
   methods: mapMutations([
@@ -199,10 +210,10 @@ interface ToLibraryDirectory {
   ]),
 })
 export default class ListTo extends Vue {
-  shown: boolean = false
+  shown: boolean = false;
 
   closeMenu() {
-    this.shown = false
+    this.shown = false;
   }
   openShell(path: string) {
     let newPath = path;
@@ -526,6 +537,9 @@ export default class ListTo extends Vue {
     this.changeSelectedToName(this.selectedToName);
     this.changeDirectoryLength(this.selectedToName);
   }
+  get scrollerBgMode() {
+    return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
+  }
 }
 </script>
 
@@ -551,7 +565,7 @@ export default class ListTo extends Vue {
 }
 
 .item-path {
-  font-size: 12px;
+  font-size: 12px !important;
   color: #7a8186;
 }
 

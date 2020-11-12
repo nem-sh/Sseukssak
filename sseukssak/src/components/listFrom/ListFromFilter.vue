@@ -2,7 +2,7 @@
   <v-menu offset-y>
     <template v-slot:activator="{ attrs, on }">
       <v-btn
-        class="ma-2"
+        class="mx-2 my-0"
         outlined
         rounded
         small

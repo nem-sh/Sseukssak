@@ -1,7 +1,7 @@
 <template>
   <div style="display: inline">
     <v-btn
-      class="mr-5 play-btn"
+      class="mr-5 play-btn mt-3"
       color="var(--color-purple)"
       dark
       rounded
@@ -12,14 +12,34 @@
     <v-dialog v-if="!mini" v-model="dialog" persistent max-width="400px">
       <v-card align="center">
         <v-card-text>
-          <lottie-player src="https://assets6.lottiefiles.com/packages/lf20_AvXSwT.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+          <lottie-player
+            src="https://assets6.lottiefiles.com/packages/lf20_AvXSwT.json"
+            background="transparent"
+            speed="1"
+            style="width: 300px; height: 300px"
+            loop
+            autoplay
+          ></lottie-player>
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog v-else v-model="dialog" persistent max-width="250px" max-height="150px">
+    <v-dialog
+      v-else
+      v-model="dialog"
+      persistent
+      max-width="250px"
+      max-height="150px"
+    >
       <v-card align="center">
         <v-card-text>
-          <lottie-player src="https://assets1.lottiefiles.com/datafiles/bEYvzB8QfV3EM9a/data.json"  background="transparent"  speed="1"  style="width: 200px; height: 150px; padding: 0;"  loop  autoplay></lottie-player>
+          <lottie-player
+            src="https://assets1.lottiefiles.com/datafiles/bEYvzB8QfV3EM9a/data.json"
+            background="transparent"
+            speed="1"
+            style="width: 200px; height: 150px; padding: 0"
+            loop
+            autoplay
+          ></lottie-player>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -40,7 +60,7 @@ const { shell } = require("electron").remote;
 const { app } = require("electron").remote;
 // 알림창
 import { remote } from "electron";
-const notifier = remote.require('node-notifier');
+const notifier = remote.require("node-notifier");
 declare const __static: string;
 import path from "path";
 
@@ -75,7 +95,7 @@ interface File {
     "selectedToName",
     "toLibraryList",
     "moveHistory",
-    "mini"
+    "mini",
   ]),
   methods: mapMutations([
     "changeMoveHistory",
@@ -243,7 +263,6 @@ export default class BtnMoveFile extends Vue {
   }
 
   moveFile() {
-    
     // console.log(this.toLibraryList);
     // let timerInterval;
     // Swal.fire({
@@ -260,12 +279,6 @@ export default class BtnMoveFile extends Vue {
     //   },
     // });
 
-    BUS.$emit("bus:refreshfile");
-    BUS.$emit("bus:dupcheck");
-    BUS.$emit("bus:refreshfile");
-
-    let selectedFrom: ToLibraryDirectory[] = [];
-
     // 정리 그룹 선택 안했을 시
     if (this.selectedToName === "") {
       Swal.fire({
@@ -276,152 +289,157 @@ export default class BtnMoveFile extends Vue {
         timer: 1000,
       });
       return;
-    }
+    } else {
+      BUS.$emit("bus:refreshfile");
+      BUS.$emit("bus:dupcheck");
+      BUS.$emit("bus:refreshfile");
 
-    for (let index = 0; index < this.toLibraryList.length; index++) {
-      if (this.toLibraryList[index].name == this.selectedToName) {
-        selectedFrom = this.toLibraryList[index].directories;
-        break;
+      let selectedFrom: ToLibraryDirectory[] = [];
+
+      for (let index = 0; index < this.toLibraryList.length; index++) {
+        if (this.toLibraryList[index].name == this.selectedToName) {
+          selectedFrom = this.toLibraryList[index].directories;
+          break;
+        }
       }
-    }
-    if (selectedFrom == []) {
-      return;
-    }
+      if (selectedFrom == []) {
+        return;
+      }
 
-    this.dialog = true;
-    
-    const directories: ToLibraryDirectory[] = JSON.parse(
-      JSON.stringify(selectedFrom)
-    );
+      this.dialog = true;
 
-    for (let index = 0; index < directories.length; index++) {
-      const element = directories[index];
-      directories[index].path = directories[index].path.replace(
-        "%from%",
-        this.fromDir
+      const directories: ToLibraryDirectory[] = JSON.parse(
+        JSON.stringify(selectedFrom)
       );
 
-      if (!fs.existsSync(directories[index].path)) {
-        fs.mkdirSync(directories[index].path);
-      }
-    }
-    directories.forEach((directory: ToLibraryDirectory) => {
-      directory.types = [];
-      directory.typeTags.forEach((typeTag) => {
-        if (typeTag[0] == "#") {
-          directory.types = directory.types.concat(this.tagToType[typeTag]);
-        } else {
-          directory.types = directory.types.concat(typeTag);
-        }
-      });
-    });
-    const fileSortList = this.fileSortList;
+      for (let index = 0; index < directories.length; index++) {
+        const element = directories[index];
+        directories[index].path = directories[index].path.replace(
+          "%from%",
+          this.fromDir
+        );
 
-    for (const idx of fileSortList.files) {
-      // console.log(fileSortList, 7, idx.name);
-      const a: string[][] = [];
-      if (!fs.existsSync(this.fromDir + "\\" + idx.name)) {
-        this.changeMoveHistory([
-          idx.name,
-          1,
-          this.fromDir + "\\" + idx.name,
-          "파일이 존재하지 않습니다.",
-          new Date().getTime(),
-          1,
-        ]);
-        continue;
+        if (!fs.existsSync(directories[index].path)) {
+          fs.mkdirSync(directories[index].path);
+        }
       }
       directories.forEach((directory: ToLibraryDirectory) => {
-        if (this.compareDate(new Date(idx.birthTime), directory.dateTags)) {
-          if (this.compareTitle(idx.name, directory.titleTags)) {
-            console.log(idx.name);
-
-            let flag = false;
-            directory.types.forEach((type) => {
-              if (type == "." + idx.fileType || type == idx.fileType) {
-                flag = true;
-                return;
-              }
-            });
-            if (directory.types.length == 0) {
-              flag = true;
-            }
-            if (flag) {
-              if (fs.existsSync(directory.path + "\\" + idx.name)) {
-                Swal.fire({
-                  position: "center",
-                  icon: "warning",
-                  title: "중복된 이름의 파일이 존재하여 자동 리네임 되었습니다",
-                  showConfirmButton: false,
-                  timer: 1000,
-                });
-                a.push([
-                  this.fromDir + "\\" + idx.name,
-                  directory.path + "\\" + "[중복]" + idx.name,
-                ]);
-              } else {
-                a.push([
-                  this.fromDir + "\\" + idx.name,
-                  directory.path + "\\" + idx.name,
-                ]);
-              }
-            }
+        directory.types = [];
+        directory.typeTags.forEach((typeTag) => {
+          if (typeTag[0] == "#") {
+            directory.types = directory.types.concat(this.tagToType[typeTag]);
+          } else {
+            directory.types = directory.types.concat(typeTag);
           }
-        }
+        });
       });
-      // console.log(a, 1);
-      let step;
-      if (a.length > 0) {
-        for (step = 0; step < a.length - 1; step++) {
-          // Runs 5 times, with values of step 0 through 4.
+      const fileSortList = this.fileSortList;
+
+      for (const idx of fileSortList.files) {
+        // console.log(fileSortList, 7, idx.name);
+        const a: string[][] = [];
+        if (!fs.existsSync(this.fromDir + "\\" + idx.name)) {
           this.changeMoveHistory([
             idx.name,
             1,
-            a[step][0],
-            a[step][1],
+            this.fromDir + "\\" + idx.name,
+            "파일이 존재하지 않습니다.",
             new Date().getTime(),
             1,
           ]);
-          fs.copyFileSync(a[step][0], a[step][1]);
+          continue;
         }
-        this.changeMoveHistory([
-          idx.name,
-          1,
-          a[a.length - 1][0],
-          a[a.length - 1][1],
-          new Date().getTime(),
-          1,
-        ]);
-        fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
-      }
-    }
+        directories.forEach((directory: ToLibraryDirectory) => {
+          if (this.compareDate(new Date(idx.birthTime), directory.dateTags)) {
+            if (this.compareTitle(idx.name, directory.titleTags)) {
+              console.log(idx.name);
 
-    setTimeout(() => {
-      this.dialog = false;
-      notifier.notify(
-        {
-          title: '쓱싹 알림',
-          message: '정리가 완료되었습니다!',
+              let flag = false;
+              directory.types.forEach((type) => {
+                if (type == "." + idx.fileType || type == idx.fileType) {
+                  flag = true;
+                  return;
+                }
+              });
+              if (directory.types.length == 0) {
+                flag = true;
+              }
+              if (flag) {
+                if (fs.existsSync(directory.path + "\\" + idx.name)) {
+                  Swal.fire({
+                    position: "center",
+                    icon: "warning",
+                    title:
+                      "중복된 이름의 파일이 존재하여 자동 리네임 되었습니다",
+                    showConfirmButton: false,
+                    timer: 1000,
+                  });
+                  a.push([
+                    this.fromDir + "\\" + idx.name,
+                    directory.path + "\\" + "[중복]" + idx.name,
+                  ]);
+                } else {
+                  a.push([
+                    this.fromDir + "\\" + idx.name,
+                    directory.path + "\\" + idx.name,
+                  ]);
+                }
+              }
+            }
+          }
+        });
+        // console.log(a, 1);
+        let step;
+        if (a.length > 0) {
+          for (step = 0; step < a.length - 1; step++) {
+            // Runs 5 times, with values of step 0 through 4.
+            this.changeMoveHistory([
+              idx.name,
+              1,
+              a[step][0],
+              a[step][1],
+              new Date().getTime(),
+              1,
+            ]);
+            fs.copyFileSync(a[step][0], a[step][1]);
+          }
+          this.changeMoveHistory([
+            idx.name,
+            1,
+            a[a.length - 1][0],
+            a[a.length - 1][1],
+            new Date().getTime(),
+            1,
+          ]);
+          fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
+        }
+      }
+
+      setTimeout(() => {
+        this.dialog = false;
+        notifier.notify({
+          title: "쓱싹 알림",
+          message: "정리가 완료되었습니다!",
           icon: path.join(__static, "sweeping.png"),
           sound: true,
-        },
-      );
-    }, 2000);
-    // Swal.fire({
-    //   position: "center",
-    //   icon: "success",
-    //   title: "정리가 완료되었습니다.",
-    //   showConfirmButton: false,
-    //   timer: 3000,
-    // });
+        });
+      }, 5000);
+      // Swal.fire({
+      //   position: "center",
+      //   icon: "success",
+      //   title: "정리가 완료되었습니다.",
+      //   showConfirmButton: false,
+      //   timer: 3000,
+      // });
 
-    BUS.$emit("bus:refreshfile");
+      BUS.$emit("bus:refreshfile");
+    }
   }
 
   mounted() {
     BUS.$on("bus:moveFile", () => {
       this.moveFile();
-    })
+    });
   }
 }
 </script>

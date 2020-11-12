@@ -1,13 +1,19 @@
 <template>
   <v-container>
-    <br />
-    <br />
-    <br />
-    <!-- <input type="text" v-model="inputs" /> -->
-    <v-btn @click="resetHistory()">내역 초기화</v-btn>
-
-    <hr />
-    <div v-if="isLoading" style="overflow:scroll; height:400px;">
+    <div class="mt-4">
+      <img
+        src="@/assets/titleImg/HistoryImg.png"
+        alt=""
+        height="40"
+        class="mt-4"
+      />
+    </div>
+    <div
+      v-if="isLoading"
+      style="overflow: scroll; height: 480px"
+      :class="scrollerBgMode"
+      class="mt-4"
+    >
       <div v-if="historyList.length != 0">
         <v-list
           v-for="historychunk in historyList"
@@ -29,6 +35,9 @@
           </div>
         </v-list>
       </div>
+    </div>
+    <div align="right" class="mt-3">
+      <v-btn color="#7288da" rounded dark @click="resetHistory()">초기화</v-btn>
     </div>
   </v-container>
 </template>
@@ -82,7 +91,7 @@ import { Watch } from "vue-property-decorator";
     "duplicatedList",
     "fileList",
     "renameHistory2",
-    "moveHistory"
+    "moveHistory",
   ]),
 
   methods: mapMutations([
@@ -91,8 +100,8 @@ import { Watch } from "vue-property-decorator";
     "changeFileSortList",
     "changeDuplicatedList",
     "changeRenameHistory2",
-    "changeMoveHistory"
-  ])
+    "changeMoveHistory",
+  ]),
 })
 export default class Restore extends Vue {
   changeDuplicatedList!: (newList: [][]) => void;
@@ -106,6 +115,9 @@ export default class Restore extends Vue {
   historyList: any[][] = [[]];
   inputs: string = "";
 
+  get scrollerBgMode() {
+    return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
+  }
   mounted() {
     this.readHistory();
   }
