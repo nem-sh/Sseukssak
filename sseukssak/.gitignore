@@ -6,6 +6,9 @@ node_modules
 credentials.json
 token.json
 
+# local history
+history_test.json
+
 
 # local env files
 .env.local
