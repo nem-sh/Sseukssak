@@ -10,9 +10,8 @@
             <v-icon>mdi-forward</v-icon>
           </template>
         </v-breadcrumbs>
-        <v-btn icon @click="read()">
-          <img class="mt-2" height="25px" src="@/assets/folder2.png" />
-          <!-- <i class="far fa-folder-open fa-2x" :class="folderMode"></i> -->
+        <v-btn large icon @click="read()">
+          <i class="far fa-folder-open fa-2x" style="color:var(--color-purple)"></i>
         </v-btn>
       </div>
       <div v-show="this.renameFileList.length > 0">
