@@ -627,6 +627,10 @@ export default class ListTo extends Vue {
     return false;
   }
 
+  openGoogleDrive(){
+    shell.openExternal('https://drive.google.com');
+  }
+
   @Watch("selectedToName")
   watchSelectedToName() {
     this.selectedToNameValue = this.selectedToName;
