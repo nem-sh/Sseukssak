@@ -59,6 +59,24 @@
             >
               <v-list-item-action class="mr-3">
                 <v-img
+                  v-if="isDriveDirectory(item.path)"
+                  src="@/assets/folder-drive-icon.png"
+                  alt=""
+                  height="60px"
+                  width="60px"
+                  ><template v-slot:placeholder>
+                    <v-row
+                      class="fill-height ma-0"
+                      align="center"
+                      justify="center"
+                    >
+                      <v-progress-circular
+                        indeterminate
+                        color="var(--color-purple)"
+                      ></v-progress-circular>
+                    </v-row> </template></v-img
+                ><v-img
+                  v-else
                   src="@/assets/folder-icon.png"
                   alt=""
                   height="60px"
@@ -170,7 +188,7 @@
                       </template>
                       <v-list v-show="shown">
                         <v-list-item link>
-                          <v-list-item-title 
+                          <v-list-item-title
                             ><ModalModifyToLibraryDirectory
                               :propDirectory="item"
                               @closeMenu="closeMenu"
@@ -597,6 +615,17 @@ export default class ListTo extends Vue {
       tagListStr += "  " + tagLists[i];
     }
     return tagListStr;
+  }
+
+  isDriveDirectory(path) {
+    if (path.includes("%drive%")) {
+      return true;
+    }
+    return false;
+  }
+
+  openGoogleDrive(){
+    shell.openExternal('https://drive.google.com');
   }
 
   @Watch("selectedToName")

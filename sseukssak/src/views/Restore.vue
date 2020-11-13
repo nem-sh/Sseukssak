@@ -23,23 +23,33 @@
             v-for="chunk in timechunk"
             :key="chunk + Math.random()"
           >
-            <!-- 성공 실패에 따른 카드 색상 변경 -->
-            <v-expansion-panel-header
+            <div
               :class="{
-                ss: chunk.success == 1,
-                ff: chunk.success == 0,
-                rr: chunk.success == -1
+                worktype1: chunk.workcode == 1,
+                worktype2: chunk.workcode == 2,
+                worktype3: chunk.workcode == 3,
+                worktype4: chunk.workcode == 4
               }"
             >
-              <span
-                class="d-inline-block text-truncate"
-                style="max-width: 300px;"
-                >파일명 : {{ chunk.filename }}</span
+              <!-- 성공 실패에 따른 카드 색상 변경 -->
+
+              <v-expansion-panel-header
+                :class="{
+                  ss: chunk.success == 1,
+                  ff: chunk.success == 0,
+                  rr: chunk.success == -1
+                }"
               >
-              <span style="text-align: right;"
-                >작업분류 : {{ chunk.workcode }}</span
-              >
-            </v-expansion-panel-header>
+                <span
+                  class="d-inline-block text-truncate"
+                  style="max-width: 300px;"
+                  >파일명 : {{ chunk.filename }}</span
+                >
+                <span style="text-align: right;"
+                  >작업분류 : {{ convertWorkcode(chunk.workcode) }}</span
+                >
+              </v-expansion-panel-header>
+            </div>
             <v-expansion-panel-content>
               <span>
                 {{ chunk.success == 1 ? "해당 작업 성공" : "" }}
@@ -86,6 +96,30 @@
 }
 .rr {
   background-color: #99ff66;
+}
+
+.worktype1 {
+  border: solid 0px;
+  border-left-width: 15px;
+  border-left-color: black;
+}
+.worktype2 {
+  border: solid 0px;
+
+  border-left-width: 15px;
+  border-left-color: teal;
+}
+.worktype3 {
+  border: solid 0px;
+
+  border-left-width: 15px;
+  border-left-color: lightblue;
+}
+.worktype4 {
+  border: solid 0px;
+
+  border-left-width: 15px;
+  border-left-color: darkblue;
 }
 
 .smallchunk {
@@ -185,6 +219,10 @@ export default class Restore extends Vue {
     // this.jsontest(mm2);
   }
 
+  convertWorkcode(code: any) {
+    return constants.history.workcode[code];
+  }
+
   convertTime(time: string) {
     // console.log(new Date(Number(time)));
 
@@ -243,8 +281,6 @@ export default class Restore extends Vue {
       // console.log(chunk);
 
       if (chunk.date) {
-        chunk.workcode = constants.history.workcode[chunk.workcode];
-
         let zz;
         zz = Math.round(chunk.date / 60000) * 60000;
         // zz = new Date(zz);
