@@ -7912,6 +7912,11 @@ querystringify@^2.1.1:
   resolved "https://registry.yarnpkg.com/querystringify/-/querystringify-2.2.0.tgz#3345941b4153cb9d082d8eee4cda2016a9aef7f6"
   integrity sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==
 
+rage-edit@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/rage-edit/-/rage-edit-1.2.0.tgz#991860a60fef934d8a6d0f057e55786b02f94a2b"
+  integrity sha512-0RspBRc2s6We4g7hRCvT5mu7YPEnfjvQK8Tt354a2uUNJCMC7MKLvo/1mLvHUCQ/zbP6siQyp5VRZN7UCpMFZg==
+
 randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5, randombytes@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/randombytes/-/randombytes-2.1.0.tgz#df6f84372f0270dc65cdf6291349ab7a473d4f2a"
@@ -8568,6 +8573,13 @@ shebang-regex@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-3.0.0.tgz#ae16f1644d873ecad843b0307b143362d4c42172"
   integrity sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
+
+shell-context-menu@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/shell-context-menu/-/shell-context-menu-1.0.2.tgz#c9ca24cb96ae20e4d0e77359abfe3e51db492b47"
+  integrity sha512-gcrTdTsy1VBJAf7Ro2faOqlxqiHp6qo+TOJkEgNdH0eiBj9/tEJDywRVj+VOu+cW513bE8yRntBji/kIe2hMzg==
+  dependencies:
+    rage-edit "^1.2.0"
 
 shell-quote@^1.6.1:
   version "1.7.2"

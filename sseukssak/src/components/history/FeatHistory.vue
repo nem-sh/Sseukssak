@@ -1,6 +1,7 @@
 <template>
   <div>
     <!-- <span><i class="fas fa-pencil fa-lg"></i></span> -->
+    123123
   </div>
 </template>
 
@@ -61,21 +62,21 @@ export default class Restore extends Vue {
   @Watch("duplicatedList")
   duplistChanged(value: [][]) {
     if (value.length > 1) {
-      console.log(value, "dup change detected");
+      console.log("dup change detected");
       this.putChunkstoHistory(value, 1);
     }
   }
   @Watch("renameHistory2")
   renameHistoryChanged(value: [][]) {
     if (value.length > 1) {
-      console.log(value, "rename change detected");
+      console.log("rename change detected");
       this.putChunkstoHistory(value, 2);
     }
   }
   @Watch("moveHistory")
   moveChanged(value: [][]) {
     if (value.length > 1) {
-      console.log(value, "move change detected");
+      console.log("move change detected");
       this.putChunkstoHistory(value, 3);
     }
   }

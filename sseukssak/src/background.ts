@@ -202,7 +202,7 @@ app.on("ready", async () => {
   }
   setTimeout(() => {
     createWindow();
-  }, 4000);
+  }, 2000);
 
   ipcMain.on("resize-me-smaller-please", (event, arg) => {
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;

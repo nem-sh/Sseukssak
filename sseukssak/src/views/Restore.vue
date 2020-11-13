@@ -8,33 +8,62 @@
         class="mt-4"
       />
     </div>
+    <hr />
     <div
-      v-if="isLoading"
-      style="overflow: scroll; height: 480px"
-      :class="scrollerBgMode"
-      class="mt-4"
+      style="overflow-x:hidden; overflow-y:scroll; width:100%; height:400px;"
     >
-      <div v-if="historyList.length != 0">
-        <v-list
-          v-for="historychunk in historyList"
-          :key="historychunk.filename + historychunk.date + Math.random()"
-        >
-          <div class="chunkfail" v-if="historychunk.success == 0">
-            <p>
-              <b>파일명 : {{ historychunk.filename }}</b>
-            </p>
-            <p>실행시간 : {{ historychunk.date }}</p>
-            <p>작업코드 : {{ historychunk.workcode }}</p>
-          </div>
-          <div class="chunksucc" v-if="historychunk.success == 1">
-            <p>
-              <b>파일명 : {{ historychunk.filename }}</b>
-            </p>
-            <p>실행시간 : {{ historychunk.date }}</p>
-            <p>작업코드 : {{ historychunk.workcode }}</p>
-          </div>
-        </v-list>
-      </div>
+      <v-list v-for="(timechunk, time) in timesortedList" :key="time">
+        <v-expansion-panels color="grey lighten-4" style="chunk">
+          <br />
+          <!-- 시간대별로 묶어놓았으며, 그 기준에 따른 시간 표시 -->
+          <span>{{ convertTime(time) }}에 작업한 파일들</span>
+          <br />
+          <br />
+          <v-expansion-panel
+            v-for="chunk in timechunk"
+            :key="chunk + Math.random()"
+          >
+            <!-- 성공 실패에 따른 카드 색상 변경 -->
+            <v-expansion-panel-header
+              :class="{
+                ss: chunk.success == 1,
+                ff: chunk.success == 0,
+                rr: chunk.success == -1
+              }"
+            >
+              <span
+                class="d-inline-block text-truncate"
+                style="max-width: 300px;"
+                >파일명 : {{ chunk.filename }}</span
+              >
+              <span style="text-align: right;"
+                >작업분류 : {{ chunk.workcode }}</span
+              >
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <span>
+                {{ chunk.success == 1 ? "해당 작업 성공" : "" }}
+                {{ chunk.success == 0 ? "해당 작업 실패" : "" }}
+                {{ chunk.success == -1 ? "복구 작업 성공" : "" }}
+              </span>
+              <br />
+              <!-- 텍스트 길이가 길어지면 ...으로 표현하도록 하였음 -->
+              <!-- 해당 속성은 text-truncate이며 필요없다면 삭제 -->
+              <span
+                class="d-inline-block text-truncate"
+                style="max-width: 700px;"
+                >이동 전 위치 : {{ chunk.before }}</span
+              >
+              <br />
+              <span
+                class="d-inline-block text-truncate"
+                style="max-width: 700px;"
+                >이동 후 위치 : {{ chunk.after }}</span
+              >
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-list>
     </div>
     <div align="right" class="mt-3">
       <v-btn color="#7288da" rounded dark @click="resetHistory()">초기화</v-btn>
@@ -43,30 +72,39 @@
 </template>
 
 <style>
-div.chunk {
-  padding: 2px;
-  border: 1px black solid;
-  color: black;
-  font-size: 10px;
-  line-height: 8px;
-  /* background-color: #cceeff; */
+.restorebtn {
+  float: right;
+  width: 500px;
 }
-.chunksucc {
-  padding: 2px;
-  border: 1px black solid;
-  color: black;
-  font-size: 10px;
-  line-height: 8px;
-  background-color: #cceeff;
+/* 성공:ss, 실패:ff, 복구:rr로 할 예정 */
+.ss {
+  background-color: #6699ff;
 }
 
-.chunkfail {
-  padding: 2px;
-  border: 1px black solid;
-  color: black;
+.ff {
+  background-color: #ff6699;
+}
+.rr {
+  background-color: #99ff66;
+}
+
+.smallchunk {
+  padding: 7px;
+  /* border: 1px black solid; */
   font-size: 10px;
   line-height: 8px;
-  background-color: #e0eb4c;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.chunk {
+  padding: 3px;
+  /* border: 3px black solid; */
+  font-size: 20px;
+  line-height: 8px;
+  /* margin: 8px; */
+  /* margin-top: 8px;
+  margin-bottom: 8px; */
 }
 </style>
 <script lang="ts">
@@ -91,7 +129,7 @@ import { Watch } from "vue-property-decorator";
     "duplicatedList",
     "fileList",
     "renameHistory2",
-    "moveHistory",
+    "moveHistory"
   ]),
 
   methods: mapMutations([
@@ -100,8 +138,8 @@ import { Watch } from "vue-property-decorator";
     "changeFileSortList",
     "changeDuplicatedList",
     "changeRenameHistory2",
-    "changeMoveHistory",
-  ]),
+    "changeMoveHistory"
+  ])
 })
 export default class Restore extends Vue {
   changeDuplicatedList!: (newList: [][]) => void;
@@ -114,6 +152,7 @@ export default class Restore extends Vue {
   isLoading!: boolean;
   historyList: any[][] = [[]];
   inputs: string = "";
+  timesortedList: Object = [];
 
   get scrollerBgMode() {
     return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
@@ -142,8 +181,24 @@ export default class Restore extends Vue {
     const mm = JSON.parse(localHistory.toString());
 
     const mm2 = Buffer.from(JSON.stringify(mm));
+    this.sortbyTimeChunk(mm2);
+    // this.jsontest(mm2);
+  }
 
-    this.jsontest(mm2);
+  convertTime(time: string) {
+    // console.log(new Date(Number(time)));
+
+    let a = new Date(Number(time)).getMonth();
+    let b = new Date(Number(time)).getDate();
+    let c = new Date(Number(time)).getHours();
+
+    let d = new Date(Number(time)).getMinutes();
+
+    return `${a}월 ${b}일 ${c}시 ${d}분`;
+  }
+
+  selectchunk(t) {
+    console.log(t);
   }
 
   jsontest(changedHistory: object) {
@@ -152,7 +207,7 @@ export default class Restore extends Vue {
 
     //arr에 담기
     mm.forEach(function(chunk: any) {
-      console.log(chunk);
+      // console.log(chunk);
       try {
         if (chunk.date != undefined) {
           sortingarr.push(chunk);
@@ -180,11 +235,51 @@ export default class Restore extends Vue {
     });
   }
 
+  sortbyTimeChunk(changedHistory: object) {
+    let sortingarr: any = {};
+    const mm = JSON.parse(changedHistory.toString());
+    // console.log(mm);
+    mm.forEach(function(chunk: any) {
+      // console.log(chunk);
+
+      if (chunk.date) {
+        chunk.workcode = constants.history.workcode[chunk.workcode];
+
+        let zz;
+        zz = Math.round(chunk.date / 60000) * 60000;
+        // zz = new Date(zz);
+        if (sortingarr[zz] == undefined) {
+          sortingarr[zz] = [];
+          sortingarr[zz].push(chunk);
+        } else {
+          sortingarr[zz].push(chunk);
+        }
+      }
+    });
+    // console.log(sortingarr);
+
+    let keys = Object.keys(sortingarr);
+
+    keys.sort(function(a, b) {
+      return Number(b) - Number(a);
+    });
+    let sorted: any = {};
+
+    for (let ya = 0; ya < keys.length; ya++) {
+      sorted[keys[ya]] = sortingarr[keys[ya]];
+    }
+
+    // console.log(sorted);
+
+    this.timesortedList = sorted;
+  }
+
   resetHistory() {
     this.isLoading = false;
     const nulldata = [];
     const nulldata2 = JSON.stringify(nulldata);
-    this.historyList = [];
+    // this.historyList = [];
+    this.timesortedList = [];
 
     fs.writeFileSync("history_test.json", nulldata2);
     this.isLoading = true;

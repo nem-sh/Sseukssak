@@ -81,14 +81,22 @@ export default class DupCheck extends Vue {
   }
   stat(filepath, q) {
     if (q == "j") {
-      this.checkingQueuej = fs.statSync(filepath);
+      try {
+        this.checkingQueuej = fs.statSync(filepath);
+      } catch (e) {
+        console.log(e);
+      }
     } else if (q == "k") {
-      this.checkingQueuek = fs.statSync(filepath);
+      try {
+        this.checkingQueuek = fs.statSync(filepath);
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
   // DuplicateCheck(fileList: string[]) {
   DuplicateCheck() {
-    console.log(this.fileList);
+    // console.log(this.fileList);
     const duplist = [[this.fromDir]];
     const dupchecked = Array(this.fileList.length).fill(1);
     for (let j = 0; j < this.fileList.length; j++) {
@@ -117,7 +125,7 @@ export default class DupCheck extends Vue {
         this.makedupFolder = true;
       }
     }
-    console.log(duplist);
+    // console.log(duplist);
 
     this.MoveDupedFiles(duplist);
   }
