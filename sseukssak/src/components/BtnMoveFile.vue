@@ -288,7 +288,7 @@ export default class BtnMoveFile extends Vue {
         if (!fs.existsSync(this.fromDir + "\\" + idx.name)) {
           this.changeMoveHistory([
             idx.name,
-            1,
+            0,
             this.fromDir + "\\" + idx.name,
             "파일이 존재하지 않습니다.",
             new Date().getTime(),
