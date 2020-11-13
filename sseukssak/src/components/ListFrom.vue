@@ -344,6 +344,9 @@
           >
         </li>
         <li>
+          <BtnImageRename />
+        </li>
+        <li>
           <a
             @click="deleteThis(fromDir + '\\' + selectedData.name, true)"
             style="display: flex; align-items: center"
@@ -464,6 +467,8 @@ import ListFromFilter from "@/components/listFrom/ListFromFilter.vue";
 import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.vue";
 import BtnUploadGoogleDriveFolder from "@/components/googleDrive/BtnUploadGoogleDriveFolder.vue";
 
+import BtnImageRename from "@/components/ai/BtnImageRename.vue"
+
 import Swal from "sweetalert2";
 // import { shell } from "electron";
 const { shell } = require("electron").remote;
@@ -497,6 +502,7 @@ interface Directory {
     BtnUploadGoogleDriveFolder,
     ListFromBreadcrumbs,
     ListFromFilter,
+    BtnImageRename,
   },
   computed: mapState(["fileSortList", "fromDir", "fileList", "isLogin"]),
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
