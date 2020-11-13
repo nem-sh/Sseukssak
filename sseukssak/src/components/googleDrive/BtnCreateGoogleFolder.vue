@@ -22,10 +22,10 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="dialog = false"> 취소 </v-btn>
         <v-btn dark rounded color="#7288da" @click="makeGoogleFolder">
           추가
         </v-btn>
+        <v-btn text @click="dialog = false"> 취소 </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
