@@ -106,7 +106,6 @@
                     <v-menu
                       top
                       :offset-y="offset"
-                      :value="shown"
                       :close-on-content-click="false"
                     >
                       <template v-slot:activator="{ on, attrs }">
@@ -121,7 +120,7 @@
                       </template>
                       <v-list>
                         <v-list-item link>
-                          <v-list-item-title
+                          <v-list-item-title 
                             ><ModalModifyToLibraryDirectory
                               :propDirectory="item"
                               @closeMenu="closeMenu"
@@ -149,6 +148,9 @@
           </template>
         </v-virtual-scroll>
       </div>
+    </div>
+    <div align="right">
+      <BtnMoveFile v-if="selectedToName"/>
     </div>
     <div v-if="!selectedToName" align="center" class="to-part-second">
       <lottie-player
@@ -571,5 +573,9 @@ export default class ListTo extends Vue {
 
 .to-name {
   padding-top: 10px;
+}
+
+.theme--dark.v-list {
+  background: #363a3e !important;
 }
 </style>

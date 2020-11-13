@@ -44,8 +44,8 @@
           <i class="fas fa-sync-alt mr-2"></i>새로고침
         </v-btn>
       </div>
-      <div class="rounded-xl" height="100%">
-        <div>
+      <div class="" height="100%" >
+        <div >
           <ListFromBreadcrumbs :fromDir="fromDir" :className="'bread-from'" />
         </div>
         <v-virtual-scroll
@@ -377,7 +377,7 @@
         </li>
       </ul>
       <v-dialog v-model="dialog" max-width="500">
-        <v-card>
+        <v-card :class="{'modal-d': this.$vuetify.theme.dark}">
           <v-card-title class="headline mb-3">
             {{ selectedDataInfo.name }}
           </v-card-title>
@@ -396,15 +396,17 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
-              color="green darken-1"
-              text
+              color="#7288da"
+              rounded
+              dark
               @click="openFile(selectedData.name)"
             >
               실행
             </v-btn>
             <v-btn
-              color="red darken-1"
-              text
+              color="red lighten-1"
+              rounded
+              dark
               @click="
                 deleteThis(fromDir + '\\' + selectedData.name, true);
                 dialog = false;
@@ -412,12 +414,12 @@
             >
               제거
             </v-btn>
-            <v-btn color=" darken-1" text @click="dialog = false"> 닫기 </v-btn>
+            <v-btn text @click="dialog = false"> 닫기 </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="dialog2" persistent max-width="290">
-        <v-card>
+      <v-dialog v-model="dialog2" persistent max-width="450">
+        <v-card :class="{'modal-d': this.$vuetify.theme.dark}">
           <v-card-title class="headline">
             {{ selectedData.name }}의 이름 바꾸기
           </v-card-title>
@@ -432,10 +434,10 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="green darken-1" text @click="dialog2 = false">
+            <v-btn text @click="dialog2 = false">
               취소
             </v-btn>
-            <v-btn color="green darken-1" text @click="renameThis">
+            <v-btn color="#7288da" dark rounded @click="renameThis">
               지정
             </v-btn>
           </v-card-actions>
@@ -935,9 +937,12 @@ export default class ListFrom extends Vue {
 
 .contextmenu-d {
   background: #24303a !important;
-  color: #ffffff !important;
   box-shadow: 0 15px 35px rgba(107, 107, 190, 0.1),
     0 5px 15px rgba(233, 233, 233, 0.07) !important;
+}
+
+.contextmenu-d a {
+  color: #ffffff !important;
 }
 
 #contextmenu li {
