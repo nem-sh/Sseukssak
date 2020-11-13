@@ -80,10 +80,12 @@ export default class DupCheck extends Vue {
     // this.fetch()
   }
   stat(filepath, q) {
-    if (q == "j") {
-      this.checkingQueuej = fs.statSync(filepath);
-    } else if (q == "k") {
-      this.checkingQueuek = fs.statSync(filepath);
+    if (fs.existsSync(filepath)) {
+      if (q == "j") {
+        this.checkingQueuej = fs.statSync(filepath);
+      } else if (q == "k") {
+        this.checkingQueuek = fs.statSync(filepath);
+      }
     }
   }
   // DuplicateCheck(fileList: string[]) {
