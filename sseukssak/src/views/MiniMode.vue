@@ -72,7 +72,6 @@ export default class MiniMode extends Vue {
   /* border-radius: 50%; */
   position: relative;
   display: block;
-  font-weight: bold;
   box-shadow: 0px 0px 25px 3px var(--color-purple);
 }
 

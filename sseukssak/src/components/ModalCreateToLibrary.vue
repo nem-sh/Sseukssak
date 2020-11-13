@@ -15,7 +15,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        <v-card-text class="pt-4">
+        <v-card-text class="pt-4" :class="{'modal-d': this.$vuetify.theme.dark}">
           <div>
             <v-text-field
               :rules="rules"
@@ -136,5 +136,8 @@ export default class ModalCreateToLibrary extends Vue {
 <style>
 header {
   height: 64px;
+}
+.modal-d {
+  background-color: #24303a !important;;
 }
 </style>

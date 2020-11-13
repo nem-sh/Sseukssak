@@ -29,18 +29,16 @@
               <div>
                 <h2 class="mt-4">1. 폴더 선택</h2>
                 <div class="text-right mb-1">
-                  <v-btn @click="readDir" text rounded color="green"
+                  <v-btn @click="readDir" text rounded
                     ><i class="fas fa-search mr-2"></i>폴더 찾기</v-btn
                   >
                   <v-dialog
                     :class="scrollerBgMode"
                     v-model="dialog3"
-                    persistent
                     max-width="500"
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
-                        color="green"
                         text
                         rounded
                         v-bind="attrs"
@@ -49,7 +47,7 @@
                         <i class="fas fa-folder-plus mr-2"></i>새 폴더 추가
                       </v-btn>
                     </template>
-                    <v-card class="pa-2">
+                    <v-card class="pa-2" :class="{'modal-d': this.$vuetify.theme.dark}">
                       <v-card-title>
                         <!-- <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_pTnS7W/Empty Folder.json"  background="transparent"  speed="1"  style="width: 100px; height: 100px;"  loop  autoplay></lottie-player> -->
                         <i class="fal fa-info-circle fa-lg mr-2 pb-1"></i>정리할
@@ -75,14 +73,13 @@
 
                       <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn text rounded @click="dialog3 = false">
+                        <v-btn text @click="dialog3 = false">
                           취소
                         </v-btn>
                         <v-btn
-                          color="var(--color-purple)"
-                          rounded
                           dark
-                          class="mr-3"
+                          color="#7288da"
+                          rounded
                           @click="readFromDir"
                         >
                           추가
@@ -208,11 +205,9 @@
                       (selectedFilter === '날짜' && selectedDate !== '') ||
                       selectedFilter === '파일명')
                   "
-                  color="white"
-                  class="text--primary"
-                  fab
+                  color="#7288da"
+                  dark
                   rounded
-                  small
                   @click="clickAddBtn"
                 >
                   <v-icon>mdi-plus</v-icon>
@@ -638,7 +633,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
     });
   }
   get scrollerBgMode() {
-    return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
+    return this.$vuetify.theme.dark ? "file-scroller-d modal-d" : "file-scroller";
   }
 }
 </script>
