@@ -30,7 +30,7 @@ export default {
   height: 85vh;
   margin-bottom: 10vh;
   padding-top: 0;
-  width: 65vw;;
+  width: 65vw;
 }
 .snapshot {
   height: 100%;
@@ -45,7 +45,7 @@ export default {
     width: 100%;
     justify-content: center;
     align-content: center;
-    font-size: 4vh;
+    font-size: 3.5vh;
     text-align: center;
     color: black;
 }

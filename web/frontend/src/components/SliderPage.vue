@@ -1,0 +1,166 @@
+<template>
+  <v-container class="SliderBox">
+    <v-row class="SliderPart">
+      <div class="wrapper">
+            <div class="images">
+              <div class="img-1"></div>
+              <div class="img-2"></div>
+            </div>
+            <div class="ImgSlider">
+              <div class="drag-line">
+                <span></span>
+              </div>
+              <input type="range" min="0" max="100" :value="sliderValue" @input="ImgSliderOnInput">
+            </div>
+          </div>
+      </v-row>
+      <v-row class="DescriptionPart">
+        쓱싹 사용 전후의 바탕화면을 확인해보세요!
+      </v-row>
+  </v-container>
+</template>
+
+<script>
+export default {
+  name: "SliderPage",
+  data () {
+        return {
+          sliderValue: 70,
+        }
+    },
+    methods: {
+      ImgSliderOnInput () {
+        const ImageSlider = document.querySelector(".ImgSlider input")
+        const showImg = document.querySelector(".images .img-2")
+        const dragLine = document.querySelector(".ImgSlider .drag-line")
+        const sliderVal = ImageSlider.value;
+        dragLine.style.left = sliderVal + "%";
+        showImg.style.width = sliderVal + "%";
+      },
+    },
+}
+</script>
+
+<style>
+.SliderBox {
+  height: 85vh;
+  margin-bottom: 10vh;
+  padding-top: 0;
+  width: 65vw;
+}
+.SliderPart {
+    height: 92%;
+}
+.DescriptionPart {
+    padding-top: 5vh;
+    height: 8%;
+    width: 100%;
+    justify-content: center;
+    align-content: center;
+    font-size: 4vh;
+    text-align: center;
+    color: black;
+}
+.BigRow {
+  height: 80%;
+  width: 100%;
+}
+.wrapper{
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: #fff;
+  border: 2px solid #fff;
+  box-shadow: 0px 0px 15px rgba(0,0,0,0.15);
+}
+.wrapper .images{
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+.wrapper .images .img-1{
+  height: 100%;
+  width: 100%;
+  background: url("../assets/After.png") no-repeat;
+  background-size: cover;
+  /* background: url("images/car.jpg") no-repeat; */
+}
+.wrapper .images .img-2{
+  position: absolute;
+  height: 100%;
+  width: 70%;
+  /* filter: blur(5px); */
+  background: url("../assets/Before.png") no-repeat;
+  background-size: cover;
+  /* background: url("images/car.png") no-repeat; */
+}
+.wrapper .ImgSlider{
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 99;
+}
+.wrapper .ImgSlider input{
+  width: 100%;
+  outline: none;
+  background: none;
+  -webkit-appearance: none;
+}
+.ImgSlider input::-webkit-slider-thumb{
+  height: 80vh;
+  width: 3px;
+  background: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+.ImgSlider .drag-line{
+  width: 3px;
+  height: 80vh;
+  position: absolute;
+  left: 70%;
+  pointer-events: none;
+}
+.ImgSlider .drag-line::before,
+.ImgSlider .drag-line::after{
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 40vh;
+  background: #fff;
+}
+.ImgSlider .drag-line::before{
+  top: 0;
+}
+.ImgSlider .drag-line::after{
+  bottom: 0;
+}
+.ImgSlider .drag-line span{
+  height: 42px;
+  width: 42px;
+  border: 3px solid #fff;
+  position: absolute;
+  top: 47%;
+  left: 10%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.ImgSlider .drag-line span::before,
+.ImgSlider .drag-line span::after{
+  position: absolute;
+  content: "";
+  top: 50%;
+  border: 10px solid transparent;
+  border-bottom-width: 0px;
+  border-right-width: 0px;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.ImgSlider .drag-line span::before{
+  left: 40%;
+  border-left-color: #fff;
+}
+.ImgSlider .drag-line span::after{
+  left: 68%;
+  border-top-color: #fff;
+}
+</style>
