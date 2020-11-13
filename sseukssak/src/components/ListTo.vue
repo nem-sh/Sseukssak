@@ -91,7 +91,7 @@
                   {{ item.path }}
                 </div> -->
 
-                <v-list-item-subtitle
+                <!-- <v-list-item-subtitle
                   v-if="
                     getTagLists(item.typeTags, item.dateTags, item.titleTags)
                       .length <= 3
@@ -111,21 +111,33 @@
                     chip
                     >{{ tag }}
                   </v-chip>
-                  <!-- <ListFromBreadcrumbs
-                    :fromDir="item.path"
-                    :className="'bread-to'"
-                  /> -->
-                </v-list-item-subtitle>
+                </v-list-item-subtitle> -->
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
+                    
                     <v-list-item-subtitle
-                      v-if="
-                        getTagLists(
-                          item.typeTags,
-                          item.dateTags,
-                          item.titleTags
-                        ).length > 3
-                      "
+                  v-if="
+                    getTagLists(item.typeTags, item.dateTags, item.titleTags)
+                      .length <= 3
+                  "
+                  color="#7288da"
+                  class="item-path"
+                >
+                  <v-chip
+                    v-for="tag in getTagLists(
+                      item.typeTags,
+                      item.dateTags,
+                      item.titleTags
+                    )"
+                    :key="tag"
+                    class="mr-2"
+                    small
+                    chip
+                    >{{ tag }}
+                  </v-chip>
+                </v-list-item-subtitle>
+                <v-list-item-subtitle
+                      v-else
                       color="#7288da"
                       class="item-path"
                     >
@@ -144,6 +156,8 @@
                         >{{ tag }}
                       </v-chip>
                     </v-list-item-subtitle>
+                    
+
                   </template>
                   <span>{{
                     getTagString(item.typeTags, item.dateTags, item.titleTags)
