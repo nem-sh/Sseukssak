@@ -3,18 +3,17 @@
     v-if="isLogin"
     class="file-scroller"
     v-model="dialog"
-    persistent
     max-width="500"
   >
     <template v-slot:activator="{ on, attrs }">
-      <v-btn color="green" rounded text v-bind="attrs" v-on="on">
+      <v-btn text v-bind="attrs" v-on="on">
         <i class="fab fa-google-drive mr-2"></i>구글 드라이브
       </v-btn>
     </template>
 
-    <v-card>
+    <v-card :class="{'modal-d': this.$vuetify.theme.dark}">
       <v-card-title>
-        생성할 구글 드라이브 폴더 명을 입력해 주세요
+        <i class="fal fa-info-circle fa-lg mr-2 pb-1"></i>생성할 구글 드라이브 폴더 명을 입력해 주세요
       </v-card-title>
       <v-card-text>
         <v-text-field v-model="folderName" label="새 폴더명 입력">
@@ -23,8 +22,8 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="red darken-1" text @click="dialog = false"> 취소 </v-btn>
-        <v-btn color="green darken-1" text @click="makeGoogleFolder">
+        <v-btn text @click="dialog = false"> 취소 </v-btn>
+        <v-btn dark rounded color="#7288da" @click="makeGoogleFolder">
           추가
         </v-btn>
       </v-card-actions>

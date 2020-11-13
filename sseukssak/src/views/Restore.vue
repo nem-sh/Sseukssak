@@ -16,7 +16,7 @@
         <v-expansion-panels color="grey lighten-4" style="chunk">
           <br />
           <!-- 시간대별로 묶어놓았으며, 그 기준에 따른 시간 표시 -->
-          <span>{{ convertTime(time) }}</span>
+          <span>{{ convertTime(time) }}에 작업한 파일들</span>
           <br />
           <br />
           <v-expansion-panel
@@ -25,7 +25,11 @@
           >
             <!-- 성공 실패에 따른 카드 색상 변경 -->
             <v-expansion-panel-header
-              :class="{ ss: chunk.success == 1, ff: chunk.success == 0 }"
+              :class="{
+                ss: chunk.success == 1,
+                ff: chunk.success == 0,
+                rr: chunk.success == -1
+              }"
             >
               <span
                 class="d-inline-block text-truncate"
@@ -79,6 +83,9 @@
 
 .ff {
   background-color: #ff6699;
+}
+.rr {
+  background-color: #99ff66;
 }
 
 .smallchunk {
@@ -179,7 +186,15 @@ export default class Restore extends Vue {
   }
 
   convertTime(time: string) {
-    return ":: " + new Date(Number(time)).toString();
+    // console.log(new Date(Number(time)));
+
+    let a = new Date(Number(time)).getMonth();
+    let b = new Date(Number(time)).getDate();
+    let c = new Date(Number(time)).getHours();
+
+    let d = new Date(Number(time)).getMinutes();
+
+    return `${a}월 ${b}일 ${c}시 ${d}분`;
   }
 
   selectchunk(t) {
@@ -231,7 +246,7 @@ export default class Restore extends Vue {
         chunk.workcode = constants.history.workcode[chunk.workcode];
 
         let zz;
-        zz = Math.round(chunk.date / 1000) * 1000;
+        zz = Math.round(chunk.date / 60000) * 60000;
         // zz = new Date(zz);
         if (sortingarr[zz] == undefined) {
           sortingarr[zz] = [];
@@ -263,7 +278,8 @@ export default class Restore extends Vue {
     this.isLoading = false;
     const nulldata = [];
     const nulldata2 = JSON.stringify(nulldata);
-    this.historyList = [];
+    // this.historyList = [];
+    this.timesortedList = [];
 
     fs.writeFileSync("history_test.json", nulldata2);
     this.isLoading = true;

@@ -63,8 +63,8 @@
           </template>
         </v-virtual-scroll>
       </v-col>
-      <v-col cols="1" class="d-flex flex-column my-auto align-center">
-        <v-btn dark rounded class="mr-4 mb-2" @click="rename" color="#7288da">
+      <v-col cols="1" class="pr-5 d-flex flex-column my-auto align-center">
+        <v-btn dark rounded class="mr-4 mb-2 play-btn" @click="rename" color="#7288da">
           변경
         </v-btn>
         <v-btn
@@ -206,12 +206,11 @@ export default class Rename extends Vue {
         }
         return;
       });
-      // 베타버전 주의 알림
+
       Swal.fire({
         position: "center",
         icon: "warning",
         title: "이름을 변경하시겠습니까?",
-        text: "베타 버전입니다. 중요한 파일 변경은 주의해주세요.",
         showCancelButton: true,
         confirmButtonText: `Yes`,
       }).then((result) => {
