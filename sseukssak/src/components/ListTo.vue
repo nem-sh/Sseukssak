@@ -186,7 +186,7 @@
                           <i class="fas fa-ellipsis-v-alt"></i
                         ></v-btn>
                       </template>
-                      <v-list>
+                      <v-list v-show="shown">
                         <v-list-item link>
                           <v-list-item-title
                             ><ModalModifyToLibraryDirectory
@@ -216,9 +216,6 @@
           </template>
         </v-virtual-scroll>
       </div>
-    </div>
-    <div align="right">
-      <BtnMoveFile v-if="selectedToName" />
     </div>
     <div v-if="!selectedToName" align="center" class="to-part-second">
       <lottie-player
