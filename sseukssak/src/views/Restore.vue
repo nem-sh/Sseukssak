@@ -263,7 +263,8 @@ export default class Restore extends Vue {
     this.isLoading = false;
     const nulldata = [];
     const nulldata2 = JSON.stringify(nulldata);
-    this.historyList = [];
+    // this.historyList = [];
+    this.timesortedList = [];
 
     fs.writeFileSync("history_test.json", nulldata2);
     this.isLoading = true;
