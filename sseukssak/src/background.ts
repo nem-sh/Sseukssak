@@ -29,7 +29,19 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 function createTray() {
-  let appIcon = new Tray(path.join(__static, "sweeping_32.png"));
+  
+  // if (win !== null) {
+  //   console.log(win.webContents.getUserAgent())
+  //   const osCheckLists = win.webContents.getUserAgent().split(' ');
+  //   console.log(osCheckLists[1])
+  //   if (osCheckLists[1] === '(Macintosh;)') {
+      
+  // }
+  // else {
+  //   let appIcon = new Tray(path.join(__static, "sweeping_32.png"));
+  // }
+
+  let appIcon = new Tray(path.join(__static, "sweeping_16.png"));
   const contextMenu = Menu.buildFromTemplate([
     {
       label: "Show",
@@ -136,7 +148,7 @@ function createWindow() {
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
 
-    win.webContents.openDevTools({ mode: "undocked" });
+    // win.webContents.openDevTools({ mode: "undocked" });
   }
   win.once("ready-to-show", () => {
     if (win !== null) {
@@ -195,12 +207,14 @@ app.on("ready", async () => {
     }
   }
   createLoadingScreen();
-  if (!tray) {
-    tray = createTray();
-  }
+  
   setTimeout(() => {
     createWindow();
+    if (!tray) {
+      tray = createTray();
+    }
   }, 4000);
+
 
   ipcMain.on("resize-me-smaller-please", (event, arg) => {
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
