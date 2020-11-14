@@ -29,7 +29,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 function createTray() {
-  let appIcon = new Tray(path.join(__static, "sweeping.png"));
+  let appIcon = new Tray(path.join(__static, "sweeping_32.png"));
   const contextMenu = Menu.buildFromTemplate([
     {
       label: "Show",
@@ -78,7 +78,6 @@ function createLoadingScreen() {
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     if (loadingScreen !== null) {
-      console.log(__dirname);
       // loadingScreen.loadURL("file://" + __dirname + "/bundled/loading.html");
       // loadingScreen.once("ready-to-show", () => {
       //   if (loadingScreen !== null) {
@@ -88,7 +87,7 @@ function createLoadingScreen() {
     }
   } else {
     createProtocol("app");
-    loadingScreen.loadURL("app://./loading_v2.html");
+    loadingScreen.loadURL("app://./loading.html");
     loadingScreen.once("ready-to-show", () => {
       if (loadingScreen !== null) {
         loadingScreen.show();
@@ -201,7 +200,7 @@ app.on("ready", async () => {
   }
   setTimeout(() => {
     createWindow();
-  }, 2000);
+  }, 4000);
 
   ipcMain.on("resize-me-smaller-please", (event, arg) => {
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;

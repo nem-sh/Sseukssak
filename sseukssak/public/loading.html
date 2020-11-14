@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
   <title>SseukSsak</title>
   <style rel="stylesheet">
     ::-webkit-scrollbar {
@@ -14,12 +15,61 @@
     }
     body {
       background: white;
-      color: white;
+      color: black;
+      font-size: 25px;
+      font-weight: 1000;
+      font-family: "Nanum Gothic", sans-serif !important;
+    }
+    .loading {
+      position: absolute;
+      left: 77px;
+      top: 200px;
+    }
+    .loading span {
+      display: inline-block;
+      margin: 0 -.05em;
+      animation: loading 1.4s infinite alternate;
+    }
+    loading span:nth-child(2) {
+      animation-delay: .1s;
+    }
+    loading span:nth-child(3) {
+      animation-delay: .2s;
+    }
+    loading span:nth-child(4) {
+      animation-delay: .3s;
+    }
+    loading span:nth-child(5) {
+      animation-delay: .4s;
+    }
+    loading span:nth-child(6) {
+      animation-delay: .5s;
+    }
+    loading span:nth-child(7) {
+      animation-delay: .6s;
+    }
+    @keyframes loading {
+      0% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
     }
   </style>
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 </head>
 <body>
-  <lottie-player src="https://assets1.lottiefiles.com/datafiles/bEYvzB8QfV3EM9a/data.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px; padding: 0;"  loop  autoplay></lottie-player>
+  <lottie-player src="https://assets1.lottiefiles.com/datafiles/bEYvzB8QfV3EM9a/data.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px; padding: 0; margin-top: -30px;"  loop  autoplay></lottie-player>
+  <div class="loading">
+    <span>S</span>
+    <span>S</span>
+    <span>E</span>
+    <span>U</span>
+    <span>S</span>
+    <span>S</span>
+    <span>A</span>
+    <span>K</span>
+  </div>
 </body>
 </html>
