@@ -11,7 +11,10 @@
           </template>
         </v-breadcrumbs>
         <v-btn large icon @click="read()">
-          <i class="far fa-folder-open fa-2x" style="color:var(--color-purple)"></i>
+          <i
+            class="far fa-folder-open fa-2x"
+            style="color: var(--color-purple)"
+          ></i>
         </v-btn>
       </div>
       <div v-show="this.renameFileList.length > 0">
@@ -156,7 +159,12 @@ export default class Rename extends Vue {
   }
 
   get dirItems() {
-    const dirs = this.renameDir.split("\\");
+    const dirs = this.renameDir
+      .split("\\")
+      .join(",")
+      .split("/")
+      .join(",")
+      .split(",");
     const item: Breadcrumbs[] = [];
     dirs.forEach((dir) => {
       item.push({

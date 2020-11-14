@@ -546,11 +546,11 @@ export default class ModalAddToLibraryDirectory extends Vue {
 
       return;
     }
-    this.directoryDir = "%from%" + "\\" + this.readFromDirName;
+    this.directoryDir = "%from%" + "/" + this.readFromDirName;
     this.dialog3 = false;
   }
   createGoogleFolder(data) {
-    this.directoryDir = "%drive%" + "\\" + data;
+    this.directoryDir = "%drive%" + "/" + data;
     this.dialog3 = false;
   }
 

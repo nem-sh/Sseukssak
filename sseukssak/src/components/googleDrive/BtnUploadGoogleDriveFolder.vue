@@ -46,7 +46,7 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
     const PATCH_URL = "https://www.googleapis.com/drive/v3/files/";
 
     const contentType = mime.lookup(fileName);
-    const file = fs.readFileSync(fromDir + "\\" + fileName);
+    const file = fs.readFileSync(fromDir + "/" + fileName);
 
     const headers = {
       Authorization: "Bearer " + accessToken,
@@ -123,18 +123,16 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
         } else {
           // console.log(file.data.id);
           const folderId = file.data.id;
-          fs.readdir(fromDir + "\\" + folderName, (err, files) => {
+          fs.readdir(fromDir + "/" + folderName, (err, files) => {
             if (err) {
-              //console.log("readdir error");
+              console.log("readdir error");
               console.log(err);
             } else {
               //console.log("readdir pass");
               //console.log(files);
               files.forEach((file, idx, array) => {
                 if (
-                  fs
-                    .lstatSync(fromDir + "\\" + folderName + "\\" + file)
-                    .isFile()
+                  fs.lstatSync(fromDir + "/" + folderName + "/" + file).isFile()
                 ) {
                   if (idx === array.length - 1) {
                     this.uploadFile(
@@ -142,7 +140,7 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
                       file,
                       true,
                       folderId,
-                      fromDir + "\\" + folderName
+                      fromDir + "/" + folderName
                     );
                   } else {
                     this.uploadFile(
@@ -150,18 +148,18 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
                       file,
                       false,
                       folderId,
-                      fromDir + "\\" + folderName
+                      fromDir + "/" + folderName
                     );
                   }
                 } else if (
                   fs
-                    .lstatSync(fromDir + "\\" + folderName + "\\" + file)
+                    .lstatSync(fromDir + "/" + folderName + "/" + file)
                     .isDirectory()
                 ) {
                   this.uploadFolder(
                     auth,
                     file,
-                    fromDir + "\\" + folderName,
+                    fromDir + "/" + folderName,
                     folderId
                   );
                 }

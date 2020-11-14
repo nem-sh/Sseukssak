@@ -289,6 +289,7 @@ interface ToLibraryDirectory {
     "toLibraryNameList",
     "fromDir",
     "selectedToName",
+    "osPlatform",
   ]),
   methods: mapMutations([
     "changeToLibraryList",
@@ -300,6 +301,7 @@ export default class ListTo extends Vue {
   selectedToName!: string;
   selectedToNameValue: string = "";
   shown: boolean = false;
+  osPlatform!: string;
 
   closeMenu() {
     this.shown = false;
@@ -430,37 +432,37 @@ export default class ListTo extends Vue {
         name: "유형별 정리",
         directories: [
           {
-            path: "%from%\\이미지",
+            path: "%from%/이미지",
             typeTags: ["#Image"],
             dateTags: [],
             titleTags: [],
           },
           {
-            path: "%from%\\문서",
+            path: "%from%/문서",
             typeTags: ["#Document"],
             dateTags: [],
             titleTags: [],
           },
           {
-            path: "%from%\\비디오",
+            path: "%from%/비디오",
             typeTags: ["#Video"],
             dateTags: [],
             titleTags: [],
           },
           {
-            path: "%from%\\오디오",
+            path: "%from%/오디오",
             typeTags: ["#Audio"],
             dateTags: [],
             titleTags: [],
           },
           {
-            path: "%from%\\압축파일",
+            path: "%from%/압축파일",
             typeTags: ["#Compressed"],
             dateTags: [],
             titleTags: [],
           },
           {
-            path: "%from%\\바로가기",
+            path: "%from%/바로가기",
             typeTags: ["lnk"],
             dateTags: [],
             titleTags: [],
@@ -475,37 +477,37 @@ export default class ListTo extends Vue {
           name: "유형별 정리",
           directories: [
             {
-              path: "%from%\\이미지",
+              path: "%from%/이미지",
               typeTags: ["#Image"],
               dateTags: [],
               titleTags: [],
             },
             {
-              path: "%from%\\문서",
+              path: "%from%/문서",
               typeTags: ["#Document"],
               dateTags: [],
               titleTags: [],
             },
             {
-              path: "%from%\\비디오",
+              path: "%from%/비디오",
               typeTags: ["#Video"],
               dateTags: [],
               titleTags: [],
             },
             {
-              path: "%from%\\오디오",
+              path: "%from%/오디오",
               typeTags: ["#Audio"],
               dateTags: [],
               titleTags: [],
             },
             {
-              path: "%from%\\압축파일",
+              path: "%from%/압축파일",
               typeTags: ["#Compressed"],
               dateTags: [],
               titleTags: [],
             },
             {
-              path: "%from%\\바로가기",
+              path: "%from%/바로가기",
               typeTags: ["lnk"],
               dateTags: [],
               titleTags: [],
@@ -592,7 +594,14 @@ export default class ListTo extends Vue {
   menuOpened: boolean = false;
 
   getDirectoryName(path) {
-    const pathList = path.split("\\");
+    // if (this.osPlatform === "Win32") {
+    //   const pathList = path.split("\\");
+    //   return pathList[pathList.length - 1];
+    // } else if (this.osPlatform === "MacIntel") {
+    //   const pathList = path.split("/");
+    //   return pathList[pathList.length - 1];
+    // }
+    const pathList = path.split("\\").join(",").split("/").join(",").split(",");
     return pathList[pathList.length - 1];
   }
 

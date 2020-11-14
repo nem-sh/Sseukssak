@@ -1,6 +1,6 @@
 <template>
   <v-btn icon large @click="read(true)">
-    <i class="far fa-folder-open fa-2x" style="color:var(--color-purple)"></i>
+    <i class="far fa-folder-open fa-2x" style="color: var(--color-purple)"></i>
   </v-btn>
 </template>
 
@@ -16,7 +16,7 @@ const { app } = require("electron").remote;
 
 import Swal from "sweetalert2";
 const homeDir = require("os").homedir();
-const desktopDir = `${homeDir}\\Desktop`;
+const desktopDir = `${homeDir}/Desktop`;
 
 interface SortList {
   directories: Directory[];

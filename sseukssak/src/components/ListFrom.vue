@@ -273,9 +273,9 @@
             />폴더명 바꾸기</a
           >
         </li>
-        <li>
+        <li v-if="osPlatform === 'Win32'">
           <a
-            @click="deleteThis(fromDir + '\\' + selectedData.name, true)"
+            @click="deleteThis(fromDir + '/' + selectedData.name, true)"
             style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
@@ -346,9 +346,9 @@
         <li>
           <BtnImageRename />
         </li>
-        <li>
+        <li v-if="osPlatform === 'Win32'">
           <a
-            @click="deleteThis(fromDir + '\\' + selectedData.name, true)"
+            @click="deleteThis(fromDir + '/' + selectedData.name, true)"
             style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
@@ -407,11 +407,12 @@
               실행
             </v-btn>
             <v-btn
+              v-if="osPlatform === 'Win32'"
               color="red lighten-1"
               rounded
               dark
               @click="
-                deleteThis(fromDir + '\\' + selectedData.name, true);
+                deleteThis(fromDir + '/' + selectedData.name, true);
                 dialog = false;
               "
             >
@@ -502,7 +503,13 @@ interface Directory {
     ListFromFilter,
     BtnImageRename,
   },
-  computed: mapState(["fileSortList", "fromDir", "fileList", "isLogin"]),
+  computed: mapState([
+    "fileSortList",
+    "fromDir",
+    "fileList",
+    "isLogin",
+    "osPlatform",
+  ]),
   methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
 })
 export default class ListFrom extends Vue {
@@ -533,6 +540,7 @@ export default class ListFrom extends Vue {
         v.indexOf("\\") == -1) ||
       '\\ / : * ? " < > | 은 사용 불가능합니다',
   };
+  osPlatform!: string;
 
   clickclick() {
     Swal.fire({
@@ -569,14 +577,14 @@ export default class ListFrom extends Vue {
       return;
     }
     if (
-      fs.lstatSync(this.fromDir + "\\" + this.selectedData["name"]).isFile() &&
+      fs.lstatSync(this.fromDir + "/" + this.selectedData["name"]).isFile() &&
       !this.renameValue.includes(".")
     ) {
       this.renameValue = this.renameValue + "." + this.selectedData["fileType"];
     }
     fs.renameSync(
-      this.fromDir + "\\" + this.selectedData["name"],
-      this.fromDir + "\\" + this.renameValue
+      this.fromDir + "/" + this.selectedData["name"],
+      this.fromDir + "/" + this.renameValue
     );
     this.renewFrom();
     Swal.fire({
@@ -590,7 +598,7 @@ export default class ListFrom extends Vue {
   }
   openShell() {
     // console.log(this.fromDir + "\\" + this.selectedData["name"]);
-    shell.openPath(this.fromDir + "\\" + this.selectedData["name"]);
+    shell.openPath(this.fromDir + "/" + this.selectedData["name"]);
   }
   getInfo() {
     this.selectedDataInfo["name"] = this.selectedData["name"];
@@ -603,7 +611,7 @@ export default class ListFrom extends Vue {
       this.selectedData["updatedTime"]
     );
     this.selectedDataInfo["size"] = fs.statSync(
-      this.fromDir + "\\" + this.selectedData["name"]
+      this.fromDir + "/" + this.selectedData["name"]
     ).size;
 
     this.dialog = true;
@@ -621,7 +629,7 @@ export default class ListFrom extends Vue {
         if (fs.lstatSync(path).isDirectory()) {
           const fileList = fs.readdirSync(path);
           fileList.forEach((name: string) => {
-            this.deleteThis(path + "\\" + name, false);
+            this.deleteThis(path + "/" + name, false);
           });
           (async () => {
             await trash([path]);
@@ -720,7 +728,7 @@ export default class ListFrom extends Vue {
   changeFileSortList!: (newList: SortList) => void;
   openFile(file: string) {
     // const { spawn } = require("child_process");
-    childProcess.execSync('"' + this.fromDir + "\\" + file + '"');
+    childProcess.execSync('"' + this.fromDir + "/" + file + '"');
   }
   compareTime(time: number) {
     const timeValue = new Date(time);
@@ -737,7 +745,12 @@ export default class ListFrom extends Vue {
     this.filterState = "전체보기";
     // console.log(enteredDirectory, 987);
     if (enteredDirectory == "") {
-      const dir: string[] = this.fromDir.split("\\");
+      const dir: string[] = this.fromDir
+        .split("\\")
+        .join(",")
+        .split("/")
+        .join(",")
+        .split(",");
       dir.pop();
       if (dir.length == 1) {
         Swal.fire({
@@ -750,9 +763,9 @@ export default class ListFrom extends Vue {
         });
         return;
       }
-      this.changeDir(dir.join("\\"));
+      this.changeDir(dir.join("/"));
     } else {
-      this.changeDir(this.fromDir + "\\" + enteredDirectory);
+      this.changeDir(this.fromDir + "/" + enteredDirectory);
     }
     try {
       this.getFrom(this.fromDir);
@@ -826,7 +839,12 @@ export default class ListFrom extends Vue {
   }
 
   get dirPath() {
-    const tmp = this.fromDir.split("\\");
+    const tmp = this.fromDir
+      .split("\\")
+      .join(",")
+      .split("/")
+      .join(",")
+      .split(",");
     return tmp[tmp.length - 1];
   }
 
