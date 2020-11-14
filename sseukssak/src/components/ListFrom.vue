@@ -312,7 +312,7 @@
         class="pa-0"
         :class="bgMode"
       >
-        <li class="rename-d">
+        <li class="rename-d" v-if="osPlatform === 'Win32'">
           <a
             @click="openFile(selectedData.name)"
             style="display: flex; align-items: center"
@@ -399,6 +399,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
+              v-if="osPlatform === 'Win32'"
               color="#7288da"
               rounded
               dark
@@ -727,8 +728,10 @@ export default class ListFrom extends Vue {
   changeFileList!: (newList: string[]) => void;
   changeFileSortList!: (newList: SortList) => void;
   openFile(file: string) {
+    if (this.osPlatform === 'Win32') {
+      childProcess.execSync('"' + this.fromDir + "/" + file + '"');
+    }
     // const { spawn } = require("child_process");
-    childProcess.execSync('"' + this.fromDir + "/" + file + '"');
   }
   compareTime(time: number) {
     const timeValue = new Date(time);
