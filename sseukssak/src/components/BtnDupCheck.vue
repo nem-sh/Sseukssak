@@ -95,6 +95,10 @@ export default class DupCheck extends Vue {
     const dupchecked = Array(this.fileList.length).fill(1);
     for (let j = 0; j < this.fileList.length; j++) {
       const tmpduplist = [this.fileList[j]];
+      const stats = fs.statSync(this.fromDir + "\\" + this.fileList[j]);
+      if (stats.size == 0) {
+        dupchecked[j] == 0;
+      }
       if (dupchecked[j] == 1) {
         this.stat(this.fromDir + "\\" + this.fileList[j], "j");
         for (let k = j + 1; k < this.fileList.length; k++) {
@@ -127,9 +131,9 @@ export default class DupCheck extends Vue {
     const dupedhistory: any[][] = [[]];
 
     if (this.makedupFolder) {
-      if (!fs.existsSync(this.fromDir + "\\" + "duplicated files")) {
+      if (!fs.existsSync(this.fromDir + "\\" + "중복 파일들")) {
         // duped files 폴더 생성 부분
-        fs.mkdirSync(this.fromDir + "\\" + "duplicated files");
+        fs.mkdirSync(this.fromDir + "\\" + "중복 파일들");
       }
     }
 
@@ -142,30 +146,18 @@ export default class DupCheck extends Vue {
 
         if (
           !fs.existsSync(
-            this.fromDir +
-              "\\" +
-              "duplicated files" +
-              "\\" +
-              dupedfilelist[f1][f2]
+            this.fromDir + "\\" + "중복 파일들" + "\\" + dupedfilelist[f1][f2]
           )
         ) {
           fs.renameSync(
             this.fromDir + "\\" + dupedfilelist[f1][f2],
-            this.fromDir +
-              "\\" +
-              "duplicated files" +
-              "\\" +
-              dupedfilelist[f1][f2]
+            this.fromDir + "\\" + "중복 파일들" + "\\" + dupedfilelist[f1][f2]
           );
           dupedhistory.push([
             dupedfilelist[f1][f2],
             1,
             this.fromDir + "\\" + dupedfilelist[f1][f2],
-            this.fromDir +
-              "\\" +
-              "duplicated files" +
-              "\\" +
-              dupedfilelist[f1][f2],
+            this.fromDir + "\\" + "중복 파일들" + "\\" + dupedfilelist[f1][f2],
             d,
             2
           ]);
