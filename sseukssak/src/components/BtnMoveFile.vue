@@ -13,8 +13,9 @@
       <v-btn
         :disabled="restoreMoveList.length === 0"
         class="mr-3"
-        color="red"
+        color="error"
         rounded
+        dark
         @click="RestoreMoveFile"
       >
         <i class="fas fa-redo-alt"></i>
@@ -289,11 +290,11 @@ export default class BtnMoveFile extends Vue {
       for (const idx of fileSortList.files) {
         // console.log(fileSortList, 7, idx.name);
         const a: string[][] = [];
-        if (!fs.existsSync(this.fromDir + "\\" + idx.name)) {
+        if (!fs.existsSync(this.fromDir + "/" + idx.name)) {
           this.changeMoveHistory([
             idx.name,
             0,
-            this.fromDir + "\\" + idx.name,
+            this.fromDir + "/" + idx.name,
             "파일이 존재하지 않습니다.",
             new Date().getTime(),
             1,
@@ -316,17 +317,17 @@ export default class BtnMoveFile extends Vue {
                 flag = true;
               }
               if (flag) {
-                if (fs.existsSync(directory.path + "\\" + idx.name)) {
+                if (fs.existsSync(directory.path + "/" + idx.name)) {
                   dupFlag = true;
 
                   a.push([
-                    this.fromDir + "\\" + idx.name,
-                    directory.path + "\\" + "[중복]" + idx.name,
+                    this.fromDir + "/" + idx.name,
+                    directory.path + "/" + "[중복]" + idx.name,
                   ]);
                 } else {
                   a.push([
-                    this.fromDir + "\\" + idx.name,
-                    directory.path + "\\" + idx.name,
+                    this.fromDir + "/" + idx.name,
+                    directory.path + "/" + idx.name,
                   ]);
                 }
               }
@@ -443,7 +444,12 @@ export default class BtnMoveFile extends Vue {
     for (let index = 0; index < this.restoreMoveList.length; index++) {
       const element = this.restoreMoveList[index];
       // console.log(element);
-      const filePathSplit = element["to"].split("\\");
+      const filePathSplit = element["to"]
+        .split("\\")
+        .join(",")
+        .split("/")
+        .join(",")
+        .split(",");
       // console.log(filePathSplit);
       if (element["type"] == "move") {
         try {

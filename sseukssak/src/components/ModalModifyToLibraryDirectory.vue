@@ -276,6 +276,7 @@ const AppProps = Vue.extend({
     "toLibraryNameList",
     "selectedToName",
     "dropToDir",
+    "osPlatform",
   ]),
   methods: mapMutations(["changeToLibraryList", "changeDropToDir"]),
 })
@@ -346,6 +347,8 @@ export default class ModalAddToLibraryDirectory extends AppProps {
   dropToDir!: string;
   changeDropToDir!: (dir: string) => void;
   changeToLibraryList!: (newList: ToLibrary[]) => void;
+
+  osPlatform!: string;
 
   titleAdd() {
     if (this.titleAddName === "") {
@@ -551,7 +554,12 @@ export default class ModalAddToLibraryDirectory extends AppProps {
 
       return;
     }
-    this.directoryDir = "%from%" + "\\" + this.readFromDirName;
+    // if (this.osPlatform === "Win32") {
+    //   this.directoryDir = "%from%" + "\\" + this.readFromDirName;
+    // } else if (this.osPlatform === "MacIntel") {
+    //   this.directoryDir = "%from%" + "/" + this.readFromDirName;
+    // }
+    this.directoryDir = "%from%" + "/" + this.readFromDirName;
     this.dialog3 = false;
   }
 

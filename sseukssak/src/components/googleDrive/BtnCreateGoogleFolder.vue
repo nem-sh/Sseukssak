@@ -76,7 +76,7 @@ export default class BtnCreateGoogleFolder extends Vue {
           // console.log(file);
           this.$emit(
             "create-google-folder",
-            file.data.id + "\\" + this.folderName
+            file.data.id + "/" + this.folderName
           );
         }
         this.dialog = false;

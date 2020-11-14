@@ -29,23 +29,36 @@ export default class ListFromBreadcrumbs extends AppProps {
   osPlatform!: string;
   get dirPaths() {
     const items: FilePath[] = [];
-    if (this.osPlatform === "Win32") {
-      const dirLists = this.fromDir.split("\\");
-      dirLists.forEach((dirList) => {
-        items.push({
-          text: dirList,
-          disabled: true,
-        });
+    // if (this.osPlatform === "Win32") {
+    //   const dirLists = this.fromDir.split("\\");
+    //   dirLists.forEach((dirList) => {
+    //     items.push({
+    //       text: dirList,
+    //       disabled: true,
+    //     });
+    //   });
+    // } else if (this.osPlatform === "MacIntel") {
+    //   const dirLists = this.fromDir.split("/");
+    //   dirLists.forEach((dirList) => {
+    //     items.push({
+    //       text: dirList,
+    //       disabled: true,
+    //     });
+    //   });
+    // }
+    const dirLists = this.fromDir
+      .split("\\")
+      .join(",")
+      .split("/")
+      .join(",")
+      .split(",");
+    dirLists.forEach((dirList) => {
+      items.push({
+        text: dirList,
+        disabled: true,
       });
-    } else if (this.osPlatform === "MacIntel") {
-      const dirLists = this.fromDir.split("/");
-      dirLists.forEach((dirList) => {
-        items.push({
-          text: dirList,
-          disabled: true,
-        });
-      });
-    }
+    });
+
     return items;
   }
   get breadName() {
