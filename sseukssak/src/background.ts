@@ -207,12 +207,13 @@ app.on("ready", async () => {
     }
   }
   createLoadingScreen();
+  if (!tray) {
+    tray = createTray();
+  }
   
   setTimeout(() => {
     createWindow();
-    if (!tray) {
-      tray = createTray();
-    }
+    
   }, 4000);
 
 
