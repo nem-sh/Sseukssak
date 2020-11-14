@@ -10,7 +10,7 @@
     </div>
     <hr />
     <div
-      style="overflow-x:hidden; overflow-y:scroll; width:100%; height:400px;"
+      style="overflow-x: hidden; overflow-y: scroll; width: 100%; height: 400px"
     >
       <v-list v-for="(timechunk, time) in timesortedList" :key="time">
         <v-expansion-panels color="grey lighten-4" style="chunk">
@@ -28,7 +28,7 @@
                 worktype1: chunk.workcode == 1,
                 worktype2: chunk.workcode == 2,
                 worktype3: chunk.workcode == 3,
-                worktype4: chunk.workcode == 4
+                worktype4: chunk.workcode == 4,
               }"
             >
               <!-- 성공 실패에 따른 카드 색상 변경 -->
@@ -37,15 +37,15 @@
                 :class="{
                   ss: chunk.success == 1,
                   ff: chunk.success == 0,
-                  rr: chunk.success == -1
+                  rr: chunk.success == -1,
                 }"
               >
                 <span
                   class="d-inline-block text-truncate"
-                  style="max-width: 300px;"
+                  style="max-width: 300px"
                   >파일명 : {{ chunk.filename }}</span
                 >
-                <span style="text-align: right;"
+                <span style="text-align: right"
                   >작업분류 : {{ convertWorkcode(chunk.workcode) }}</span
                 >
               </v-expansion-panel-header>
@@ -61,13 +61,13 @@
               <!-- 해당 속성은 text-truncate이며 필요없다면 삭제 -->
               <span
                 class="d-inline-block text-truncate"
-                style="max-width: 700px;"
+                style="max-width: 700px"
                 >이동 전 위치 : {{ chunk.before }}</span
               >
               <br />
               <span
                 class="d-inline-block text-truncate"
-                style="max-width: 700px;"
+                style="max-width: 700px"
                 >이동 후 위치 : {{ chunk.after }}</span
               >
             </v-expansion-panel-content>
@@ -163,7 +163,7 @@ import { Watch } from "vue-property-decorator";
     "duplicatedList",
     "fileList",
     "renameHistory2",
-    "moveHistory"
+    "moveHistory",
   ]),
 
   methods: mapMutations([
@@ -172,8 +172,8 @@ import { Watch } from "vue-property-decorator";
     "changeFileSortList",
     "changeDuplicatedList",
     "changeRenameHistory2",
-    "changeMoveHistory"
-  ])
+    "changeMoveHistory",
+  ]),
 })
 export default class Restore extends Vue {
   changeDuplicatedList!: (newList: [][]) => void;
@@ -236,7 +236,7 @@ export default class Restore extends Vue {
   }
 
   selectchunk(t) {
-    console.log(t);
+    // console.log(t);
   }
 
   jsontest(changedHistory: object) {
@@ -244,7 +244,7 @@ export default class Restore extends Vue {
     const mm = JSON.parse(changedHistory.toString());
 
     //arr에 담기
-    mm.forEach(function(chunk: any) {
+    mm.forEach(function (chunk: any) {
       // console.log(chunk);
       try {
         if (chunk.date != undefined) {
@@ -256,7 +256,7 @@ export default class Restore extends Vue {
     });
 
     // 날짜순으로 정렬
-    sortingarr.sort(function(a, b) {
+    sortingarr.sort(function (a, b) {
       return a.date > b.date ? -1 : a.date < b.date ? 1 : 0;
     });
     // console.log(sortingarr);
@@ -264,7 +264,7 @@ export default class Restore extends Vue {
     //historylist 변경
     this.historyList = sortingarr.slice(0, 100);
 
-    this.historyList.forEach(function(history: any) {
+    this.historyList.forEach(function (history: any) {
       // console.log(history);
       const d = new Date(history.date);
       history.date = d.toString();
@@ -277,7 +277,7 @@ export default class Restore extends Vue {
     let sortingarr: any = {};
     const mm = JSON.parse(changedHistory.toString());
     // console.log(mm);
-    mm.forEach(function(chunk: any) {
+    mm.forEach(function (chunk: any) {
       // console.log(chunk);
 
       if (chunk.date) {
@@ -296,7 +296,7 @@ export default class Restore extends Vue {
 
     let keys = Object.keys(sortingarr);
 
-    keys.sort(function(a, b) {
+    keys.sort(function (a, b) {
       return Number(b) - Number(a);
     });
     let sorted: any = {};

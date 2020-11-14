@@ -42,7 +42,7 @@
               <div>
                 <h2 class="mt-4">1. 폴더 선택</h2>
                 <div class="text-right mb-1">
-                  <v-btn @click="readDir" text rounded 
+                  <v-btn @click="readDir" text rounded
                     ><i class="fas fa-search mr-2"></i>폴더 찾기</v-btn
                   >
                   <v-dialog
@@ -51,16 +51,14 @@
                     max-width="500"
                   >
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        text
-                        rounded
-                        v-bind="attrs"
-                        v-on="on"
-                      >
+                      <v-btn text rounded v-bind="attrs" v-on="on">
                         <i class="fas fa-folder-plus mr-2"></i>폴더 추가
                       </v-btn>
                     </template>
-                    <v-card class="pa-2" :class="{'modal-d': this.$vuetify.theme.dark}">
+                    <v-card
+                      class="pa-2"
+                      :class="{ 'modal-d': this.$vuetify.theme.dark }"
+                    >
                       <v-card-title>
                         <i class="fal fa-info-circle fa-lg mr-2 pb-1"></i>정리할
                         폴더 내에 해당 폴더가 추가됩니다.
@@ -87,9 +85,7 @@
                         >
                           추가
                         </v-btn>
-                        <v-btn text @click="dialog3 = false">
-                          취소
-                        </v-btn>
+                        <v-btn text @click="dialog3 = false"> 취소 </v-btn>
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
@@ -594,8 +590,8 @@ export default class ModalAddToLibraryDirectory extends AppProps {
     if (this.dates.length == 2) {
       const fromSelect = new Date(this.dates[0]);
       const toSelect = new Date(this.dates[1]);
-      console.log(fromSelect.toDateString());
-      console.log(typeof toSelect);
+      // console.log(fromSelect.toDateString());
+      // console.log(typeof toSelect);
       if (fromSelect > toSelect) {
         [this.dates[0], this.dates[1]] = [this.dates[1], this.dates[0]];
       }
@@ -635,7 +631,9 @@ export default class ModalAddToLibraryDirectory extends AppProps {
     });
   }
   get scrollerBgMode() {
-    return this.$vuetify.theme.dark ? "file-scroller-d modal-d" : "file-scroller";
+    return this.$vuetify.theme.dark
+      ? "file-scroller-d modal-d"
+      : "file-scroller";
   }
 }
 </script>
