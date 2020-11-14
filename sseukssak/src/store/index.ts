@@ -1,8 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import {
-  RestoreMoveListUnit,
-} from "../api/interface";
+import { RestoreMoveListUnit } from "../api/interface";
 import { google } from "googleapis";
 // import { stat } from "fs";
 
@@ -47,6 +45,9 @@ interface DirState {
 
   // 미니모드
   mini: boolean;
+
+  // OS platform
+  osPlatform: string;
 }
 interface ToLibrary {
   name: string;
@@ -94,7 +95,7 @@ export default new Vuex.Store({
     fileList: [],
     fileSortList: {
       directories: [],
-      files: []
+      files: [],
     },
     toLibraryList: [],
     toLibraryNameList: [],
@@ -105,7 +106,7 @@ export default new Vuex.Store({
       path: "",
       typeTags: [],
       dateTags: [],
-      titleTags: []
+      titleTags: [],
     },
     HistoryList: [],
     renameHistory: [],
@@ -134,7 +135,8 @@ export default new Vuex.Store({
     isLogin: false,
 
     // 미니모드
-    mini: false
+    mini: false,
+    osPlatform: "",
   },
   mutations: {
     changeModifyDirectroy(
@@ -199,18 +201,18 @@ export default new Vuex.Store({
           name:
             this.getters["front"](item) +
             this.getters["middle"](item) +
-            this.getters["back"](item, i + 1)
+            this.getters["back"](item, i + 1),
         });
         state.afterItems.push(tmp);
       });
     },
     sortBeforeItems(state: DirState) {
-      state.beforeItems.sort(function (a, b) {
+      state.beforeItems.sort(function(a, b) {
         return a.mtime > b.mtime ? 1 : -1;
       });
     },
     sortRenameFileList(state: DirState) {
-      state.renameFileList.sort(function (a, b) {
+      state.renameFileList.sort(function(a, b) {
         return a.mtime > b.mtime ? 1 : -1;
       });
       state.renameFileList.forEach((item) => {
@@ -267,6 +269,9 @@ export default new Vuex.Store({
     changeRestoreMoveList(state: DirState, value: RestoreMoveListUnit[]) {
       state.restoreMoveList = value;
     },
+    setOsPlatform(state: DirState, value: string) {
+      state.osPlatform = value;
+    },
   },
   actions: {},
   getters: {
@@ -315,9 +320,9 @@ export default new Vuex.Store({
     authUrl: (state) => {
       return state.oAuth2Client.generateAuthUrl({
         accessType: "offline",
-        scope: ["https://www.googleapis.com/auth/drive"]
+        scope: ["https://www.googleapis.com/auth/drive"],
       });
-    }
+    },
   },
-  modules: {}
+  modules: {},
 });

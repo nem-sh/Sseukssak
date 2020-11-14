@@ -38,16 +38,14 @@
                     max-width="500"
                   >
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        text
-                        rounded
-                        v-bind="attrs"
-                        v-on="on"
-                      >
+                      <v-btn text rounded v-bind="attrs" v-on="on">
                         <i class="fas fa-folder-plus mr-2"></i>새 폴더 추가
                       </v-btn>
                     </template>
-                    <v-card class="pa-2" :class="{'modal-d': this.$vuetify.theme.dark}">
+                    <v-card
+                      class="pa-2"
+                      :class="{ 'modal-d': this.$vuetify.theme.dark }"
+                    >
                       <v-card-title>
                         <!-- <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_pTnS7W/Empty Folder.json"  background="transparent"  speed="1"  style="width: 100px; height: 100px;"  loop  autoplay></lottie-player> -->
                         <i class="fal fa-info-circle fa-lg mr-2 pb-1"></i>정리할
@@ -81,13 +79,13 @@
                         >
                           추가
                         </v-btn>
-                        <v-btn text @click="dialog3 = false">
-                          취소
-                        </v-btn>
+                        <v-btn text @click="dialog3 = false"> 취소 </v-btn>
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
-                  <BtnCreateGoogleFolder @create-google-folder="createGoogleFolder"/>
+                  <BtnCreateGoogleFolder
+                    @create-google-folder="createGoogleFolder"
+                  />
                 </div>
                 <div class="ml-3 mb-3 font-weight-bold d-flex align-center">
                   <img
@@ -552,10 +550,8 @@ export default class ModalAddToLibraryDirectory extends Vue {
     this.dialog3 = false;
   }
   createGoogleFolder(data) {
-    
     this.directoryDir = "%drive%" + "\\" + data;
     this.dialog3 = false;
-
   }
 
   get dateRangeText() {
@@ -592,8 +588,8 @@ export default class ModalAddToLibraryDirectory extends Vue {
     if (this.dates.length == 2) {
       const fromSelect = new Date(this.dates[0]);
       const toSelect = new Date(this.dates[1]);
-      console.log(fromSelect.toDateString());
-      console.log(typeof toSelect);
+      // console.log(fromSelect.toDateString());
+      // console.log(typeof toSelect);
       if (fromSelect > toSelect) {
         [this.dates[0], this.dates[1]] = [this.dates[1], this.dates[0]];
       }
@@ -633,7 +629,9 @@ export default class ModalAddToLibraryDirectory extends Vue {
     });
   }
   get scrollerBgMode() {
-    return this.$vuetify.theme.dark ? "file-scroller-d modal-d" : "file-scroller";
+    return this.$vuetify.theme.dark
+      ? "file-scroller-d modal-d"
+      : "file-scroller";
   }
 }
 </script>

@@ -44,8 +44,8 @@
           <i class="fas fa-sync-alt mr-2"></i>새로고침
         </v-btn>
       </div>
-      <div class="" height="100%" >
-        <div >
+      <div class="" height="100%">
+        <div>
           <ListFromBreadcrumbs :fromDir="fromDir" :className="'bread-from'" />
         </div>
         <v-virtual-scroll
@@ -380,7 +380,7 @@
         </li>
       </ul>
       <v-dialog v-model="dialog" max-width="500">
-        <v-card :class="{'modal-d': this.$vuetify.theme.dark}">
+        <v-card :class="{ 'modal-d': this.$vuetify.theme.dark }">
           <v-card-title class="headline mb-3">
             {{ selectedDataInfo.name }}
           </v-card-title>
@@ -422,7 +422,7 @@
         </v-card>
       </v-dialog>
       <v-dialog v-model="dialog2" persistent max-width="450">
-        <v-card :class="{'modal-d': this.$vuetify.theme.dark}">
+        <v-card :class="{ 'modal-d': this.$vuetify.theme.dark }">
           <v-card-title class="headline">
             {{ selectedData.name }}의 이름 바꾸기
           </v-card-title>
@@ -437,9 +437,7 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn text @click="dialog2 = false">
-              취소
-            </v-btn>
+            <v-btn text @click="dialog2 = false"> 취소 </v-btn>
             <v-btn color="#7288da" dark rounded @click="renameThis">
               지정
             </v-btn>
@@ -467,7 +465,7 @@ import ListFromFilter from "@/components/listFrom/ListFromFilter.vue";
 import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.vue";
 import BtnUploadGoogleDriveFolder from "@/components/googleDrive/BtnUploadGoogleDriveFolder.vue";
 
-import BtnImageRename from "@/components/ai/BtnImageRename.vue"
+import BtnImageRename from "@/components/ai/BtnImageRename.vue";
 
 import Swal from "sweetalert2";
 // import { shell } from "electron";
@@ -544,9 +542,9 @@ export default class ListFrom extends Vue {
       showConfirmButton: false,
       timer: 1000,
     });
-    console.log(
-      fs.createReadStream(this.fromDir + "\\" + this.selectedData["name"])
-    );
+    // console.log(
+    //   fs.createReadStream(this.fromDir + "\\" + this.selectedData["name"])
+    // );
   }
 
   renameThis() {
@@ -591,7 +589,7 @@ export default class ListFrom extends Vue {
     this.dialog2 = false;
   }
   openShell() {
-    console.log(this.fromDir + "\\" + this.selectedData["name"]);
+    // console.log(this.fromDir + "\\" + this.selectedData["name"]);
     shell.openPath(this.fromDir + "\\" + this.selectedData["name"]);
   }
   getInfo() {
@@ -666,7 +664,7 @@ export default class ListFrom extends Vue {
       const secMargin = 10;
       let posLeft = "";
       let posTop = "";
-      console.log(posX, posY, menuWidth, menuHeight, winWidth, winHeight);
+      // console.log(posX, posY, menuWidth, menuHeight, winWidth, winHeight);
       if (
         posX + menuWidth + secMargin >= winWidth &&
         posY + menuHeight + secMargin >= winHeight
@@ -684,11 +682,11 @@ export default class ListFrom extends Vue {
         posTop = posY + secMargin + "px";
       }
 
-      console.log(posLeft, posTop);
+      // console.log(posLeft, posTop);
       if (posLeft && posTop) {
         posTop = posY + secMargin + "px";
         posLeft = posX + secMargin + "px";
-        console.log(posTop);
+        // console.log(posTop);
         if (Number(posY + secMargin) > 400) {
           posTop = posY - menuHeight - secMargin + "px";
         }
@@ -737,7 +735,7 @@ export default class ListFrom extends Vue {
   }
   async enterDirectory(enteredDirectory: string) {
     this.filterState = "전체보기";
-    console.log(enteredDirectory, 987);
+    // console.log(enteredDirectory, 987);
     if (enteredDirectory == "") {
       const dir: string[] = this.fromDir.split("\\");
       dir.pop();

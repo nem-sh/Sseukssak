@@ -9,6 +9,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
+import { mapState } from "vuex";
 
 interface FilePath {
   text: string;
@@ -22,40 +23,32 @@ const AppProps = Vue.extend({
 });
 
 @Component({
-  data: () => ({
-    items: [
-      {
-        text: "Dashboard",
-        disabled: false,
-        href: "breadcrumbs_dashboard",
-      },
-      {
-        text: "Link 1",
-        disabled: false,
-        href: "breadcrumbs_link_1",
-      },
-      {
-        text: "Link 2",
-        disabled: true,
-        href: "breadcrumbs_link_2",
-      },
-    ],
-  }),
+  computed: mapState(["osPlatform"]),
 })
 export default class ListFromBreadcrumbs extends AppProps {
+  osPlatform!: string;
   get dirPaths() {
-    const dirLists = this.fromDir.split("\\");
     const items: FilePath[] = [];
-    dirLists.forEach((dirList) => {
-      items.push({
-        text: dirList,
-        disabled: true,
+    if (this.osPlatform === "Win32") {
+      const dirLists = this.fromDir.split("\\");
+      dirLists.forEach((dirList) => {
+        items.push({
+          text: dirList,
+          disabled: true,
+        });
       });
-    });
+    } else if (this.osPlatform === "MacIntel") {
+      const dirLists = this.fromDir.split("/");
+      dirLists.forEach((dirList) => {
+        items.push({
+          text: dirList,
+          disabled: true,
+        });
+      });
+    }
     return items;
   }
   get breadName() {
-    console.log(this.className);
     return this.className;
   }
 }

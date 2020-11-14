@@ -38,12 +38,12 @@ interface File {
     "changeDir",
     "changeFileList",
     "changeFileSortList",
-    "changeDuplicatedList"
-  ])
+    "changeDuplicatedList",
+  ]),
 })
 export default class DupCheck extends Vue {
   mounted() {
-    console.log("mounted at dupcheck");
+    // console.log("mounted at dupcheck");
     BUS.$on("bus:dupcheck", () => {
       this.DuplicateCheck();
     });
@@ -69,7 +69,7 @@ export default class DupCheck extends Vue {
 
   read() {
     const rs = dialog.showOpenDialogSync({
-      properties: ["openDirectory"]
+      properties: ["openDirectory"],
     });
     if (!rs) return;
 
@@ -159,17 +159,17 @@ export default class DupCheck extends Vue {
             this.fromDir + "\\" + dupedfilelist[f1][f2],
             this.fromDir + "\\" + "중복 파일들" + "\\" + dupedfilelist[f1][f2],
             d,
-            2
+            2,
           ]);
         } else {
-          console.log("dup fail");
+          // console.log("dup fail");
           dupedhistory.push([
             dupedfilelist[f1][f2],
             0,
             this.fromDir + "\\" + dupedfilelist[f1][f2],
             this.fromDir + "\\" + dupedfilelist[f1][f2],
             d,
-            2
+            2,
           ]);
         }
       }

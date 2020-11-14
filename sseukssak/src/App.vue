@@ -2,7 +2,9 @@
   <v-app id="app" class="app-container">
     <!-- <Quick /> -->
     <div class="window-operations-container">
-      <div><img class="logo" src="@/assets/sseukssak.png" alt="" /></div>
+      <div>
+        <img class="logo" src="@/assets/sseukssak.png" alt="" />
+      </div>
       <div class="operations">
         <BtnLoginGoogle v-if="!mini" class="mr-1" />
         <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
@@ -22,11 +24,16 @@
             <div class="top-space"></div>
             <v-tooltip right>
               <template v-slot:activator="{ on, attrs }">
-                <div class="menu--logo" v-bind="attrs" v-on="on">
+                <div
+                  @click="goInfoPage()"
+                  class="menu--logo"
+                  v-bind="attrs"
+                  v-on="on"
+                >
                   <img class="app-logo" src="@/assets/sweeping.png" alt="" />
                 </div>
               </template>
-              <span>쓱싹</span>
+              <span>웹사이트 이동</span>
             </v-tooltip>
 
             <div class="menu--separator"></div>
@@ -95,13 +102,33 @@
                   class="menu--settings"
                   v-bind="attrs"
                   v-on="on"
-                  @click="goInfoPage"
+                  @click="dialog = true"
                 >
                   <span><i class="far fa-question fa-lg"></i></span>
                 </div>
               </template>
               <span>도움말</span>
             </v-tooltip>
+            <v-dialog v-model="dialog" width="400px">
+              <v-expansion-panels accordion>
+                <v-expansion-panel
+                  :class="bgMode"
+                  v-for="item in helpItems"
+                  :key="item.id"
+                >
+                  <v-expansion-panel-header
+                    >{{ item.title }}<i :class="item.icon" class="ml-2"></i>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    {{ item.des }}
+                    <i
+                      class="far fa-external-link-alt go-site"
+                      @click="goInfoPage"
+                    ></i>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-dialog>
           </div>
         </div>
       </div>
@@ -131,18 +158,53 @@ const { ipcRenderer, shell } = window.require("electron");
   components: {
     Home,
     BtnLoginGoogle,
-    FeatHistory
+    FeatHistory,
   },
-  created() {
-    this.$router.push({ name: "Home" });
+  data: () => {
+    return {
+      helpItems: [
+        {
+          id: 1,
+          icon: "far fa-folders",
+          title: "파일 정리",
+          des:
+            "FROM에서 정리를 원하는 폴더를 선택하여 TO에 지정된 정리 그룹의 기준에 맞게 이동됩니다.",
+        },
+        {
+          id: 2,
+          icon: "far fa-pencil",
+          title: "파일/폴더명 변경",
+          des:
+            "이름 변경을 원하는 폴더 및 파일을 선택하여 통합적으로 변경이 가능합니다.",
+        },
+        {
+          id: 3,
+          icon: "far fa-history",
+          title: "히스토리",
+          des:
+            "쓱싹을 통해 실행했던 파일 이동, 이름 변경, 중복 제거의 기록들을 확인할 수 있습니다.",
+        },
+      ],
+    };
   },
-  computed: mapState(["mini"]),
-  methods: mapMutations(["changeMiniState"])
+  computed: mapState(["mini", "osPlatform"]),
+  methods: mapMutations(["changeMiniState", "setOsPlatform"]),
 })
 export default class App extends Vue {
+  dialog: boolean = false;
   activeTab: string = "Home";
   mini!: boolean;
   changeMiniState!: (value: boolean) => void;
+  osPlatform!: string;
+  setOsPlatform!: (value: string) => void;
+
+  created() {
+    const requestOsPlatform = window.navigator.platform;
+    this.setOsPlatform(requestOsPlatform);
+    if (this.$route.name !== "Home") {
+      this.$router.push({ name: "Home" });
+    }
+  }
 
   goMenu(idx) {
     if (idx === 1 && this.$route.name !== "Home") {
@@ -198,16 +260,6 @@ export default class App extends Vue {
   get bgMode() {
     return this.$vuetify.theme.dark ? "rename-bg-d" : "rename-bg";
   }
-
-  goSettingsPage() {
-    Swal.fire({
-      position: "center",
-      icon: "warning",
-      title: "준비중 입니다 :)",
-      showConfirmButton: false,
-      timer: 1000
-    });
-  }
 }
 </script>
 
@@ -218,8 +270,12 @@ export default class App extends Vue {
   -moz-osx-font-smoothing: grayscale !important;
   color: #2c3e50;
 }
+.go-site:hover {
+  cursor: pointer;
+  color: var(--color-purple);
+}
 .rename-bg-d {
-  background-color: #24303a;
-  color: white;
+  background-color: #24303a !important;
+  color: white !important;
 }
 </style>

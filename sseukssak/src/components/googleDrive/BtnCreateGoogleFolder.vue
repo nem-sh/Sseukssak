@@ -11,9 +11,10 @@
       </v-btn>
     </template>
 
-    <v-card :class="{'modal-d': this.$vuetify.theme.dark}">
+    <v-card :class="{ 'modal-d': this.$vuetify.theme.dark }">
       <v-card-title>
-        <i class="fal fa-info-circle fa-lg mr-2 pb-1"></i>생성할 구글 드라이브 폴더 명을 입력해 주세요
+        <i class="fal fa-info-circle fa-lg mr-2 pb-1"></i>생성할 구글 드라이브
+        폴더 명을 입력해 주세요
       </v-card-title>
       <v-card-text>
         <v-text-field v-model="folderName" label="새 폴더명 입력">
@@ -50,7 +51,7 @@ export default class BtnCreateGoogleFolder extends Vue {
   // drive: any = google.drive({version: 'v3', auth: this.oAuth2Client})
 
   makeGoogleFolder() {
-    console.log(this.oAuth2Client);
+    // console.log(this.oAuth2Client);
     const drive = google.drive({ version: "v3", auth: this.oAuth2Client });
     const fileMetadata = {
       name: this.folderName,
@@ -72,7 +73,7 @@ export default class BtnCreateGoogleFolder extends Vue {
             icon: "success",
             title: "폴더를 생성했습니다.",
           });
-          console.log(file);
+          // console.log(file);
           this.$emit(
             "create-google-folder",
             file.data.id + "\\" + this.folderName

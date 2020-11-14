@@ -132,29 +132,31 @@
                 </v-list-item-subtitle> -->
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
-                    
                     <v-list-item-subtitle
-                  v-if="
-                    getTagLists(item.typeTags, item.dateTags, item.titleTags)
-                      .length <= 3
-                  "
-                  color="#7288da"
-                  class="item-path"
-                >
-                  <v-chip
-                    v-for="tag in getTagLists(
-                      item.typeTags,
-                      item.dateTags,
-                      item.titleTags
-                    )"
-                    :key="tag"
-                    class="mr-2"
-                    small
-                    chip
-                    >{{ tag }}
-                  </v-chip>
-                </v-list-item-subtitle>
-                <v-list-item-subtitle
+                      v-if="
+                        getTagLists(
+                          item.typeTags,
+                          item.dateTags,
+                          item.titleTags
+                        ).length <= 3
+                      "
+                      color="#7288da"
+                      class="item-path"
+                    >
+                      <v-chip
+                        v-for="tag in getTagLists(
+                          item.typeTags,
+                          item.dateTags,
+                          item.titleTags
+                        )"
+                        :key="tag"
+                        class="mr-2"
+                        small
+                        chip
+                        >{{ tag }}
+                      </v-chip>
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle
                       v-else
                       color="#7288da"
                       class="item-path"
@@ -174,8 +176,6 @@
                         >{{ tag }}
                       </v-chip>
                     </v-list-item-subtitle>
-                    
-
                   </template>
                   <span>{{
                     getTagString(item.typeTags, item.dateTags, item.titleTags)
@@ -397,7 +397,7 @@ export default class ListTo extends Vue {
     event.stopPropagation();
 
     for (const f of event.dataTransfer.files) {
-      console.log(f);
+      // console.log(f);
       if (this.selectedToName == "") {
         Swal.fire({
           position: "center",
@@ -638,8 +638,8 @@ export default class ListTo extends Vue {
     return false;
   }
 
-  openGoogleDrive(){
-    shell.openExternal('https://drive.google.com');
+  openGoogleDrive() {
+    shell.openExternal("https://drive.google.com");
   }
 
   @Watch("selectedToName")

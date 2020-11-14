@@ -61,8 +61,7 @@
 
     <div
       style="overflow-x:hidden; overflow-y:scroll;  height:410px;"
-      :class="scrollerBgMode"
-    >
+      :class="scrollerBgMode">
       <v-list v-for="(timechunk, time) in timesortedList" :key="time">
         <v-expansion-panels color="grey lighten-4" style="chunk">
           <br />
@@ -96,8 +95,7 @@
                   >fas fa-circle</v-icon
                 >
                 <v-icon color="red darken-1" size="10" v-if="chunk.success == 0"
-                  >fas fa-exclamation-circle</v-icon
-                >
+                  >fas fa-exclamation-circle</v-icon>
                 <v-icon
                   color="blue lighten-3"
                   size="10"
@@ -119,12 +117,12 @@
               <!-- 해당 속성은 text-truncate이며 필요없다면 삭제 -->
               <span
                 class="d-inline-block text-truncate"
-                style="max-width: 700px;"
+                style="max-width: 700px"
                 >이동 전 위치 : {{ chunk.before }}</span
               >
               <span
                 class="d-inline-block text-truncate"
-                style="max-width: 700px;"
+                style="max-width: 700px"
                 >이동 후 위치 : {{ chunk.after }}</span
               >
             </v-expansion-panel-content>
@@ -228,7 +226,7 @@ import { Watch } from "vue-property-decorator";
     "duplicatedList",
     "fileList",
     "renameHistory2",
-    "moveHistory"
+    "moveHistory",
   ]),
 
   methods: mapMutations([
@@ -237,8 +235,8 @@ import { Watch } from "vue-property-decorator";
     "changeFileSortList",
     "changeDuplicatedList",
     "changeRenameHistory2",
-    "changeMoveHistory"
-  ])
+    "changeMoveHistory",
+  ]),
 })
 export default class Restore extends Vue {
   changeDuplicatedList!: (newList: [][]) => void;
@@ -301,7 +299,7 @@ export default class Restore extends Vue {
   }
 
   selectchunk(t) {
-    console.log(t);
+    // console.log(t);
   }
 
   jsontest(changedHistory: object) {
@@ -309,7 +307,7 @@ export default class Restore extends Vue {
     const mm = JSON.parse(changedHistory.toString());
 
     //arr에 담기
-    mm.forEach(function(chunk: any) {
+    mm.forEach(function (chunk: any) {
       // console.log(chunk);
       try {
         if (chunk.date != undefined) {
@@ -321,7 +319,7 @@ export default class Restore extends Vue {
     });
 
     // 날짜순으로 정렬
-    sortingarr.sort(function(a, b) {
+    sortingarr.sort(function (a, b) {
       return a.date > b.date ? -1 : a.date < b.date ? 1 : 0;
     });
     // console.log(sortingarr);
@@ -329,7 +327,7 @@ export default class Restore extends Vue {
     //historylist 변경
     this.historyList = sortingarr.slice(0, 100);
 
-    this.historyList.forEach(function(history: any) {
+    this.historyList.forEach(function (history: any) {
       // console.log(history);
       const d = new Date(history.date);
       history.date = d.toString();
@@ -342,7 +340,7 @@ export default class Restore extends Vue {
     let sortingarr: any = {};
     const mm = JSON.parse(changedHistory.toString());
     // console.log(mm);
-    mm.forEach(function(chunk: any) {
+    mm.forEach(function (chunk: any) {
       // console.log(chunk);
 
       if (chunk.date) {
@@ -361,7 +359,7 @@ export default class Restore extends Vue {
 
     let keys = Object.keys(sortingarr);
 
-    keys.sort(function(a, b) {
+    keys.sort(function (a, b) {
       return Number(b) - Number(a);
     });
     let sorted: any = {};
