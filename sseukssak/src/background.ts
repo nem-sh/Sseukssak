@@ -137,8 +137,7 @@ function createWindow() {
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
 
-    // 빌드 한 프로그램에서 개발자 모드 On
-    // win.webContents.openDevTools({ mode: "undocked" });
+    win.webContents.openDevTools({ mode: "undocked" });
   }
   win.once("ready-to-show", () => {
     if (win !== null) {

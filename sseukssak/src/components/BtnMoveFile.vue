@@ -1,24 +1,25 @@
 <template>
   <div style="display: inline">
-    <v-btn
-      v-if="restoreMoveList.length != 0"
-      class="mr-5"
-      color="red"
-      dark
-      rounded
-      @click="RestoreMoveFile"
-    >
-      <i class="fas fa-redo-alt"></i>
-    </v-btn>
-    <v-btn
-      class="mr-5"
-      color="var(--color-purple)"
-      dark
-      rounded
-      @click="moveFile"
-    >
-      정리
-    </v-btn>
+    <div class="d-flex justify-end">
+      <v-btn
+        class="mr-3 play-btn"
+        color="var(--color-purple)"
+        dark
+        rounded
+        @click="moveFile"
+      >
+        정리
+      </v-btn>
+      <v-btn
+        :disabled="restoreMoveList.length === 0"
+        class="mr-3"
+        color="red"
+        rounded
+        @click="RestoreMoveFile"
+      >
+        <i class="fas fa-redo-alt"></i>
+      </v-btn>
+    </div>
     <v-dialog v-if="!mini" v-model="dialog" persistent max-width="400px">
       <v-card align="center">
         <v-card-text>
@@ -47,11 +48,13 @@ import Swal from "sweetalert2";
 import mime from "mime-types";
 
 // 알림창
-import { remote } from "electron";
-const notifier = remote.require("node-notifier");
-declare const __static: string;
+// import { remote } from "electron";
+// const { Notification } = require('electron').remote;
+// const notifier = remote.require("node-notifier");
+// declare const __static: string;
 import path from "path";
 import Axios from "axios";
+
 import {
   ToLibrary2,
   ToLibraryDirectory2,
@@ -233,9 +236,10 @@ export default class BtnMoveFile extends Vue {
       });
       return;
     } else {
+      let dupFlag = false
       // 로딩
       if (this.mini === true) {
-        BUS.$emit("bus:miniLoading");
+        BUS.$emit("bus:mniiLoading");
       } else {
         this.dialog = true;
       }
@@ -313,14 +317,8 @@ export default class BtnMoveFile extends Vue {
               }
               if (flag) {
                 if (fs.existsSync(directory.path + "\\" + idx.name)) {
-                  Swal.fire({
-                    position: "center",
-                    icon: "warning",
-                    title:
-                      "중복된 이름의 파일이 존재하여 자동 리네임 되었습니다",
-                    showConfirmButton: false,
-                    timer: 1000
-                  });
+                  dupFlag = true
+
                   a.push([
                     this.fromDir + "\\" + idx.name,
                     directory.path + "\\" + "[중복]" + idx.name
@@ -377,18 +375,51 @@ export default class BtnMoveFile extends Vue {
       this.changeRestoreMoveList(tempRestoreMoveList);
 
       setTimeout(() => {
-        // 로딩
+        // 로딩 끝
         if (this.mini === true) {
           BUS.$emit("bus:miniLoadingEnd");
         } else {
           this.dialog = false;
         }
-        notifier.notify({
-          title: "쓱싹 알림",
-          message: "정리가 완료되었습니다!",
-          icon: path.join(__static, "sweeping.png"),
-          sound: true
-        });
+        // 정리한게 없는 경우
+        if (tempRestoreMoveList.length === 0) {
+          Swal.fire({
+            position: "center",
+            icon: "info",
+            title:
+              "정리한 파일이 없습니다",
+            showConfirmButton: false,
+            timer: 1000
+          });
+        } else {
+          // 중복 알림
+          if (dupFlag) {
+            Swal.fire({
+              position: "center",
+              icon: "info",
+              title: "정리가 완료되었습니다",
+              text: "중복된 이름의 파일이 존재하여 자동 리네임되었습니다",
+              showConfirmButton: false,
+              timer: 1000
+            });
+            dupFlag = false
+          } else {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title:
+                "정리가 완료되었습니다",
+              showConfirmButton: false,
+              timer: 1000
+            });
+          }
+          // notifier.notify({
+          //   title: "쓱싹 알림",
+          //   message: "정리가 완료되었습니다!",
+          //   icon: path.join(__static, "sweeping.png"),
+          //   sound: true
+          // });
+        }
       }, 1000);
       // Swal.fire({
       //   position: "center",
@@ -402,6 +433,14 @@ export default class BtnMoveFile extends Vue {
     }
   }
   RestoreMoveFile() {
+    // 로딩
+    if (this.mini === true) {
+      BUS.$emit("bus:miniLoading");
+    } else {
+      this.dialog = true;
+    }
+
+    this.dialog = true;
     console.log(this.restoreMoveList);
     for (let index = 0; index < this.restoreMoveList.length; index++) {
       const element = this.restoreMoveList[index];
@@ -411,7 +450,6 @@ export default class BtnMoveFile extends Vue {
       if (element["type"] == "move") {
         try {
           fs.renameSync(element["to"], element["from"]);
-
           this.changeMoveHistory([
             filePathSplit[filePathSplit.length - 1],
             1,
@@ -455,6 +493,23 @@ export default class BtnMoveFile extends Vue {
     }
     this.changeRestoreMoveList([]);
     BUS.$emit("bus:refreshfile");
+
+    setTimeout(() => {
+      // 로딩 끝
+      if (this.mini === true) {
+        BUS.$emit("bus:miniLoadingEnd");
+      } else {
+        this.dialog = false;
+      }
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title:
+          "복원되었습니다",
+        showConfirmButton: false,
+        timer: 1000
+      });
+    }, 1000);
   }
 }
 </script>

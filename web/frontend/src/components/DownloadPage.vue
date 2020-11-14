@@ -1,89 +1,73 @@
 <template>
     <v-container class="OuterDiv">
-      <v-row class="BigRow">
-        <v-col
-          cols="12"
-          sm="8"
-        >
-          <div class="wrapper">
-            <div class="images">
-              <div class="img-1"></div>
-              <div class="img-2"></div>
-            </div>
-            <div class="ImgSlider">
-              <div class="drag-line">
-                <span></span>
-              </div>
-              <input type="range" min="0" max="100" :value="sliderValue" @input="ImgSliderOnInput">
-            </div>
-          </div>
-        </v-col>
-        <v-col
-          cols="12"
-          sm="4"
-        >
-          <v-row class="TopRow">
-            파일 정리가 귀찮다면?
-          </v-row>
-          <v-row class="MidRow">
-            지금 Sseukssak 하세요!
-          </v-row>
-          <v-row class="BotRow">
-            <v-btn
-              class="DownloadButton"
-              rounded
-              elevation="5"
-              @click="download()"
-            >다운로드</v-btn>
-          </v-row>
-        </v-col>
-      </v-row>
+      <video autoplay data-keepplaying muted loop id="myVideo">
+  <source src="../assets/BackGroundVideo.mp4" type="video/mp4">
+</video>
+
+<!-- Optional: some overlay text to describe the video -->
+<v-row class="content">
+  <v-col
+  cols="4"
+  > 
+  </v-col>
+  <v-col
+  cols="4"
+  class="midPart"
+  >
+  <v-row class="FirstRow">
+    <span>원클릭 폴더 관리 앱</span>
+  <span class="forD">for DeskTop</span>
+  </v-row>
+  <v-row class="SecondRow">
+    <v-col
+    cols="4"
+    class="LogoPart"
+    >
+    <img :src="require(`@/assets/sweeping.png`)" alt="No Image" class="LogoImage"/>
+    </v-col>
+    <v-col
+    cols="8"
+    class="NamePart"
+    >
+    Sseukssak
+    </v-col>
+  </v-row>
+  <v-row class="ThirdRow">
+    <button class="DownloadButton" @click="download()">다운로드</button>
+  </v-row>
+  </v-col>
+  <v-col
+  cols="4"
+  > 
+  </v-col>
+</v-row>
     </v-container>
 </template>
 
 <script>
-import fileDownload from "js-file-download"
 
 export default {
+  name: "DownloadPage",
     data () {
         return {
           sliderValue: 95,
         }
     },
     methods: {
-      ImgSliderOnInput () {
-        const ImageSlider = document.querySelector(".ImgSlider input")
-        const showImg = document.querySelector(".images .img-2")
-        const dragLine = document.querySelector(".ImgSlider .drag-line")
-        const sliderVal = ImageSlider.value;
-        dragLine.style.left = sliderVal + "%";
-        showImg.style.width = sliderVal + "%";
-      },
+      // ImgSliderOnInput () {
+      //   const ImageSlider = document.querySelector(".ImgSlider input")
+      //   const showImg = document.querySelector(".images .img-2")
+      //   const dragLine = document.querySelector(".ImgSlider .drag-line")
+      //   const sliderVal = ImageSlider.value;
+      //   dragLine.style.left = sliderVal + "%";
+      //   showImg.style.width = sliderVal + "%";
+      // },
         download () {
-            // axios({
-            //     url: this.SERVER_URL,
-            //     method: "GET",
-            //     responseType: "blob"
-            // })
-            // .then((response) =>{
-            //     const url = window.URL.createObjectURL(new Blob([response.data]))
-            //     const link = document.createElement('a');
-            //     link.href = url;
-            //     link.setAttribute("download", "File_Name")
-            //     document.body.appendChild(link);
-            //     link.click();
-            // })
-                // .catch((err) => {
-                //     console.log(err.response)
-                // })
-            // fileDownload(myImage, "Downloaded_File.png")
-            // const url = window.URL.createObjectURL(new Blob([myImage]))
-            // const link = document.createElement('a');
-            // link.href = url;
-            // link.setAttribute("download", "File_Name.png")
-            // document.body.appendChild(link);
-            // link.click();
-            fileDownload("hi", "Sseukssak Setup")
+          const link = document.createElement('a');
+          link.href = "http://k3b304.p.ssafy.io/static/sseukssak.exe";
+          link.setAttribute("download", "sseukssak.exe")
+          document.body.appendChild(link);
+          link.click();
         },
     },
 }
@@ -93,137 +77,102 @@ export default {
 .OuterDiv {
   height: 100vh;
   width: 100vw;
-}
-.BigRow {
-  height: 80%;
-  width: 100%;
-    
-}
-.wrapper{
-  position: relative;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  background: #fff;
-  border: 7px solid #fff;
-  box-shadow: 0px 0px 15px rgba(0,0,0,0.15);
-}
-.wrapper .images{
-  height: 100%;
-  width: 100%;
   display: flex;
+  justify-content: center;
+  align-items: center;;
 }
-.wrapper .images .img-1{
+.midPart {
   height: 100%;
-  width: 100%;
-  background: url("../assets/After.png") no-repeat;
-  background-size: cover;
-  /* background: url("images/car.jpg") no-repeat; */
 }
-.wrapper .images .img-2{
-  position: absolute;
-  height: 100%;
-  width: 98%;
-  /* filter: blur(5px); */
-  background: url("../assets/Before.png") no-repeat;
-  background-size: cover;
-  /* background: url("images/car.png") no-repeat; */
-}
-.wrapper .ImgSlider{
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 99;
-}
-.wrapper .ImgSlider input{
-  width: 100%;
-  outline: none;
-  background: none;
-  -webkit-appearance: none;
-}
-.ImgSlider input::-webkit-slider-thumb{
-  height: 80vh;
-  width: 3px;
-  background: none;
-  -webkit-appearance: none;
-  cursor: pointer;
-}
-.ImgSlider .drag-line{
-  width: 3px;
-  height: 80vh;
-  position: absolute;
-  left: 98%;
-  pointer-events: none;
-}
-.ImgSlider .drag-line::before,
-.ImgSlider .drag-line::after{
-  position: absolute;
-  content: "";
-  width: 100%;
-  height: 40vh;
-  background: #fff;
-}
-.ImgSlider .drag-line::before{
-  top: 0;
-}
-.ImgSlider .drag-line::after{
-  bottom: 0;
-}
-.ImgSlider .drag-line span{
-  height: 42px;
-  width: 42px;
-  border: 3px solid #fff;
-  position: absolute;
-  top: 47%;
-  left: 10%;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
-.ImgSlider .drag-line span::before,
-.ImgSlider .drag-line span::after{
-  position: absolute;
-  content: "";
-  top: 50%;
-  border: 10px solid transparent;
-  border-bottom-width: 0px;
-  border-right-width: 0px;
-  transform: translate(-50%, -50%) rotate(45deg);
-}
-.ImgSlider .drag-line span::before{
-  left: 40%;
-  border-left-color: #fff;
-}
-.ImgSlider .drag-line span::after{
-  left: 68%;
-  border-top-color: #fff;
-}
-.TopRow {
-  height: 25%;
+.FirstRow {
+  height: 40%;
   width: 100%;
   justify-content: center;
-  align-items: center;
-  text-align: center;
-  font-size: 2vw;
 }
-.MidRow {
-  height: 25%;
+.SecondRow {
+  height: 40%;
+  width: 100%;
+  padding-top: 0 !important;
+  padding-left: 0 !important;
+  padding-bottom: 0 !important;
+  justify-content: center;
+}
+.ThirdRow {
+  height: 20%;
   width: 100%;
   justify-content: center;
-  align-items: center;
-  text-align: center;
-  font-size: 2vw;
 }
-.BotRow {
-  height: 50%;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
+.LogoPart {
+height: 100%;
+width: 100%;
+padding: 0 !important;
+}
+.NamePart {
+height: 100%;
+width: 100%;
+padding-left: 0 !important;
+font-size: 4vw;
+}
+.LogoImage {
+  width: 80%;
+  height: 80%;
 }
 .DownloadButton {
-  height: 20% !important;
-  width: 60%;
+  margin: auto;
+  height: 80%;
+  border-radius: 50px;
+  width: 50%;
   background-color: white;
   text-align: center;
   font-size: 2vw !important;
+  color: black;
+}
+.forD {
+  font-size: 1.5vw;
+  padding-bottom: 3vw;
+}
+#myVideo {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+}
+.LogoBox {
+  margin: auto;
+  font-size: 5vh;
+  font-family: "Nanum Gothic", sans-serif !important;
+  font-weight: 900;
+  height: 60px
+}
+.midPart {
+  text-align: center;
+  font-size: 6vh;
+}
+/* Add some content at the bottom of the video/page */
+.content {
+  position: fixed;
+  /* bottom: 0; */
+  /* background: rgba(0, 0, 0, 0.5); */
+  color: #f1f1f1;
+  height: 60%;
+  width: 100%;
+  padding: 20px;
+}
+
+/* Style the button used to pause/play the video */
+#myBtn {
+  width: 200px;
+  font-size: 18px;
+  padding: 10px;
+  border: none;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+}
+
+.DownloadButton:hover {
+  background: #ddd;
+  color: black;
 }
 </style>

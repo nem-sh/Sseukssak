@@ -73,9 +73,6 @@
 
                       <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn text @click="dialog3 = false">
-                          취소
-                        </v-btn>
                         <v-btn
                           dark
                           color="#7288da"
@@ -83,6 +80,9 @@
                           @click="readFromDir"
                         >
                           추가
+                        </v-btn>
+                        <v-btn text @click="dialog3 = false">
+                          취소
                         </v-btn>
                       </v-card-actions>
                     </v-card>

@@ -8,7 +8,7 @@
 import { Vue, Component } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
 import { SortList } from "../api/interface";
-import shellContextMenu from "shell-context-menu";
+// import shellContextMenu from "shell-context-menu";
 import fs from "fs";
 const { shell } = require("electron").remote;
 const { app } = require("electron").remote;
@@ -37,7 +37,7 @@ export default class Quick extends Vue {
       menu: "여기서 바로 쓱싹할께요!!!!",
     };
 
-    shellContextMenu.registerCommand(options);
+    // shellContextMenu.registerCommand(options);
   }
   created() {
     console.log(1);
