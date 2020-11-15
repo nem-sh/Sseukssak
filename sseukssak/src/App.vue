@@ -110,7 +110,6 @@
             <div class="menu--settings">
               <BtnLoginGoogle />
             </div>
-
             <v-dialog v-model="dialog" width="400px">
               <v-expansion-panels accordion>
                 <v-expansion-panel
@@ -131,6 +130,7 @@
                 </v-expansion-panel>
               </v-expansion-panels>
             </v-dialog>
+            <Quick />
           </div>
         </div>
       </div>
@@ -149,7 +149,7 @@ import { mapState, mapMutations } from "vuex";
 import Component from "vue-class-component";
 import Home from "@/views/Home.vue";
 
-// import Quick from "@/views/Quick.vue";
+import Quick from "@/components/Quick.vue";
 import "./components/styles/main.scss";
 import BtnLoginGoogle from "@/components/googleDrive/BtnLoginGoogle.vue";
 import FeatHistory from "@/components/history/FeatHistory.vue";
@@ -161,6 +161,7 @@ const { ipcRenderer, shell } = window.require("electron");
     Home,
     BtnLoginGoogle,
     FeatHistory,
+    Quick,
   },
   data: () => {
     return {
@@ -201,6 +202,7 @@ export default class App extends Vue {
   setOsPlatform!: (value: string) => void;
 
   created() {
+    console.log(process.argv[0]);
     const requestOsPlatform = window.navigator.platform;
     this.setOsPlatform(requestOsPlatform);
     if (this.$route.name !== "Home") {
