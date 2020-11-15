@@ -42,6 +42,14 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
   changeGoogleHistory!: (newHistory: any[]) => void
 
   async uploadFile(auth) {
+    Swal.fire({
+      title: '업로드 중입니다.',
+      icon: 'info',
+      showConfirmButton: false,
+      willOpen: () => {
+        Swal.showLoading()
+      }
+    })
     const accessToken = auth.credentials.access_token;
     const UPLOAD_URL =
       "https://www.googleapis.com/upload/drive/v3/files?uploadType=media";
