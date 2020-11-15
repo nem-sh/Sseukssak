@@ -61,7 +61,6 @@ import mime from "mime-types";
 // const { Notification } = require('electron').remote;
 // const notifier = remote.require("node-notifier");
 // declare const __static: string;
-import path from "path";
 import Axios from "axios";
 
 import {
@@ -203,14 +202,14 @@ export default class BtnMoveFile extends Vue {
               title: "구글 드라이브 업로드에 성공했습니다.",
             })
           )
-          .catch((err) =>
+          .catch(() =>
             Swal.fire({
               icon: "error",
               title: "구글 드라이브 업로드에 실패했습니다.",
             })
           );
       })
-      .catch((err) =>
+      .catch(() =>
         Swal.fire({
           icon: "error",
           title: "구글 드라이브 업로드에 실패했습니다.",
@@ -348,37 +347,60 @@ export default class BtnMoveFile extends Vue {
         if (a.length > 0) {
           for (step = 0; step < a.length - 1; step++) {
             // Runs 5 times, with values of step 0 through 4.
+
+            try {
+              fs.copyFileSync(a[step][0], a[step][1]);
+              this.changeMoveHistory([
+                idx.name,
+                1,
+                a[step][0],
+                a[step][1],
+                new Date().getTime(),
+                1,
+              ]);
+              tempRestoreMoveList.push({
+                type: "copy",
+                from: a[step][0],
+                to: a[step][1],
+              });
+            } catch (err) {
+              this.changeMoveHistory([
+                idx.name,
+                0,
+                a[step][0],
+                a[step][1],
+                new Date().getTime(),
+                1,
+              ]);
+            }
+          }
+          try {
+            //555555555555
+            fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
             this.changeMoveHistory([
               idx.name,
               1,
-              a[step][0],
-              a[step][1],
+              a[a.length - 1][0],
+              a[a.length - 1][1],
               new Date().getTime(),
               1,
             ]);
+
             tempRestoreMoveList.push({
-              type: "copy",
+              type: "move",
               from: a[step][0],
               to: a[step][1],
             });
-            fs.copyFileSync(a[step][0], a[step][1]);
+          } catch (err) {
+            this.changeMoveHistory([
+              idx.name,
+              0,
+              a[a.length - 1][0],
+              a[a.length - 1][1],
+              new Date().getTime(),
+              1,
+            ]);
           }
-          this.changeMoveHistory([
-            idx.name,
-            1,
-            a[a.length - 1][0],
-            a[a.length - 1][1],
-            new Date().getTime(),
-            1,
-          ]);
-
-          tempRestoreMoveList.push({
-            type: "move",
-            from: a[step][0],
-            to: a[step][1],
-          });
-          //555555555555
-          fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
         }
       }
 

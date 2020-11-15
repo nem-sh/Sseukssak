@@ -1,8 +1,15 @@
 <template>
   <div>
-    <!-- <v-btn color="var(--color-purple)" dark rounded @click="btnDupCheck()">
-      중복제거
-    </v-btn> -->
+    <a style="display: flex; align-items: center" @click="btnDupCheck()"
+      ><v-img
+        class="mr-2"
+        max-width="25"
+        contain
+        height="100%"
+        src="./../assets/dup.png"
+        alt="rename"
+      />중복파일 제거</a
+    >
   </div>
 </template>
 <script lang="ts">
@@ -36,8 +43,14 @@ interface File {
   updatedTime: number;
   icon: string;
 }
+
+const AppProps = Vue.extend({
+  props: {
+    propName: String || null,
+  },
+});
 @Component({
-  computed: mapState(["fileSortList", "fromDir", "duplicatedList", "fileList"]),
+  computed: mapState(["fileSortList", "fromDir", "duplicatedList"]),
   methods: mapMutations([
     "changeDir",
     "changeFileList",
@@ -45,7 +58,7 @@ interface File {
     "changeDuplicatedList",
   ]),
 })
-export default class DupCheck extends Vue {
+export default class DupCheck extends AppProps {
   mounted() {
     // console.log("mounted at dupcheck");
     BUS.$on("bus:dupcheck", () => {
@@ -56,7 +69,7 @@ export default class DupCheck extends Vue {
   fromDir!: string;
   files: string[] = [];
   duplicatedList!: any[][];
-  fileList!: string[];
+  fileList: string[] = [];
   fileSortList!: SortList;
 
   makedupFolder: boolean = false;
@@ -100,19 +113,30 @@ export default class DupCheck extends Vue {
   // DuplicateCheck(fileList: string[]) {
   DuplicateCheck() {
     // console.log(this.fileList);
-    const duplist = [[this.fromDir]];
+    let duplist = [[""]];
+    console.log(this.propName);
+    let dir = "";
+    if (this.propName) {
+      duplist = [[this.fromDir + "/" + this.propName]];
+      dir = this.fromDir + "/" + this.propName;
+      this.fileList = fs.readdirSync(this.fromDir + "/" + this.propName);
+    } else {
+      duplist = [[this.fromDir]];
+      dir = this.fromDir;
+      this.fileList = fs.readdirSync(this.fromDir);
+    }
     const dupchecked = Array(this.fileList.length).fill(1);
     for (let j = 0; j < this.fileList.length; j++) {
       const tmpduplist = [this.fileList[j]];
-      const stats = fs.statSync(this.fromDir + "/" + this.fileList[j]);
+      const stats = fs.statSync(dir + "/" + this.fileList[j]);
       if (stats.size == 0) {
         dupchecked[j] == 0;
       }
       if (dupchecked[j] == 1) {
-        this.stat(this.fromDir + "/" + this.fileList[j], "j");
+        this.stat(dir + "/" + this.fileList[j], "j");
         for (let k = j + 1; k < this.fileList.length; k++) {
           if (dupchecked[k] == 1) {
-            this.stat(this.fromDir + "/" + this.fileList[k], "k");
+            this.stat(dir + "/" + this.fileList[k], "k");
             // 중복 검증 부분
 
             if (this.checkingQueuej["size"] == this.checkingQueuek["size"]) {
@@ -134,15 +158,15 @@ export default class DupCheck extends Vue {
     }
     // console.log(duplist);
 
-    this.MoveDupedFiles(duplist);
+    this.MoveDupedFiles(dir, duplist);
   }
-  MoveDupedFiles(dupedfilelist: string[][]) {
+  MoveDupedFiles(dir: string, dupedfilelist: string[][]) {
     const dupedhistory: any[][] = [[]];
 
     if (this.makedupFolder) {
-      if (!fs.existsSync(this.fromDir + "/" + "중복 파일들")) {
+      if (!fs.existsSync(dir + "/" + "중복 파일들")) {
         // duped files 폴더 생성 부분
-        fs.mkdirSync(this.fromDir + "/" + "중복 파일들");
+        fs.mkdirSync(dir + "/" + "중복 파일들");
       }
     }
 
@@ -155,18 +179,18 @@ export default class DupCheck extends Vue {
 
         if (
           !fs.existsSync(
-            this.fromDir + "/" + "중복 파일들" + "/" + dupedfilelist[f1][f2]
+            dir + "/" + "중복 파일들" + "/" + dupedfilelist[f1][f2]
           )
         ) {
           fs.renameSync(
-            this.fromDir + "/" + dupedfilelist[f1][f2],
-            this.fromDir + "/" + "중복 파일들" + "/" + dupedfilelist[f1][f2]
+            dir + "/" + dupedfilelist[f1][f2],
+            dir + "/" + "중복 파일들" + "/" + dupedfilelist[f1][f2]
           );
           dupedhistory.push([
             dupedfilelist[f1][f2],
             1,
-            this.fromDir + "/" + dupedfilelist[f1][f2],
-            this.fromDir + "/" + "중복 파일들" + "/" + dupedfilelist[f1][f2],
+            dir + "/" + dupedfilelist[f1][f2],
+            dir + "/" + "중복 파일들" + "/" + dupedfilelist[f1][f2],
             d,
             2,
           ]);
@@ -175,8 +199,8 @@ export default class DupCheck extends Vue {
           dupedhistory.push([
             dupedfilelist[f1][f2],
             0,
-            this.fromDir + "/" + dupedfilelist[f1][f2],
-            this.fromDir + "/" + dupedfilelist[f1][f2],
+            dir + "/" + dupedfilelist[f1][f2],
+            dir + "/" + dupedfilelist[f1][f2],
             d,
             2,
           ]);
