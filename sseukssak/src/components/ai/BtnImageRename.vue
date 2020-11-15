@@ -1,6 +1,6 @@
 <template>
   <a
-    @click="apiRequest"
+    @click="apiRequest()"
     style="display: flex; align-items: center"
   >
     <v-img
@@ -18,32 +18,56 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import fs from 'fs'
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import Swal from 'sweetalert2'
 import Axios from 'axios'
 
-
 const { shell } = require("electron").remote;
 
-@Component({
-
+const BtnImageRenameProps = Vue.extend({
+  props: {
+    fileName: String
+  }
 })
-export default class BtnImageRename extends Vue {
-    
+
+@Component({
+  computed:mapState([
+    "fromDir"
+  ])
+})
+export default class BtnImageRename extends BtnImageRenameProps {
+    fromDir!: string
+
     apiRequest() {
         const URL = 'https://dapi.kakao.com/v2/vision/multitag/generate'
-        const formData = new FormData();
-        formData.append('image',fs.readFileSync('test.jpg').toString())
-        const data = {
-            'image':fs.readFileSync('test.jpg')
-        }
+        const file = new File([fs.readFileSync(this.fromDir+'/'+this.fileName)],this.fileName)
+        console.log(file)
+        const form = new FormData();
+        form.append('image',file)
+
         const headers = {
             Authorization:'KakaoAK 86fa802ad9319ae7223fcff9d2020718',
             'Content-Type':'multipart/form-data'
         }
-        console.log(data)
-        Axios.post(URL, formData, {headers:headers})
-            .then(res => console.log(res)) 
+
+
+
+        Axios.post(URL, form, {headers:headers})
+            .then(res => {
+              console.log(res)
+              if (res.data.result.label_kr.length===0){
+                 return Swal.fire({
+                  icon:'info',
+                  title:'이미지 분석 결과가 없습니다.'
+                })
+              }
+              const newFileName = res.data.result.label_kr.join('_')
+              fs.renameSync(this.fromDir+'/'+this.fileName,this.fromDir+'/'+newFileName+'.jpg')
+              Swal.fire({
+                icon:'success',
+                title:'이미지 파일 이름이 성공적으로 변경되었습니다!'
+              })
+            })
             .catch(err => console.log(err))
     }
 
