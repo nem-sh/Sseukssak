@@ -59,6 +59,7 @@
           height="400"
           item-height="90"
           :class="scrollerBgMode"
+          @contextmenu.prevent="showContextMenu('', $event)"
         >
           <template v-slot:default="{ item }">
             <div :key="item.name" class="d-flex align-start mx-5">
@@ -83,8 +84,8 @@
                 <div
                   v-if="
                     select == 0 ||
-                      (select == 1 && compareTime(file.birthTime)) ||
-                      (select == 2 && compareTime(file.updatedTime))
+                    (select == 1 && compareTime(file.birthTime)) ||
+                    (select == 2 && compareTime(file.updatedTime))
                   "
                 >
                   <div
@@ -92,7 +93,7 @@
                     draggable="true"
                     @drag="drag(file)"
                     @click="openFile(file.name)"
-                    @contextmenu.prevent="showContextMenu(file, $event)"
+                    @contextmenu.stop="showContextMenu(file, $event)"
                   >
                     <v-tooltip top>
                       <template v-slot:activator="{ on, attrs }">
@@ -157,7 +158,7 @@
                     @drop="innerdrop(file, $event)"
                     draggable="true"
                     @click="enterDirectory(file.name)"
-                    @contextmenu.prevent="showContextMenu(file, $event)"
+                    @contextmenu.stop="showContextMenu(file, $event)"
                   >
                     <v-tooltip top>
                       <template v-slot:activator="{ on, attrs }">
@@ -269,6 +270,9 @@
           >
         </li>
         <li>
+          <BtnDupCheck :propName="selectedData.name" />
+        </li>
+        <li>
           <a
             @click="
               renameValue = selectedData.name;
@@ -360,7 +364,7 @@
             v-bind:fileName="selectedData.name"
             v-if="
               selectedData.name.includes('.jpg') ||
-                selectedData.name.includes('.png')
+              selectedData.name.includes('.png')
             "
           />
         </li>
@@ -520,16 +524,16 @@ interface Directory {
     BtnUploadGoogleDriveFolder,
     ListFromBreadcrumbs,
     ListFromFilter,
-    BtnImageRename
+    BtnImageRename,
   },
   computed: mapState([
     "fileSortList",
     "fromDir",
     "fileList",
     "isLogin",
-    "osPlatform"
+    "osPlatform",
   ]),
-  methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"])
+  methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
 })
 export default class ListFrom extends Vue {
   dragData: File = {
@@ -537,7 +541,7 @@ export default class ListFrom extends Vue {
     name: "",
     birthTime: 0,
     updatedTime: 0,
-    icon: ""
+    icon: "",
   };
   icon = require("./../assets/info.png");
   text: string = "";
@@ -564,7 +568,7 @@ export default class ListFrom extends Vue {
         v.indexOf(">") == -1 &&
         v.indexOf("|") == -1 &&
         v.indexOf("\\") == -1) ||
-      '\\ / : * ? " < > | 은 사용 불가능합니다'
+      '\\ / : * ? " < > | 은 사용 불가능합니다',
   };
   osPlatform!: string;
 
@@ -580,7 +584,7 @@ export default class ListFrom extends Vue {
       name: "",
       birthTime: 0,
       updatedTime: 0,
-      icon: ""
+      icon: "",
     };
     this.renewFrom();
     console.log(e);
@@ -591,7 +595,7 @@ export default class ListFrom extends Vue {
       icon: "warning",
       title: "준비중입니다",
       showConfirmButton: false,
-      timer: 1000
+      timer: 1000,
     });
     // console.log(
     //   fs.createReadStream(this.fromDir + "\\" + this.selectedData["name"])
@@ -620,7 +624,7 @@ export default class ListFrom extends Vue {
         icon: "warning",
         title: "특수문자 안된다고",
         showConfirmButton: false,
-        timer: 1000
+        timer: 1000,
       });
 
       return;
@@ -641,7 +645,7 @@ export default class ListFrom extends Vue {
       icon: "success",
       title: "수정되었습니다",
       showConfirmButton: false,
-      timer: 1000
+      timer: 1000,
     });
     this.dialog2 = false;
   }
@@ -672,7 +676,7 @@ export default class ListFrom extends Vue {
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "네, 삭제합니다!",
-      cancelButtonText: "취소"
+      cancelButtonText: "취소",
     }).then((result) => {
       if (result.isConfirmed) {
         if (fs.lstatSync(path).isDirectory()) {
@@ -696,7 +700,7 @@ export default class ListFrom extends Vue {
             icon: "success",
             title: "삭제되었습니다.",
             showConfirmButton: false,
-            timer: 1000
+            timer: 1000,
           });
         }
       }
@@ -709,7 +713,12 @@ export default class ListFrom extends Vue {
     }
   }
   showContextMenu(value, e) {
-    this.selectedData = value;
+    if (value == "") {
+      this.selectedData = { name: "" };
+      console.log("test");
+    } else {
+      this.selectedData = value;
+    }
     const winWidth = window.outerWidth;
     const winHeight = window.outerHeight;
     const posX: number = e.pageX - 90;
@@ -810,7 +819,7 @@ export default class ListFrom extends Vue {
           title: `권한이 없습니다!`,
           text: "상위 경로에는 이동 권한이 없습니다.",
           showConfirmButton: false,
-          timer: 1000
+          timer: 1000,
         });
         return;
       }
@@ -843,7 +852,7 @@ export default class ListFrom extends Vue {
           fileSortList.directories.push({
             name: name,
             birthTime: birthTime,
-            updatedTime: updatedTime
+            updatedTime: updatedTime,
           });
         } else {
           const fileType = fileSplit[fileSplit.length - 1].toLowerCase();
@@ -866,7 +875,7 @@ export default class ListFrom extends Vue {
             fileType: fileType,
             birthTime: birthTime,
             updatedTime: updatedTime,
-            icon: ""
+            icon: "",
           };
           app.getFileIcon(iconPath).then((fileIcon) => {
             realIcon = fileIcon.toDataURL();
@@ -884,7 +893,7 @@ export default class ListFrom extends Vue {
         title: `권한이 없습니다!`,
         text: `"${dir}"의 이동은 권한이 없습니다.`,
         showConfirmButton: false,
-        timer: 1000
+        timer: 1000,
       });
     }
   }
