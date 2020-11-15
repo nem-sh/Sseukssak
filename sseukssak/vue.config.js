@@ -12,7 +12,7 @@ module.exports = {
           icon: "./public/sweeping.ico",
         },
         mac: {
-          target: ['default'],
+          target: ["default"],
           icon: "./public/sweeping_mac.ico",
         },
         dmg: {

@@ -15,7 +15,12 @@
             ><div v-if="fromDir">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
-                  <h3 v-bind="attrs" v-on="on">{{ dirPath }}</h3>
+                  <h3 v-if="dirPath.length < 25" v-bind="attrs" v-on="on">
+                    {{ dirPath }}
+                  </h3>
+                  <h3 v-else v-bind="attrs" v-on="on">
+                    {{ dirPath.slice(0, 25) }}
+                  </h3>
                 </template>
                 <span>{{ fromDir }}</span>
               </v-tooltip>

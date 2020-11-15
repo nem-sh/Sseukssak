@@ -29,23 +29,6 @@ export default class ListFromBreadcrumbs extends AppProps {
   osPlatform!: string;
   get dirPaths() {
     const items: FilePath[] = [];
-    // if (this.osPlatform === "Win32") {
-    //   const dirLists = this.fromDir.split("\\");
-    //   dirLists.forEach((dirList) => {
-    //     items.push({
-    //       text: dirList,
-    //       disabled: true,
-    //     });
-    //   });
-    // } else if (this.osPlatform === "MacIntel") {
-    //   const dirLists = this.fromDir.split("/");
-    //   dirLists.forEach((dirList) => {
-    //     items.push({
-    //       text: dirList,
-    //       disabled: true,
-    //     });
-    //   });
-    // }
     const dirLists = this.fromDir
       .split("\\")
       .join(",")
@@ -53,12 +36,28 @@ export default class ListFromBreadcrumbs extends AppProps {
       .join(",")
       .split(",");
     dirLists.forEach((dirList) => {
-      items.push({
-        text: dirList,
-        disabled: true,
-      });
+      if (dirList.length > 11) {
+        items.push({
+          text: dirList.slice(0, 7) + "...",
+          disabled: true,
+        });
+      } else {
+        items.push({
+          text: dirList,
+          disabled: true,
+        });
+      }
     });
 
+    if (items.length > 5) {
+      const fisrtValue = [
+        {
+          text: "...",
+          disabled: true,
+        },
+      ];
+      return fisrtValue.concat(items.slice().reverse().slice(0, 4).reverse());
+    }
     return items;
   }
   get breadName() {

@@ -1,6 +1,6 @@
 <template>
-  <v-menu offset-y>
-    <template v-slot:activator="{ attrs, on }">
+  <v-menu offset-y :class="dropdownBgMode">
+    <template :class="dropdownBgMode" v-slot:activator="{ attrs, on }">
       <v-btn
         class="mx-2 my-0"
         outlined
@@ -13,18 +13,22 @@
         <i class="fas fa-angle-down mr-2"></i>{{ selected }}
       </v-btn>
     </template>
-    <div :class="dropdownBgMode">
-      <v-radio-group v-model="radioGroup" class="mx-4">
-        <v-radio
-          v-for="item in items"
-          :key="item.id"
-          :label="item.label"
-          :value="item.id"
-          color="var(--color-purple)"
-          @click="sendSelected(item.id)"
-        ></v-radio
-      ></v-radio-group>
-    </div>
+    <v-list class="py-0">
+      <v-list-item :class="dropdownBgMode">
+        <div>
+          <v-radio-group v-model="radioGroup">
+            <v-radio
+              v-for="item in items"
+              :key="item.id"
+              :label="item.label"
+              :value="item.id"
+              color="var(--color-purple)"
+              @click="sendSelected(item.id)"
+            ></v-radio
+          ></v-radio-group>
+        </div>
+      </v-list-item>
+    </v-list>
   </v-menu>
 </template>
 

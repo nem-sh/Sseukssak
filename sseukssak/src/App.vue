@@ -6,7 +6,7 @@
         <img class="logo" src="@/assets/sseukssak.png" alt="" />
       </div>
       <div class="operations">
-        <i v-if="!mini" class="far fa-question" @click="dialog = true"> </i>
+        <i v-if="!mini" class="far fa-question" @click="dialog = true"></i>
         <!-- <BtnLoginGoogle v-if="!mini" class="mr-1" /> -->
 
         <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>

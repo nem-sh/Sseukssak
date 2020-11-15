@@ -1,17 +1,29 @@
 <template>
-  <v-row justify="center">
-    <v-dialog v-model="dialog" persistent max-width="400">
-      <template v-slot:activator="{ on, attrs }">
-        <i v-if="isLogin" class="fab fa-google-drive fa-lg" @click="logout">
-        </i>
-
-        <i
-          v-else
-          style="color: #999999"
-          class="fab fa-google-drive fa-lg"
-          v-bind="attrs"
-          v-on="on"
-          @click="login(oAuth2Client)"
+  <v-dialog v-model="dialog" persistent max-width="400">
+    <template v-slot:activator="{ on, attrs }">
+      <i v-if="isLogin" class="fab fa-google-drive fa-lg" @click="logout"></i>
+      <i
+        v-else
+        style="color: #999999"
+        class="fab fa-google-drive fa-lg"
+        v-bind="attrs"
+        v-on="on"
+        @click="login(oAuth2Client)"
+      >
+      </i>
+    </template>
+    <v-card>
+      <v-card-title class="headline"> 인증 코드를 입력해주세요. </v-card-title>
+      <v-card-text>
+        <v-text-field label="Code" v-model="code"></v-text-field>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="red darken-1" text @click="dialog = false"> 닫기 </v-btn>
+        <v-btn
+          color="green darken-1"
+          text
+          @click="setCode(oAuth2Client, tokenPath)"
         >
         </i>
       </template>
