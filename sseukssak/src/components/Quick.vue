@@ -76,6 +76,7 @@ import { SortList } from "../api/interface";
 import shellContextMenu from "shell-context-menu";
 import fs from "fs";
 import path from "path";
+import Swal from "sweetalert2";
 const { shell } = require("electron").remote;
 const { app } = require("electron").remote;
 declare const __static: string;
@@ -109,42 +110,88 @@ export default class Quick extends Vue {
   changeFileSortList!: (list: SortList) => void;
   changeSelectedToName!: (name: string) => void;
   quickDelete() {
-    shellContextMenu.removeDirectoryCommand("SseuckSsack Quick");
-    shellContextMenu.removeDirectoryBackgroundCommand("SseuckSsack Quick");
+    try {
+      shellContextMenu.removeDirectoryCommand("SseuckSsack Quick");
+      shellContextMenu.removeDirectoryBackgroundCommand("SseuckSsack Quick");
+      fs.writeFileSync(
+        this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quickData.txt",
+        JSON.stringify({ to: "" })
+      );
+      this.changeQuickTo("");
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: `삭제되었습니다!`,
+        showConfirmButton: false,
+        timer: 1000,
+      });
+    } catch (err) {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: `실패했습니다!`,
+        showConfirmButton: false,
+        timer: 1000,
+      });
+    }
   }
   quickRegist() {
     console.log(1, this.selectedToNameValue);
     if (this.selectedToNameValue) {
-      if (
-        !fs.existsSync(
-          this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quick.exe"
-        )
-      ) {
-        fs.copyFileSync(
-          path.join(__static, "quick.exe"),
-          this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quick.exe"
+      try {
+        if (
+          !fs.existsSync(
+            this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quick.exe"
+          )
+        ) {
+          fs.copyFileSync(
+            path.join(__static, "quick.exe"),
+            this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quick.exe"
+          );
+        }
+        fs.writeFileSync(
+          this.defalutPath +
+            "AppData\\Local\\Programs\\sseukssak\\quickData.txt",
+          JSON.stringify({ to: this.selectedToNameValue })
         );
+
+        const options = {
+          name: "SseuckSsack Quick",
+          icon:
+            this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\쓱싹.exe",
+          command:
+            this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quick.exe",
+          menu: `여기서 쓱싹!`,
+        };
+
+        shellContextMenu.registerDirectoryBackgroundCommand(options);
+
+        shellContextMenu.registerDirectoryCommand(options);
+        this.changeQuickTo(this.selectedToNameValue);
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: `등록되었습니다!`,
+          showConfirmButton: false,
+          timer: 1000,
+        });
+      } catch (err) {
+        Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: `실패했습니다!`,
+          showConfirmButton: false,
+          timer: 1000,
+        });
       }
-      fs.writeFileSync(
-        this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quickData.txt",
-        JSON.stringify({ to: this.selectedToNameValue })
-      );
-
-      const options = {
-        name: "SseuckSsack Quick",
-        icon:
-          this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\쓱싹.exe",
-        command:
-          this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quick.exe",
-        menu: `여기서 쓱싹!`,
-      };
-
-      shellContextMenu.registerDirectoryBackgroundCommand(options);
-
-      shellContextMenu.registerDirectoryCommand(options);
-      this.changeQuickTo(this.selectedToNameValue);
     } else {
-      alert("일단 골라");
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: `등록할 To를 선택해주세요!`,
+        showConfirmButton: false,
+        timer: 1000,
+      });
     }
   }
   created() {
