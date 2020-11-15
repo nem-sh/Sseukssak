@@ -96,6 +96,7 @@ export default class BtnImageRename extends BtnImageRenameProps {
             time,
             3,
           ])
+          console.log('chk')
         }
       })
       .catch((err) =>
