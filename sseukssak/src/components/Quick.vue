@@ -133,8 +133,7 @@ export default class Quick extends Vue {
       const options = {
         name: "SseuckSsack Quick",
         icon:
-          this.defalutPath +
-          "AppData\\Local\\Programs\\sseukssak\\sseukssak.exe",
+          this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\쓱싹.exe",
         command:
           this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quick.exe",
         menu: `여기서 쓱싹!`,
