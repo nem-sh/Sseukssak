@@ -19,7 +19,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import fs from "fs";
-import { mapState } from "vuex";
+import { mapMutations, mapState } from "vuex";
 import axios from "axios";
 import mime from "mime-types";
 import Swal from "sweetalert2";
@@ -32,10 +32,14 @@ const BtnUploadGoogleDriveProps = Vue.extend({
 
 @Component({
   computed: mapState(["fromDir", "tokenPath", "oAuth2Client"]),
+  methods: mapMutations([
+    "changeGoogleHistory"
+  ]),
 })
 export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
   oAuth2Client!: object;
   fromDir!: string;
+  changeGoogleHistory!: (newHistory: any[]) => void
 
   async uploadFile(auth) {
     const accessToken = auth.credentials.access_token;
@@ -65,24 +69,59 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
           .patch(PATCH_URL + `${res.data.id}?uploadType=multipart`, data, {
             headers: patchHeaders,
           })
-          .then(() =>
-            Swal.fire({
-              icon: "success",
-              title: "구글 드라이브 업로드에 성공했습니다.",
-            })
+          .then(() =>{
+              Swal.fire({
+                icon: "success",
+                title: "구글 드라이브 업로드에 성공했습니다.",
+              })
+              const time = new Date().setTime(Date.now())
+              this.changeGoogleHistory([])
+              this.changeGoogleHistory([
+                this.fileName,
+                1,
+                this.fromDir+'\\'+this.fileName,
+                '%drive%'+this.fileName,
+                time,
+                4,
+              ])
+            }
           )
-          .catch((err) =>
-            Swal.fire({
-              icon: "error",
-              title: "구글 드라이브 업로드에 실패했습니다.",
-            })
+          .catch(() =>
+            {
+              Swal.fire({
+                icon: "error",
+                title: "구글 드라이브 업로드에 실패했습니다.",
+              })
+              const time = new Date().setTime(Date.now())
+              this.changeGoogleHistory([])
+              this.changeGoogleHistory([
+                this.fileName,
+                0,
+                this.fromDir+'\\'+this.fileName,
+                '%drive%'+this.fileName,
+                time,
+                4,
+              ])
+            }
           );
       })
       .catch((err) =>
-        Swal.fire({
-          icon: "error",
-          title: "구글 드라이브 업로드에 실패했습니다.",
-        })
+        {
+          Swal.fire({
+            icon: "error",
+            title: "구글 드라이브 업로드에 실패했습니다.",
+          })
+          const time = new Date().setTime(Date.now())
+          this.changeGoogleHistory([])
+          this.changeGoogleHistory([
+            this.fileName,
+            0,
+            this.fromDir+'\\'+this.fileName,
+            '%drive%'+this.fileName,
+            time,
+            4,
+          ])
+        }
       );
   }
 }

@@ -29,7 +29,8 @@ import { mapMutations, mapState } from "vuex";
     "duplicatedList",
     "fileList",
     "renameHistory2",
-    "moveHistory"
+    "moveHistory",
+    "googleHistory"
   ]),
 
   methods: mapMutations([
@@ -40,19 +41,24 @@ import { mapMutations, mapState } from "vuex";
     "changeRenameHistory2",
     "changeMoveHistory",
     "resetMoveHistory",
-    "resetRenameHistory"
-  ])
+    "resetRenameHistory",
+    "changeGoogleHistory",
+    "resetGoogleHistory"
+  ]),
 })
 export default class Restore extends Vue {
   changeDuplicatedList!: (newList: [][]) => void;
   changeRenameHistory2!: (newList: [][]) => void;
   changeMoveHistory!: (newList: [][]) => void;
+  changeGoogleHistory!: (newList: [][]) => void;
   resetMoveHistory!: (newList: [][]) => void;
   resetRenameHistory!: (newList: [][]) => void;
+  resetGoogleHistory!: () => void;
 
   localHistory: any[] = [];
   duplicatedList!: any[][];
   renameHistory2!: any[][];
+  googleHistory!: any[][];
   moveHistory!: any[][];
   isLoading!: boolean;
   historyList: (string | number)[][] = [[]];
@@ -79,6 +85,13 @@ export default class Restore extends Vue {
       this.putChunkstoHistory(value, 3);
     }
   }
+  @Watch("googleHistory")
+  googleHistoryChange(value: [][]) {
+    if (value.length > 1) {
+      // console.log("move change detected");
+      this.putChunkstoHistory(value, 4);
+    }
+  }
 
   mounted() {
     // console.log(this.duplicatedList);
@@ -102,7 +115,7 @@ export default class Restore extends Vue {
     // 생성 후 json parse
     let hsjson = JSON.parse(localHistory.toString());
 
-    // console.log(chunks);
+    console.log(chunks);
     // console.log(hsjson);
     chunks.forEach(function(chunk: [][]) {
       try {
@@ -131,6 +144,8 @@ export default class Restore extends Vue {
       this.resetRenameHistory([[]]);
     } else if (type == 3) {
       this.resetMoveHistory([[]]);
+    } else if (type == 4){
+      this.resetGoogleHistory();
     }
   }
 
