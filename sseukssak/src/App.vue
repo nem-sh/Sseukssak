@@ -6,7 +6,9 @@
         <img class="logo" src="@/assets/sseukssak.png" alt="" />
       </div>
       <div class="operations">
-        <BtnLoginGoogle v-if="!mini" class="mr-1" />
+        <i v-if="!mini" class="far fa-question" @click="dialog = true"> </i>
+        <!-- <BtnLoginGoogle v-if="!mini" class="mr-1" /> -->
+
         <i class="far fa-window-minimize minimize" @click="minimizeWindow"></i>
         <i v-if="mini" class="fas fa-expand-alt" @click="resizeBigWindow"></i>
         <i
@@ -96,20 +98,18 @@
               <span><i class="fas fa-moon fa-lg"></i></span>
             </div>
 
-            <v-tooltip right>
+            <!-- <v-tooltip right>
               <template v-slot:activator="{ on, attrs }">
-                <div
-                  class="menu--settings"
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="dialog = true"
-                >
-                  <span><i class="far fa-question fa-lg"></i></span>
+                <div class="menu--settings" v-bind="attrs" v-on="on">
+                  <BtnLoginGoogle />
                 </div>
               </template>
-              <span>도움말</span>
-            </v-tooltip>
+              <span>구글드라이브 연동</span>
+            </v-tooltip> -->
 
+            <div class="menu--settings">
+              <BtnLoginGoogle />
+            </div>
             <v-dialog v-model="dialog" width="400px">
               <v-expansion-panels accordion>
                 <v-expansion-panel
