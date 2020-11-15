@@ -15,7 +15,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import fs from "fs";
-import { mapState } from "vuex";
+import { mapMutations, mapState } from "vuex";
 import Swal from "sweetalert2";
 import Axios from "axios";
 import { BUS } from "../EventBus.js";
