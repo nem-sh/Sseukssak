@@ -1,13 +1,6 @@
 <template>
-  <!-- <div>
-    <form action="">
-
-    </form>
-  </div> -->
-  <div>
-
   <a
-    @click="apiRequest"
+    @click="apiRequest()"
     style="display: flex; align-items: center"
   >
     <v-img
@@ -19,68 +12,63 @@
         alt="AI"
     />이미지 이름 자동 변경
   </a>
-  <!-- <form
-  target="_blank"
-  method="POST"
-  enctype="application/x-www-form-urlencoded"
-  action="https://postman-echo.com/post"
->
-  <input type="text" name="--theKey">
-  <input type="submit">
-</form> -->
-  </div>
 </template>
 
 <script lang='ts'>
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import fs from 'fs'
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import Swal from 'sweetalert2'
 import Axios from 'axios'
-import FormData from 'form-data'
-// import {request} from 'http'
-import fetch from 'electron-fetch'
 
 const { shell } = require("electron").remote;
 
-@Component({
-
+const BtnImageRenameProps = Vue.extend({
+  props: {
+    fileName: String
+  }
 })
-export default class BtnImageRename extends Vue {
-    
+
+@Component({
+  computed:mapState([
+    "fromDir"
+  ])
+})
+export default class BtnImageRename extends BtnImageRenameProps {
+    fromDir!: string
+
     apiRequest() {
         const URL = 'https://dapi.kakao.com/v2/vision/multitag/generate'
-        const readStream = fs.createReadStream('test.jpg')
+        const file = new File([fs.readFileSync(this.fromDir+'/'+this.fileName)],this.fileName)
+        console.log(file)
         const form = new FormData();
-        
-        form.append('image',readStream)
+        form.append('image',file)
 
         const headers = {
             Authorization:'KakaoAK 86fa802ad9319ae7223fcff9d2020718',
             'Content-Type':'multipart/form-data'
         }
 
-        fetch(URL,{method: 'POST', body: form, headers: headers})
-          .then(res => res.json())
-          .then(json => console.log(json))
 
 
-        // const req = request(
-        //   {
-        //   host: 'https://dapi.kakao.com',
-        //   path: '/v2/vision/multitag/generate',
-        //   method: 'POST',
-        //   headers: headers
-        //   },
-        //   res => {
-        //     console.log(res.statusCode)
-        //   }
-        // )
-        // form.pipe(req)
-        // Axios.post(URL, form, {headers:headers})
-        //     .then(res => console.log(res)) 
-        //     .catch(err => console.log(err))
+        Axios.post(URL, form, {headers:headers})
+            .then(res => {
+              console.log(res)
+              if (res.data.result.label_kr.length===0){
+                 return Swal.fire({
+                  icon:'info',
+                  title:'이미지 분석 결과가 없습니다.'
+                })
+              }
+              const newFileName = res.data.result.label_kr.join('_')
+              fs.renameSync(this.fromDir+'/'+this.fileName,this.fromDir+'/'+newFileName+'.jpg')
+              Swal.fire({
+                icon:'success',
+                title:'이미지 파일 이름이 성공적으로 변경되었습니다!'
+              })
+            })
+            .catch(err => console.log(err))
     }
 
   

@@ -344,7 +344,10 @@
           >
         </li>
         <li>
-          <BtnImageRename />
+          <BtnImageRename 
+            v-bind:fileName="selectedData.name"
+            v-if="selectedData.name.includes('.jpg') || selectedData.name.includes('.png')"
+          />
         </li>
         <li>
           <a
