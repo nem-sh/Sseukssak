@@ -180,11 +180,12 @@ export default class Quick extends Vue {
           "C:\\Users\\multicampus\\AppData\\Local\\Programs\\sseukssak\\quickData.txt",
           JSON.stringify({ to: quickData["to"] })
         );
+
+        this.changeSelectedToName(quickData["to"]);
       }
       if (quickData["from"]) {
         this.changeDir(quickData["from"]);
         this.getFrom(this.fromDir);
-        this.changeSelectedToName(quickData["to"]);
       } else {
         console.log("ㄴㄴ");
       }
