@@ -1,16 +1,20 @@
 <template>
   <v-container class="OuterDiv">
     <video autoplay data-keepplaying muted loop id="myVideo">
-      <source src="../assets/BackGroundVideo.mp4" type="video/mp4" />
+      <source src="../assets/version01.mp4" type="video/mp4" />
     </video>
-
-    <!-- Optional: some overlay text to describe the video -->
     <v-row class="content">
-      <v-col cols="4"> </v-col>
-      <v-col cols="4" class="midPart">
+      <v-col cols="0" xs="1" sm="2" md="4"> 
+
+      </v-col>
+      <v-col cols="12" xs="10" sm="8" md="4" class="midPart">
         <v-row class="FirstRow">
-          <span>원클릭 폴더 관리 앱</span>
-          <span class="forD">for DeskTop</span>
+          <v-row class="OneClick">
+            원클릭 파일 정리
+          </v-row>
+          <v-row class="forD">
+            for DeskTop
+          </v-row>
         </v-row>
         <v-row class="SecondRow">
           <v-col cols="4" class="LogoPart">
@@ -20,13 +24,22 @@
               class="LogoImage"
             />
           </v-col>
-          <v-col cols="8" class="NamePart"> Sseukssak </v-col>
+          <v-col cols="8" class="NamePart">SseukSsak</v-col>
         </v-row>
         <v-row class="ThirdRow">
-          <button class="DownloadButton" @click="download()">다운로드</button>
+          <v-col cols="6" class="DC">
+            <button class="DownloadButton" @click="downloadWin()">
+              <i class="fab fa-windows fa-lg"></i> for Windows
+              </button>
+          </v-col>
+          <v-col cols="6" class="DC">
+            <button class="DownloadButton" @click="downloadMac()">
+              <i class="fab fa-apple fa-lg"></i> for Mac
+              </button>
+          </v-col>
         </v-row>
       </v-col>
-      <v-col cols="4"> </v-col>
+      <v-col cols="0" xs="1" sm="2" md="4"> </v-col>
     </v-row>
   </v-container>
 </template>
@@ -48,10 +61,17 @@ export default {
     //   dragLine.style.left = sliderVal + "%";
     //   showImg.style.width = sliderVal + "%";
     // },
-    download() {
+    downloadWin() {
       const link = document.createElement("a");
       link.href = "http://k3b304.p.ssafy.io/static/sseukssak.exe";
-      link.setAttribute("download", "sseukssak.exe");
+      link.setAttribute("download", "sseukssak_Win.exe");
+      document.body.appendChild(link);
+      link.click();
+    },
+    downloadMac() {
+      const link = document.createElement("a");
+      link.href = "http://k3b304.p.ssafy.io/static/sseukssak.exe";
+      link.setAttribute("download", "sseukssak_Mac.exe");
       document.body.appendChild(link);
       link.click();
     },
@@ -70,6 +90,9 @@ export default {
 .midPart {
   height: 100%;
 }
+.DC {
+  height: 100%;
+}
 .FirstRow {
   height: 40%;
   width: 100%;
@@ -86,7 +109,7 @@ export default {
 .ThirdRow {
   height: 20%;
   width: 100%;
-  justify-content: center;
+  margin: 0 !important;
 }
 .LogoPart {
   height: 100%;
@@ -104,18 +127,26 @@ export default {
   height: 80%;
 }
 .DownloadButton {
-  margin: auto;
-  height: 80%;
+  height: 100%;
   border-radius: 50px;
-  width: 50%;
+  width: 100%;
   background-color: white;
   text-align: center;
-  font-size: 2vw !important;
+  font-size: 1.8vw;
+  padding-top: 0.5vh;
   color: black;
 }
+.OneClick {
+  justify-content: center;
+  height: 40%;
+  width: 100%;
+  font-size: 3vw;
+}
 .forD {
+  justify-content: center;
+  height: 60%;
+  width: 100%;
   font-size: 1.5vw;
-  padding-bottom: 3vw;
 }
 #myVideo {
   position: fixed;
@@ -138,12 +169,10 @@ export default {
 /* Add some content at the bottom of the video/page */
 .content {
   position: fixed;
-  /* bottom: 0; */
-  /* background: rgba(0, 0, 0, 0.5); */
   color: #f1f1f1;
   height: 60%;
   width: 100%;
-  padding: 20px;
+  /* padding: 20px; */
 }
 
 /* Style the button used to pause/play the video */

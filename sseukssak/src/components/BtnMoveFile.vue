@@ -197,12 +197,7 @@ export default class BtnMoveFile extends Vue {
           data,
           { headers: patchHeaders }
         )
-          .then(() =>
-            Swal.fire({
-              icon: "success",
-              title: "구글 드라이브 업로드에 성공했습니다.",
-            })
-          )
+          .then(() => console.log("구글 드라이브 업로드에 성공했습니다."))
           .catch(() =>
             Swal.fire({
               icon: "error",
@@ -256,9 +251,11 @@ export default class BtnMoveFile extends Vue {
 
       BUS.$emit("bus:refreshfile");
       if (this.dupOnOff) {
+        // console.log("does dup check");
         BUS.$emit("bus:dupcheck");
         BUS.$emit("bus:refreshfile");
       }
+      // console.log("ended dup check");
       const tempRestoreMoveList: RestoreMoveListUnit[] = [];
 
       let selectedFrom: ToLibraryDirectory2[] = [];
@@ -368,8 +365,20 @@ export default class BtnMoveFile extends Vue {
                   data[1],
                   name[name.length - 1]
                 );
+                tempRestoreMoveList.push({
+                  type: "drive",
+                  from: a[step][0],
+                  to: a[step][1],
+                });
+              } else {
+                fs.copyFileSync(a[step][0], a[step][1]);
+
+                tempRestoreMoveList.push({
+                  type: "copy",
+                  from: a[step][0],
+                  to: a[step][1],
+                });
               }
-              fs.copyFileSync(a[step][0], a[step][1]);
               this.changeMoveHistory([
                 idx.name,
                 1,
@@ -378,11 +387,6 @@ export default class BtnMoveFile extends Vue {
                 new Date().getTime(),
                 1,
               ]);
-              tempRestoreMoveList.push({
-                type: "copy",
-                from: a[step][0],
-                to: a[step][1],
-              });
             } catch (err) {
               this.changeMoveHistory([
                 idx.name,
@@ -404,11 +408,24 @@ export default class BtnMoveFile extends Vue {
                 data[1],
                 name[name.length - 1]
               );
-              if (a.length - 1 == 0) {
-                fs.unlinkSync(a[step][0]);
+              console.log(a.length);
+              if (a.length - 1 != 0) {
+                fs.unlinkSync(a[a.length - 1][0]);
               }
+              tempRestoreMoveList.push({
+                type: "drive",
+                from: a[step][0],
+                to: a[step][1],
+              });
+            } else {
+              fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
+
+              tempRestoreMoveList.push({
+                type: "move",
+                from: a[step][0],
+                to: a[step][1],
+              });
             }
-            fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
             this.changeMoveHistory([
               idx.name,
               1,
@@ -417,12 +434,6 @@ export default class BtnMoveFile extends Vue {
               new Date().getTime(),
               1,
             ]);
-
-            tempRestoreMoveList.push({
-              type: "move",
-              from: a[step][0],
-              to: a[step][1],
-            });
           } catch (err) {
             this.changeMoveHistory([
               idx.name,

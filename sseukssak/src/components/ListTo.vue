@@ -311,6 +311,7 @@ interface File {
     "fromDir",
     "selectedToName",
     "osPlatform",
+    "directoryDrag",
   ]),
   methods: mapMutations([
     "changeToLibraryList",
@@ -319,11 +320,13 @@ interface File {
     "changeFileList",
     "changeFileSortList",
     "changeDir",
+    "changeDirectoryDrag",
   ]),
 })
 export default class ListTo extends Vue {
   fromDir!: string;
-
+  directoryDrag!: string;
+  changeDirectoryDrag!: (newList: string) => void;
   changeDir!: (newList: string) => void;
   changeFileList!: (newList: string[]) => void;
   changeFileSortList!: (newList: SortList) => void;
@@ -420,6 +423,11 @@ export default class ListTo extends Vue {
   }
   openShell(path: string) {
     let newPath = path;
+    if (path.includes("%drive%")) {
+      const data = path.split("/");
+      shell.openExternal("https://drive.google.com/drive/folders/" + data[1]);
+      return;
+    }
     if (path.includes("%from%")) {
       if (this.fromDir) {
         newPath = path.replace("%from%", this.fromDir);
@@ -510,9 +518,25 @@ export default class ListTo extends Vue {
     });
   }
   dropTo(event) {
+    console.log(1);
     event.preventDefault();
     event.stopPropagation();
+    if (event.dataTransfer.files.length == 0) {
+      console.log(2);
 
+      if (this.directoryDrag) {
+        this.changeDropToDir(this.fromDir + "/" + this.directoryDrag);
+        this.changeDirectoryDrag("");
+      } else {
+        Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: "디렉토리가 아닙니다",
+          showConfirmButton: false,
+          timer: 1000,
+        });
+      }
+    }
     for (const f of event.dataTransfer.files) {
       // console.log(f);
       if (this.selectedToName == "") {

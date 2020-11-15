@@ -7,6 +7,7 @@ import { google } from "googleapis";
 Vue.use(Vuex);
 
 interface DirState {
+  directoryDrag: string;
   quickTo: string;
   restoreMoveList: RestoreMoveListUnit[];
   firstOpen: boolean;
@@ -91,6 +92,7 @@ interface FileInfo {
 
 export default new Vuex.Store({
   state: {
+    directoryDrag: "",
     quickTo: "",
     restoreMoveList: [],
     firstOpen: true,
@@ -144,6 +146,9 @@ export default new Vuex.Store({
     osPlatform: "",
   },
   mutations: {
+    changeDirectoryDrag(state: DirState, name: string) {
+      state.directoryDrag = name
+    },
     changeQuickTo(state: DirState, name: string) {
       state.quickTo = name
     },

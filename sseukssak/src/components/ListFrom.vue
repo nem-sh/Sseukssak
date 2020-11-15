@@ -157,6 +157,7 @@
                     v-else
                     @drop="innerdrop(file, $event)"
                     draggable="true"
+                    @drag="dragDirectory(file.name)"
                     @click="enterDirectory(file.name)"
                     @contextmenu.stop="showContextMenu(file, $event)"
                   >
@@ -528,8 +529,14 @@ interface Directory {
     "fileList",
     "isLogin",
     "osPlatform",
+    "directoryDrag",
   ]),
-  methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
+  methods: mapMutations([
+    "changeDir",
+    "changeFileList",
+    "changeFileSortList",
+    "changeDirectoryDrag",
+  ]),
 })
 export default class ListFrom extends Vue {
   dragData: File = {
@@ -540,6 +547,7 @@ export default class ListFrom extends Vue {
     icon: "",
   };
   icon = require("./../assets/info.png");
+  directoryDrag!: string;
   text: string = "";
   renameValue: string = "";
   selectedData: object = {};
@@ -567,8 +575,16 @@ export default class ListFrom extends Vue {
       '\\ / : * ? " < > | 은 사용 불가능합니다',
   };
   osPlatform!: string;
-
+  dragDirectory(name) {
+    if (this.directoryDrag != name) {
+      this.changeDirectoryDrag(name);
+    }
+  }
   innerdrop(from, e) {
+    if (this.directoryDrag != "") {
+      this.changeDirectoryDrag("");
+      return;
+    }
     console.log(from, this.dragData);
     console.log(1);
     fs.renameSync(
@@ -598,8 +614,10 @@ export default class ListFrom extends Vue {
     // );
   }
   drag(file) {
+    this.changeDirectoryDrag("");
     if (file.name != this.dragData.name) {
       this.dragData = file;
+
       console.log(file);
     }
   }
@@ -777,6 +795,7 @@ export default class ListFrom extends Vue {
   }
 
   fromDir!: string;
+  changeDirectoryDrag!: (newDir: string) => void;
   changeDir!: (newDir: string) => void;
   changeFileList!: (newList: string[]) => void;
   changeFileSortList!: (newList: SortList) => void;
