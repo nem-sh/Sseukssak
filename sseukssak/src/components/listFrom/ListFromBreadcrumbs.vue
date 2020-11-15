@@ -56,7 +56,7 @@ export default class ListFromBreadcrumbs extends AppProps {
           disabled: true,
         },
       ];
-      return fisrtValue.concat(items.slice().reverse().slice(0, 4));
+      return fisrtValue.concat(items.slice().reverse().slice(0, 4).reverse());
     }
     return items;
   }
