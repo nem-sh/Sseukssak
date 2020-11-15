@@ -1,5 +1,9 @@
 <template>
-  <div></div>
+  <div>
+    <v-btn color="var(--color-purple)" dark rounded @click="btnDupCheck()">
+      중복제거
+    </v-btn>
+  </div>
 </template>
 <script lang="ts">
 import Vue from "vue";
@@ -38,8 +42,8 @@ interface File {
     "changeDir",
     "changeFileList",
     "changeFileSortList",
-    "changeDuplicatedList",
-  ]),
+    "changeDuplicatedList"
+  ])
 })
 export default class DupCheck extends Vue {
   mounted() {
@@ -69,7 +73,7 @@ export default class DupCheck extends Vue {
 
   read() {
     const rs = dialog.showOpenDialogSync({
-      properties: ["openDirectory"],
+      properties: ["openDirectory"]
     });
     if (!rs) return;
 
@@ -87,6 +91,11 @@ export default class DupCheck extends Vue {
         this.checkingQueuek = fs.statSync(filepath);
       }
     }
+  }
+
+  btnDupCheck() {
+    this.DuplicateCheck();
+    BUS.$emit("bus:refreshfile");
   }
   // DuplicateCheck(fileList: string[]) {
   DuplicateCheck() {
@@ -159,7 +168,7 @@ export default class DupCheck extends Vue {
             this.fromDir + "/" + dupedfilelist[f1][f2],
             this.fromDir + "/" + "중복 파일들" + "/" + dupedfilelist[f1][f2],
             d,
-            2,
+            2
           ]);
         } else {
           // console.log("dup fail");
@@ -169,7 +178,7 @@ export default class DupCheck extends Vue {
             this.fromDir + "/" + dupedfilelist[f1][f2],
             this.fromDir + "/" + dupedfilelist[f1][f2],
             d,
-            2,
+            2
           ]);
         }
       }
