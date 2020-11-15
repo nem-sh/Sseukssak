@@ -401,7 +401,12 @@
       <v-dialog v-model="dialog" max-width="500">
         <v-card :class="{ 'modal-d': this.$vuetify.theme.dark }">
           <v-card-title class="headline mb-3">
-            {{ selectedDataInfo.name }}
+            <v-img
+              max-width="50px"
+              class="folder--icon"
+              :src="selectedDataInfo.icon"
+              alt="icon"
+            />{{ selectedDataInfo.name }}
           </v-card-title>
 
           <v-card-text class="text--primary">
@@ -671,6 +676,8 @@ export default class ListFrom extends Vue {
     this.selectedDataInfo["name"] = this.selectedData["name"];
 
     this.selectedDataInfo["fileType"] = this.selectedData["fileType"];
+
+    this.selectedDataInfo["icon"] = this.selectedData["icon"];
     this.selectedDataInfo["birthTime"] = new Date(
       this.selectedData["birthTime"]
     );
