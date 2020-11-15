@@ -270,10 +270,6 @@ export default class BtnMoveFile extends Vue {
       for (let index = 0; index < directories.length; index++) {
         const element = directories[index];
         element.path = element.path.replace("%from%", this.fromDir);
-
-        if (!fs.existsSync(element.path)) {
-          fs.mkdirSync(element.path);
-        }
       }
       directories.forEach((directory: ToLibraryDirectory2) => {
         directory.types = [];
@@ -317,6 +313,9 @@ export default class BtnMoveFile extends Vue {
                 flag = true;
               }
               if (flag) {
+                if (!fs.existsSync(directory.path)) {
+                  fs.mkdirSync(directory.path);
+                }
                 if (fs.existsSync(directory.path + "/" + idx.name)) {
                   dupFlag = true;
 
