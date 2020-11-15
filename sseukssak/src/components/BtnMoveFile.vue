@@ -2,6 +2,7 @@
   <div style="display: inline">
     <div class="d-flex justify-end">
       <v-checkbox
+        v-if="!mini"
         class="mt-1 mr-3"
         label="중복제거"
         value="중복제거"
