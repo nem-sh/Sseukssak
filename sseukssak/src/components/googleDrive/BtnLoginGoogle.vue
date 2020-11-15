@@ -93,14 +93,21 @@ export default class BtnLoginGoogle extends Vue {
   }
 
   logout() {
-    console.log("logout");
     try {
-      fs.unlinkSync(this.tokenPath);
-      this.changeLoginState(false);
+      
       Swal.fire({
-        icon: "success",
-        title: "구글 드라이브 연동을 해제했습니다.",
-      });
+        title: '구글 드라이브 연동을 해제하시겠습니까?',
+        showCancelButton: true,
+        confirmButtonText: '예',
+        cancelButtonText: '취소'
+      }).then((result) => {
+        
+        if (result.isConfirmed) {
+          fs.unlinkSync(this.tokenPath);
+          this.changeLoginState(false);
+          Swal.fire("구글 드라이브 연동을 해제했습니다.", '', 'success')
+        }
+      })
     } catch (err) {
       Swal.fire({
         icon: "error",
