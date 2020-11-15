@@ -60,7 +60,7 @@ import {
   ToLibrary2,
   ToLibraryDirectory2,
   SortList,
-  RestoreMoveListUnit,
+  RestoreMoveListUnit
 } from "../api/interface";
 
 @Component({
@@ -73,14 +73,14 @@ import {
     "moveHistory",
     "mini",
     "oAuth2Client",
-    "restoreMoveList",
+    "restoreMoveList"
   ]),
   methods: mapMutations([
     "changeMoveHistory",
     "changeFileSortList",
     "changeFileList",
-    "changeRestoreMoveList",
-  ]),
+    "changeRestoreMoveList"
+  ])
 })
 export default class BtnMoveFile extends Vue {
   restoreMoveList!: RestoreMoveListUnit[];
@@ -100,7 +100,7 @@ export default class BtnMoveFile extends Vue {
       this.now.getDate() - this.now.getDay()
     ),
     "#This month": new Date(this.now.getFullYear(), this.now.getMonth()),
-    "#Every new file": new Date(0),
+    "#Every new file": new Date(0)
   };
   tagToType: object = tagToTypeList;
   fromDir!: string;
@@ -169,17 +169,17 @@ export default class BtnMoveFile extends Vue {
 
     const headers = {
       Authorization: "Bearer " + accessToken,
-      "Content-Type": contentType,
+      "Content-Type": contentType
     };
 
     Axios.post(UPLOAD_URL, file, { headers: headers })
       .then((res) => {
         const data = {
-          name: fileName,
+          name: fileName
         };
         const patchHeaders = {
           Authorization: "Bearer " + accessToken,
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         };
 
         Axios.patch(
@@ -191,20 +191,20 @@ export default class BtnMoveFile extends Vue {
           .then(() =>
             Swal.fire({
               icon: "success",
-              title: "구글 드라이브 업로드에 성공했습니다.",
+              title: "구글 드라이브 업로드에 성공했습니다."
             })
           )
           .catch((err) =>
             Swal.fire({
               icon: "error",
-              title: "구글 드라이브 업로드에 실패했습니다.",
+              title: "구글 드라이브 업로드에 실패했습니다."
             })
           );
       })
       .catch((err) =>
         Swal.fire({
           icon: "error",
-          title: "구글 드라이브 업로드에 실패했습니다.",
+          title: "구글 드라이브 업로드에 실패했습니다."
         })
       );
   }
@@ -233,7 +233,7 @@ export default class BtnMoveFile extends Vue {
         icon: "warning",
         title: "정리 그룹을 선택해주세요",
         showConfirmButton: false,
-        timer: 1000,
+        timer: 1000
       });
       return;
     } else {
@@ -293,7 +293,7 @@ export default class BtnMoveFile extends Vue {
             this.fromDir + "/" + idx.name,
             "파일이 존재하지 않습니다.",
             new Date().getTime(),
-            1,
+            1
           ]);
           continue;
         }
@@ -321,12 +321,12 @@ export default class BtnMoveFile extends Vue {
 
                   a.push([
                     this.fromDir + "/" + idx.name,
-                    directory.path + "/" + "[중복]" + idx.name,
+                    directory.path + "/" + "[중복]" + idx.name
                   ]);
                 } else {
                   a.push([
                     this.fromDir + "/" + idx.name,
-                    directory.path + "/" + idx.name,
+                    directory.path + "/" + idx.name
                   ]);
                 }
               }
@@ -344,12 +344,12 @@ export default class BtnMoveFile extends Vue {
               a[step][0],
               a[step][1],
               new Date().getTime(),
-              1,
+              1
             ]);
             tempRestoreMoveList.push({
               type: "copy",
               from: a[step][0],
-              to: a[step][1],
+              to: a[step][1]
             });
             fs.copyFileSync(a[step][0], a[step][1]);
           }
@@ -359,13 +359,13 @@ export default class BtnMoveFile extends Vue {
             a[a.length - 1][0],
             a[a.length - 1][1],
             new Date().getTime(),
-            1,
+            1
           ]);
 
           tempRestoreMoveList.push({
             type: "move",
             from: a[step][0],
-            to: a[step][1],
+            to: a[step][1]
           });
           //555555555555
           fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
@@ -388,7 +388,7 @@ export default class BtnMoveFile extends Vue {
             icon: "info",
             title: "정리한 파일이 없습니다",
             showConfirmButton: false,
-            timer: 1000,
+            timer: 1000
           });
         } else {
           // 중복 알림
@@ -399,7 +399,7 @@ export default class BtnMoveFile extends Vue {
               title: "정리가 완료되었습니다",
               text: "중복된 이름의 파일이 존재하여 자동 리네임되었습니다",
               showConfirmButton: false,
-              timer: 1000,
+              timer: 1000
             });
             dupFlag = false;
           } else {
@@ -408,7 +408,7 @@ export default class BtnMoveFile extends Vue {
               icon: "success",
               title: "정리가 완료되었습니다",
               showConfirmButton: false,
-              timer: 1000,
+              timer: 1000
             });
           }
           // notifier.notify({
@@ -455,20 +455,20 @@ export default class BtnMoveFile extends Vue {
           fs.renameSync(element["to"], element["from"]);
           this.changeMoveHistory([
             filePathSplit[filePathSplit.length - 1],
-            1,
+            -1,
             element["to"],
             element["from"],
             new Date().getTime(),
-            -1,
+            1
           ]);
         } catch (error) {
           this.changeMoveHistory([
             filePathSplit[filePathSplit.length - 1],
-            0,
+            -2,
             element["to"],
             element["from"],
             new Date().getTime(),
-            -1,
+            1
           ]);
         }
       } else if (element["type"] == "copy") {
@@ -476,20 +476,20 @@ export default class BtnMoveFile extends Vue {
           fs.unlinkSync(element["to"]);
           this.changeMoveHistory([
             filePathSplit[filePathSplit.length - 1],
-            1,
+            -1,
             element["to"],
             "delete",
             new Date().getTime(),
-            -1,
+            1
           ]);
         } catch (error) {
           this.changeMoveHistory([
             filePathSplit[filePathSplit.length - 1],
-            0,
+            -2,
             element["to"],
             "delete",
             new Date().getTime(),
-            -1,
+            1
           ]);
         }
       }
@@ -509,7 +509,7 @@ export default class BtnMoveFile extends Vue {
         icon: "success",
         title: "복원되었습니다",
         showConfirmButton: false,
-        timer: 1000,
+        timer: 1000
       });
     }, 1000);
   }

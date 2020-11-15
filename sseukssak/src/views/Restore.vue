@@ -58,17 +58,23 @@
       </v-dialog>
     </div>
     <br />
+    <span v-if="Object.keys(timesortedList).length < 1">
+      파일 이동 내역이 없습니다.
+    </span>
 
     <div
       style="overflow-x:hidden; overflow-y:scroll;  height:410px;"
-      :class="scrollerBgMode">
-      <v-list class="mx-5" v-for="(timechunk, time) in timesortedList" :key="time">
+      :class="scrollerBgMode"
+    >
+      <v-list
+        class="mx-5"
+        v-for="(timechunk, time) in timesortedList"
+        :key="time"
+      >
         <v-expansion-panels color="grey lighten-4" style="chunk">
           <br />
           <!-- 시간대별로 묶어놓았으며, 그 기준에 따른 시간 표시 -->
-          <h5>
-            <i class="far fa-calendar-alt"></i> {{ convertTime(time) }}
-          </h5>
+          <h5><i class="far fa-calendar-alt"></i> {{ convertTime(time) }}</h5>
           <br />
           <br />
           <v-expansion-panel
@@ -87,8 +93,9 @@
               <h5
                 class="d-inline-block text-truncate"
                 style="max-width: 300px;"
-                >파일명 : {{ chunk.filename }}</h5
               >
+                파일명 : {{ chunk.filename }}
+              </h5>
               <div align="right">
                 <v-icon
                   color="teal lighten-1"
@@ -97,7 +104,8 @@
                   >fas fa-circle</v-icon
                 >
                 <v-icon color="red darken-1" size="10" v-if="chunk.success == 0"
-                  >fas fa-exclamation-circle</v-icon>
+                  >fas fa-exclamation-circle</v-icon
+                >
                 <v-icon
                   color="blue lighten-3"
                   size="10"
@@ -108,32 +116,35 @@
             </v-expansion-panel-header>
             <v-expansion-panel-content style="chunkcontent">
               <hr />
-              <h5 style="text-align: right;" class="d-inline-block py-3"
-                >요약 : {{ convertWorkcode(chunk.workcode) }}
-                {{ chunk.success == -1 ? "복구 작업" : ""
-                }}{{ chunk.success == 1 ? "성공" : ""
-                }}{{ chunk.success == 0 ? "실패" : "" }}</h5
-              >
+              <h5 style="text-align: right;" class="d-inline-block py-3">
+                요약 : {{ convertWorkcode(chunk.workcode) }}
+                {{ convertWorkName(chunk.success) }}
+              </h5>
               <hr />
               <!-- 텍스트 길이가 길어지면 ...으로 표현하도록 하였음 -->
               <!-- 해당 속성은 text-truncate이며 필요없다면 삭제 -->
               <h5
                 class="d-inline-block text-truncate pt-3"
                 style="max-width: 700px"
-                >이동 전 위치 : {{ chunk.before }}</h5
               >
-              <h5
-                class="d-inline-block text-truncate"
-                style="max-width: 700px"
-                >이동 후 위치 : {{ chunk.after }}</h5
-              >
+                이동 전 위치 : {{ chunk.before }}
+              </h5>
+              <h5 class="d-inline-block text-truncate" style="max-width: 700px">
+                이동 후 위치 : {{ chunk.after }}
+              </h5>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
       </v-list>
     </div>
     <div align="right" class="mt-3">
-      <v-btn color="red accent-2" rounded style="color:white" @click="resetHistory()">초기화</v-btn>
+      <v-btn
+        color="red accent-2"
+        rounded
+        style="color:white"
+        @click="resetHistory()"
+        >초기화</v-btn
+      >
     </div>
   </v-container>
 </template>
@@ -228,7 +239,7 @@ import { Watch } from "vue-property-decorator";
     "duplicatedList",
     "fileList",
     "renameHistory2",
-    "moveHistory",
+    "moveHistory"
   ]),
 
   methods: mapMutations([
@@ -237,8 +248,8 @@ import { Watch } from "vue-property-decorator";
     "changeFileSortList",
     "changeDuplicatedList",
     "changeRenameHistory2",
-    "changeMoveHistory",
-  ]),
+    "changeMoveHistory"
+  ])
 })
 export default class Restore extends Vue {
   changeDuplicatedList!: (newList: [][]) => void;
@@ -258,6 +269,7 @@ export default class Restore extends Vue {
   }
   mounted() {
     this.readHistory();
+    console.log(this.timesortedList);
   }
   get succfail() {
     return {};
@@ -288,6 +300,10 @@ export default class Restore extends Vue {
     return constants.history.workcode[code];
   }
 
+  convertWorkName(code: any) {
+    return constants.history.success[code];
+  }
+
   convertTime(time: string) {
     // console.log(new Date(Number(time)));
 
@@ -309,7 +325,7 @@ export default class Restore extends Vue {
     const mm = JSON.parse(changedHistory.toString());
 
     //arr에 담기
-    mm.forEach(function (chunk: any) {
+    mm.forEach(function(chunk: any) {
       // console.log(chunk);
       try {
         if (chunk.date != undefined) {
@@ -321,7 +337,7 @@ export default class Restore extends Vue {
     });
 
     // 날짜순으로 정렬
-    sortingarr.sort(function (a, b) {
+    sortingarr.sort(function(a, b) {
       return a.date > b.date ? -1 : a.date < b.date ? 1 : 0;
     });
     // console.log(sortingarr);
@@ -329,7 +345,7 @@ export default class Restore extends Vue {
     //historylist 변경
     this.historyList = sortingarr.slice(0, 100);
 
-    this.historyList.forEach(function (history: any) {
+    this.historyList.forEach(function(history: any) {
       // console.log(history);
       const d = new Date(history.date);
       history.date = d.toString();
@@ -342,7 +358,7 @@ export default class Restore extends Vue {
     let sortingarr: any = {};
     const mm = JSON.parse(changedHistory.toString());
     // console.log(mm);
-    mm.forEach(function (chunk: any) {
+    mm.forEach(function(chunk: any) {
       // console.log(chunk);
 
       if (chunk.date) {
@@ -361,7 +377,7 @@ export default class Restore extends Vue {
 
     let keys = Object.keys(sortingarr);
 
-    keys.sort(function (a, b) {
+    keys.sort(function(a, b) {
       return Number(b) - Number(a);
     });
     let sorted: any = {};
@@ -393,10 +409,10 @@ export default class Restore extends Vue {
 </script>
 <style scoped>
 .theme--dark.v-list {
-  background-color:#24303a !important;
+  background-color: #24303a !important;
 }
 
 .theme--dark.v-expansion-panels .v-expansion-panel {
-  background-color:#1e2730 !important;
+  background-color: #1e2730 !important;
 }
 </style>
