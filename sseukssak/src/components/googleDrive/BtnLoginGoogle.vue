@@ -2,12 +2,13 @@
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent max-width="400">
       <template v-slot:activator="{ on, attrs }">
-        <i v-if="isLogin" class="fab fa-google-drive" @click="logout"> </i>
+        <i v-if="isLogin" class="fab fa-google-drive fa-lg" @click="logout">
+        </i>
 
         <i
           v-else
           style="color: #999999"
-          class="fab fa-google-drive"
+          class="fab fa-google-drive fa-lg"
           v-bind="attrs"
           v-on="on"
           @click="login(oAuth2Client)"
@@ -40,12 +41,11 @@
 </template>
 
 <script lang='ts'>
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import fs from 'fs'
-import { mapGetters, mapMutations, mapState } from 'vuex'
-import Swal from 'sweetalert2'
-
+import Vue from "vue";
+import Component from "vue-class-component";
+import fs from "fs";
+import { mapGetters, mapMutations, mapState } from "vuex";
+import Swal from "sweetalert2";
 
 const { shell } = require("electron").remote;
 
@@ -99,44 +99,48 @@ export default class BtnLoginGoogle extends Vue {
     });
   }
 
-  
-  logout(){    
-    fs.unlink(this.tokenPath, (err)=>{
-      if (err) return Swal.fire({
-          icon:'error',
-          title:'구글 드라이브 연동 해제에 실패했습니다.'
+  logout() {
+    console.log("logout");
+    fs.unlink(this.tokenPath, (err) => {
+      console.log("logout logout");
+      if (err)
+        return Swal.fire({
+          icon: "error",
+          title: "구글 드라이브 연동 해제에 실패했습니다.",
         });
-      this.changeLoginState(false)
+      this.changeLoginState(false);
       Swal.fire({
-        icon:'success',
-        title:'구글 드라이브 연동을 해제했습니다.'
-      })
-    })
+        icon: "success",
+        title: "구글 드라이브 연동을 해제했습니다.",
+      });
+    });
   }
 
-  setCode(oAuth2Client,TOKEN_PATH){
-      this.dialog = false
-      this.changeLoginState(true)
-      oAuth2Client.getToken(this.code, (err, token) => {
-          if (err) return Swal.fire({
-          icon:'error',
-          title:'잘못된 코드입니다. 코드를 다시 확인해주세요.'
+  setCode(oAuth2Client, TOKEN_PATH) {
+    this.dialog = false;
+    this.changeLoginState(true);
+    oAuth2Client.getToken(this.code, (err, token) => {
+      if (err)
+        return Swal.fire({
+          icon: "error",
+          title: "잘못된 코드입니다. 코드를 다시 확인해주세요.",
         });
-          
-          oAuth2Client.setCredentials(token);
-          
-          fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-              if (err) return Swal.fire({
-          icon:'error',
-          title:'로그인 정보 저장에 실패했습니다.'
-        });
-          });
 
-          Swal.fire({
-          icon:'success',
-          title:'구글 드라이브 연동에 성공했습니다.'
-        });
-      })
+      oAuth2Client.setCredentials(token);
+
+      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+        if (err)
+          return Swal.fire({
+            icon: "error",
+            title: "로그인 정보 저장에 실패했습니다.",
+          });
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "구글 드라이브 연동에 성공했습니다.",
+      });
+    });
   }
 }
 </script>
