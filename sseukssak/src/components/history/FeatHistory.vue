@@ -74,7 +74,7 @@ export default class Restore extends Vue {
   }
   @Watch("moveHistory")
   moveChanged(value: [][]) {
-    if (value.length > 1) {
+    if (value.length >= 1) {
       // console.log("move change detected");
       this.putChunkstoHistory(value, 3);
     }

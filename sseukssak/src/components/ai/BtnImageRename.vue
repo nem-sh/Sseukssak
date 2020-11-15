@@ -29,9 +29,13 @@ const BtnImageRenameProps = Vue.extend({
 
 @Component({
   computed: mapState(["fromDir"]),
+  methods: mapMutations([
+    "changeRenameHistory2"
+  ]),
 })
 export default class BtnImageRename extends BtnImageRenameProps {
   fromDir!: string;
+  changeRenameHistory2!: (newHistory: any[]) => void
 
   apiRequest() {
     const URL = "https://dapi.kakao.com/v2/vision/multitag/generate";
@@ -66,7 +70,7 @@ export default class BtnImageRename extends BtnImageRenameProps {
         const newFileName = res.data.result.label_kr
           .join("_")
           .replace("/", "_");
-        console.log(this.fromDir + "/" + newFileName + ext);
+        const time = new Date().setTime(Date.now())
 
         if (fs.existsSync(this.fromDir + "/" + newFileName + ext)) {
           Swal.fire({
@@ -84,6 +88,14 @@ export default class BtnImageRename extends BtnImageRenameProps {
             icon: "success",
             title: "이미지 파일 이름이 성공적으로 변경되었습니다!",
           });
+          this.changeRenameHistory2([
+            this.fileName + " => " + newFileName+ext,
+            1,
+            this.fromDir+'\\'+this.fileName,
+            this.fromDir+'\\'+newFileName+ext,
+            time,
+            3,
+          ])
         }
       })
       .catch((err) =>
