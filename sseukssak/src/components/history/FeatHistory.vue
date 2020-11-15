@@ -29,7 +29,7 @@ import { mapMutations, mapState } from "vuex";
     "duplicatedList",
     "fileList",
     "renameHistory2",
-    "moveHistory",
+    "moveHistory"
   ]),
 
   methods: mapMutations([
@@ -40,8 +40,8 @@ import { mapMutations, mapState } from "vuex";
     "changeRenameHistory2",
     "changeMoveHistory",
     "resetMoveHistory",
-    "resetRenameHistory",
-  ]),
+    "resetRenameHistory"
+  ])
 })
 export default class Restore extends Vue {
   changeDuplicatedList!: (newList: [][]) => void;
@@ -61,20 +61,20 @@ export default class Restore extends Vue {
   @Watch("duplicatedList")
   duplistChanged(value: [][]) {
     if (value.length > 1) {
-      // console.log("dup change detected");
+      console.log("dup change detected");
       this.putChunkstoHistory(value, 1);
     }
   }
   @Watch("renameHistory2")
   renameHistoryChanged(value: [][]) {
-    if (value.length >= 1) {
+    if (value.length > 1) {
       // console.log("rename change detected");
       this.putChunkstoHistory(value, 2);
     }
   }
   @Watch("moveHistory")
   moveChanged(value: [][]) {
-    if (value.length >= 1) {
+    if (value.length > 1) {
       // console.log("move change detected");
       this.putChunkstoHistory(value, 3);
     }
@@ -104,7 +104,7 @@ export default class Restore extends Vue {
 
     // console.log(chunks);
     // console.log(hsjson);
-    chunks.forEach(function (chunk: [][]) {
+    chunks.forEach(function(chunk: [][]) {
       try {
         hsjson.push({
           filename: chunk[0],
@@ -112,7 +112,7 @@ export default class Restore extends Vue {
           before: chunk[2],
           after: chunk[3],
           date: chunk[4],
-          workcode: chunk[5],
+          workcode: chunk[5]
         });
       } catch (err) {
         console.log(err);
@@ -136,7 +136,7 @@ export default class Restore extends Vue {
 
   readHistory() {
     const nulldata = {
-      datas: {},
+      datas: {}
     };
     const nulldata2 = JSON.stringify(nulldata);
 
@@ -167,7 +167,7 @@ export default class Restore extends Vue {
             before: null,
             after: null,
             date: null,
-            workcode: null,
+            workcode: null
           };
         }
         // console.log(mm);
@@ -200,7 +200,7 @@ export default class Restore extends Vue {
           mm["datas"][a]["before"],
           mm["datas"][a]["after"],
           mm["datas"][a]["date"],
-          mm["datas"][a]["workcode"],
+          mm["datas"][a]["workcode"]
         ]);
       } catch (err) {
         console.log("error", err);
@@ -208,7 +208,7 @@ export default class Restore extends Vue {
     }
 
     // 날짜순으로 정렬
-    sortingarr.sort(function (a, b) {
+    sortingarr.sort(function(a, b) {
       return a[4] > b[4] ? -1 : a[4] < b[4] ? 1 : 0;
     });
     // console.log(sortingarr);
@@ -230,7 +230,7 @@ export default class Restore extends Vue {
           before: null,
           after: null,
           date: null,
-          workcode: null,
+          workcode: null
         };
 
         mm["datas"][k]["filename"] = this.historyList[k][0];
@@ -252,7 +252,7 @@ export default class Restore extends Vue {
   resetHistory() {
     this.isLoading = false;
     const nulldata = {
-      datas: {},
+      datas: {}
     };
     const nulldata2 = JSON.stringify(nulldata);
     this.historyList = [];
