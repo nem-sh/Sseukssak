@@ -220,6 +220,8 @@ export default class Rename extends Vue {
           const dupTmpChange: Array<string> = [];
           const logData: Array<object> = [];
           const workTime: number = new Date().setTime(Date.now());
+          
+          let changeFlag: boolean = false;
 
           this.afterItems.forEach((item, i) => {
             const dupIdx = this.dupCheck.indexOf(item.name);
@@ -255,6 +257,7 @@ export default class Rename extends Vue {
               const o = path.join(item.dir, this.beforeItems[i].name);
               const n = path.join(item.dir, item.name);
               if (o !== n) {
+                changeFlag = true
                 fs.renameSync(o, n);
                 logData.push([
                   this.beforeItems[i].name + " => " + item.name,
@@ -294,6 +297,7 @@ export default class Rename extends Vue {
                 dupTmp.forEach((item, i) => {
                   const o = path.join(item.dir, item.name);
                   const n = path.join(item.dir, dupTmpChange[i]);
+                  changeFlag = true
                   fs.renameSync(o, n);
                   logData.push([
                     item + " => " + dupTmpChange[i],
@@ -318,19 +322,30 @@ export default class Rename extends Vue {
               }
             });
           } else {
-            Swal.fire({
-              position: "center",
-              icon: "success",
-              title: "파일명이 변경되었습니다",
-              showConfirmButton: false,
-              timer: 1000,
-            });
+            if (changeFlag) {
+              Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "파일명이 변경되었습니다",
+                showConfirmButton: false,
+                timer: 1000,
+              });
+              this.changeLogBackCheck(true);
+            } else {
+              Swal.fire({
+                position: "center",
+                icon: "info",
+                title: "변경된 파일/폴더가 없습니다",
+                showConfirmButton: false,
+                timer: 1000,
+              });
+            }
             this.$emit("finish");
             this.initailizeRename();
             BUS.$emit("bus:refreshfilter");
           }
+          changeFlag = false
           this.changeRenameHistory(logData);
-          this.changeLogBackCheck(true);
           this.changeRenameDir("");
         }
       });
@@ -346,9 +361,14 @@ export default class Rename extends Vue {
       confirmButtonText: `Yes`,
     }).then((result) => {
       if (result.isConfirmed) {
+        const workTime: number = new Date().setTime(Date.now());
         this.changeLogBackCheck(false);
         const lastLog = this.renameHistory[this.renameHistory.length - 1];
         lastLog.forEach((log) => {
+          const oldArray = log[3].split("\\")
+          const oldName = oldArray[oldArray.length - 1]
+          const newArray = log[2].split("\\")
+          const newName = newArray[newArray.length - 1]
           // 예외처리(해당 폴더에 되돌리려는 파일명이 존재하면 -> 덮어씌어지지 않게)
           if (fs.existsSync(log[2])) {
             Swal.fire({
@@ -364,6 +384,14 @@ export default class Rename extends Vue {
                 // 예외처리(해당 폴더에 해당 파일이 존재하지 않으면)
                 try {
                   fs.renameSync(log[3], log[2]);
+                  this.changeRenameHistory2([
+                    oldName + " => " + newName,
+                    -1,
+                    log[3],
+                    log[2],
+                    workTime,
+                    3,
+                  ]);
                 } catch (error) {
                   Swal.fire({
                     position: "center",
@@ -378,6 +406,14 @@ export default class Rename extends Vue {
           } else {
             try {
               fs.renameSync(log[3], log[2]);
+              this.changeRenameHistory2([
+                oldName + " => " + newName,
+                -1,
+                log[3],
+                log[2],
+                workTime,
+                3,
+              ]);
             } catch (error) {
               Swal.fire({
                 position: "center",

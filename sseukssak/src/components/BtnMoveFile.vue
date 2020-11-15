@@ -14,8 +14,8 @@
         :disabled="restoreMoveList.length === 0"
         class="mr-3"
         color="error"
+        style="color:white"
         rounded
-        dark
         @click="RestoreMoveFile"
       >
         <i class="fas fa-redo-alt"></i>
