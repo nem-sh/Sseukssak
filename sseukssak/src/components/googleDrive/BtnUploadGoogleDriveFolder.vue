@@ -38,7 +38,7 @@ const BtnUploadGoogleDriveProps = Vue.extend({
 export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
   oAuth2Client!: object;
   fromDir!: string;
-  fileLog: any[]= [[]];
+  // fileLog: any[]= [[]];
   changeGoogleHistory!: (newList: any[]) => void;
 
   uploadFile(auth, fileName, isLast, folderId, fromDir) {
@@ -74,7 +74,14 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
           )
           .then(() => {
             const time = new Date().setTime(Date.now())
-            this.fileLog.push([
+           
+            if (isLast) {
+              Swal.fire({
+                icon: "success",
+                title: "구글 드라이브 업로드에 성공했습니다.",
+              });
+            }
+            this.changeGoogleHistory([
                 fileName,
                 1,
                 this.fromDir+'/'+fileName,
@@ -82,14 +89,6 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
                 time,
                 4,
               ])
-            if (isLast) {
-              console.log(this.fileLog)
-              Swal.fire({
-                icon: "success",
-                title: "구글 드라이브 업로드에 성공했습니다.",
-              });
-              this.changeGoogleHistory(this.fileLog)
-            }
           })
           .catch((err) =>{
             console.log(err)
@@ -97,14 +96,33 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
               icon: "error",
               title: "구글 드라이브 업로드에 실패했습니다.",
             })
+            const time = new Date().setTime(Date.now())
+            this.changeGoogleHistory([
+                fileName,
+                0,
+                this.fromDir+'/'+fileName,
+                '%drive%'+fileName,
+                time,
+                4,
+              ])
           }       
           );
       })
-      .catch((err) =>
+      .catch((err) =>{
         Swal.fire({
           icon: "error",
           title: "구글 드라이브 업로드에 실패했습니다.",
         })
+        const time = new Date().setTime(Date.now())
+            this.changeGoogleHistory([
+                fileName,
+                0,
+                this.fromDir+'/'+fileName,
+                '%drive%'+fileName,
+                time,
+                4,
+              ])
+        }
       );
   }
 

@@ -277,7 +277,7 @@ export default new Vuex.Store({
       state.renameHistory2.push(newHistory);
     },
     changeGoogleHistory(state: DirState, newHistory: []) {
-      state.googleHistory=newHistory;
+      state.googleHistory.push(newHistory);
     },
     resetGoogleHistory(state: DirState) {
       state.googleHistory=[[]];
