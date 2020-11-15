@@ -67,7 +67,7 @@ export default class Restore extends Vue {
   }
   @Watch("renameHistory2")
   renameHistoryChanged(value: [][]) {
-    if (value.length > 1) {
+    if (value.length >= 1) {
       // console.log("rename change detected");
       this.putChunkstoHistory(value, 2);
     }
