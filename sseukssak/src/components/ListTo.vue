@@ -371,17 +371,20 @@ export default class ListTo extends Vue {
   }
   deleteToLibrary() {
     Swal.fire({
-      position: "center",
-      icon: "warning",
       title: "삭제하시겠습니까?",
+      text: "해당 정리 그룹이 삭제됩니다.",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: `Yes`,
+      confirmButtonText: "네, 삭제합니다!",
+      cancelButtonText: "취소",
+      position: "center",
     }).then((result) => {
       if (result.isConfirmed) {
         const tempToLibraryList = this.toLibraryList;
         for (let index = 0; index < this.toLibraryList.length; index++) {
           if (this.toLibraryList[index].name == this.selectedToName) {
-            this.selectedToName = "";
+            this.changeSelectedToName("");
+            // this.selectedToName = "";
             tempToLibraryList.splice(index, 1);
             this.changeToLibraryList(tempToLibraryList);
             window.localStorage.setItem(
