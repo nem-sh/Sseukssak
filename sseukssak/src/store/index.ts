@@ -7,6 +7,7 @@ import { google } from "googleapis";
 Vue.use(Vuex);
 
 interface DirState {
+  quickTo: string;
   restoreMoveList: RestoreMoveListUnit[];
   firstOpen: boolean;
   fromDir: string;
@@ -88,6 +89,7 @@ interface FileInfo {
 
 export default new Vuex.Store({
   state: {
+    quickTo: "",
     restoreMoveList: [],
     firstOpen: true,
     dropToDir: "",
@@ -139,6 +141,9 @@ export default new Vuex.Store({
     osPlatform: "",
   },
   mutations: {
+    changeQuickTo(state: DirState, name: string) {
+      state.quickTo = name
+    },
     changeModifyDirectroy(
       state: DirState,
       modifyDirectroy: ToLibraryDirectory
@@ -207,12 +212,12 @@ export default new Vuex.Store({
       });
     },
     sortBeforeItems(state: DirState) {
-      state.beforeItems.sort(function(a, b) {
+      state.beforeItems.sort(function (a, b) {
         return a.mtime > b.mtime ? 1 : -1;
       });
     },
     sortRenameFileList(state: DirState) {
-      state.renameFileList.sort(function(a, b) {
+      state.renameFileList.sort(function (a, b) {
         return a.mtime > b.mtime ? 1 : -1;
       });
       state.renameFileList.forEach((item) => {
