@@ -84,6 +84,8 @@
                 >
                   <div
                     v-if="file.fileType"
+                    draggable="true"
+                    @drag="drag(file)"
                     @click="openFile(file.name)"
                     @contextmenu.prevent="showContextMenu(file, $event)"
                   >
@@ -147,6 +149,8 @@
                   </div>
                   <div
                     v-else
+                    @drop="innerdrop(file, $event)"
+                    draggable="true"
                     @click="enterDirectory(file.name)"
                     @contextmenu.prevent="showContextMenu(file, $event)"
                   >
@@ -511,9 +515,20 @@ interface Directory {
     "isLogin",
     "osPlatform",
   ]),
-  methods: mapMutations(["changeDir", "changeFileList", "changeFileSortList"]),
+  methods: mapMutations([
+    "changeDir",
+    "changeFileList",
+    "changeFileSortList",
+  ]),
 })
 export default class ListFrom extends Vue {
+  dragData: File = {
+    fileType: "",
+    name: "",
+    birthTime: 0,
+    updatedTime: 0,
+    icon: "",
+  };
   icon = require("./../assets/info.png");
   text: string = "";
   renameValue: string = "";
@@ -543,6 +558,23 @@ export default class ListFrom extends Vue {
   };
   osPlatform!: string;
 
+  innerdrop(from, e) {
+    console.log(from, this.dragData);
+    console.log(1);
+    fs.renameSync(
+      this.fromDir + "/" + this.dragData.name,
+      this.fromDir + "/" + from.name + "/" + this.dragData.name
+    );
+    this.dragData = {
+      fileType: "",
+      name: "",
+      birthTime: 0,
+      updatedTime: 0,
+      icon: "",
+    };
+    this.renewFrom();
+    console.log(e);
+  }
   clickclick() {
     Swal.fire({
       position: "center",
@@ -555,7 +587,13 @@ export default class ListFrom extends Vue {
     //   fs.createReadStream(this.fromDir + "\\" + this.selectedData["name"])
     // );
   }
-
+  drag(file) {
+    if (file.name != this.dragData.name) {
+      this.dragData = file;
+      console.log(file);
+    }
+  }
+  
   renameThis() {
     if (
       this.renameValue.includes("|") ||
@@ -728,7 +766,7 @@ export default class ListFrom extends Vue {
   changeFileList!: (newList: string[]) => void;
   changeFileSortList!: (newList: SortList) => void;
   openFile(file: string) {
-    if (this.osPlatform === 'Win32') {
+    if (this.osPlatform === "Win32") {
       childProcess.execSync('"' + this.fromDir + "/" + file + '"');
     }
     // const { spawn } = require("child_process");
