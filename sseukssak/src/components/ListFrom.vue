@@ -830,6 +830,7 @@ export default class ListFrom extends Vue {
     }
   }
   async renewFrom() {
+    console.log("renew");
     this.getFrom(this.fromDir);
     this.filterState = "전체보기";
   }

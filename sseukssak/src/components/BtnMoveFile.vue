@@ -2,6 +2,7 @@
   <div style="display: inline">
     <div class="d-flex justify-end">
       <v-checkbox
+        v-if="!mini"
         class="mt-1 mr-3"
         label="중복제거"
         value="중복제거"
@@ -322,16 +323,26 @@ export default class BtnMoveFile extends Vue {
                 flag = true;
               }
               if (flag) {
-                if (!fs.existsSync(directory.path)) {
+                if (
+                  !fs.existsSync(directory.path) &&
+                  !directory.path.includes("%drive%")
+                ) {
                   fs.mkdirSync(directory.path);
                 }
-                if (fs.existsSync(directory.path + "/" + idx.name)) {
-                  dupFlag = true;
+                if (!directory.path.includes("%drive%")) {
+                  if (fs.existsSync(directory.path + "/" + idx.name)) {
+                    dupFlag = true;
 
-                  a.push([
-                    this.fromDir + "/" + idx.name,
-                    directory.path + "/" + "[중복]" + idx.name,
-                  ]);
+                    a.push([
+                      this.fromDir + "/" + idx.name,
+                      directory.path + "/" + "[중복]" + idx.name,
+                    ]);
+                  } else {
+                    a.push([
+                      this.fromDir + "/" + idx.name,
+                      directory.path + "/" + idx.name,
+                    ]);
+                  }
                 } else {
                   a.push([
                     this.fromDir + "/" + idx.name,
@@ -342,13 +353,22 @@ export default class BtnMoveFile extends Vue {
             }
           }
         });
-        // console.log(a, 1);
         let step;
         if (a.length > 0) {
           for (step = 0; step < a.length - 1; step++) {
             // Runs 5 times, with values of step 0 through 4.
 
             try {
+              if (a[step][1].includes("%drive%")) {
+                const data = a[step][1].split("/");
+                const name = a[step][0].split("/");
+
+                this.moveToGoogleDrive(
+                  a[step][0],
+                  data[1],
+                  name[name.length - 1]
+                );
+              }
               fs.copyFileSync(a[step][0], a[step][1]);
               this.changeMoveHistory([
                 idx.name,
@@ -376,6 +396,18 @@ export default class BtnMoveFile extends Vue {
           }
           try {
             //555555555555
+            if (a[step][1].includes("%drive%")) {
+              const data = a[step][1].split("/");
+              const name = a[step][0].split("/");
+              this.moveToGoogleDrive(
+                a[a.length - 1][0],
+                data[1],
+                name[name.length - 1]
+              );
+              if (a.length - 1 == 0) {
+                fs.unlinkSync(a[step][0]);
+              }
+            }
             fs.renameSync(a[a.length - 1][0], a[a.length - 1][1]);
             this.changeMoveHistory([
               idx.name,
