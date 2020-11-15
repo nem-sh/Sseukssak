@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a style="display: flex; align-items: center" @click="btnDupCheck()"
+    <!-- <a style="display: flex; align-items: center" @click="btnDupCheck()"
       ><v-img
         class="mr-2"
         max-width="25"
@@ -9,7 +9,7 @@
         src="./../assets/dup.png"
         alt="rename"
       />중복파일 제거</a
-    >
+    > -->
   </div>
 </template>
 <script lang="ts">
@@ -46,8 +46,8 @@ interface File {
 
 const AppProps = Vue.extend({
   props: {
-    propName: String || null,
-  },
+    propName: String || null
+  }
 });
 @Component({
   computed: mapState(["fileSortList", "fromDir", "duplicatedList"]),
@@ -55,8 +55,8 @@ const AppProps = Vue.extend({
     "changeDir",
     "changeFileList",
     "changeFileSortList",
-    "changeDuplicatedList",
-  ]),
+    "changeDuplicatedList"
+  ])
 })
 export default class DupCheck extends AppProps {
   mounted() {
@@ -86,7 +86,7 @@ export default class DupCheck extends AppProps {
 
   read() {
     const rs = dialog.showOpenDialogSync({
-      properties: ["openDirectory"],
+      properties: ["openDirectory"]
     });
     if (!rs) return;
 
@@ -162,6 +162,7 @@ export default class DupCheck extends AppProps {
   }
   MoveDupedFiles(dir: string, dupedfilelist: string[][]) {
     const dupedhistory: any[][] = [[]];
+    // console.log(dupedfilelist);
 
     if (this.makedupFolder) {
       if (!fs.existsSync(dir + "/" + "중복 파일들")) {
@@ -192,7 +193,7 @@ export default class DupCheck extends AppProps {
             dir + "/" + dupedfilelist[f1][f2],
             dir + "/" + "중복 파일들" + "/" + dupedfilelist[f1][f2],
             d,
-            2,
+            2
           ]);
         } else {
           // console.log("dup fail");
@@ -202,11 +203,12 @@ export default class DupCheck extends AppProps {
             dir + "/" + dupedfilelist[f1][f2],
             dir + "/" + dupedfilelist[f1][f2],
             d,
-            2,
+            2
           ]);
         }
       }
     }
+    // console.log(dupedhistory);
     this.changeDuplicatedList(dupedhistory);
   }
 }
