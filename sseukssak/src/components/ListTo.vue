@@ -423,6 +423,11 @@ export default class ListTo extends Vue {
   }
   openShell(path: string) {
     let newPath = path;
+    if (path.includes("%drive%")) {
+      const data = path.split("/");
+      shell.openExternal("https://drive.google.com/drive/folders/" + data[1]);
+      return;
+    }
     if (path.includes("%from%")) {
       if (this.fromDir) {
         newPath = path.replace("%from%", this.fromDir);
