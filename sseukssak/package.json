@@ -15,7 +15,6 @@
   "dependencies": {
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
-    "form-data": "^3.0.0",
     "googleapis": "^62.0.0",
     "node-notifier": "^8.0.0",
     "shell-context-menu": "^1.0.2",

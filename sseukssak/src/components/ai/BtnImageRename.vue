@@ -1,6 +1,6 @@
 <template>
   <a
-    @click="apiRequest()"
+    @click="apiRequest"
     style="display: flex; align-items: center"
   >
     <v-img
@@ -61,12 +61,23 @@ export default class BtnImageRename extends BtnImageRenameProps {
                   title:'이미지 분석 결과가 없습니다.'
                 })
               }
+              const ext = (this.fileName.includes('jpg'))? '.jpg' : '.png'
               const newFileName = res.data.result.label_kr.join('_')
-              fs.renameSync(this.fromDir+'/'+this.fileName,this.fromDir+'/'+newFileName+'.jpg')
-              Swal.fire({
-                icon:'success',
-                title:'이미지 파일 이름이 성공적으로 변경되었습니다!'
+              fs.exists(this.fromDir+'/'+newFileName+ext,(exists)=>{
+                if (exists){
+                  Swal.fire({
+                    icon:'error',
+                    title:'변경하려는 파일 이름과 중복되는 이름이 이미 존재합니다.'
+                  })
+                }else{
+                  fs.renameSync(this.fromDir+'/'+this.fileName,this.fromDir+'/'+newFileName+ext)
+                  Swal.fire({
+                    icon:'success',
+                    title:'이미지 파일 이름이 성공적으로 변경되었습니다!'
+                  })
+                }
               })
+              
             })
             .catch(err => console.log(err))
     }
