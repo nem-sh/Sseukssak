@@ -41,7 +41,12 @@ export default class BtnImageRename extends BtnImageRenameProps {
     apiRequest() {
         const URL = 'https://dapi.kakao.com/v2/vision/multitag/generate'
         const file = new File([fs.readFileSync(this.fromDir+'/'+this.fileName)],this.fileName)
-        console.log(file)
+        if (file.size>2000000){
+          return Swal.fire({
+            icon:'error',
+            title:' 이미지 크기가 너무 큽니다!'
+          })
+        }
         const form = new FormData();
         form.append('image',file)
 
@@ -79,7 +84,10 @@ export default class BtnImageRename extends BtnImageRenameProps {
               })
               
             })
-            .catch(err => console.log(err))
+            .catch(err => Swal.fire({
+                    icon:'error',
+                    title:'이미지 분석 요청에 실패했습니다.'
+                  }))
     }
 
   
