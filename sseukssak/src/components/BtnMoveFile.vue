@@ -408,8 +408,9 @@ export default class BtnMoveFile extends Vue {
                 data[1],
                 name[name.length - 1]
               );
-              if (a.length - 1 == 0) {
-                fs.unlinkSync(a[step][0]);
+              console.log(a.length);
+              if (a.length - 1 != 0) {
+                fs.unlinkSync(a[a.length - 1][0]);
               }
               tempRestoreMoveList.push({
                 type: "drive",
