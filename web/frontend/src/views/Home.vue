@@ -1,27 +1,17 @@
 <template>
   <div class="home">
-    <full-page ref="fullpage" :options="options" id="fullpage">
+    <full-page ref="fullpage" :options="options" id="fullpage" @scroll="console.log($refs.fullpage.api.getActiveSection())">
       <div class="section">
         <DownloadPage />
       </div>
       <div class="section">
-        <SliderPage />
+        <SliderPage/>
       </div>
       <div class="section">
-        <div class="slide">
-          <IntroCard :picture="pic1" :descriptions="des1" />
-        </div>
-        <div class="slide">
-          <IntroCard :picture="pic2" :descriptions="des2" />
-        </div>
+        <IntroCard :VideoName="vi1" :desTitle="desT1" :desContent="desC1" :isLast="false"/>
       </div>
       <div class="section">
-        <div class="slide">
-          <IntroCard :picture="pic3" :descriptions="des3" />
-        </div>
-        <div class="slide">
-          <IntroCard :picture="pic4" :descriptions="des4" />
-        </div>
+        <IntroCard :VideoName="vi2" :desTitle="desT2" :desContent="desC2" :isLast="true" />
       </div>
     </full-page>
   </div>
@@ -32,7 +22,6 @@ import { Component, Vue } from "vue-property-decorator";
 import DownloadPage from "@/components/DownloadPage.vue";
 import SliderPage from "@/components/SliderPage.vue";
 import IntroCard from "@/components/IntroCard.vue";
-
 
 @Component({
   name: "Home",
@@ -45,21 +34,25 @@ import IntroCard from "@/components/IntroCard.vue";
 export default class Home extends Vue {
   data () {
     return {
-      pic1: "FromToPic.png",
-      pic2: "FromToPic2.png",
-      pic3: "RenamePic.png",
-      pic4: "RenamePic2.png",
-      des1: "정리를 원하는 폴더를 선택하고 해당 폴더의 파일들이 이동할 위치를 지정합니다.",
-      des2: "어떤 파일들을 어떤 폴더로 이동시킬 것인지 다양한 조건들을 설정할 수 있습니다.",
-      des3: "특정 폴더에서 이름 변경을 원하는 파일들을 선택합니다.",
-      des4: "머릿말, 꼬릿말 등을 통해 체계적으로 파일 이름을 관리할 수 있습니다."
+      vi1: "MoveFiles.mp4",
+      vi2: "RenameFiles.mp4",
+      desT1: "파일 이동",
+      desC1: "사용자의 설정에 따라 특정 폴더의 파일들을 깔끔하게 정리할 수 있습니다.",
+      desT2: "파일 이름 변경",
+      desC2: "특정 폴더 내의 파일들의 이름을 일괄적으로 변경할 수 있습니다.",
+      color1: "lightslategrey",
+      color2: "beige",
+      color3: "lightblue"
     }
   }
   options = {
     licenseKey: "OPEN-SOURCE-GPLV3-LICENSE",
-    autoScrolling: true,
+    // autoScrolling: true,
     scrollHorizontally: true,
-  };
+    anchors: ['firstPage', 'secondPage', 'thirdPage', 'fourthPage'],
+    sectionsColor: ['', '#4BBFC3', '#7BAABE', 'beige'],
+    
+  }
 }
 </script>
 
@@ -67,10 +60,7 @@ export default class Home extends Vue {
 .home {
   font-family: "Nanum Gothic", sans-serif !important;
   font-weight: 900;
+  width: 100vw;
   height: 100vh;
-  background-color: #C0C0C0;
-}
-.slide {
-  justify-content: center;
 }
 </style>
