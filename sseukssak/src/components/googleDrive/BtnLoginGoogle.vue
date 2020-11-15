@@ -66,25 +66,20 @@ export default class BtnLoginGoogle extends Vue {
   code: string = "";
 
   mounted() {
-    fs.stat(this.tokenPath, (err) => {
-      if (!err) {
-        fs.readFile(this.tokenPath, (err, data) => {
-          if (!err) {
-            const savedToken = JSON.parse(data.toString());
-            this.oAuth2Client.setCredentials(savedToken);
-            this.oAuth2Client.on("tokens", (tokens) => {
-              if (tokens["refresh_token"]) {
-                savedToken["refresh_token"] = tokens["refresh_token"];
-              }
-              savedToken["access_token"] = tokens["access_token"];
-              fs.writeFileSync(this.tokenPath, savedToken);
-              this.oAuth2Client.setCredentials(savedToken);
-            });
-          }
-        });
-        this.changeLoginState(true);
-      }
-    });
+    if (fs.existsSync(this.tokenPath)) {
+      const data = fs.readFileSync(this.tokenPath);
+      const savedToken = JSON.parse(data.toString());
+      this.oAuth2Client.setCredentials(savedToken);
+      this.oAuth2Client.on("tokens", (tokens) => {
+        if (tokens["refresh_token"]) {
+          savedToken["refresh_token"] = tokens["refresh_token"];
+        }
+        savedToken["access_token"] = tokens["access_token"];
+        fs.writeFileSync(this.tokenPath, savedToken);
+        this.oAuth2Client.setCredentials(savedToken);
+      });
+      this.changeLoginState(true);
+    }
   }
 
   login(oAuth2Client) {
@@ -99,19 +94,19 @@ export default class BtnLoginGoogle extends Vue {
 
   logout() {
     console.log("logout");
-    fs.unlink(this.tokenPath, (err) => {
-      console.log("logout logout");
-      if (err)
-        return Swal.fire({
-          icon: "error",
-          title: "구글 드라이브 연동 해제에 실패했습니다.",
-        });
+    try {
+      fs.unlinkSync(this.tokenPath);
       this.changeLoginState(false);
       Swal.fire({
         icon: "success",
         title: "구글 드라이브 연동을 해제했습니다.",
       });
-    });
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "구글 드라이브 연동 해제에 실패했습니다.",
+      });
+    }
   }
 
   setCode(oAuth2Client, TOKEN_PATH) {
