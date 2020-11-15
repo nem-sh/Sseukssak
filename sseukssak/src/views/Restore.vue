@@ -15,7 +15,7 @@
             <v-icon>far fa-question-circle</v-icon>
           </v-btn>
         </template>
-        <v-card>
+        <v-card :class="{ 'modal-d': this.$vuetify.theme.dark }">
           <v-card-title>
             <div class="text-center">
               <span class="headline text-center">History 기능</span>
@@ -62,11 +62,13 @@
     <div
       style="overflow-x:hidden; overflow-y:scroll;  height:410px;"
       :class="scrollerBgMode">
-      <v-list v-for="(timechunk, time) in timesortedList" :key="time">
+      <v-list class="mx-5" v-for="(timechunk, time) in timesortedList" :key="time">
         <v-expansion-panels color="grey lighten-4" style="chunk">
           <br />
           <!-- 시간대별로 묶어놓았으며, 그 기준에 따른 시간 표시 -->
-          <span>{{ convertTime(time) }}에 작업한 파일들</span>
+          <h5>
+            <i class="far fa-calendar-alt"></i> {{ convertTime(time) }}
+          </h5>
           <br />
           <br />
           <v-expansion-panel
@@ -82,10 +84,10 @@
             <!-- 성공 실패에 따른 카드 색상 변경 -->
 
             <v-expansion-panel-header expand-icon=" ">
-              <span
+              <h5
                 class="d-inline-block text-truncate"
                 style="max-width: 300px;"
-                >파일명 : {{ chunk.filename }}</span
+                >파일명 : {{ chunk.filename }}</h5
               >
               <div align="right">
                 <v-icon
@@ -106,24 +108,24 @@
             </v-expansion-panel-header>
             <v-expansion-panel-content style="chunkcontent">
               <hr />
-              <span style="text-align: right;" class="d-inline-block"
+              <h5 style="text-align: right;" class="d-inline-block py-3"
                 >요약 : {{ convertWorkcode(chunk.workcode) }}
                 {{ chunk.success == -1 ? "복구 작업" : ""
                 }}{{ chunk.success == 1 ? "성공" : ""
-                }}{{ chunk.success == 0 ? "실패" : "" }}</span
+                }}{{ chunk.success == 0 ? "실패" : "" }}</h5
               >
               <hr />
               <!-- 텍스트 길이가 길어지면 ...으로 표현하도록 하였음 -->
               <!-- 해당 속성은 text-truncate이며 필요없다면 삭제 -->
-              <span
-                class="d-inline-block text-truncate"
+              <h5
+                class="d-inline-block text-truncate pt-3"
                 style="max-width: 700px"
-                >이동 전 위치 : {{ chunk.before }}</span
+                >이동 전 위치 : {{ chunk.before }}</h5
               >
-              <span
+              <h5
                 class="d-inline-block text-truncate"
                 style="max-width: 700px"
-                >이동 후 위치 : {{ chunk.after }}</span
+                >이동 후 위치 : {{ chunk.after }}</h5
               >
             </v-expansion-panel-content>
           </v-expansion-panel>
@@ -131,7 +133,7 @@
       </v-list>
     </div>
     <div align="right" class="mt-3">
-      <v-btn color="#7288da" rounded dark @click="resetHistory()">초기화</v-btn>
+      <v-btn color="red accent-2" rounded style="color:white" @click="resetHistory()">초기화</v-btn>
     </div>
   </v-container>
 </template>
@@ -389,3 +391,12 @@ export default class Restore extends Vue {
   }
 }
 </script>
+<style scoped>
+.theme--dark.v-list {
+  background-color:#24303a !important;
+}
+
+.theme--dark.v-expansion-panels .v-expansion-panel {
+  background-color:#1e2730 !important;
+}
+</style>
