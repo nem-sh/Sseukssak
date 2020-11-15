@@ -18,7 +18,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import fs from 'fs'
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import Swal from 'sweetalert2'
 import Axios from 'axios'
 
@@ -32,15 +32,22 @@ const BtnImageRenameProps = Vue.extend({
 
 @Component({
   computed:mapState([
-    "fromDir"
+    "fromDir",
   ])
+  ,
+
+  methods: mapMutations([
+    "changeRenameHistory2"
+  ]),
 })
 export default class BtnImageRename extends BtnImageRenameProps {
     fromDir!: string
+    changeRenameHistory2!: (newHistory: any[]) => void
 
     apiRequest() {
         const URL = 'https://dapi.kakao.com/v2/vision/multitag/generate'
         const file = new File([fs.readFileSync(this.fromDir+'/'+this.fileName)],this.fileName)
+        
         if (file.size>2000000){
           return Swal.fire({
             icon:'error',
@@ -68,6 +75,7 @@ export default class BtnImageRename extends BtnImageRenameProps {
               }
               const ext = (this.fileName.includes('jpg'))? '.jpg' : '.png'
               const newFileName = res.data.result.label_kr.join('_').replace('/','_')
+              const time = new Date().setTime(Date.now())
               fs.exists(this.fromDir+'/'+newFileName+ext,(exists)=>{
                 if (exists){
                   Swal.fire({
@@ -80,6 +88,14 @@ export default class BtnImageRename extends BtnImageRenameProps {
                     icon:'success',
                     title:'이미지 파일 이름이 성공적으로 변경되었습니다!'
                   })
+                  this.changeRenameHistory2([
+                    this.fileName + " => " + newFileName+ext,
+                    1,
+                    this.fromDir+'\\'+this.fileName,
+                    this.fromDir+'\\'+newFileName+ext,
+                    time,
+                    3,
+                  ])
                 }
               })
               
