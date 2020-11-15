@@ -18,7 +18,7 @@
 <script lang='ts'>
 import Vue from "vue";
 import Component from "vue-class-component";
-import { mapState } from "vuex";
+import { mapMutations, mapState } from "vuex";
 import fs from "fs";
 import { google } from "googleapis";
 import axios from "axios";
@@ -33,21 +33,23 @@ const BtnUploadGoogleDriveProps = Vue.extend({
 
 @Component({
   computed: mapState(["fromDir", "tokenPath", "oAuth2Client"]),
+  methods: mapMutations(["changeGoogleHistory"])
 })
 export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
   oAuth2Client!: object;
   fromDir!: string;
-  fileLog: string[] = [];
+  fileLog: any[]= [[]];
+  changeGoogleHistory!: (newList: any[]) => void;
 
-  async uploadFile(auth, fileName, isLast, folderId, fromDir) {
+  uploadFile(auth, fileName, isLast, folderId, fromDir) {
+    console.log(this.changeGoogleHistory)
     const accessToken = auth.credentials.access_token;
     const UPLOAD_URL =
       "https://www.googleapis.com/upload/drive/v3/files?uploadType=media";
     const PATCH_URL = "https://www.googleapis.com/drive/v3/files/";
-
+    
     const contentType = mime.lookup(fileName);
     const file = fs.readFileSync(fromDir + "/" + fileName);
-
     const headers = {
       Authorization: "Bearer " + accessToken,
       "Content-Type": contentType,
@@ -71,18 +73,31 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
             { headers: patchHeaders }
           )
           .then(() => {
+            const time = new Date().setTime(Date.now())
+            this.fileLog.push([
+                fileName,
+                1,
+                this.fromDir+'/'+fileName,
+                '%drive%'+fileName,
+                time,
+                4,
+              ])
             if (isLast) {
+              console.log(this.fileLog)
               Swal.fire({
                 icon: "success",
                 title: "구글 드라이브 업로드에 성공했습니다.",
               });
+              this.changeGoogleHistory(this.fileLog)
             }
           })
-          .catch((err) =>
+          .catch((err) =>{
+            console.log(err)
             Swal.fire({
               icon: "error",
               title: "구글 드라이브 업로드에 실패했습니다.",
             })
+          }       
           );
       })
       .catch((err) =>

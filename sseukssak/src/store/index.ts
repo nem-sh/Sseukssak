@@ -23,6 +23,8 @@ interface DirState {
   renameHistory: any[][];
   renameHistory2: any[][];
 
+  googleHistory: any[][];
+
   HistoryList: any[][];
 
   moveHistory: any[][];
@@ -135,6 +137,7 @@ export default new Vuex.Store({
       "urn:ietf:wg:oauth:2.0:oob"
     ),
     isLogin: false,
+    googleHistory: [],
 
     // 미니모드
     mini: false,
@@ -267,6 +270,12 @@ export default new Vuex.Store({
     },
     changeRenameHistory2(state: DirState, newHistory: []) {
       state.renameHistory2.push(newHistory);
+    },
+    changeGoogleHistory(state: DirState, newHistory: []) {
+      state.googleHistory=newHistory;
+    },
+    resetGoogleHistory(state: DirState) {
+      state.googleHistory=[[]];
     },
     changeMiniState(state: DirState, value: boolean) {
       state.mini = value;
