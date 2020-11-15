@@ -242,10 +242,6 @@
       class="from-part-third"
       align="right"
     >
-      <div align="left">
-        <BtnDupCheck />
-      </div>
-
       <BtnMoveFile />
     </div>
     <div>
@@ -255,7 +251,7 @@
         class="pa-0"
         :class="bgMode"
       >
-        <li>
+        <li v-if="selectedData.name">
           <a
             @click="enterDirectory(selectedData.name)"
             style="display: flex; align-items: center"
