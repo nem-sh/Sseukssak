@@ -228,7 +228,7 @@ export default class Rename extends Vue {
       Swal.fire({
         position: "center",
         icon: "warning",
-        title: "해당 폴더에 접근 권한이 없습니다",
+        title: "해당 경로는 권한이 없습니다",
         showConfirmButton: false,
         timer: 1000,
       });

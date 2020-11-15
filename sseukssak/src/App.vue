@@ -110,25 +110,71 @@
             <div class="menu--settings">
               <BtnLoginGoogle />
             </div>
-            <v-dialog v-model="dialog" width="400px">
-              <v-expansion-panels accordion>
-                <v-expansion-panel
-                  :class="bgMode"
-                  v-for="item in helpItems"
-                  :key="item.id"
-                >
-                  <v-expansion-panel-header
-                    >{{ item.title }}<i :class="item.icon" class="ml-2"></i>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
-                    {{ item.des }}
-                    <i
-                      class="far fa-external-link-alt go-site"
-                      @click="goInfoPage"
-                    ></i>
-                  </v-expansion-panel-content>
-                </v-expansion-panel>
-              </v-expansion-panels>
+            <v-dialog v-model="dialog" width="900px">
+                <v-carousel>
+                  <v-carousel-item>
+                    <v-sheet
+                      height="100%"
+                      tile
+                    >
+                      <v-row
+                        class="fill-height"
+                        align="center"
+                        justify="center"
+                      >
+                        <div class="text-center">
+                          <h1 class="info-title">메인 화면</h1>
+                          <img width="100%" height="452px" src="@/assets/info/info1.png" alt="info1">
+                        </div>
+                      </v-row>
+                    </v-sheet>
+                  </v-carousel-item>
+                  <v-carousel-item>
+                    <v-sheet
+                      tile
+                    >
+                      <v-row
+                        align="center"
+                        justify="center"
+                      >
+                        <div class="text-center">
+                          <h1 class="info-title">파일 정리</h1>
+                          <img width="100%" height="452px" src="@/assets/info/info2.png" alt="info2">
+                        </div>
+                      </v-row>
+                    </v-sheet>
+                  </v-carousel-item>
+                  <v-carousel-item>
+                    <v-sheet
+                      tile
+                    >
+                      <v-row
+                        align="center"
+                        justify="center"
+                      >
+                        <div class="text-center">
+                          <h1 class="info-title">파일/폴더명 통합 변경</h1>
+                          <img width="100%" height="452px" src="@/assets/info/info3.png" alt="info3">
+                        </div>
+                      </v-row>
+                    </v-sheet>
+                  </v-carousel-item>
+                  <v-carousel-item>
+                    <v-sheet
+                      tile
+                    >
+                      <v-row
+                        align="center"
+                        justify="center"
+                      >
+                        <div class="text-center">
+                          <h1 class="info-title">히스토리</h1>
+                          <img width="100%" height="452px" src="@/assets/info/info4.png" alt="info4">
+                        </div>
+                      </v-row>
+                    </v-sheet>
+                  </v-carousel-item>
+                </v-carousel>
             </v-dialog>
             <Quick />
           </div>
@@ -144,7 +190,6 @@
 
 <script lang="ts">
 import Vue from "vue";
-import Swal from "sweetalert2";
 import { mapState, mapMutations } from "vuex";
 import Component from "vue-class-component";
 import Home from "@/views/Home.vue";
@@ -281,5 +326,8 @@ export default class App extends Vue {
 .rename-bg-d {
   background-color: #24303a !important;
   color: white !important;
+}
+.info-title {
+  background-color: var(--color-purple) !important;
 }
 </style>
