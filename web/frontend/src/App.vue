@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <!-- <v-app-bar v-if="showAppbar" app color="#7288da" dark class="appBar">
+    <!-- <v-app-bar v-if="Checker" app color="#7288da" dark class="appBar">
       <div class="LogoBox">
         <img :src="require(`@/assets/sweeping.png`)" alt="No Image" class="TopLogoImage"/>
       Sseukssak
@@ -23,7 +23,7 @@ export default Vue.extend({
   name: "App",
   data() {
     return {
-      showAppbar: true,
+      // Checker: this.$store.state.showAppBar,
       options: {
         licenseKey: "OPEN-SOURCE-GPLV3-LICENSE",
         autoScrolling: true,
@@ -32,14 +32,16 @@ export default Vue.extend({
     };
   },
   methods: {
-    download() {
-      const link = document.createElement("a");
-      link.href = "http://k3b304.p.ssafy.io/static/sseukssak.exe";
-      link.setAttribute("download", "sseukssak.exe");
-      document.body.appendChild(link);
-      link.click();
-    },
+    // download() {
+    //   const link = document.createElement("a");
+    //   link.href = "http://k3b304.p.ssafy.io/static/sseukssak.exe";
+    //   link.setAttribute("download", "sseukssak.exe");
+    //   document.body.appendChild(link);
+    //   link.click();
+    // },
   },
+  computed: {
+  }
 });
 </script>
 <style scoped>

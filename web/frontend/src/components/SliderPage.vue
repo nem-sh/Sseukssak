@@ -1,23 +1,25 @@
 <template>
-  <v-container class="SliderBox">
-    <v-row class="SliderPart">
-      <div class="wrapper">
-            <div class="images">
-              <div class="img-1"></div>
-              <div class="img-2"></div>
-            </div>
-            <div class="ImgSlider">
-              <div class="drag-line">
-                <span></span>
+  <div class="SlWrapper">
+    <v-container class="SliderBox">
+      <v-row class="SliderPart">
+        <div class="wrapper">
+              <div class="images">
+                <div class="img-1"></div>
+                <div class="img-2"></div>
               </div>
-              <input type="range" min="0" max="100" :value="sliderValue" @input="ImgSliderOnInput">
+              <div class="ImgSlider">
+                <div class="drag-line">
+                  <span></span>
+                </div>
+                <input type="range" min="0" max="100" :value="sliderValue" @input="ImgSliderOnInput">
+              </div>
             </div>
-          </div>
-      </v-row>
-      <v-row class="DescriptionPart">
-        쓱싹 사용 전후의 바탕화면을 확인해보세요!
-      </v-row>
-  </v-container>
+        </v-row>
+        <v-row class="DescriptionPart">
+          쓱싹 사용 전후의 바탕화면을 확인해보세요!
+        </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script>
@@ -42,24 +44,27 @@ export default {
 </script>
 
 <style>
+.SlWrapper {
+  height: 100%;
+  width: 100%;
+}
 .SliderBox {
+  margin-top: 10vh;
   height: 85vh;
-  margin-bottom: 10vh;
-  padding-top: 0;
   width: 65vw;
 }
 .SliderPart {
-    height: 92%;
+  height: 92%;
 }
 .DescriptionPart {
-    padding-top: 5vh;
-    height: 8%;
-    width: 100%;
-    justify-content: center;
-    align-content: center;
-    font-size: 4vh;
-    text-align: center;
-    color: black;
+  padding-top: 5vh;
+  height: 8%;
+  width: 100%;
+  justify-content: center;
+  align-content: center;
+  font-size: 4vh;
+  text-align: center;
+  color: black;
 }
 .BigRow {
   height: 80%;
