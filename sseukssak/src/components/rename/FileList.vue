@@ -1,5 +1,11 @@
 <template>
-  <v-col :class="partMode" class="position-p">
+  <v-col
+    :class="partMode"
+    class="position-p"
+    @drop="drop"
+    dragenter.prevent
+    @dragover.prevent
+  >
     <div :class="partTitleMode">
       <h4 class="text-center">1. 변경할 파일/폴더 선택</h4>
     </div>
@@ -157,7 +163,68 @@ export default class Rename extends Vue {
   get folderMode() {
     return this.$vuetify.theme.dark ? "folder-d" : "folder";
   }
+  async drop(event) {
+    event.preventDefault();
+    event.stopPropagation();
 
+    for (const f of event.dataTransfer.files) {
+      // const tmpFileList: FileInfo[] = [];
+      // const stat = fs.lstatSync(f.path);
+
+      const tmpFileList: FileInfo[] = this.renameFileList;
+      console.log(f.path);
+      let pathList: string[] = [];
+      if (f.path.includes("\\")) {
+        pathList = f.path.split("\\");
+      } else {
+        pathList = f.path.split("/");
+      }
+      const v = pathList[pathList.length - 1];
+      let p = pathList[0];
+      for (let index = 1; index < pathList.length - 1; index++) {
+        const element = pathList[index];
+        p = p + "/" + element;
+      }
+      const dir = p;
+      p = p + "/" + pathList[pathList.length - 1];
+      console.log(v, p, dir);
+      const stat = fs.lstatSync(p);
+      // 확장자
+      let _fileType = "";
+      if (!stat.isDirectory()) {
+        const tmp = v.split(".");
+        _fileType = tmp[tmp.length - 1].toLowerCase();
+      }
+      const item = {
+        name: v,
+        path: p,
+        ctime: stat.birthtime,
+        mtime: stat.mtime,
+        type: _fileType,
+        dir: dir,
+        icon: "",
+      };
+      // 파일 아이콘
+      let iconPath = dir + "/" + v;
+      if (v.includes(".lnk")) {
+        try {
+          iconPath = shell.readShortcutLink(iconPath).target;
+        } catch {
+          iconPath = dir + "/" + v;
+        }
+      }
+      let realIcon = "";
+      app.getFileIcon(iconPath).then((fileIcon) => {
+        realIcon = fileIcon.toDataURL();
+        item["icon"] = realIcon;
+      });
+      tmpFileList.push(item);
+      this.changeRenameDir(dir);
+      await this.changeRenameFileList(tmpFileList);
+      await this.changeBeforeItems([]);
+      await this.sortRenameFileList();
+    }
+  }
   get dirItems() {
     const dirs = this.renameDir
       .split("\\")
