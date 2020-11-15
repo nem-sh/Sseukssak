@@ -14,7 +14,7 @@
       <span>퀵 등록</span>
     </v-tooltip>
     <v-dialog v-model="dialog" width="400px">
-      <v-card class="mx-auto" max-width="400">
+      <v-card class="mx-auto" max-width="400" :class="{ 'modal-d': this.$vuetify.theme.dark }">
         <v-img
           class="white--text align-end"
           height="200px"
@@ -62,7 +62,7 @@
         </v-card-text>
 
         <v-card-actions style="display: flex; justify-content: flex-end">
-          <v-btn color="black" @click="dialog = false" text> 닫기 </v-btn>
+          <v-btn @click="dialog = false" text> 닫기 </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

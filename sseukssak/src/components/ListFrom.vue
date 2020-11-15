@@ -240,7 +240,7 @@
 
     <div
       v-if="fileScrollList.length !== 0"
-      class="from-part-third"
+      class="from-part-third pt-3"
       align="right"
     >
       <BtnMoveFile />
@@ -470,6 +470,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+      <!-- <v-btn @click="test">notify 테스트</v-btn> -->
     </div>
   </v-container>
 </template>
@@ -580,6 +581,16 @@ export default class ListFrom extends Vue {
       '\\ / : * ? " < > | 은 사용 불가능합니다',
   };
   osPlatform!: string;
+
+  test() {
+    Notification.requestPermission().then(function() {
+      const options = {
+        body: "test",
+      }
+      const n = new Notification("test", options);
+    });
+  }
+
   dragDirectory(name) {
     if (this.directoryDrag != name) {
       this.changeDirectoryDrag(name);
