@@ -201,6 +201,12 @@
                         ></v-btn>
                       </template>
                       <v-list v-show="shown">
+                        <v-list-item link @click="openDirectory(item.path)">
+                          <v-list-item-title
+                            ><i class="fad fa-sign-in-alt mr-2"></i
+                            >폴더열기</v-list-item-title
+                          >
+                        </v-list-item>
                         <v-list-item link>
                           <v-list-item-title
                             ><ModalModifyToLibraryDirectory
@@ -262,9 +268,9 @@ import ListFromBreadcrumbs from "@/components/listFrom/ListFromBreadcrumbs.vue";
 
 import { shell } from "electron";
 
-const shellContextMenu = require("shell-context-menu").remote;
 import { BUS } from "./EventBus.js";
 
+const { app } = require("electron").remote;
 // const { shell } = require("electron").remote;
 interface ToLibrary {
   name: string;
@@ -276,7 +282,22 @@ interface ToLibraryDirectory {
   dateTags: string[];
   titleTags: string[];
 }
-
+interface SortList {
+  directories: Directory[];
+  files: File[];
+}
+interface Directory {
+  name: string;
+  birthTime: number;
+  updatedTime: number;
+}
+interface File {
+  fileType: string;
+  name: string;
+  birthTime: number;
+  updatedTime: number;
+  icon: string;
+}
 @Component({
   components: {
     ModalCreateToLibrary,
@@ -295,9 +316,17 @@ interface ToLibraryDirectory {
     "changeToLibraryList",
     "changeSelectedToName",
     "changeDropToDir",
+    "changeFileList",
+    "changeFileSortList",
+    "changeDir",
   ]),
 })
 export default class ListTo extends Vue {
+  fromDir!: string;
+
+  changeDir!: (newList: string) => void;
+  changeFileList!: (newList: string[]) => void;
+  changeFileSortList!: (newList: SortList) => void;
   selectedToName!: string;
   selectedToNameValue: string = "";
   shown: boolean = false;
@@ -305,6 +334,89 @@ export default class ListTo extends Vue {
 
   closeMenu() {
     this.shown = false;
+  }
+  openDirectory(path: string) {
+    let newPath = path;
+    if (path.includes("%from%")) {
+      if (this.fromDir) {
+        newPath = path.replace("%from%", this.fromDir);
+      } else {
+        Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: "이 폴더를 열기 위해선 from을 먼저 지정해주세요!",
+          showConfirmButton: false,
+          timer: 1000,
+        });
+      }
+    }
+
+    if (fs.existsSync(newPath)) {
+      // console.log(newPath);
+      this.changeDir(newPath);
+      this.getFrom(newPath);
+    }
+  }
+  async getFrom(dir: string) {
+    console.log(dir);
+    // try {
+    const fileList: string[] = fs.readdirSync(dir);
+    const fileSortList: SortList = { directories: [], files: [] };
+    fileList.forEach((name: string) => {
+      const fileSplit = name.split(".");
+      if (fs.lstatSync(this.fromDir + "/" + name).isDirectory()) {
+        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
+        const updatedTime = Math.max(
+          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
+        );
+        fileSortList.directories.push({
+          name: name,
+          birthTime: birthTime,
+          updatedTime: updatedTime,
+        });
+      } else {
+        const fileType = fileSplit[fileSplit.length - 1].toLowerCase();
+        const birthTime = fs.lstatSync(this.fromDir + "/" + name).birthtimeMs;
+        const updatedTime = Math.max(
+          fs.lstatSync(this.fromDir + "/" + name).mtimeMs,
+          fs.lstatSync(this.fromDir + "/" + name).ctimeMs
+        );
+        let iconPath = this.fromDir + "/" + name;
+        if (name.includes(".lnk")) {
+          try {
+            iconPath = shell.readShortcutLink(iconPath).target;
+          } catch {
+            iconPath = this.fromDir + "/" + name;
+          }
+        }
+        let realIcon = "";
+        const file = {
+          name: name,
+          fileType: fileType,
+          birthTime: birthTime,
+          updatedTime: updatedTime,
+          icon: "",
+        };
+        app.getFileIcon(iconPath).then((fileIcon) => {
+          realIcon = fileIcon.toDataURL();
+          file["icon"] = realIcon;
+        });
+        fileSortList.files.push(file);
+      }
+    });
+    this.changeFileSortList(fileSortList);
+    this.changeFileList(fileList);
+    // } catch (error) {
+    //   Swal.fire({
+    //     position: "center",
+    //     icon: "warning",
+    //     title: `권한이 없습니다!`,
+    //     text: `"${dir}"의 이동은 권한이 없습니다.`,
+    //     showConfirmButton: false,
+    //     timer: 1000,
+    //   });
+    // }
   }
   openShell(path: string) {
     let newPath = path;
@@ -592,7 +704,6 @@ export default class ListTo extends Vue {
 
   dirLength: number = 0;
   selectedDir!: ToLibraryDirectory[];
-  fromDir!: string;
   offset: boolean = true;
   menuOpened: boolean = false;
 

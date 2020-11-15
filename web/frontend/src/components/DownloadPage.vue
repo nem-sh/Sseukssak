@@ -1,76 +1,62 @@
 <template>
-    <v-container class="OuterDiv">
-      <video autoplay data-keepplaying muted loop id="myVideo">
-  <source src="../assets/BackGroundVideo.mp4" type="video/mp4">
-</video>
+  <v-container class="OuterDiv">
+    <video autoplay data-keepplaying muted loop id="myVideo">
+      <source src="../assets/BackGroundVideo.mp4" type="video/mp4" />
+    </video>
 
-<!-- Optional: some overlay text to describe the video -->
-<v-row class="content">
-  <v-col
-  cols="4"
-  > 
-  </v-col>
-  <v-col
-  cols="4"
-  class="midPart"
-  >
-  <v-row class="FirstRow">
-    <span>원클릭 폴더 관리 앱</span>
-  <span class="forD">for DeskTop</span>
-  </v-row>
-  <v-row class="SecondRow">
-    <v-col
-    cols="4"
-    class="LogoPart"
-    >
-    <img :src="require(`@/assets/sweeping.png`)" alt="No Image" class="LogoImage"/>
-    </v-col>
-    <v-col
-    cols="8"
-    class="NamePart"
-    >
-    Sseukssak
-    </v-col>
-  </v-row>
-  <v-row class="ThirdRow">
-    <button class="DownloadButton" @click="download()">다운로드</button>
-  </v-row>
-  </v-col>
-  <v-col
-  cols="4"
-  > 
-  </v-col>
-</v-row>
-    </v-container>
+    <!-- Optional: some overlay text to describe the video -->
+    <v-row class="content">
+      <v-col cols="4"> </v-col>
+      <v-col cols="4" class="midPart">
+        <v-row class="FirstRow">
+          <span>원클릭 폴더 관리 앱</span>
+          <span class="forD">for DeskTop</span>
+        </v-row>
+        <v-row class="SecondRow">
+          <v-col cols="4" class="LogoPart">
+            <img
+              :src="require(`@/assets/sweeping.png`)"
+              alt="No Image"
+              class="LogoImage"
+            />
+          </v-col>
+          <v-col cols="8" class="NamePart"> Sseukssak </v-col>
+        </v-row>
+        <v-row class="ThirdRow">
+          <button class="DownloadButton" @click="download()">다운로드</button>
+        </v-row>
+      </v-col>
+      <v-col cols="4"> </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-
 export default {
   name: "DownloadPage",
-    data () {
-        return {
-          sliderValue: 95,
-        }
+  data() {
+    return {
+      sliderValue: 95,
+    };
+  },
+  methods: {
+    // ImgSliderOnInput () {
+    //   const ImageSlider = document.querySelector(".ImgSlider input")
+    //   const showImg = document.querySelector(".images .img-2")
+    //   const dragLine = document.querySelector(".ImgSlider .drag-line")
+    //   const sliderVal = ImageSlider.value;
+    //   dragLine.style.left = sliderVal + "%";
+    //   showImg.style.width = sliderVal + "%";
+    // },
+    download() {
+      const link = document.createElement("a");
+      link.href = "http://k3b304.p.ssafy.io/static/sseukssak.exe";
+      link.setAttribute("download", "sseukssak.exe");
+      document.body.appendChild(link);
+      link.click();
     },
-    methods: {
-      // ImgSliderOnInput () {
-      //   const ImageSlider = document.querySelector(".ImgSlider input")
-      //   const showImg = document.querySelector(".images .img-2")
-      //   const dragLine = document.querySelector(".ImgSlider .drag-line")
-      //   const sliderVal = ImageSlider.value;
-      //   dragLine.style.left = sliderVal + "%";
-      //   showImg.style.width = sliderVal + "%";
-      // },
-        download () {
-          const link = document.createElement('a');
-          link.href = "http://k3b304.p.ssafy.io/static/sseukssak.exe";
-          link.setAttribute("download", "sseukssak.exe")
-          document.body.appendChild(link);
-          link.click();
-        },
-    },
-}
+  },
+};
 </script>
 
 <style>
@@ -79,7 +65,7 @@ export default {
   width: 100vw;
   display: flex;
   justify-content: center;
-  align-items: center;;
+  align-items: center;
 }
 .midPart {
   height: 100%;
@@ -103,15 +89,15 @@ export default {
   justify-content: center;
 }
 .LogoPart {
-height: 100%;
-width: 100%;
-padding: 0 !important;
+  height: 100%;
+  width: 100%;
+  padding: 0 !important;
 }
 .NamePart {
-height: 100%;
-width: 100%;
-padding-left: 0 !important;
-font-size: 4vw;
+  height: 100%;
+  width: 100%;
+  padding-left: 0 !important;
+  font-size: 4vw;
 }
 .LogoImage {
   width: 80%;
@@ -143,7 +129,7 @@ font-size: 4vw;
   font-size: 5vh;
   font-family: "Nanum Gothic", sans-serif !important;
   font-weight: 900;
-  height: 60px
+  height: 60px;
 }
 .midPart {
   text-align: center;

@@ -25,11 +25,32 @@
           text
           @click="setCode(oAuth2Client, tokenPath)"
         >
-          입력
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+        </i>
+      </template>
+      <v-card :class="{ 'modal-d': this.$vuetify.theme.dark }">
+        <v-card-title class="headline">
+          인증 코드를 입력해주세요.
+        </v-card-title>
+        <v-card-text>
+          <v-text-field label="Code" v-model="code"></v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="#7288da"
+            rounded
+            dark
+            @click="setCode(oAuth2Client, tokenPath)"
+          >
+            입력
+          </v-btn>
+          <v-btn text @click="dialog = false">
+            닫기
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
 </template>
 
 <script lang='ts'>
