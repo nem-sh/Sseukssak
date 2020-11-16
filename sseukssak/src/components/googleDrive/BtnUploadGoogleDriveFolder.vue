@@ -133,6 +133,8 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
 
   uploadFolder(auth, folderName, fromDir, parentsId) {
     if (!parentsId){
+      this.toUploadFilesNum=0
+      this.uploadedFilesNum=0
       Swal.fire({
         title: '업로드 중입니다.',
         icon: 'info',
