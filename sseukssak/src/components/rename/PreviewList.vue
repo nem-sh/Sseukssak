@@ -64,7 +64,13 @@
         </v-virtual-scroll>
       </v-col>
       <v-col cols="1" class="pr-5 d-flex flex-column my-auto align-center">
-        <v-btn dark rounded class="mr-4 mb-2 play-btn" @click="rename" color="#7288da">
+        <v-btn
+          dark
+          rounded
+          class="mr-4 mb-2 play-btn"
+          @click="rename"
+          color="#7288da"
+        >
           변경
         </v-btn>
         <v-btn
@@ -220,7 +226,7 @@ export default class Rename extends Vue {
           const dupTmpChange: Array<string> = [];
           const logData: Array<object> = [];
           const workTime: number = new Date().setTime(Date.now());
-          
+
           let changeFlag: boolean = false;
 
           this.afterItems.forEach((item, i) => {
@@ -257,7 +263,7 @@ export default class Rename extends Vue {
               const o = path.join(item.dir, this.beforeItems[i].name);
               const n = path.join(item.dir, item.name);
               if (o !== n) {
-                changeFlag = true
+                changeFlag = true;
                 fs.renameSync(o, n);
                 logData.push([
                   this.beforeItems[i].name + " => " + item.name,
@@ -280,7 +286,7 @@ export default class Rename extends Vue {
           });
           if (dupTmp.length > 0) {
             const text = dupTmp
-              .map(function (item, index) {
+              .map(function(item, index) {
                 return item.name + " => " + dupTmpChange[index];
               })
               .join(" , ");
@@ -297,7 +303,7 @@ export default class Rename extends Vue {
                 dupTmp.forEach((item, i) => {
                   const o = path.join(item.dir, item.name);
                   const n = path.join(item.dir, dupTmpChange[i]);
-                  changeFlag = true
+                  changeFlag = true;
                   fs.renameSync(o, n);
                   logData.push([
                     item + " => " + dupTmpChange[i],
@@ -326,7 +332,7 @@ export default class Rename extends Vue {
               Swal.fire({
                 position: "center",
                 icon: "success",
-                title: "파일명이 변경되었습니다",
+                title: "변경되었습니다",
                 showConfirmButton: false,
                 timer: 1000,
               });
@@ -344,7 +350,7 @@ export default class Rename extends Vue {
             this.initailizeRename();
             BUS.$emit("bus:refreshfilter");
           }
-          changeFlag = false
+          changeFlag = false;
           this.changeRenameHistory(logData);
           this.changeRenameDir("");
         }
@@ -365,10 +371,10 @@ export default class Rename extends Vue {
         this.changeLogBackCheck(false);
         const lastLog = this.renameHistory[this.renameHistory.length - 1];
         lastLog.forEach((log) => {
-          const oldArray = log[3].split("\\")
-          const oldName = oldArray[oldArray.length - 1]
-          const newArray = log[2].split("\\")
-          const newName = newArray[newArray.length - 1]
+          const oldArray = log[3].split("\\");
+          const oldName = oldArray[oldArray.length - 1];
+          const newArray = log[2].split("\\");
+          const newName = newArray[newArray.length - 1];
           // 예외처리(해당 폴더에 되돌리려는 파일명이 존재하면 -> 덮어씌어지지 않게)
           if (fs.existsSync(log[2])) {
             Swal.fire({
