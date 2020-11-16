@@ -14,7 +14,11 @@
       <span>퀵 등록</span>
     </v-tooltip>
     <v-dialog v-model="dialog" width="400px">
-      <v-card class="mx-auto" max-width="400" :class="{ 'modal-d': this.$vuetify.theme.dark }">
+      <v-card
+        class="mx-auto"
+        max-width="400"
+        :class="{ 'modal-d': this.$vuetify.theme.dark }"
+      >
         <v-img
           class="white--text align-end"
           height="200px"
@@ -77,6 +81,9 @@ import shellContextMenu from "shell-context-menu";
 import fs from "fs";
 import path from "path";
 import Swal from "sweetalert2";
+
+const homeDir = require("os").homedir();
+const desktopDir = `${homeDir}/Desktop`;
 const { shell } = require("electron").remote;
 const { app } = require("electron").remote;
 declare const __static: string;
@@ -95,6 +102,7 @@ declare const __static: string;
     "changeFileList",
     "changeFileSortList",
     "changeSelectedToName",
+    "setOsPlatform",
   ]),
 })
 export default class Quick extends Vue {
@@ -158,7 +166,8 @@ export default class Quick extends Vue {
         const options = {
           name: "SseuckSsack Quick",
           icon:
-            this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\쓱싹.exe",
+            this.defalutPath +
+            "AppData\\Local\\Programs\\sseukssak\\sseukssak.exe",
           command:
             this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quick.exe",
           menu: `여기서 쓱싹!`,
@@ -176,6 +185,7 @@ export default class Quick extends Vue {
           timer: 1000,
         });
       } catch (err) {
+        console.log(err);
         Swal.fire({
           position: "center",
           icon: "warning",
@@ -221,20 +231,24 @@ export default class Quick extends Vue {
           .toString()
           .trim()
       );
-
+      console.log(quickData["from"], quickData);
       if (quickData["to"]) {
         fs.writeFileSync(
           "C:\\Users\\multicampus\\AppData\\Local\\Programs\\sseukssak\\quickData.txt",
           JSON.stringify({ to: quickData["to"] })
         );
-
+        this.quickTo = quickData["to"];
         this.changeSelectedToName(quickData["to"]);
       }
       if (quickData["from"]) {
         this.changeDir(quickData["from"]);
+        console.log(this.fromDir);
         this.getFrom(this.fromDir);
       } else {
+        this.changeDir(desktopDir);
         console.log("ㄴㄴ");
+
+        this.getFrom(this.fromDir);
       }
     }
   }
