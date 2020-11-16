@@ -41,6 +41,9 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
   // fileLog: any[]= [[]];
   changeGoogleHistory!: (newList: any[]) => void;
 
+  toUploadFilesNum: number = 0
+  uploadedFilesNum: number = 0
+
   uploadFile(auth, fileName, isLast, folderId, fromDir) {
     console.log(this.changeGoogleHistory)
     const accessToken = auth.credentials.access_token;
@@ -54,7 +57,7 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
       Authorization: "Bearer " + accessToken,
       "Content-Type": contentType,
     };
-
+    this.toUploadFilesNum ++;
     axios
       .post(UPLOAD_URL, file, { headers: headers })
       .then((res) => {
@@ -74,12 +77,14 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
           )
           .then(() => {
             const time = new Date().setTime(Date.now())
-           
-            if (isLast) {
+            this.uploadedFilesNum ++;
+            if (this.toUploadFilesNum!=0 && this.uploadedFilesNum==this.toUploadFilesNum) {
               Swal.fire({
                 icon: "success",
                 title: "구글 드라이브 업로드에 성공했습니다.",
               });
+              this.toUploadFilesNum=0
+              this.uploadedFilesNum=0
             }
             this.changeGoogleHistory([
                 fileName,
@@ -127,6 +132,30 @@ export default class BtnUploadGoogleDrive extends BtnUploadGoogleDriveProps {
   }
 
   uploadFolder(auth, folderName, fromDir, parentsId) {
+    if (!parentsId){
+      Swal.fire({
+        title: '업로드 중입니다.',
+        icon: 'info',
+        html:'<b></b>'+ ' / '+'<span></span>',
+        showConfirmButton: false,
+        willOpen: () => {
+          Swal.showLoading()
+          setInterval(()=>{
+            const content = Swal.getContent()
+            if (content) {
+              const uploaded = content.querySelector('b')
+              const toUpload = content.querySelector('span')
+              if (toUpload){
+                toUpload.textContent = this.toUploadFilesNum.toString()  
+              }
+              if (uploaded){
+                uploaded.textContent = this.uploadedFilesNum.toString()
+              }
+            }
+          },100)
+        }
+      })
+    }
     const drive = google.drive({ version: "v3", auth: auth });
     let fileMetadata;
     if (parentsId) {

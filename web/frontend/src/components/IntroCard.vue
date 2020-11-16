@@ -60,6 +60,7 @@ export default {
 .TheRow {
   width: 100%;
   height: 100%;
+  justify-content: center;
 }
 .VideoDescription {
   height: 100%;

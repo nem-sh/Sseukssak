@@ -54,24 +54,16 @@ export default {
     };
   },
   methods: {
-    // ImgSliderOnInput () {
-    //   const ImageSlider = document.querySelector(".ImgSlider input")
-    //   const showImg = document.querySelector(".images .img-2")
-    //   const dragLine = document.querySelector(".ImgSlider .drag-line")
-    //   const sliderVal = ImageSlider.value;
-    //   dragLine.style.left = sliderVal + "%";
-    //   showImg.style.width = sliderVal + "%";
-    // },
     downloadWin() {
       const link = document.createElement("a");
-      link.href = "http://k3b304.p.ssafy.io/static/sseukssak.exe";
+      link.href = "http://k3b304.p.ssafy.io/static/sseukssak_win.exe";
       link.setAttribute("download", "sseukssak_Win.exe");
       document.body.appendChild(link);
       link.click();
     },
     downloadMac() {
       const link = document.createElement("a");
-      link.href = "http://k3b304.p.ssafy.io/static/sseukssak.exe";
+      link.href = "http://k3b304.p.ssafy.io/static/sseukssak_mac.exe";
       link.setAttribute("download", "sseukssak_Mac.exe");
       document.body.appendChild(link);
       link.click();
