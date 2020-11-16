@@ -58,13 +58,17 @@
       </v-dialog>
     </div>
     <br />
-    <span v-if="Object.keys(timesortedList).length < 1">
-      파일 이동 내역이 없습니다.
-    </span>
+    <div
+      v-if="Object.keys(timesortedList).length < 1"
+      style="text-align:center"
+    >
+      <h1>파일 이동 내역이 없습니다.</h1>
+    </div>
 
     <div
       style="overflow-x:hidden; overflow-y:scroll;  height:410px;"
       :class="scrollerBgMode"
+      v-if="Object.keys(timesortedList).length >= 1"
     >
       <v-list
         class="mx-5"
@@ -139,6 +143,7 @@
     </div>
     <div align="right" class="mt-3">
       <v-btn
+        v-if="Object.keys(timesortedList).length >= 1"
         color="red accent-2"
         rounded
         style="color:white"
@@ -152,6 +157,11 @@
 <style>
 .helpbtn {
   float: right;
+}
+
+.hsempty {
+  text-align: center;
+  height: 410px;
 }
 
 .helpmodal {
@@ -224,6 +234,7 @@ import Component from "vue-class-component";
 import fs from "fs";
 import path from "path";
 // import electron, { app } from 'electron';
+import Swal from "sweetalert2";
 
 import { mapMutations, mapState } from "vuex";
 import constants from "@/assets/constants.json";
@@ -269,7 +280,7 @@ export default class Restore extends Vue {
   }
   mounted() {
     this.readHistory();
-    console.log(this.timesortedList);
+    // console.log(this.timesortedList);
   }
   get succfail() {
     return {};
@@ -392,14 +403,36 @@ export default class Restore extends Vue {
   }
 
   resetHistory() {
-    this.isLoading = false;
-    const nulldata = [];
-    const nulldata2 = JSON.stringify(nulldata);
-    // this.historyList = [];
-    this.timesortedList = [];
+    Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: "히스토리 초기화를 진행합니다.",
+      showCancelButton: true,
+      confirmButtonText: `예`,
+      showConfirmButton: true,
+      cancelButtonText: "아니오"
+    }).then((res) => {
+      if (res.isConfirmed) {
+        // console.log("selected yes");
+        const nulldata = [];
+        const nulldata2 = JSON.stringify(nulldata);
+        // this.historyList = [];
+        this.timesortedList = [];
 
-    fs.writeFileSync("history_test.json", nulldata2);
-    this.isLoading = true;
+        fs.writeFileSync("history_test.json", nulldata2);
+
+        Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: `초기화되었습니다.`,
+          showConfirmButton: false,
+          timer: 1000
+        });
+      }
+      // } else {
+      //   console.log("selected no");
+      // }
+    });
   }
 
   created() {
