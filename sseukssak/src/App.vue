@@ -176,7 +176,9 @@
                   </v-carousel-item>
                 </v-carousel>
             </v-dialog>
-            <Quick />
+            
+            
+            <Quick v-if="osPlatform ==='Win32'" />
           </div>
         </div>
       </div>

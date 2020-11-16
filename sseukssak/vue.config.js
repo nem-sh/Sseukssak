@@ -16,7 +16,7 @@ module.exports = {
           icon: "./public/sweeping_mac.ico",
         },
         dmg: {
-          title: "쓱싹",
+          title: "sseukssak",
           icon: "./public/sweeping_mac.ico",
         },
         nsis: {
