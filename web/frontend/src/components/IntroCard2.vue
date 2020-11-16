@@ -2,12 +2,6 @@
   <div class="IntWrapper">
     <v-container style="height:100%">
       <v-row class="TheRow d-flex align-center">
-        <v-col class="ImagePart" cols="12" md="7">
-          <video aria-describedby="" autoplay="true" loop="" muted="" playsinline="" data-keepplaying class="IntroVideo">
-            <source :data-src="require(`@/assets/${VideoName}`)" type="video/mp4" class="VideoPart"/>
-          </video>
-        </v-col>
-        <v-col md="1"></v-col>
         <v-col class="VideoDescription d-flex flex-column" cols="12" md="4">
           <div class="text-center">
             <div class="DesTitle pb-5">
@@ -19,6 +13,12 @@
             </div>
           </div>
         </v-col>
+        <v-col md="1"></v-col>
+        <v-col class="ImagePart" cols="12" md="7">
+          <video aria-describedby="" autoplay="true" loop="" muted="" playsinline="" data-keepplaying class="IntroVideo">
+            <source :data-src="require(`@/assets/${VideoName}`)" type="video/mp4" class="VideoPart"/>
+          </video>
+        </v-col>
       </v-row>
     </v-container>
   </div>
@@ -26,7 +26,7 @@
 
 <script>
 export default {
-  name: "IntroCard",
+  name: "IntroCard2",
   props: {
     VideoName: String,
     desTitle: String,

@@ -4,10 +4,22 @@
       <source src="../assets/version01.mp4" type="video/mp4" />
     </video>
     <v-row class="content">
-      <v-col cols="0" xs="1" sm="2" md="4"> 
-
-      </v-col>
-      <v-col cols="12" xs="10" sm="8" md="4" class="midPart">
+      <div class="mx-auto">
+        <v-row class="SecondRow">
+          <!-- <v-col cols="4" class="LogoPart"> -->
+          <div class="LogoPart d-flex">
+            <img
+              :src="require(`@/assets/sweeping.png`)"
+              alt="No Image"
+              class="LogoImage"
+            />
+            <div class="NamePart">
+              SseukSsak
+            </div>
+          </div>
+          <!-- </v-col> -->
+          <!-- <v-col cols="8" class="NamePart">SseukSsak</v-col> -->
+        </v-row>
         <v-row class="FirstRow">
           <v-row class="OneClick">
             원클릭 파일 정리
@@ -16,18 +28,8 @@
             for DeskTop
           </v-row>
         </v-row>
-        <v-row class="SecondRow">
-          <v-col cols="4" class="LogoPart">
-            <img
-              :src="require(`@/assets/sweeping.png`)"
-              alt="No Image"
-              class="LogoImage"
-            />
-          </v-col>
-          <v-col cols="8" class="NamePart">SseukSsak</v-col>
-        </v-row>
         <v-row class="ThirdRow">
-          <v-col cols="6" class="DC">
+          <v-col cols="6" class="DC text-center">
             <button class="DownloadButton" @click="downloadWin()">
               <i class="fab fa-windows fa-lg"></i> for Windows
               </button>
@@ -38,8 +40,7 @@
               </button>
           </v-col>
         </v-row>
-      </v-col>
-      <v-col cols="0" xs="1" sm="2" md="4"> </v-col>
+      </div>
     </v-row>
   </v-container>
 </template>
@@ -120,19 +121,20 @@ export default {
   height: 100%;
   width: 100%;
   padding-left: 0 !important;
-  font-size: 4vw;
+  font-size: 6vw;
 }
 .LogoImage {
-  width: 80%;
+  width: 30%;
   height: 80%;
 }
 .DownloadButton {
   height: 100%;
   border-radius: 50px;
-  width: 100%;
-  background-color: white;
+  width: 80%;
+  background-color: #363a3e;
+  color: white !important;
   text-align: center;
-  font-size: 1.8vw;
+  font-size: 1.5vw;
   padding-top: 0.5vh;
   color: black;
 }
@@ -188,6 +190,6 @@ export default {
 
 .DownloadButton:hover {
   background: #ddd;
-  color: black;
+  color: black !important;
 }
 </style>

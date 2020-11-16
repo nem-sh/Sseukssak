@@ -11,8 +11,11 @@
         <IntroCard :VideoName="vi1" :desTitle="desT1" :desContent="desC1" :isLast="false"/>
       </div>
       <div class="section">
-        <IntroCard :VideoName="vi2" :desTitle="desT2" :desContent="desC2" :isLast="true" />
+        <IntroCard2 :VideoName="vi2" :desTitle="desT2" :desContent="desC2" :isLast="true" />
       </div>
+      <!-- <div class="section">
+        <ContactUs />
+      </div> -->
     </full-page>
   </div>
 </template>
@@ -22,6 +25,8 @@ import { Component, Vue } from "vue-property-decorator";
 import DownloadPage from "@/components/DownloadPage.vue";
 import SliderPage from "@/components/SliderPage.vue";
 import IntroCard from "@/components/IntroCard.vue";
+import IntroCard2 from "@/components/IntroCard2.vue";
+import ContactUs from "@/components/ContactUs.vue";
 
 @Component({
   name: "Home",
@@ -29,6 +34,8 @@ import IntroCard from "@/components/IntroCard.vue";
     DownloadPage,
     SliderPage,
     IntroCard,
+    IntroCard2,
+    ContactUs
   },
 })
 export default class Home extends Vue {
@@ -36,10 +43,10 @@ export default class Home extends Vue {
     return {
       vi1: "MoveFiles.mp4",
       vi2: "RenameFiles.mp4",
-      desT1: "파일 이동",
+      desT1: "파일 정리",
       desC1: "사용자의 설정에 따라 특정 폴더의 파일들을 깔끔하게 정리할 수 있습니다.",
-      desT2: "파일 이름 변경",
-      desC2: "특정 폴더 내의 파일들의 이름을 일괄적으로 변경할 수 있습니다.",
+      desT2: "RENAME",
+      desC2: "여러 파일 및 폴더 이름을 일괄적으로 변경할 수 있습니다.",
       color1: "lightslategrey",
       color2: "beige",
       color3: "lightblue"

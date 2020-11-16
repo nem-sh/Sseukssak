@@ -1,5 +1,5 @@
 <template>
-  <div class="SlWrapper">
+  <div class="SlWrapper d-flex align-center">
     <v-container class="SliderBox">
       <v-row class="SliderPart">
         <div class="wrapper">
@@ -49,7 +49,6 @@ export default {
   width: 100%;
 }
 .SliderBox {
-  margin-top: 10vh;
   height: 85vh;
   width: 65vw;
 }
