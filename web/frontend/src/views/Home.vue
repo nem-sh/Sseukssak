@@ -45,7 +45,7 @@ export default class Home extends Vue {
       vi2: "RenameFiles.mp4",
       desT1: "파일 정리",
       desC1: "사용자의 설정에 따라 특정 폴더의 파일들을 깔끔하게 정리할 수 있습니다.",
-      desT2: "RENAME",
+      desT2: "파일/폴더명 변경",
       desC2: "여러 파일 및 폴더 이름을 일괄적으로 변경할 수 있습니다.",
       color1: "lightslategrey",
       color2: "beige",
@@ -59,7 +59,7 @@ export default class Home extends Vue {
     sectionsColor: ['', '#4BBFC3', '#7BAABE', 'beige'],
     navigation: true,
     navigationPosition: 'left',
-    navigationTooltips: ['다운로드', '전후 비교', '파일 이동', '이름 변경'],
+    navigationTooltips: ['다운로드', '전후 비교', '파일 정리', '이름 변경'],
   }
 }
 </script>
