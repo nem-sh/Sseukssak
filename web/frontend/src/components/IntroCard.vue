@@ -2,16 +2,16 @@
   <div class="IntWrapper">
     <v-container class="IntroBox">
       <v-row class="TheRow">
-        <v-col class="ImagePart" cols="12" md="8">
+        <v-col class="VideoArea" cols="12" sm="8">
           <video aria-describedby="" autoplay="true" loop="" muted="" playsinline="" data-keepplaying class="IntroVideo">
             <source :data-src="require(`@/assets/${VideoName}`)" type="video/mp4" class="VideoPart"/>
           </video>
         </v-col>
-        <v-col class="VideoDescription" cols="12" md="4" v-spacer="3">
+        <v-col cols="0" sm="1"></v-col>
+        <v-col class="VideoDescription" cols="12" sm="3">
           <v-row class="DesTitle">
             {{desTitle}}
           </v-row>
-          <v-spacer></v-spacer>
           <v-row class="DesContent">
             {{desContent}}
           </v-row>
@@ -45,7 +45,11 @@ export default {
 }
 .IntroBox {
   height: 85vh;
-  width: 65vw;
+  width: 80vw;
+}
+.VideoArea {
+  width: 100%;
+  justify-content: center;
 }
 .IntroVideo {
   width: 100%;
@@ -58,6 +62,7 @@ export default {
 .TheRow {
   width: 100%;
   height: 100%;
+  justify-content: center;
 }
 .VideoDescription {
   height: 100%;
@@ -72,7 +77,7 @@ export default {
   height: 15%;
   width: 100%;
   justify-content: center;
-  font-size: 5vh;
+  font-size: 4vh;
 }
 .DesContent {
   height: 20%;

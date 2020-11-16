@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <full-page ref="fullpage" :options="options" id="fullpage" @scroll="console.log($refs.fullpage.api.getActiveSection())">
+    <full-page ref="fullpage" :options="options" id="fullpage">
       <div class="section">
         <DownloadPage />
       </div>
@@ -8,10 +8,10 @@
         <SliderPage/>
       </div>
       <div class="section">
-        <IntroCard :VideoName="vi1" :desTitle="desT1" :desContent="desC1" :isLast="false"/>
+        <IntroCard :VideoName="vi1" :desTitle="desT1" :desContent="desC1"/>
       </div>
       <div class="section">
-        <IntroCard :VideoName="vi2" :desTitle="desT2" :desContent="desC2" :isLast="true" />
+        <IntroCard :VideoName="vi2" :desTitle="desT2" :desContent="desC2"/>
       </div>
     </full-page>
   </div>
@@ -40,18 +40,16 @@ export default class Home extends Vue {
       desC1: "사용자의 설정에 따라 특정 폴더의 파일들을 깔끔하게 정리할 수 있습니다.",
       desT2: "파일 이름 변경",
       desC2: "특정 폴더 내의 파일들의 이름을 일괄적으로 변경할 수 있습니다.",
-      color1: "lightslategrey",
-      color2: "beige",
-      color3: "lightblue"
     }
   }
   options = {
     licenseKey: "OPEN-SOURCE-GPLV3-LICENSE",
-    // autoScrolling: true,
     scrollHorizontally: true,
     anchors: ['firstPage', 'secondPage', 'thirdPage', 'fourthPage'],
     sectionsColor: ['', '#4BBFC3', '#7BAABE', 'beige'],
-    
+    navigation: true,
+    navigationPosition: 'left',
+    navigationTooltips: ['다운로드', '전후 비교', '파일 이동', '이름 변경'],
   }
 }
 </script>
@@ -62,5 +60,10 @@ export default class Home extends Vue {
   font-weight: 900;
   width: 100vw;
   height: 100vh;
+  -ms-user-select: none; 
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 </style>
