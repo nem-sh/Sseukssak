@@ -111,70 +111,68 @@
               <BtnLoginGoogle />
             </div>
             <v-dialog v-model="dialog" width="900px">
-                <v-carousel>
-                  <v-carousel-item>
-                    <v-sheet
-                      height="100%"
-                      tile
-                    >
-                      <v-row
-                        class="fill-height"
-                        align="center"
-                        justify="center"
-                      >
-                        <div class="text-center">
-                          <h1 class="info-title">메인 화면</h1>
-                          <img width="100%" height="452px" src="@/assets/info/info1.png" alt="info1">
-                        </div>
-                      </v-row>
-                    </v-sheet>
-                  </v-carousel-item>
-                  <v-carousel-item>
-                    <v-sheet
-                      tile
-                    >
-                      <v-row
-                        align="center"
-                        justify="center"
-                      >
-                        <div class="text-center">
-                          <h1 class="info-title">파일 정리</h1>
-                          <img width="100%" height="452px" src="@/assets/info/info2.png" alt="info2">
-                        </div>
-                      </v-row>
-                    </v-sheet>
-                  </v-carousel-item>
-                  <v-carousel-item>
-                    <v-sheet
-                      tile
-                    >
-                      <v-row
-                        align="center"
-                        justify="center"
-                      >
-                        <div class="text-center">
-                          <h1 class="info-title">파일/폴더명 통합 변경</h1>
-                          <img width="100%" height="452px" src="@/assets/info/info3.png" alt="info3">
-                        </div>
-                      </v-row>
-                    </v-sheet>
-                  </v-carousel-item>
-                  <v-carousel-item>
-                    <v-sheet
-                      tile
-                    >
-                      <v-row
-                        align="center"
-                        justify="center"
-                      >
-                        <div class="text-center">
-                          <h1 class="info-title">히스토리</h1>
-                          <img width="100%" height="452px" src="@/assets/info/info4.png" alt="info4">
-                        </div>
-                      </v-row>
-                    </v-sheet>
-                  </v-carousel-item>
-                </v-carousel>
+              <v-carousel>
+                <v-carousel-item>
+                  <v-sheet height="100%" tile>
+                    <v-row class="fill-height" align="center" justify="center">
+                      <div class="text-center">
+                        <h1 class="info-title">메인 화면</h1>
+                        <img
+                          width="100%"
+                          height="452px"
+                          src="@/assets/info/info1.png"
+                          alt="info1"
+                        />
+                      </div>
+                    </v-row>
+                  </v-sheet>
+                </v-carousel-item>
+                <v-carousel-item>
+                  <v-sheet tile>
+                    <v-row align="center" justify="center">
+                      <div class="text-center">
+                        <h1 class="info-title">파일 정리</h1>
+                        <img
+                          width="100%"
+                          height="452px"
+                          src="@/assets/info/info2.png"
+                          alt="info2"
+                        />
+                      </div>
+                    </v-row>
+                  </v-sheet>
+                </v-carousel-item>
+                <v-carousel-item>
+                  <v-sheet tile>
+                    <v-row align="center" justify="center">
+                      <div class="text-center">
+                        <h1 class="info-title">파일/폴더명 통합 변경</h1>
+                        <img
+                          width="100%"
+                          height="452px"
+                          src="@/assets/info/info3.png"
+                          alt="info3"
+                        />
+                      </div>
+                    </v-row>
+                  </v-sheet>
+                </v-carousel-item>
+                <v-carousel-item>
+                  <v-sheet tile>
+                    <v-row align="center" justify="center">
+                      <div class="text-center">
+                        <h1 class="info-title">히스토리</h1>
+                        <img
+                          width="100%"
+                          height="452px"
+                          src="@/assets/info/info4.png"
+                          alt="info4"
+                        />
+                      </div>
+                    </v-row>
+                  </v-sheet>
+                </v-carousel-item>
+              </v-carousel>
             </v-dialog>
             <Quick />
           </div>
