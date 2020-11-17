@@ -246,7 +246,19 @@ export default class BtnMoveFile extends Vue {
       if (this.mini === true) {
         BUS.$emit("bus:mniiLoading");
       } else {
-        this.dialog = true;
+        // this.dialog = true;
+        Swal.fire({
+            html: `<lottie-player
+            src="https://assets6.lottiefiles.com/packages/lf20_AvXSwT.json"
+            background="transparent"
+            speed="1"
+            style="width: 300px; height: 300px"
+            loop
+            autoplay
+          ></lottie-player>`,
+            showConfirmButton: false
+            
+          });
       }
 
       BUS.$emit("bus:refreshfile");
