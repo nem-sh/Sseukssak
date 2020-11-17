@@ -30,7 +30,8 @@ import { mapMutations, mapState } from "vuex";
     "fileList",
     "renameHistory2",
     "moveHistory",
-    "googleHistory"
+    "googleHistory",
+    "restoreRedoList"
   ]),
 
   methods: mapMutations([
@@ -40,20 +41,24 @@ import { mapMutations, mapState } from "vuex";
     "changeDuplicatedList",
     "changeRenameHistory2",
     "changeMoveHistory",
+    "changerestoreRedoList",
     "resetMoveHistory",
     "resetRenameHistory",
+    "resetrestoreRedoList",
     "changeGoogleHistory",
     "resetGoogleHistory"
-  ]),
+  ])
 })
 export default class Restore extends Vue {
   changeDuplicatedList!: (newList: [][]) => void;
   changeRenameHistory2!: (newList: [][]) => void;
   changeMoveHistory!: (newList: [][]) => void;
   changeGoogleHistory!: (newList: [][]) => void;
+  changerestoreRedoList!: (newList: [][]) => void;
   resetMoveHistory!: (newList: [][]) => void;
   resetRenameHistory!: (newList: [][]) => void;
   resetGoogleHistory!: () => void;
+  resetrestoreRedoList!: () => void;
 
   localHistory: any[] = [];
   duplicatedList!: any[][];
@@ -61,6 +66,7 @@ export default class Restore extends Vue {
   googleHistory!: any[][];
   moveHistory!: any[][];
   isLoading!: boolean;
+  restoreRedoList!: any[][];
   historyList: (string | number)[][] = [[]];
 
   // 함수 변동 감시 부분
@@ -93,6 +99,15 @@ export default class Restore extends Vue {
     }
   }
 
+  @Watch("restoreRedoList")
+  redoHistoryChange(value: [][]) {
+    if (value.length > 1) {
+      // console.log("move change detected");
+      this.putChunkstoHistory(value, 5);
+    }
+  }
+  ///
+
   mounted() {
     // console.log(this.duplicatedList);
     // console.log(constants);
@@ -115,7 +130,7 @@ export default class Restore extends Vue {
     // 생성 후 json parse
     let hsjson = JSON.parse(localHistory.toString());
 
-    console.log(chunks);
+    // console.log(chunks);
     // console.log(hsjson);
     chunks.forEach(function(chunk: [][]) {
       try {
@@ -144,8 +159,10 @@ export default class Restore extends Vue {
       this.resetRenameHistory([[]]);
     } else if (type == 3) {
       this.resetMoveHistory([[]]);
-    } else if (type == 4){
+    } else if (type == 4) {
       this.resetGoogleHistory();
+    } else if (type == 5) {
+      this.resetrestoreRedoList();
     }
   }
 

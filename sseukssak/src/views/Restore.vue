@@ -96,7 +96,7 @@
             <v-expansion-panel-header expand-icon=" ">
               <h5
                 class="d-inline-block text-truncate"
-                style="max-width: 300px;"
+                style="max-width: 450px;"
               >
                 파일명 : {{ chunk.filename }}
               </h5>
@@ -124,6 +124,7 @@
                 요약 : {{ convertWorkcode(chunk.workcode) }}
                 {{ convertWorkName(chunk.success) }}
               </h5>
+
               <hr />
               <!-- 텍스트 길이가 길어지면 ...으로 표현하도록 하였음 -->
               <!-- 해당 속성은 text-truncate이며 필요없다면 삭제 -->
@@ -133,9 +134,21 @@
               >
                 이동 전 위치 : {{ chunk.before }}
               </h5>
+              <br />
               <h5 class="d-inline-block text-truncate" style="max-width: 700px">
                 이동 후 위치 : {{ chunk.after }}
               </h5>
+              <div
+                style="btnrestore"
+                align="right"
+                v-if="chunk.success == 1 || chunk.success == -1"
+              >
+                <v-btn icon>
+                  <v-icon @click="selectchunk(chunk)" size="12" color="brown">
+                    fas fa-redo
+                  </v-icon>
+                </v-btn>
+              </div>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -168,6 +181,10 @@
   text-align: center;
 }
 
+.btnrestore {
+  position: float;
+  height: 1px;
+}
 .restorebtn {
   float: right;
   width: 500px;
@@ -250,7 +267,8 @@ import { Watch } from "vue-property-decorator";
     "duplicatedList",
     "fileList",
     "renameHistory2",
-    "moveHistory"
+    "moveHistory",
+    "restoreRedoList"
   ]),
 
   methods: mapMutations([
@@ -259,13 +277,17 @@ import { Watch } from "vue-property-decorator";
     "changeFileSortList",
     "changeDuplicatedList",
     "changeRenameHistory2",
-    "changeMoveHistory"
+    "changeMoveHistory",
+    "changerestoreRedoList"
   ])
 })
 export default class Restore extends Vue {
   changeDuplicatedList!: (newList: [][]) => void;
   changeRenameHistory2!: (newList: [][]) => void;
   changeMoveHistory!: (newList: [][]) => void;
+  changerestoreRedoList!: (newList: [][]) => void;
+
+  restoreRedoList!: any[][];
   localHistory: any[] = [];
   duplicatedList!: any[][];
   renameHistory2!: any[][];
@@ -274,6 +296,10 @@ export default class Restore extends Vue {
   historyList: any[][] = [[]];
   inputs: string = "";
   timesortedList: Object = [];
+
+  get refreshHistory() {
+    return this.timesortedList;
+  }
 
   get scrollerBgMode() {
     return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
@@ -327,8 +353,65 @@ export default class Restore extends Vue {
     return `${a + 1}월 ${b}일 ${c}시 ${d}분`;
   }
 
-  selectchunk(t) {
+  selectchunk(chunk) {
     // console.log(t);
+    const d = new Date().setTime(Date.now());
+    Swal.fire({
+      position: "center",
+      icon: "question",
+      text: "해당 파일에 실행한 작업을 취소하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: `예`,
+      showConfirmButton: true,
+      cancelButtonText: "아니오"
+    }).then((res) => {
+      if (res.isConfirmed) {
+        let sf = -1;
+        if (!fs.existsSync(chunk.before)) {
+          try {
+            fs.renameSync(chunk.after, chunk.before);
+            sf = 1;
+          } catch {
+            sf = 0;
+          }
+        }
+        console.log(sf);
+        if (sf == 1) {
+          let filename = chunk.filename;
+          if (chunk.workcode == 3) {
+            const ss = chunk.filename.split(" => ");
+            filename = ss[1] + " => " + ss[0];
+          }
+          this.changerestoreRedoList([]);
+          this.changerestoreRedoList([
+            filename,
+            -1,
+            chunk.after,
+            chunk.before,
+            d,
+            chunk.workcode
+          ]);
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            text: `해당 작업을 되돌렸습니다.`,
+            showConfirmButton: false,
+            timer: 1000
+          });
+          setTimeout(() => {
+            this.readHistory();
+          }, 1000);
+        } else {
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            text: "오류가 발생했습니다.",
+            showConfirmButton: false,
+            timer: 1000
+          });
+        }
+      }
+    });
   }
 
   jsontest(changedHistory: object) {
@@ -406,7 +489,7 @@ export default class Restore extends Vue {
     Swal.fire({
       position: "center",
       icon: "warning",
-      title: "히스토리 초기화를 진행합니다.",
+      text: "히스토리 초기화를 진행합니다.",
       showCancelButton: true,
       confirmButtonText: `예`,
       showConfirmButton: true,
@@ -424,7 +507,7 @@ export default class Restore extends Vue {
         Swal.fire({
           position: "center",
           icon: "warning",
-          title: `초기화되었습니다.`,
+          text: `초기화되었습니다.`,
           showConfirmButton: false,
           timer: 1000
         });
