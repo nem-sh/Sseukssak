@@ -23,6 +23,7 @@ interface DirState {
   modifyDirectroy: ToLibraryDirectory;
   renameHistory: any[][];
   renameHistory2: any[][];
+  restoreRedoList: any[][];
 
   googleHistory: any[][];
 
@@ -101,7 +102,7 @@ export default new Vuex.Store({
     fileList: [],
     fileSortList: {
       directories: [],
-      files: [],
+      files: []
     },
     toLibraryList: [],
     toLibraryNameList: [],
@@ -112,13 +113,14 @@ export default new Vuex.Store({
       path: "",
       typeTags: [],
       dateTags: [],
-      titleTags: [],
+      titleTags: []
     },
     HistoryList: [],
     renameHistory: [],
     renameHistory2: [],
     moveHistory: [],
     renameFileList: [],
+    restoreRedoList: [],
     beforeItems: [],
     afterItems: [],
     filterFront: "3",
@@ -143,14 +145,14 @@ export default new Vuex.Store({
 
     // 미니모드
     mini: false,
-    osPlatform: "",
+    osPlatform: ""
   },
   mutations: {
     changeDirectoryDrag(state: DirState, name: string) {
-      state.directoryDrag = name
+      state.directoryDrag = name;
     },
     changeQuickTo(state: DirState, name: string) {
-      state.quickTo = name
+      state.quickTo = name;
     },
     changeModifyDirectroy(
       state: DirState,
@@ -198,6 +200,11 @@ export default new Vuex.Store({
     changeMoveHistory(state: DirState, newHistory: [][]) {
       state.moveHistory.push(newHistory);
     },
+
+    changerestoreRedoList(state: DirState, newHistory: [][]) {
+      state.restoreRedoList.push(newHistory);
+    },
+
     // 1111 임시 추가
     resetMoveHistory(state: DirState) {
       state.moveHistory = [[]];
@@ -206,6 +213,11 @@ export default new Vuex.Store({
     resetRenameHistory(state: DirState) {
       state.renameHistory2 = [[]];
     },
+
+    resetrestoreRedoList(state: DirState) {
+      state.restoreRedoList = [[]];
+    },
+
     //
     changePreview(state: DirState) {
       state.afterItems = [];
@@ -214,18 +226,18 @@ export default new Vuex.Store({
           name:
             this.getters["front"](item) +
             this.getters["middle"](item) +
-            this.getters["back"](item, i + 1),
+            this.getters["back"](item, i + 1)
         });
         state.afterItems.push(tmp);
       });
     },
     sortBeforeItems(state: DirState) {
-      state.beforeItems.sort(function (a, b) {
+      state.beforeItems.sort(function(a, b) {
         return a.mtime > b.mtime ? 1 : -1;
       });
     },
     sortRenameFileList(state: DirState) {
-      state.renameFileList.sort(function (a, b) {
+      state.renameFileList.sort(function(a, b) {
         return a.mtime > b.mtime ? 1 : -1;
       });
       state.renameFileList.forEach((item) => {
@@ -280,7 +292,7 @@ export default new Vuex.Store({
       state.googleHistory.push(newHistory);
     },
     resetGoogleHistory(state: DirState) {
-      state.googleHistory=[[]];
+      state.googleHistory = [[]];
     },
     changeMiniState(state: DirState, value: boolean) {
       state.mini = value;
@@ -290,7 +302,7 @@ export default new Vuex.Store({
     },
     setOsPlatform(state: DirState, value: string) {
       state.osPlatform = value;
-    },
+    }
   },
   actions: {},
   getters: {
@@ -339,9 +351,9 @@ export default new Vuex.Store({
     authUrl: (state) => {
       return state.oAuth2Client.generateAuthUrl({
         accessType: "offline",
-        scope: ["https://www.googleapis.com/auth/drive"],
+        scope: ["https://www.googleapis.com/auth/drive"]
       });
-    },
+    }
   },
-  modules: {},
+  modules: {}
 });

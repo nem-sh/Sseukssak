@@ -121,7 +121,7 @@ interface FileInfo {
     "afterItems",
     "dupCheck",
     "renameHistory",
-    "logBackCheck",
+    "logBackCheck"
   ]),
   methods: mapMutations([
     "changeRenameDir",
@@ -129,8 +129,8 @@ interface FileInfo {
     "changeRenameHistory",
     "changeRenameHistory2",
     "changeLogBackCheck",
-    "initailizeRename",
-  ]),
+    "initailizeRename"
+  ])
 })
 export default class Rename extends Vue {
   filterFront!: string;
@@ -175,7 +175,7 @@ export default class Rename extends Vue {
         icon: "warning",
         title: "빈칸을 작성해주세요",
         showConfirmButton: false,
-        timer: 1000,
+        timer: 1000
       });
     } else if (
       this.frontName.length > 10 ||
@@ -187,7 +187,7 @@ export default class Rename extends Vue {
         icon: "warning",
         title: "지정된 길이에 맞게 입력해주세요",
         showConfirmButton: false,
-        timer: 1000,
+        timer: 1000
       });
     } else if (this.beforeItems.length <= 0) {
       Swal.fire({
@@ -195,7 +195,7 @@ export default class Rename extends Vue {
         icon: "warning",
         title: "변경할 파일/폴더가 없습니다",
         showConfirmButton: false,
-        timer: 1000,
+        timer: 1000
       });
     } else {
       // 특수문자 예외처리
@@ -207,7 +207,7 @@ export default class Rename extends Vue {
             icon: "warning",
             title: `이름에 특수 문자(${specialC})는 사용하실 수 없습니다`,
             showConfirmButton: false,
-            timer: 1000,
+            timer: 1000
           });
         }
         return;
@@ -218,7 +218,7 @@ export default class Rename extends Vue {
         icon: "warning",
         title: "이름을 변경하시겠습니까?",
         showCancelButton: true,
-        confirmButtonText: `Yes`,
+        confirmButtonText: `Yes`
       }).then((result) => {
         if (result.isConfirmed) {
           // 예외처리 하기(변경할 파일명이 이미 기존 폴더 내에 존재하는 경우)
@@ -271,7 +271,7 @@ export default class Rename extends Vue {
                   o,
                   n,
                   workTime,
-                  3,
+                  3
                 ]);
                 this.changeRenameHistory2([
                   this.beforeItems[i].name + " => " + item.name,
@@ -279,7 +279,7 @@ export default class Rename extends Vue {
                   o,
                   n,
                   workTime,
-                  3,
+                  3
                 ]);
               }
             }
@@ -297,7 +297,7 @@ export default class Rename extends Vue {
                 "바꾸려는 파일명이 해당 디렉토리에 이미 존재합니다. 다음과 같이 변경하시겠습니까?",
               text: text,
               showCancelButton: true,
-              confirmButtonText: `Yes`,
+              confirmButtonText: `Yes`
             }).then((result) => {
               if (result.isConfirmed) {
                 dupTmp.forEach((item, i) => {
@@ -311,7 +311,7 @@ export default class Rename extends Vue {
                     o,
                     n,
                     workTime,
-                    3,
+                    3
                   ]);
                   this.changeRenameHistory2([
                     this.beforeItems[i].name + " => " + item.name,
@@ -319,7 +319,7 @@ export default class Rename extends Vue {
                     o,
                     n,
                     workTime,
-                    3,
+                    3
                   ]);
                   this.$emit("finish");
                   this.initailizeRename();
@@ -334,7 +334,7 @@ export default class Rename extends Vue {
                 icon: "success",
                 title: "변경되었습니다",
                 showConfirmButton: false,
-                timer: 1000,
+                timer: 1000
               });
               this.changeLogBackCheck(true);
             } else {
@@ -343,7 +343,7 @@ export default class Rename extends Vue {
                 icon: "info",
                 title: "변경된 파일/폴더가 없습니다",
                 showConfirmButton: false,
-                timer: 1000,
+                timer: 1000
               });
             }
             this.$emit("finish");
@@ -364,7 +364,7 @@ export default class Rename extends Vue {
       icon: "warning",
       title: "이전 작업을 되돌리시겠습니까?",
       showCancelButton: true,
-      confirmButtonText: `Yes`,
+      confirmButtonText: `Yes`
     }).then((result) => {
       if (result.isConfirmed) {
         const workTime: number = new Date().setTime(Date.now());
@@ -384,19 +384,20 @@ export default class Rename extends Vue {
                 "되돌리려는 파일명과 같은 파일명이 존재합니다. 덮어씌우시겠습니까?",
               text: log[2],
               showCancelButton: true,
-              confirmButtonText: `Yes`,
+              confirmButtonText: `Yes`
             }).then((result) => {
               if (result.isConfirmed) {
                 // 예외처리(해당 폴더에 해당 파일이 존재하지 않으면)
                 try {
                   fs.renameSync(log[3], log[2]);
+                  this.changeRenameHistory2([]);
                   this.changeRenameHistory2([
                     oldName + " => " + newName,
                     -1,
                     log[3],
                     log[2],
                     workTime,
-                    3,
+                    3
                   ]);
                 } catch (error) {
                   Swal.fire({
@@ -404,7 +405,7 @@ export default class Rename extends Vue {
                     icon: "warning",
                     title: "되돌리려는 파일이 존재하지 않습니다",
                     showConfirmButton: false,
-                    timer: 1000,
+                    timer: 1000
                   });
                 }
               }
@@ -412,13 +413,14 @@ export default class Rename extends Vue {
           } else {
             try {
               fs.renameSync(log[3], log[2]);
+              this.changeRenameHistory2([]);
               this.changeRenameHistory2([
                 oldName + " => " + newName,
                 -1,
                 log[3],
                 log[2],
                 workTime,
-                3,
+                3
               ]);
             } catch (error) {
               Swal.fire({
@@ -426,7 +428,7 @@ export default class Rename extends Vue {
                 icon: "warning",
                 title: "되돌리려는 파일이 존재하지 않습니다",
                 showConfirmButton: false,
-                timer: 1000,
+                timer: 1000
               });
             }
           }
