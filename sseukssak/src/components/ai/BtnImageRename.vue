@@ -64,7 +64,7 @@ export default class BtnImageRename extends BtnImageRenameProps {
             title: "이미지 분석 결과가 없습니다."
           });
         }
-        const ext = this.fileName.includes("jpg") ? ".jpg" : ".png";
+        const ext = (this.fileName.includes(".jpg") || this.fileName.includes(".JPG") )? ".jpg" : ".png";
         const newFileName = res.data.result.label_kr
           .join("_")
           .replace("/", "_");

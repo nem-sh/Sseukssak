@@ -307,6 +307,11 @@
           />
         </li>
         <li>
+          <BtnFolderImageRename
+            v-bind:folderName="selectedData.name"
+          />
+        </li>
+        <li>
           <a @click="openShell()" style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
@@ -361,7 +366,9 @@
             v-bind:fileName="selectedData.name"
             v-if="
               selectedData.name.includes('.jpg') ||
-              selectedData.name.includes('.png')
+              selectedData.name.includes('.png') ||
+              selectedData.name.includes('.JPG') ||
+              selectedData.name.includes('.PNG')
             "
           />
         </li>
@@ -493,6 +500,7 @@ import BtnUploadGoogleDrive from "@/components/googleDrive/BtnUploadGoogleDrive.
 import BtnUploadGoogleDriveFolder from "@/components/googleDrive/BtnUploadGoogleDriveFolder.vue";
 
 import BtnImageRename from "@/components/ai/BtnImageRename.vue";
+import BtnFolderImageRename from "@/components/ai/BtnFolderImageRename.vue";
 
 import Swal from "sweetalert2";
 // import { shell } from "electron";
@@ -528,6 +536,7 @@ interface Directory {
     ListFromBreadcrumbs,
     ListFromFilter,
     BtnImageRename,
+    BtnFolderImageRename
   },
   computed: mapState([
     "fileSortList",
