@@ -121,6 +121,9 @@ export default class Quick extends Vue {
     try {
       shellContextMenu.removeDirectoryCommand("SseuckSsack Quick");
       shellContextMenu.removeDirectoryBackgroundCommand("SseuckSsack Quick");
+
+      shellContextMenu.removeDirectoryCommand("SseuckSsack Quick2");
+      shellContextMenu.removeDirectoryBackgroundCommand("SseuckSsack Quick2");
       fs.writeFileSync(
         this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quickData.txt",
         JSON.stringify({ to: "" })
@@ -157,6 +160,26 @@ export default class Quick extends Vue {
             this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quick.exe"
           );
         }
+        if (
+          !fs.existsSync(
+            this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quick2.exe"
+          )
+        ) {
+          fs.copyFileSync(
+            path.join(__static, "quick2.exe"),
+            this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quick2.exe"
+          );
+        }
+        if (
+          !fs.existsSync(
+            this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\alert.exe"
+          )
+        ) {
+          fs.copyFileSync(
+            path.join(__static, "alert.exe"),
+            this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\alert.exe"
+          );
+        }
         fs.writeFileSync(
           this.defalutPath +
             "AppData\\Local\\Programs\\sseukssak\\quickData.txt",
@@ -170,12 +193,25 @@ export default class Quick extends Vue {
             "AppData\\Local\\Programs\\sseukssak\\sseukssak.exe",
           command:
             this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quick.exe",
-          menu: `여기서 쓱싹!`,
+          menu: `여기서 쓱싹 열기`,
+        };
+        const options2 = {
+          name: "SseuckSsack Quick2",
+          icon:
+            this.defalutPath +
+            "AppData\\Local\\Programs\\sseukssak\\sseukssak.exe",
+          command:
+            this.defalutPath +
+            "AppData\\Local\\Programs\\sseukssak\\quick2.exe",
+          menu: `여기서 쓱싹 정리 실행!`,
         };
 
         shellContextMenu.registerDirectoryBackgroundCommand(options);
 
         shellContextMenu.registerDirectoryCommand(options);
+        shellContextMenu.registerDirectoryBackgroundCommand(options2);
+
+        shellContextMenu.registerDirectoryCommand(options2);
         this.changeQuickTo(this.selectedToNameValue);
         Swal.fire({
           position: "center",
@@ -220,13 +256,14 @@ export default class Quick extends Vue {
   quick() {
     if (
       fs.existsSync(
-        "C:\\Users\\multicampus\\AppData\\Local\\Programs\\sseukssak\\quickData.txt"
+        this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quickData.txt"
       )
     ) {
       const quickData: object = JSON.parse(
         fs
           .readFileSync(
-            "C:\\Users\\multicampus\\AppData\\Local\\Programs\\sseukssak\\quickData.txt"
+            this.defalutPath +
+              "AppData\\Local\\Programs\\sseukssak\\quickData.txt"
           )
           .toString()
           .trim()
@@ -234,7 +271,8 @@ export default class Quick extends Vue {
       console.log(quickData["from"], quickData);
       if (quickData["to"]) {
         fs.writeFileSync(
-          "C:\\Users\\multicampus\\AppData\\Local\\Programs\\sseukssak\\quickData.txt",
+          this.defalutPath +
+            "AppData\\Local\\Programs\\sseukssak\\quickData.txt",
           JSON.stringify({ to: quickData["to"] })
         );
         this.changeQuickTo(quickData["to"]);
@@ -245,10 +283,11 @@ export default class Quick extends Vue {
         console.log(this.fromDir);
         this.getFrom(this.fromDir);
       } else {
+        console.log(desktopDir);
         this.changeDir(desktopDir);
         console.log("ㄴㄴ");
 
-        this.getFrom(this.fromDir);
+        this.getFrom(desktopDir);
       }
     }
   }

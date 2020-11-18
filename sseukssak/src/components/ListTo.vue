@@ -266,6 +266,7 @@ import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.
 import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
 import ListFromBreadcrumbs from "@/components/listFrom/ListFromBreadcrumbs.vue";
 
+const ssDir = require("os").homedir() + "/AppData/Local/Programs/sseukssak/";
 import { shell } from "electron";
 
 import { BUS } from "./EventBus.js";
@@ -481,6 +482,11 @@ export default class ListTo extends Vue {
                   "selectedFromData",
                   JSON.stringify(tempToLibraryList)
                 );
+                fs.writeFileSync(
+                  ssDir + "selectedFromData.json",
+                  JSON.stringify(tempToLibraryList)
+                );
+
                 return;
               }
             }
@@ -511,6 +517,11 @@ export default class ListTo extends Vue {
               "selectedFromData",
               JSON.stringify(tempToLibraryList)
             );
+            fs.writeFileSync(
+              ssDir + "selectedFromData.json",
+              JSON.stringify(tempToLibraryList)
+            );
+
             break;
           }
         }
@@ -566,6 +577,11 @@ export default class ListTo extends Vue {
   created() {
     this.selectedToNameValue = this.selectedToName;
     const mySettings = window.localStorage.getItem("selectedFromData"); // 로컬스토리지에서 해당 key 이름으로 되어있는 value 값 불러오기
+    fs.writeFileSync(
+      ssDir + "selectedFromData.json",
+      JSON.stringify(mySettings)
+    );
+
     let mySettingObj: ToLibrary[] = [
       {
         name: "유형별 정리",
@@ -654,6 +670,7 @@ export default class ListTo extends Vue {
           ],
         },
       ]); // 로컬스토리지는 string 값만 저장할 수 있기 때문에 이 절차가 필요함
+      fs.writeFileSync(ssDir + "selectedFromData.json", SerializedData);
       window.localStorage.setItem("selectedFromData", SerializedData); // 앞에가 key, 뒤에가 value로 저장됨
     } else {
       mySettingObj = JSON.parse(mySettings);

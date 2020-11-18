@@ -19,7 +19,7 @@ import { Watch } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
 // import constants from "@/assets/constants.json";
 // import Home from './Home.vue';
-
+const ssDir = require("os").homedir() + "/AppData/Local/Programs/sseukssak/";
 @Component({
   components: {},
 
@@ -31,7 +31,7 @@ import { mapMutations, mapState } from "vuex";
     "renameHistory2",
     "moveHistory",
     "googleHistory",
-    "restoreRedoList"
+    "restoreRedoList",
   ]),
 
   methods: mapMutations([
@@ -46,8 +46,8 @@ import { mapMutations, mapState } from "vuex";
     "resetRenameHistory",
     "resetrestoreRedoList",
     "changeGoogleHistory",
-    "resetGoogleHistory"
-  ])
+    "resetGoogleHistory",
+  ]),
 })
 export default class Restore extends Vue {
   changeDuplicatedList!: (newList: [][]) => void;
@@ -121,18 +121,18 @@ export default class Restore extends Vue {
 
     let localHistory;
     try {
-      localHistory = fs.readFileSync("history_test.json");
+      localHistory = fs.readFileSync(ssDir + "history_test.json");
     } catch (error) {
-      fs.writeFileSync("history_test.json", nulldata2);
+      fs.writeFileSync(ssDir + "history_test.json", nulldata2);
     }
 
-    localHistory = fs.readFileSync("history_test.json");
+    localHistory = fs.readFileSync(ssDir + "history_test.json");
     // 생성 후 json parse
     let hsjson = JSON.parse(localHistory.toString());
 
     // console.log(chunks);
     // console.log(hsjson);
-    chunks.forEach(function(chunk: [][]) {
+    chunks.forEach(function (chunk: [][]) {
       try {
         hsjson.push({
           filename: chunk[0],
@@ -140,7 +140,7 @@ export default class Restore extends Vue {
           before: chunk[2],
           after: chunk[3],
           date: chunk[4],
-          workcode: chunk[5]
+          workcode: chunk[5],
         });
       } catch (err) {
         console.log(err);
@@ -150,7 +150,7 @@ export default class Restore extends Vue {
     // console.log(hsjson);
     const newdata = JSON.stringify(hsjson);
     // console.log(newdata);
-    fs.writeFileSync("history_test.json", newdata);
+    fs.writeFileSync(ssDir + "history_test.json", newdata);
 
     // console.log(type);
     if (type == 1) {
@@ -168,18 +168,18 @@ export default class Restore extends Vue {
 
   readHistory() {
     const nulldata = {
-      datas: {}
+      datas: {},
     };
     const nulldata2 = JSON.stringify(nulldata);
 
     let localHistory;
     try {
-      localHistory = fs.readFileSync("history_test.json");
+      localHistory = fs.readFileSync(ssDir + "history_test.json");
     } catch (error) {
-      fs.writeFileSync("history_test.json", nulldata2);
+      fs.writeFileSync(ssDir + "history_test.json", nulldata2);
     }
 
-    localHistory = fs.readFileSync("history_test.json");
+    localHistory = fs.readFileSync(ssDir + "history_test.json");
 
     // console.log(this.duplicatedList.length);
     const mm = JSON.parse(localHistory.toString());
@@ -199,7 +199,7 @@ export default class Restore extends Vue {
             before: null,
             after: null,
             date: null,
-            workcode: null
+            workcode: null,
           };
         }
         // console.log(mm);
@@ -232,7 +232,7 @@ export default class Restore extends Vue {
           mm["datas"][a]["before"],
           mm["datas"][a]["after"],
           mm["datas"][a]["date"],
-          mm["datas"][a]["workcode"]
+          mm["datas"][a]["workcode"],
         ]);
       } catch (err) {
         console.log("error", err);
@@ -240,7 +240,7 @@ export default class Restore extends Vue {
     }
 
     // 날짜순으로 정렬
-    sortingarr.sort(function(a, b) {
+    sortingarr.sort(function (a, b) {
       return a[4] > b[4] ? -1 : a[4] < b[4] ? 1 : 0;
     });
     // console.log(sortingarr);
@@ -262,7 +262,7 @@ export default class Restore extends Vue {
           before: null,
           after: null,
           date: null,
-          workcode: null
+          workcode: null,
         };
 
         mm["datas"][k]["filename"] = this.historyList[k][0];
@@ -277,19 +277,19 @@ export default class Restore extends Vue {
     }
 
     const newdata = JSON.stringify(mm);
-    fs.writeFileSync("history_test.json", newdata);
+    fs.writeFileSync(ssDir + "history_test.json", newdata);
     // console.log('saved');
   }
 
   resetHistory() {
     this.isLoading = false;
     const nulldata = {
-      datas: {}
+      datas: {},
     };
     const nulldata2 = JSON.stringify(nulldata);
     this.historyList = [];
 
-    fs.writeFileSync("history_test.json", nulldata2);
+    fs.writeFileSync(ssDir + "history_test.json", nulldata2);
     this.isLoading = true;
   }
 

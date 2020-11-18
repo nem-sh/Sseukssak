@@ -242,7 +242,8 @@ import { Vue, Component, Watch } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
 import Swal from "sweetalert2";
 import BtnCreateGoogleFolder from "@/components/googleDrive/BtnCreateGoogleFolder.vue";
-
+import fs from "fs";
+const ssDir = require("os").homedir() + "/AppData/Local/Programs/sseukssak/";
 const { dialog } = require("electron").remote;
 
 interface ToLibrary {
@@ -499,6 +500,11 @@ export default class ModalAddToLibraryDirectory extends Vue {
           }
         }
         this.changeToLibraryList(tempLibraryList);
+
+        fs.writeFileSync(
+          ssDir + "selectedFromData.json",
+          JSON.stringify(tempLibraryList)
+        );
 
         window.localStorage.setItem(
           "selectedFromData",

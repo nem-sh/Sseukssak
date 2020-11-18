@@ -3,7 +3,7 @@ import Vuex from "vuex";
 import { RestoreMoveListUnit } from "../api/interface";
 import { google } from "googleapis";
 // import { stat } from "fs";
-
+const ssDir = require("os").homedir() + "/AppData/Local/Programs/sseukssak/";
 Vue.use(Vuex);
 
 interface DirState {
@@ -134,7 +134,7 @@ export default new Vuex.Store({
     renameDir: "",
 
     // google dive
-    tokenPath: "token.json",
+    tokenPath: ssDir + "token.json",
     oAuth2Client: new google.auth.OAuth2(
       "957933273560-84cubajfji0djc5k9r9n2okck14sribj.apps.googleusercontent.com",
       "xErwUWs1A-ohs2fgcFFqdulF",
@@ -232,12 +232,12 @@ export default new Vuex.Store({
       });
     },
     sortBeforeItems(state: DirState) {
-      state.beforeItems.sort(function(a, b) {
+      state.beforeItems.sort(function (a, b) {
         return a.mtime > b.mtime ? 1 : -1;
       });
     },
     sortRenameFileList(state: DirState) {
-      state.renameFileList.sort(function(a, b) {
+      state.renameFileList.sort(function (a, b) {
         return a.mtime > b.mtime ? 1 : -1;
       });
       state.renameFileList.forEach((item) => {
