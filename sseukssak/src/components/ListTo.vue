@@ -137,7 +137,9 @@
                         getTagLists(
                           item.typeTags,
                           item.dateTags,
-                          item.titleTags
+                          item.titleTags,
+
+                          item.aiTags
                         ).length <= 3
                       "
                       color="#7288da"
@@ -147,7 +149,9 @@
                         v-for="tag in getTagLists(
                           item.typeTags,
                           item.dateTags,
-                          item.titleTags
+                          item.titleTags,
+
+                          item.aiTags
                         )"
                         :key="tag"
                         class="mr-2"
@@ -165,7 +169,8 @@
                         v-for="tag in getTagLists(
                           item.typeTags,
                           item.dateTags,
-                          item.titleTags
+                          item.titleTags,
+                          item.aiTags
                         )"
                         :key="tag"
                         class="mr-2"
@@ -178,7 +183,12 @@
                     </v-list-item-subtitle>
                   </template>
                   <span>{{
-                    getTagString(item.typeTags, item.dateTags, item.titleTags)
+                    getTagString(
+                      item.typeTags,
+                      item.dateTags,
+                      item.titleTags,
+                      item.aiTags
+                    )
                   }}</span>
                 </v-tooltip>
               </v-list-item-content>
@@ -292,6 +302,7 @@ interface ToLibraryDirectory {
   typeTags: string[];
   dateTags: string[];
   titleTags: string[];
+  aiTags: string[];
 }
 interface SortList {
   directories: Directory[];
@@ -601,36 +612,47 @@ export default class ListTo extends Vue {
             typeTags: ["#Image"],
             dateTags: [],
             titleTags: [],
+            aiTags: [],
           },
           {
             path: "%from%/문서",
             typeTags: ["#Document"],
             dateTags: [],
             titleTags: [],
+
+            aiTags: [],
           },
           {
             path: "%from%/비디오",
             typeTags: ["#Video"],
             dateTags: [],
             titleTags: [],
+
+            aiTags: [],
           },
           {
             path: "%from%/오디오",
             typeTags: ["#Audio"],
             dateTags: [],
             titleTags: [],
+
+            aiTags: [],
           },
           {
             path: "%from%/압축파일",
             typeTags: ["#Compressed"],
             dateTags: [],
             titleTags: [],
+
+            aiTags: [],
           },
           {
             path: "%from%/바로가기",
             typeTags: ["lnk"],
             dateTags: [],
             titleTags: [],
+
+            aiTags: [],
           },
         ],
       },
@@ -788,16 +810,17 @@ export default class ListTo extends Vue {
     this.changeDirectoryLength(name);
   }
 
-  getTagLists(type, date, title) {
+  getTagLists(type, date, title, ai) {
     const tagLists = [];
     Array.prototype.push.apply(tagLists, type);
     Array.prototype.push.apply(tagLists, date);
     Array.prototype.push.apply(tagLists, title);
+    Array.prototype.push.apply(tagLists, ai);
     return tagLists;
   }
 
-  getTagString(type, date, title) {
-    const tagLists = this.getTagLists(type, date, title);
+  getTagString(type, date, title, ai) {
+    const tagLists = this.getTagLists(type, date, title, ai);
     let tagListStr = "";
     for (let i = 0; i < tagLists.length; i++) {
       tagListStr += "  " + tagLists[i];

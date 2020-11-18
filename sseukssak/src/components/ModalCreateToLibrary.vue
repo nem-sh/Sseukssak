@@ -66,6 +66,7 @@ interface ToLibraryDirectory {
   typeTags: string[];
   dateTags: string[];
   titleTags: string[];
+  aiTags: string[];
 }
 
 @Component({

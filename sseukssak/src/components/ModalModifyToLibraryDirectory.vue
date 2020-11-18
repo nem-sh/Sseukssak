@@ -198,13 +198,26 @@
                   </v-text-field>
                 </div>
               </div>
+              <div id="name" v-show="selectedFilter === 'AI 이미지 식별'">
+                <div>
+                  <v-text-field
+                    v-model="aiAddName"
+                    label="식별할 개체 입력"
+                    class="pt-0"
+                    prepend-icon="mdi-pencil"
+                    @keypress.enter="clickAddBtn"
+                  >
+                  </v-text-field>
+                </div>
+              </div>
               <div class="text-right pb-5">
                 <v-btn
                   v-show="
                     selectedFilter !== '' &&
                     ((selectedFilter === '파일 유형' && selectedType !== '') ||
                       (selectedFilter === '날짜' && selectedDate !== '') ||
-                      selectedFilter === '파일명')
+                      selectedFilter === '파일명' ||
+                      selectedFilter === 'AI 이미지 식별')
                   "
                   color="#7288da"
                   dark
@@ -275,6 +288,7 @@ interface ToLibraryDirectory {
   typeTags: string[];
   dateTags: string[];
   titleTags: string[];
+  aiTags: string[];
 }
 const AppProps = Vue.extend({
   props: {
@@ -298,14 +312,17 @@ export default class ModalAddToLibraryDirectory extends AppProps {
   selectedTypeTags: string[] = this.initalDirectory.typeTags.slice();
   selectedDateTags: string[] = this.initalDirectory.dateTags.slice();
   selectedTitleTags: string[] = this.initalDirectory.titleTags.slice();
+  selectedAiTags: string[] = this.initalDirectory.aiTags.slice();
   selectedTotalTags: string[] = this.initalDirectory.typeTags
     .slice()
     .concat(this.initalDirectory.dateTags.slice())
-    .concat(this.initalDirectory.titleTags.slice());
+    .concat(this.initalDirectory.titleTags.slice())
+    .concat(this.initalDirectory.aiTags.slice());
   totalTags: string[] = this.initalDirectory.typeTags
     .slice()
     .concat(this.initalDirectory.dateTags.slice())
-    .concat(this.initalDirectory.titleTags.slice());
+    .concat(this.initalDirectory.titleTags.slice())
+    .concat(this.initalDirectory.aiTags.slice());
   directoryDir: string = this.initalDirectory.path;
 
   // data
@@ -316,6 +333,7 @@ export default class ModalAddToLibraryDirectory extends AppProps {
   dialog3: boolean = false;
   typeAddName: string = "";
   titleAddName: string = "";
+  aiAddName: string = "";
   typeTags: string[] = [
     "#Image",
     "#Document",
@@ -332,7 +350,9 @@ export default class ModalAddToLibraryDirectory extends AppProps {
     "날짜 범위 직접 선택",
   ];
   titleTags: string[] = [];
-  filters: string[] = ["파일 유형", "날짜", "파일명"];
+
+  aiTags: string[] = [];
+  filters: string[] = ["파일 유형", "날짜", "파일명", "AI 이미지 식별"];
   selectedFilter: string = "";
   readFromDirName: string = "";
   selectedType: string = "";
@@ -377,6 +397,23 @@ export default class ModalAddToLibraryDirectory extends AppProps {
       this.selectedTitleTags.push(this.titleAddName);
     }
     this.titleAddName = "";
+    this.addInitialize();
+  }
+  aiAdd() {
+    if (this.aiAddName === "") {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "빈칸을 입력해주세요",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+      return;
+    }
+    if (this.dupCheckFilter(this.aiAddName)) {
+      this.selectedAiTags.push(this.aiAddName);
+    }
+    this.aiAddName = "";
     this.addInitialize();
   }
   dateAdd() {
@@ -453,12 +490,14 @@ export default class ModalAddToLibraryDirectory extends AppProps {
       }
     } else if (this.selectedFilter === "파일명") {
       this.titleAdd();
+    } else if (this.selectedFilter === "AI 이미지 식별") {
+      this.aiAdd();
     }
   }
 
   addInitialize() {
     this.selectedFilter = this.selectedType = this.selectedDate = "";
-    this.titleAddName = this.typeAddName = "";
+    this.titleAddName = this.aiAddName = this.typeAddName = "";
     this.dates = [];
   }
 
@@ -479,7 +518,7 @@ export default class ModalAddToLibraryDirectory extends AppProps {
   closeModal() {
     this.readFromDirName = "";
     this.selectedFilter = "";
-    this.selectedType = this.selectedDate = this.titleAddName = this.typeAddName =
+    this.selectedType = this.selectedDate = this.titleAddName = this.aiAddName = this.typeAddName =
       "";
     this.dates = [];
     this.directoryDir = this.initalDirectory.path;
@@ -512,6 +551,8 @@ export default class ModalAddToLibraryDirectory extends AppProps {
               typeTags: this.selectedTypeTags,
               dateTags: this.selectedDateTags,
               titleTags: this.selectedTitleTags,
+
+              aiTags: this.selectedAiTags,
             };
             this.changeToLibraryList(tempLibraryList);
 
@@ -593,19 +634,40 @@ export default class ModalAddToLibraryDirectory extends AppProps {
   @Watch("selectedTypeTags")
   watchSelectedTypeTags() {
     this.selectedTotalTags = this.selectedTypeTags.concat(
-      this.selectedDateTags.concat(this.selectedTitleTags)
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
     );
     this.totalTags = this.selectedTypeTags.concat(
-      this.selectedDateTags.concat(this.selectedTitleTags)
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
     );
   }
   @Watch("selectedTitleTags")
   watchSelectedTitleTags() {
     this.selectedTotalTags = this.selectedTypeTags.concat(
-      this.selectedDateTags.concat(this.selectedTitleTags)
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
     );
     this.totalTags = this.selectedTypeTags.concat(
-      this.selectedDateTags.concat(this.selectedTitleTags)
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
+    );
+  }
+  @Watch("selectedAiTags")
+  watchSelectedAiTags() {
+    this.selectedTotalTags = this.selectedTypeTags.concat(
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
+    );
+    this.totalTags = this.selectedTypeTags.concat(
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
     );
   }
   @Watch("dates")
@@ -625,10 +687,14 @@ export default class ModalAddToLibraryDirectory extends AppProps {
   @Watch("selectedDateTags")
   watchSelectedDateTags() {
     this.selectedTotalTags = this.selectedTypeTags.concat(
-      this.selectedDateTags.concat(this.selectedTitleTags)
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
     );
     this.totalTags = this.selectedTypeTags.concat(
-      this.selectedDateTags.concat(this.selectedTitleTags)
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
     );
   }
 
@@ -650,6 +716,12 @@ export default class ModalAddToLibraryDirectory extends AppProps {
       if (!this.selectedTotalTags.includes(tag)) {
         if (this.selectedTitleTags.indexOf(tag) > -1)
           this.selectedTitleTags.splice(this.selectedTitleTags.indexOf(tag), 1);
+      }
+    });
+    this.selectedAiTags.forEach((tag) => {
+      if (!this.selectedTotalTags.includes(tag)) {
+        if (this.selectedAiTags.indexOf(tag) > -1)
+          this.selectedAiTags.splice(this.selectedAiTags.indexOf(tag), 1);
       }
     });
   }

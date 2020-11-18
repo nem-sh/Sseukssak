@@ -195,13 +195,26 @@
                   </v-text-field>
                 </div>
               </div>
+              <div id="name" v-show="selectedFilter === 'AI 이미지 식별'">
+                <div>
+                  <v-text-field
+                    v-model="aiAddName"
+                    label="식별할 개체 입력"
+                    class="pt-0"
+                    prepend-icon="mdi-pencil"
+                    @keypress.enter="clickAddBtn"
+                  >
+                  </v-text-field>
+                </div>
+              </div>
               <div class="text-right pb-5">
                 <v-btn
                   v-show="
                     selectedFilter !== '' &&
                     ((selectedFilter === '파일 유형' && selectedType !== '') ||
                       (selectedFilter === '날짜' && selectedDate !== '') ||
-                      selectedFilter === '파일명')
+                      selectedFilter === '파일명' ||
+                      selectedFilter === 'AI 이미지 식별')
                   "
                   color="#7288da"
                   dark
@@ -268,6 +281,7 @@ interface ToLibraryDirectory {
   typeTags: string[];
   dateTags: string[];
   titleTags: string[];
+  aiTages: string[];
 }
 
 @Component({
@@ -297,6 +311,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
   dialog3: boolean = false;
   typeAddName: string = "";
   titleAddName: string = "";
+  aiAddName: string = "";
   typeTags: string[] = [
     "#Image",
     "#Document",
@@ -314,7 +329,8 @@ export default class ModalAddToLibraryDirectory extends Vue {
   ];
   titleTags: string[] = [];
   selectedTitleTags: string[] = [];
-  filters: string[] = ["파일 유형", "날짜", "파일명"];
+  selectedAiTags: string[] = [];
+  filters: string[] = ["파일 유형", "날짜", "파일명", "AI 이미지 식별"];
   selectedFilter: string = "";
   readFromDirName: string = "";
   selectedType: string = "";
@@ -357,6 +373,23 @@ export default class ModalAddToLibraryDirectory extends Vue {
       this.selectedTitleTags.push(this.titleAddName);
     }
     this.titleAddName = "";
+    this.addInitialize();
+  }
+  aiAdd() {
+    if (this.aiAddName === "") {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "파일을 입력해주세요",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+      return;
+    }
+    if (this.dupCheckFilter(this.aiAddName)) {
+      this.selectedAiTags.push(this.aiAddName);
+    }
+    this.aiAddName = "";
     this.addInitialize();
   }
   dateAdd() {
@@ -433,12 +466,14 @@ export default class ModalAddToLibraryDirectory extends Vue {
       }
     } else if (this.selectedFilter === "파일명") {
       this.titleAdd();
+    } else if (this.selectedFilter === "AI 이미지 식별") {
+      this.aiAdd();
     }
   }
 
   addInitialize() {
     this.selectedFilter = this.selectedType = this.selectedDate = "";
-    this.titleAddName = this.typeAddName = "";
+    this.titleAddName = this.aiAddName = this.typeAddName = "";
     this.dates = [];
   }
 
@@ -462,10 +497,12 @@ export default class ModalAddToLibraryDirectory extends Vue {
     this.selectedTypeTags = [];
     this.selectedDateTags = [];
     this.selectedTitleTags = [];
+
+    this.selectedAiTags = [];
     this.readFromDirName = "";
     this.directoryDir = "";
     this.selectedFilter = "";
-    this.selectedType = this.selectedDate = this.titleAddName = this.typeAddName =
+    this.selectedType = this.selectedDate = this.titleAddName = this.typeAddName = this.aiAddName =
       "";
     this.dates = [];
     this.dialog = false;
@@ -490,7 +527,8 @@ export default class ModalAddToLibraryDirectory extends Vue {
       if (
         this.selectedTypeTags.length === 0 &&
         this.selectedDateTags.length === 0 &&
-        this.selectedTitleTags.length === 0
+        this.selectedTitleTags.length === 0 &&
+        this.selectedAiTags.length === 0
       ) {
         Swal.fire({
           position: "center",
@@ -507,6 +545,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
               typeTags: this.selectedTypeTags,
               dateTags: this.selectedDateTags,
               titleTags: this.selectedTitleTags,
+              aiTags: this.selectedAiTags,
             });
             break;
           }
@@ -527,6 +566,8 @@ export default class ModalAddToLibraryDirectory extends Vue {
         this.selectedTypeTags = [];
         this.selectedDateTags = [];
         this.selectedTitleTags = [];
+
+        this.selectedAiTags = [];
         this.readFromDirName = "";
         this.directoryDir = "";
         this.selectedFilter = "";
@@ -586,19 +627,40 @@ export default class ModalAddToLibraryDirectory extends Vue {
   @Watch("selectedTypeTags")
   watchSelectedTypeTags() {
     this.selectedTotalTags = this.selectedTypeTags.concat(
-      this.selectedDateTags.concat(this.selectedTitleTags)
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
     );
     this.totalTags = this.selectedTypeTags.concat(
-      this.selectedDateTags.concat(this.selectedTitleTags)
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
     );
   }
   @Watch("selectedTitleTags")
   watchSelectedTitleTags() {
     this.selectedTotalTags = this.selectedTypeTags.concat(
-      this.selectedDateTags.concat(this.selectedTitleTags)
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
     );
     this.totalTags = this.selectedTypeTags.concat(
-      this.selectedDateTags.concat(this.selectedTitleTags)
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
+    );
+  }
+  @Watch("selectedAiTags")
+  watchSelectedAiTags() {
+    this.selectedTotalTags = this.selectedTypeTags.concat(
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
+    );
+    this.totalTags = this.selectedTypeTags.concat(
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
     );
   }
   @Watch("dates")
@@ -618,10 +680,14 @@ export default class ModalAddToLibraryDirectory extends Vue {
   @Watch("selectedDateTags")
   watchSelectedDateTags() {
     this.selectedTotalTags = this.selectedTypeTags.concat(
-      this.selectedDateTags.concat(this.selectedTitleTags)
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
     );
     this.totalTags = this.selectedTypeTags.concat(
-      this.selectedDateTags.concat(this.selectedTitleTags)
+      this.selectedDateTags.concat(
+        this.selectedTitleTags.concat(this.selectedAiTags)
+      )
     );
   }
 
@@ -643,6 +709,12 @@ export default class ModalAddToLibraryDirectory extends Vue {
       if (!this.selectedTotalTags.includes(tag)) {
         if (this.selectedTitleTags.indexOf(tag) > -1)
           this.selectedTitleTags.splice(this.selectedTitleTags.indexOf(tag), 1);
+      }
+    });
+    this.selectedAiTags.forEach((tag) => {
+      if (!this.selectedTotalTags.includes(tag)) {
+        if (this.selectedAiTags.indexOf(tag) > -1)
+          this.selectedAiTags.splice(this.selectedAiTags.indexOf(tag), 1);
       }
     });
   }
