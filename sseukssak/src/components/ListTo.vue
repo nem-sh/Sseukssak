@@ -145,7 +145,7 @@
                       color="#7288da"
                       class="item-path"
                     >
-                      <v-chip
+                      <div
                         v-for="tag in getTagLists(
                           item.typeTags,
                           item.dateTags,
@@ -153,12 +153,40 @@
 
                           item.aiTags
                         )"
-                        :key="tag"
-                        class="mr-2"
+                        :key="tag[0]"
+                        style="display: inline-block"
+                      >
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on, attrs }">
+                            <div v-bind="attrs" v-on="on">
+                              <v-chip
+                                :class="getChipColor(tag[1])"
+                                class="mr-2 chips-type"
+                                small
+                                chip
+                                >{{ tag[0] }}
+                              </v-chip>
+                            </div>
+                          </template>
+                          <span>{{ tag[1] }}</span>
+                        </v-tooltip>
+                      </div>
+
+                      <!-- <v-chip
+                        v-for="tag in getTagLists(
+                          item.typeTags,
+                          item.dateTags,
+                          item.titleTags,
+
+                          item.aiTags
+                        )"
+                        :key="tag[0]"
+                        :class="getChipColor(tag[1])"
+                        class="mr-2 chips-type"
                         small
                         chip
-                        >{{ tag }}
-                      </v-chip>
+                        >{{ tag[0] }}
+                      </v-chip> -->
                     </v-list-item-subtitle>
                     <v-list-item-subtitle
                       v-else
@@ -172,13 +200,14 @@
                           item.titleTags,
                           item.aiTags
                         )"
-                        :key="tag"
+                        :key="tag[0]"
                         class="mr-2"
+                        :class="getChipColor(tag[1])"
                         small
                         chip
                         v-bind="attrs"
                         v-on="on"
-                        >{{ tag }}
+                        >{{ tag[0] }}
                       </v-chip>
                     </v-list-item-subtitle>
                   </template>
@@ -357,6 +386,21 @@ export default class ListTo extends Vue {
   shown: boolean = false;
   osPlatform!: string;
 
+  getChipColor(tagType) {
+    if (tagType == "Type") {
+      return "chips-type";
+    }
+    if (tagType == "Date") {
+      return "chips-date";
+    }
+    if (tagType == "Title") {
+      return "chips-title";
+    }
+    if (tagType == "AI") {
+      return "chips-ai";
+    }
+    return "";
+  }
   closeMenu() {
     this.shown = false;
   }
@@ -668,36 +712,43 @@ export default class ListTo extends Vue {
               typeTags: ["#Image"],
               dateTags: [],
               titleTags: [],
+
+              aiTags: [],
             },
             {
               path: "%from%/문서",
               typeTags: ["#Document"],
               dateTags: [],
               titleTags: [],
+              aiTags: [],
             },
             {
               path: "%from%/비디오",
               typeTags: ["#Video"],
               dateTags: [],
               titleTags: [],
+              aiTags: [],
             },
             {
               path: "%from%/오디오",
               typeTags: ["#Audio"],
               dateTags: [],
               titleTags: [],
+              aiTags: [],
             },
             {
               path: "%from%/압축파일",
               typeTags: ["#Compressed"],
               dateTags: [],
               titleTags: [],
+              aiTags: [],
             },
             {
               path: "%from%/바로가기",
               typeTags: ["lnk"],
               dateTags: [],
               titleTags: [],
+              aiTags: [],
             },
           ],
         },
@@ -811,11 +862,19 @@ export default class ListTo extends Vue {
   }
 
   getTagLists(type, date, title, ai) {
-    const tagLists = [];
-    Array.prototype.push.apply(tagLists, type);
-    Array.prototype.push.apply(tagLists, date);
-    Array.prototype.push.apply(tagLists, title);
-    Array.prototype.push.apply(tagLists, ai);
+    const tagLists: any[][] = [];
+    for (let index = 0; index < type.length; index++) {
+      tagLists.push([type[index], "Type"]);
+    }
+    for (let index = 0; index < date.length; index++) {
+      tagLists.push([date[index], "Date"]);
+    }
+    for (let index = 0; index < title.length; index++) {
+      tagLists.push([title[index], "Title"]);
+    }
+    for (let index = 0; index < ai.length; index++) {
+      tagLists.push([ai[index], "AI"]);
+    }
     return tagLists;
   }
 
@@ -823,7 +882,7 @@ export default class ListTo extends Vue {
     const tagLists = this.getTagLists(type, date, title, ai);
     let tagListStr = "";
     for (let i = 0; i < tagLists.length; i++) {
-      tagListStr += "  " + tagLists[i];
+      tagListStr += "  " + tagLists[i][0] + "(" + tagLists[i][1] + ")";
     }
     return tagListStr;
   }
@@ -892,5 +951,29 @@ export default class ListTo extends Vue {
 
 .theme--dark.v-list {
   background: #363a3e !important;
+}
+.chips-type {
+  /* background: #bdd5ff !important; */
+  border-style: solid;
+  border-color: #bdd5ff !important;
+  border-width: 1.5px;
+}
+.chips-date {
+  /* background: #bdd5ff !important; */
+  border-style: solid;
+  border-color: #c0f0c8 !important;
+  border-width: 1.5px;
+}
+.chips-title {
+  /* background: #bdd5ff !important; */
+  border-style: solid;
+  border-color: #f5f1b6 !important;
+  border-width: 1.5px;
+}
+.chips-ai {
+  /* background: #bdd5ff !important; */
+  border-style: solid;
+  border-color: #f1bebe !important;
+  border-width: 1.5px;
 }
 </style>
