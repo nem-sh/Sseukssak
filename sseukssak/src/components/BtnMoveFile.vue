@@ -278,7 +278,7 @@ export default class BtnMoveFile extends Vue {
       let dupFlag = false;
       // 로딩
       if (this.mini === true) {
-        BUS.$emit("bus:mniiLoading");
+        BUS.$emit("bus:miniLoading");
       } else {
         // this.dialog = true;
         Swal.fire({
