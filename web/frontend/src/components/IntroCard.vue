@@ -1,7 +1,7 @@
 <template>
   <div class="IntWrapper">
     <v-container style="height:100%">
-      <v-row class="TheRow d-flex align-center">
+      <v-row class="Card1Row d-flex align-center">
         <v-col class="ImagePart" cols="12" lg="7">
           <video aria-describedby="" autoplay="true" loop="" muted="" playsinline="" data-keepplaying class="IntroVideo">
             <source :data-src="require(`@/assets/${VideoName}`)" type="video/mp4" class="VideoPart"/>
@@ -10,24 +10,20 @@
         <v-col cols="0" lg="1"></v-col>
         <v-col class="VideoDescription d-flex flex-column" cols="12" lg="4">
           <div class="text-center">
-            <div class="DesTitle pb-5">
+            <div class="Card1Title pb-5">
               {{desTitle}}
             </div>
-            <div class="DesContent">
+            <div class="Card1Content">
               {{desContent}}
             </div>
           </div>
         </v-col>
       </v-row>
-      <button @click="MyTest()">
-        TESTING
-      </button>
     </v-container>
   </div>
 </template>
 
 <script>
-// import fullpage from "fullpage.js";
 
 export default {
   name: "IntroCard",
@@ -38,25 +34,18 @@ export default {
   },
   data () {
     return {
+      done: false,
+      prevRatio: 0,
+      options: {
+        root: null,
+        rootMargin: null,
+        threshold: null,
+      },
+      observer: null,
+      target: null,
     }
   },
   methods: {
-    // isElementInViewport (el) {
-
-    // // Special bonus for those using jQuery
-    // if (typeof jQuery === "function" && el instanceof jQuery) {
-    //     el = el[0];
-    // }
-
-    // var rect = el.getBoundingClientRect();
-
-    // return (
-    //     rect.top >= 0 &&
-    //     rect.left >= 0 &&
-    //     rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /* or $(window).height() */
-    //     rect.right <= (window.innerWidth || document.documentElement.clientWidth) /* or $(window).width() */
-    // );
-    // },
     TextAnimation (el, elcs) {
       const text = document.querySelector(el);
       let newDom = '';
@@ -75,11 +64,32 @@ export default {
             text.children[i].style['animation-delay'] = animationDelay * i + 'ms';
         }
     },
-    MyTest() {
-      this.TextAnimation(".DesTitle", "DesTitle2")
-      this.TextAnimation(".DesContent", "DesContent2")
+    ExecuteAnimation() {
+      this.TextAnimation(".Card1Title", "Card1Title2")
+      this.TextAnimation(".Card1Content", "Card1Content2")
+    },
+    isInView(entries, observer) {
+      entries.forEach((entry) => {
+        if (entry.intersectionRatio > this.prevRatio) {
+          if (this.done == false) {
+            this.done = true
+            setTimeout(this.ExecuteAnimation(), 800)
+          }
+        } else {
+          this.done = false
+        }
+      this.prevRatio = entry.intersectionRatio;
+      });
     }
   },
+  mounted() {
+    this.options.root = null
+    this.options.rootMargin = "0px"
+    this.options.threshold = 0
+    this.observer = new IntersectionObserver(this.isInView, this.options);
+    this.target = document.querySelector('.VideoDescription');
+    this.observer.observe(this.target);
+  }
 }
 </script>
 
@@ -99,7 +109,7 @@ export default {
   height: 100%;
   width: 100%;
 }
-.TheRow {
+.Card1Row {
   width: 100%;
   height: 100%;
   justify-content: center;
@@ -112,21 +122,18 @@ export default {
   font-size: 3.5vh;
   color: black;
 }
-.DesTitle {
+.Card1Title {
   font-size: 6vh;
 }
-.DesContent {
+.Card1Content {
   font-size: 3vh;
 }
-.right {
-  animation: showItemRight-data-v-0e7b0bfa 1s!important;
-}
-.DesTitle2{
+.Card1Title2{
     font-size: 6vh;
     animation: an 1s ease-out 1 both;
     display: inline-block;
 }
-.DesContent2{
+.Card1Content2{
     font-size: 3vh;
     animation: an 1s ease-out 1 both;
     display: inline-block;

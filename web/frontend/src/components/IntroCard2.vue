@@ -2,7 +2,7 @@
   <div class="IntWrapper">
     <v-container style="height:100%">
       <v-row class="TheRow d-flex align-center">
-        <v-col class="VideoDescription d-flex flex-column" cols="12" md="4">
+        <v-col class="VideoDescription2 d-flex flex-column" cols="12" md="4">
           <div class="text-center">
             <div class="DesTitle pb-5">
               {{desTitle}}
@@ -30,10 +30,18 @@ export default {
     VideoName: String,
     desTitle: String,
     desContent: String,
-    curpage: String,
   },
   data () {
     return {
+      done: false,
+      prevRatio: 0,
+      options: {
+        root: null,
+        rootMargin: null,
+        threshold: null,
+      },
+      observer: null,
+      target: null,
     }
   },
   methods: {
@@ -55,7 +63,33 @@ export default {
             text.children[i].style['animation-delay'] = animationDelay * i + 'ms';
         }
     },
+    ExecuteAnimation() {
+      this.TextAnimation(".DesTitle", "DesTitle2")
+      this.TextAnimation(".DesContent", "DesContent2")
+    },
+    isInView(entries, observer) {
+      entries.forEach((entry) => {
+        if (entry.intersectionRatio > this.prevRatio) {
+          if (this.done == false) {
+            this.done = true
+            setTimeout(this.ExecuteAnimation(), 800)
+          }
+        } else {
+          this.done = false
+        }
+      this.prevRatio = entry.intersectionRatio;
+      });
+    }
+    
   },
+  mounted() {
+    this.options.root = null
+    this.options.rootMargin = "0px"
+    this.options.threshold = 0.05
+    this.observer = new IntersectionObserver(this.isInView, this.options);
+    this.target = document.querySelector('.VideoDescription2');
+    this.observer.observe(this.target);
+  }
 }
 </script>
 
@@ -79,7 +113,7 @@ export default {
   width: 100%;
   height: 100%;
 }
-.VideoDescription {
+.VideoDescription2 {
   height: 100%;
   width: 100%;
   justify-content: center;
