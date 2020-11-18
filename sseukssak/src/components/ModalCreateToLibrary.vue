@@ -15,7 +15,10 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        <v-card-text class="pt-4" :class="{'modal-d': this.$vuetify.theme.dark}">
+        <v-card-text
+          class="pt-4"
+          :class="{ 'modal-d': this.$vuetify.theme.dark }"
+        >
           <div>
             <v-text-field
               :rules="rules"
@@ -40,7 +43,8 @@
 import { Vue, Component } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
 import Swal from "sweetalert2";
-
+import fs from "fs";
+const ssDir = require("os").homedir() + "/AppData/Local/Programs/sseukssak/";
 interface ToLibrary {
   name: string;
   directories: object[];
@@ -117,6 +121,10 @@ export default class ModalCreateToLibrary extends Vue {
       "selectedFromData",
       JSON.stringify(tempLibraryList)
     );
+    fs.writeFileSync(
+      ssDir + "selectedFromData.json",
+      JSON.stringify(tempLibraryList)
+    );
 
     this.$emit("create", this.libraryTitle);
     this.libraryTitle = "";
@@ -138,6 +146,6 @@ header {
   height: 64px;
 }
 .modal-d {
-  background-color: #24303a !important;;
+  background-color: #24303a !important;
 }
 </style>

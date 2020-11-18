@@ -248,9 +248,9 @@
 <script lang='ts'>
 import { Vue, Component, Watch } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
-
+import fs from "fs";
 const { dialog } = require("electron").remote;
-
+const ssDir = require("os").homedir() + "/AppData/Local/Programs/sseukssak/";
 import Swal from "sweetalert2";
 
 interface ToLibrary {
@@ -507,7 +507,10 @@ export default class ModalAddToLibraryDirectory extends AppProps {
               "selectedFromData",
               JSON.stringify(tempLibraryList)
             );
-
+            fs.writeFileSync(
+              ssDir + "selectedFromData.json",
+              JSON.stringify(tempLibraryList)
+            );
             // this.libraryDirectories = [];
             // this.directoryDir = "";
             // this.selectedTypeTags = [];
