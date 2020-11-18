@@ -221,6 +221,19 @@ export default class Rename extends Vue {
         confirmButtonText: `Yes`
       }).then((result) => {
         if (result.isConfirmed) {
+          // 로딩
+          Swal.fire({
+            html: `<lottie-player
+              src="https://assets1.lottiefiles.com/datafiles/bEYvzB8QfV3EM9a/data.json"
+              background="transparent"
+              speed="1"
+              style="width: 300px; height: 300px"
+              loop
+              autoplay
+            ></lottie-player>`,
+            showConfirmButton: false,
+          });
+
           // 예외처리 하기(변경할 파일명이 이미 기존 폴더 내에 존재하는 경우)
           const dupTmp: Array<FileInfo> = [];
           const dupTmpChange: Array<string> = [];
@@ -367,6 +380,19 @@ export default class Rename extends Vue {
       confirmButtonText: `Yes`
     }).then((result) => {
       if (result.isConfirmed) {
+        // 로딩
+        Swal.fire({
+          html: `<lottie-player
+            src="https://assets1.lottiefiles.com/datafiles/bEYvzB8QfV3EM9a/data.json"
+            background="transparent"
+            speed="1"
+            style="width: 300px; height: 300px"
+            loop
+            autoplay
+          ></lottie-player>`,
+          showConfirmButton: false,
+        });
+
         const workTime: number = new Date().setTime(Date.now());
         this.changeLogBackCheck(false);
         const lastLog = this.renameHistory[this.renameHistory.length - 1];
@@ -432,6 +458,13 @@ export default class Rename extends Vue {
               });
             }
           }
+        });
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "복원되었습니다",
+          showConfirmButton: false,
+          timer: 1000
         });
         this.initailizeRename();
       }
