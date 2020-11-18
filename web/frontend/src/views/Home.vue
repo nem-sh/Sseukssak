@@ -53,7 +53,7 @@ export default class Home extends Vue {
     licenseKey: "OPEN-SOURCE-GPLV3-LICENSE",
     scrollHorizontally: true,
     anchors: ['firstPage', 'secondPage', 'thirdPage', 'fourthPage'],
-    sectionsColor: ['', '#4BBFC3', '#7BAABE', 'beige', ""],
+    sectionsColor: ['', '#4BBFC3', '#7BAABE', 'beige', "lightgray"],
     navigation: true,
     navigationPosition: 'left',
     navigationTooltips: ['다운로드', '전후 비교', '파일 정리', '이름 변경', "팀 소개"],
