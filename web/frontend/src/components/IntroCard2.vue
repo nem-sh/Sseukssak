@@ -7,7 +7,6 @@
             <div class="DesTitle pb-5">
               {{desTitle}}
             </div>
-            <v-spacer></v-spacer>
             <div class="DesContent">
               {{desContent}}
             </div>
@@ -31,12 +30,31 @@ export default {
     VideoName: String,
     desTitle: String,
     desContent: String,
+    curpage: String,
   },
   data () {
     return {
     }
   },
   methods: {
+    TextAnimation (el, elcs) {
+      const text = document.querySelector(el);
+      let newDom = '';
+      const animationDelay = 6;
+
+        for(let i = 0; i < text.innerText.length; i++)
+        {
+            newDom += `<span class="${elcs}">` + (text.innerText[i] == ' ' ? '&nbsp;' : text.innerText[i])+ '</span>';
+        }
+
+        text.innerHTML = newDom;
+        const length = text.children.length;
+
+        for(let i = 0; i < length; i++)
+        {
+            text.children[i].style['animation-delay'] = animationDelay * i + 'ms';
+        }
+    },
   },
 }
 </script>
@@ -74,5 +92,26 @@ export default {
 }
 .DesContent {
   font-size: 3vh;
+}
+.DesTitle2{
+    font-size: 6vh;
+    animation: an 1s ease-out 1 both;
+    display: inline-block;
+}
+.DesContent2{
+    font-size: 3vh;
+    animation: an 1s ease-out 1 both;
+    display: inline-block;
+}
+
+@keyframes an{
+  from{
+    opacity: 0;
+    transform: perspective(500px) translate3d(-35px, -40px, -150px) rotate3d(1, -1, 0, 35deg);
+  }
+  to{
+    opacity: 1;
+    transform: perspective(500px) translate3d(0, 0, 0);
+  }
 }
 </style>
