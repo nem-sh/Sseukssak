@@ -150,6 +150,7 @@ export default class BtnMoveFile extends Vue {
     for (let index = 0; index < aiTags.length; index++) {
       const element = aiTags[index];
       if (res.data.result.label_kr.includes(element)) {
+        console.log(res.data.result.label_kr);
         return true;
       }
     }
@@ -246,7 +247,7 @@ export default class BtnMoveFile extends Vue {
       );
   }
 
-  moveFile() {
+  async moveFile() {
     // console.log(this.toLibraryList);
     // let timerInterval;
     // Swal.fire({
@@ -347,7 +348,8 @@ export default class BtnMoveFile extends Vue {
           ]);
           continue;
         }
-        directories.forEach((directory: ToLibraryDirectory2) => {
+        for (let index = 0; index < directories.length; index++) {
+          const directory: ToLibraryDirectory2 = directories[index];
           if (this.compareDate(new Date(idx.birthTime), directory.dateTags)) {
             if (this.compareTitle(idx.name, directory.titleTags)) {
               let flag = false;
@@ -362,7 +364,9 @@ export default class BtnMoveFile extends Vue {
                 (idx.fileType == "jpg" || idx.fileType == "png") &&
                 directory.aiTags.length != 0
               ) {
-                if (this.compareAi(idx.name, directory.aiTags)) {
+                if (
+                  (await this.compareAi(idx.name, directory.aiTags)) == true
+                ) {
                   flag = true;
                 }
               }
@@ -399,7 +403,8 @@ export default class BtnMoveFile extends Vue {
               }
             }
           }
-        });
+        }
+
         let step;
         if (a.length > 0) {
           for (step = 0; step < a.length - 1; step++) {
