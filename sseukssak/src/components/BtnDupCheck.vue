@@ -25,11 +25,13 @@ interface ToLibrary {
   name: string;
   directories: ToLibraryDirectory[];
 }
+
 interface ToLibraryDirectory {
   path: string;
   typeTags: string[];
   dateTags: string[];
   titleTags: string[];
+  aiTags: string[];
   types: string[];
 }
 interface SortList {

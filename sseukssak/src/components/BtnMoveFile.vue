@@ -111,6 +111,7 @@ export default class BtnMoveFile extends Vue {
     "#This month": new Date(this.now.getFullYear(), this.now.getMonth()),
     "#Every new file": new Date(0),
   };
+  aiFlag: boolean = false;
   tagToType: object = tagToTypeList;
   fromDir!: string;
   toLibraryList!: ToLibrary2[];
@@ -123,6 +124,48 @@ export default class BtnMoveFile extends Vue {
   changeFileSortList!: (newList: SortList) => void;
   changeMoveHistory!: (newList: any[]) => void;
   changeRestoreMoveList!: (newList: RestoreMoveListUnit[]) => void;
+  compareAi(fileName: string, aiTags) {
+    const URL = "https://dapi.kakao.com/v2/vision/multitag/generate";
+    const file = new File(
+      [fs.readFileSync(this.fromDir + "/" + fileName)],
+      fileName
+    );
+    if (file.size > 2000000) {
+      Swal.fire({
+        icon: "error",
+        title: " 이미지 크기가 너무 큰 파일은 ai 분석이 어렵습니다.",
+      });
+      return false;
+    }
+    const form = new FormData();
+    form.append("image", file);
+
+    const headers = {
+      Authorization: "KakaoAK 86fa802ad9319ae7223fcff9d2020718",
+      "Content-Type": "multipart/form-data",
+    };
+    Axios.post(URL, form, { headers: headers })
+      .then((res) => {
+        if (res.data.result.label_kr.length === 0) {
+          return false;
+        }
+        for (let index = 0; index < aiTags.length; index++) {
+          const element = aiTags[index];
+          if (res.data.result.label_kr.includes(element)) {
+            this.aiFlag = true;
+            return true;
+          }
+        }
+      })
+      .catch((err) =>
+        Swal.fire({
+          icon: "error",
+          title: "이미지 분석 요청에 실패했습니다.",
+        })
+      );
+
+    return false;
+  }
   compareTitle(file: string, titleTags: string[]) {
     if (titleTags.length == 0) {
       return true;
@@ -248,7 +291,7 @@ export default class BtnMoveFile extends Vue {
       } else {
         // this.dialog = true;
         Swal.fire({
-            html: `<lottie-player
+          html: `<lottie-player
             src="https://assets6.lottiefiles.com/packages/lf20_AvXSwT.json"
             background="transparent"
             speed="1"
@@ -256,9 +299,8 @@ export default class BtnMoveFile extends Vue {
             loop
             autoplay
           ></lottie-player>`,
-            showConfirmButton: false
-            
-          });
+          showConfirmButton: false,
+        });
       }
 
       BUS.$emit("bus:refreshfile");
@@ -303,7 +345,6 @@ export default class BtnMoveFile extends Vue {
       const fileSortList = this.fileSortList;
 
       for (const idx of fileSortList.files) {
-        // console.log(fileSortList, 7, idx.name);
         const a: string[][] = [];
         if (!fs.existsSync(this.fromDir + "/" + idx.name)) {
           this.changeMoveHistory([
@@ -319,8 +360,6 @@ export default class BtnMoveFile extends Vue {
         directories.forEach((directory: ToLibraryDirectory2) => {
           if (this.compareDate(new Date(idx.birthTime), directory.dateTags)) {
             if (this.compareTitle(idx.name, directory.titleTags)) {
-              // console.log(idx.name);
-
               let flag = false;
               directory.types.forEach((type) => {
                 if (type == "." + idx.fileType || type == idx.fileType) {
@@ -328,7 +367,18 @@ export default class BtnMoveFile extends Vue {
                   return;
                 }
               });
-              if (directory.types.length == 0) {
+              if (
+                !flag &&
+                (idx.fileType == "jpg" || idx.fileType == "png") &&
+                directory.aiTags.length != 0
+              ) {
+                this.compareAi(idx.name, directory.aiTags);
+                if (this.aiFlag) {
+                  this.aiFlag = false;
+                  flag = true;
+                }
+              }
+              if (directory.types.length == 0 && directory.aiTags.length == 0) {
                 flag = true;
               }
               if (flag) {
@@ -420,7 +470,6 @@ export default class BtnMoveFile extends Vue {
                 data[1],
                 name[name.length - 1]
               );
-              console.log(a.length);
               if (a.length - 1 != 0) {
                 fs.unlinkSync(a[a.length - 1][0]);
               }
@@ -526,17 +575,14 @@ export default class BtnMoveFile extends Vue {
     }
 
     this.dialog = true;
-    // console.log(this.restoreMoveList);
     for (let index = 0; index < this.restoreMoveList.length; index++) {
       const element = this.restoreMoveList[index];
-      // console.log(element);
       const filePathSplit = element["to"]
         .split("\\")
         .join(",")
         .split("/")
         .join(",")
         .split(",");
-      // console.log(filePathSplit);
       if (element["type"] == "move") {
         try {
           fs.renameSync(element["to"], element["from"]);

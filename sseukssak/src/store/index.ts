@@ -74,6 +74,7 @@ interface ToLibraryDirectory {
   typeTags: string[];
   dateTags: string[];
   titleTags: string[];
+  aiTags: string[];
 }
 interface SortList {
   directories: Directory[];
@@ -124,7 +125,8 @@ export default new Vuex.Store({
       path: "",
       typeTags: [],
       dateTags: [],
-      titleTags: []
+      titleTags: [],
+      aiTags: []
     },
     HistoryList: [],
     renameHistory: [],

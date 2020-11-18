@@ -47,11 +47,13 @@ export interface ToLibraryDirectory {
     typeTags: string[];
     dateTags: string[];
     titleTags: string[];
+    aiTags: string[];
 }export interface ToLibraryDirectory2 {
     path: string;
     typeTags: string[];
     dateTags: string[];
     titleTags: string[];
+    aiTags: string[];
     types: string[]
 }
 export interface SortList {
