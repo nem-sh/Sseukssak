@@ -8,10 +8,10 @@
         <SliderPage/>
       </div>
       <div class="section">
-        <IntroCard :VideoName="vi1" :desTitle="desT1" :desContent="desC1" :curpage="curpage"/>
+        <IntroCard :VideoName="vi1" :desTitle="desT1" :desContent="desC1"/>
       </div>
       <div class="section">
-        <IntroCard2 :VideoName="vi2" :desTitle="desT2" :desContent="desC2" :curpage="curpage" />
+        <IntroCard2 :VideoName="vi2" :desTitle="desT2" :desContent="desC2"/>
       </div>
       <div class="section">
         <ContactUs />
@@ -47,7 +47,6 @@ export default class Home extends Vue {
       desC1: "사용자의 설정에 따라 특정 폴더의 파일들을 깔끔하게 정리할 수 있습니다.",
       desT2: "파일/폴더명 변경",
       desC2: "여러 파일 및 폴더 이름을 일괄적으로 변경할 수 있습니다.",
-      curpage: "firstPage",
     }
   }
   options = {
@@ -58,15 +57,6 @@ export default class Home extends Vue {
     navigation: true,
     navigationPosition: 'left',
     navigationTooltips: ['다운로드', '전후 비교', '파일 정리', '이름 변경', "팀 소개"],
-    onSlideLeave: function(section, origin, destination, direction){
-		// const leavingSlide = this;
-
-		//leaving the first slide of the 2nd Section to the right
-		if(section.index == 1 && origin.index == 0){
-      console.log("Leaving the fist slide!!");
-      console.log(direction)
-		}
-    },
   }
 }
 </script>
