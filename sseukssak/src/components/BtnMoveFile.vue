@@ -111,7 +111,6 @@ export default class BtnMoveFile extends Vue {
     "#This month": new Date(this.now.getFullYear(), this.now.getMonth()),
     "#Every new file": new Date(0),
   };
-  aiFlag: boolean = false;
   tagToType: object = tagToTypeList;
   fromDir!: string;
   toLibraryList!: ToLibrary2[];
@@ -124,7 +123,7 @@ export default class BtnMoveFile extends Vue {
   changeFileSortList!: (newList: SortList) => void;
   changeMoveHistory!: (newList: any[]) => void;
   changeRestoreMoveList!: (newList: RestoreMoveListUnit[]) => void;
-  compareAi(fileName: string, aiTags) {
+  async compareAi(fileName: string, aiTags) {
     const URL = "https://dapi.kakao.com/v2/vision/multitag/generate";
     const file = new File(
       [fs.readFileSync(this.fromDir + "/" + fileName)],
@@ -144,25 +143,16 @@ export default class BtnMoveFile extends Vue {
       Authorization: "KakaoAK 86fa802ad9319ae7223fcff9d2020718",
       "Content-Type": "multipart/form-data",
     };
-    Axios.post(URL, form, { headers: headers })
-      .then((res) => {
-        if (res.data.result.label_kr.length === 0) {
-          return false;
-        }
-        for (let index = 0; index < aiTags.length; index++) {
-          const element = aiTags[index];
-          if (res.data.result.label_kr.includes(element)) {
-            this.aiFlag = true;
-            return true;
-          }
-        }
-      })
-      .catch((err) =>
-        Swal.fire({
-          icon: "error",
-          title: "이미지 분석 요청에 실패했습니다.",
-        })
-      );
+    const res = await Axios.post(URL, form, { headers: headers });
+    if (res.data.result.label_kr.length === 0) {
+      return false;
+    }
+    for (let index = 0; index < aiTags.length; index++) {
+      const element = aiTags[index];
+      if (res.data.result.label_kr.includes(element)) {
+        return true;
+      }
+    }
 
     return false;
   }
@@ -372,9 +362,7 @@ export default class BtnMoveFile extends Vue {
                 (idx.fileType == "jpg" || idx.fileType == "png") &&
                 directory.aiTags.length != 0
               ) {
-                this.compareAi(idx.name, directory.aiTags);
-                if (this.aiFlag) {
-                  this.aiFlag = false;
+                if (this.compareAi(idx.name, directory.aiTags)) {
                   flag = true;
                 }
               }
