@@ -577,10 +577,10 @@ export default class ListTo extends Vue {
   created() {
     this.selectedToNameValue = this.selectedToName;
     const mySettings = window.localStorage.getItem("selectedFromData"); // 로컬스토리지에서 해당 key 이름으로 되어있는 value 값 불러오기
-    fs.writeFileSync(
-      ssDir + "selectedFromData.json",
-      JSON.stringify(mySettings)
-    );
+
+    if (mySettings) {
+      fs.writeFileSync(ssDir + "selectedFromData.json", mySettings);
+    }
 
     let mySettingObj: ToLibrary[] = [
       {
