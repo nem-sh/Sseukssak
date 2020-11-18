@@ -284,10 +284,10 @@ export default class Quick extends Vue {
         this.getFrom(this.fromDir);
       } else {
         console.log(desktopDir);
-        this.changeDir(desktopDir);
+        this.changeDir(this.defalutPath + "desktop");
         console.log("ㄴㄴ");
 
-        this.getFrom(desktopDir);
+        this.getFrom(this.fromDir);
       }
     }
   }

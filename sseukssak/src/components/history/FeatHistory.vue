@@ -19,7 +19,18 @@ import { Watch } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
 // import constants from "@/assets/constants.json";
 // import Home from './Home.vue';
-const ssDir = require("os").homedir() + "/AppData/Local/Programs/sseukssak/";
+let ssDir = "";
+const arr = process.argv[0].split("\\").join("/").split("/");
+for (let index = 0; index < arr.length; index++) {
+  const element = arr[index];
+  ssDir = ssDir + arr[index] + "/";
+  if (element == "Users") {
+    ssDir = ssDir + arr[index + 1] + "/";
+    break;
+  }
+}
+
+ssDir = ssDir + "AppData/Local/Programs/sseukssak/";
 @Component({
   components: {},
 

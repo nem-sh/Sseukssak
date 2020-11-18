@@ -44,7 +44,18 @@ import { Vue, Component } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
 import Swal from "sweetalert2";
 import fs from "fs";
-const ssDir = require("os").homedir() + "/AppData/Local/Programs/sseukssak/";
+let ssDir = "";
+const arr = process.argv[0].split("\\").join("/").split("/");
+for (let index = 0; index < arr.length; index++) {
+  const element = arr[index];
+  ssDir = ssDir + arr[index] + "/";
+  if (element == "Users") {
+    ssDir = ssDir + arr[index + 1] + "/";
+    break;
+  }
+}
+
+ssDir = ssDir + "AppData/Local/Programs/sseukssak/";
 interface ToLibrary {
   name: string;
   directories: object[];
