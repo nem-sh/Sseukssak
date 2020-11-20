@@ -193,7 +193,7 @@ export default class Quick extends Vue {
             "AppData\\Local\\Programs\\sseukssak\\sseukssak.exe",
           command:
             this.defalutPath + "AppData\\Local\\Programs\\sseukssak\\quick.exe",
-          menu: `여기서 쓱싹 열기`,
+          menu: `여기서 열기!`,
         };
         const options2 = {
           name: "SseuckSsack Quick2",
@@ -203,7 +203,7 @@ export default class Quick extends Vue {
           command:
             this.defalutPath +
             "AppData\\Local\\Programs\\sseukssak\\quick2.exe",
-          menu: `여기서 쓱싹 정리 실행!`,
+          menu: `여기서 바로 정리!`,
         };
 
         shellContextMenu.registerDirectoryBackgroundCommand(options);
@@ -289,6 +289,12 @@ export default class Quick extends Vue {
 
         this.getFrom(this.fromDir);
       }
+    } else {
+      console.log(desktopDir);
+      this.changeDir(this.defalutPath + "desktop");
+      console.log("ㄴㄴ");
+
+      this.getFrom(this.fromDir);
     }
   }
   async getFrom(dir: string) {
