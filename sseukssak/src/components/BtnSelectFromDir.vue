@@ -123,9 +123,9 @@ export default class BtnSelectFromDir extends Vue {
     }
   }
   mounted() {
-    // if (this.firstOpen) {
-    //   this.read(false);
-    // }
+    if (this.firstOpen) {
+      this.read(false);
+    }
   }
 }
 </script>

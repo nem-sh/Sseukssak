@@ -275,7 +275,12 @@ for (let index = 0; index < arr.length; index++) {
   }
 }
 
-ssDir = ssDir + "AppData/Local/Programs/sseukssak/";
+if (process.platform === "darwin") {
+  ssDir = ssDir + "Library/Application Support/sseukssak/";
+} else {
+  ssDir = ssDir + "AppData/Local/Programs/sseukssak/";
+}
+
 import Swal from "sweetalert2";
 
 interface ToLibrary {

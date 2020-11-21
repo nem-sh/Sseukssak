@@ -306,6 +306,7 @@ import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDire
 import ListFromBreadcrumbs from "@/components/listFrom/ListFromBreadcrumbs.vue";
 let ssDir = "";
 const arr = process.argv[0].split("\\").join("/").split("/");
+
 for (let index = 0; index < arr.length; index++) {
   const element = arr[index];
   ssDir = ssDir + arr[index] + "/";
@@ -315,7 +316,12 @@ for (let index = 0; index < arr.length; index++) {
   }
 }
 
-ssDir = ssDir + "AppData/Local/Programs/sseukssak/";
+if (process.platform === "darwin") {
+  ssDir = ssDir + "Library/Application Support/sseukssak/";
+} else {
+  ssDir = ssDir + "AppData/Local/Programs/sseukssak/";
+}
+
 import { shell } from "electron";
 
 import { BUS } from "./EventBus.js";
