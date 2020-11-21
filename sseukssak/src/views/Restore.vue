@@ -265,7 +265,12 @@ for (let index = 0; index < arr.length; index++) {
     break;
   }
 }
-ssDir = ssDir + "AppData/Local/Programs/sseukssak/";
+if (process.platform === "darwin") {
+  ssDir = ssDir + "Library/Application Support/sseukssak/";
+} else {
+  ssDir = ssDir + "AppData/Local/Programs/sseukssak/";
+}
+
 @Component({
   components: {},
 

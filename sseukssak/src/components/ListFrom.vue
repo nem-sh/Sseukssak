@@ -286,7 +286,7 @@
             />폴더명 바꾸기</a
           >
         </li>
-        <li v-if="osPlatform === 'Win32'">
+        <li>
           <a
             @click="deleteThis(fromDir + '/' + selectedData.name, true)"
             style="display: flex; align-items: center"
@@ -372,7 +372,7 @@
             "
           />
         </li>
-        <li v-if="osPlatform === 'Win32'">
+        <li>
           <a
             @click="deleteThis(fromDir + '/' + selectedData.name, true)"
             style="display: flex; align-items: center"
@@ -439,7 +439,6 @@
               실행
             </v-btn>
             <v-btn
-              v-if="osPlatform === 'Win32'"
               color="red lighten-1"
               rounded
               dark
