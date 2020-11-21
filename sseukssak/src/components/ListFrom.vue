@@ -312,6 +312,11 @@
           />
         </li>
         <li>
+          <BtnImageFolderOganizer
+            v-bind:folderName="selectedData.name"
+          />
+        </li>
+        <li>
           <a @click="openShell()" style="display: flex; align-items: center"
             ><v-img
               class="mr-2"
@@ -501,6 +506,7 @@ import BtnUploadGoogleDriveFolder from "@/components/googleDrive/BtnUploadGoogle
 
 import BtnImageRename from "@/components/ai/BtnImageRename.vue";
 import BtnFolderImageRename from "@/components/ai/BtnFolderImageRename.vue";
+import BtnImageFolderOganizer from "@/components/ai/BtnImageFolderOganizer.vue";
 
 import Swal from "sweetalert2";
 // import { shell } from "electron";
@@ -536,7 +542,8 @@ interface Directory {
     ListFromBreadcrumbs,
     ListFromFilter,
     BtnImageRename,
-    BtnFolderImageRename
+    BtnFolderImageRename,
+    BtnImageFolderOganizer
   },
   computed: mapState([
     "fileSortList",
