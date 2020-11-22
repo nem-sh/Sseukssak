@@ -100,6 +100,33 @@
               </div>
               <v-divider></v-divider>
               <h2 class="my-4">2. 정리할 기준 추가</h2>
+              <div v-show="!selectedFilter && recTags.length != 0">
+                <div class="mr-3" style="display: inline-block">
+                  이 태그들을 찾으시나요?
+                </div>
+                <div
+                  v-for="recTag in recTags"
+                  :key="recTag[0] + recTag[1]"
+                  style="display: inline-block"
+                >
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <div v-bind="attrs" v-on="on">
+                        <v-chip
+                          @click="useRecTag(recTag)"
+                          style="cursor: pointer"
+                          :class="getChipColor(recTag[1])"
+                          class="mr-2 chips-type"
+                          small
+                          chip
+                          >{{ recTag[0] }}
+                        </v-chip>
+                      </div>
+                    </template>
+                    <span>{{ recTag[1] }}</span>
+                  </v-tooltip>
+                </div>
+              </div>
               <v-row>
                 <v-col cols="4" class="pb-0">
                   <v-overflow-btn
@@ -130,6 +157,7 @@
                   ></v-overflow-btn>
                 </v-col>
               </v-row>
+
               <div
                 id="type"
                 v-show="
@@ -247,6 +275,61 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="dialogRec" persistent max-width="520">
+      <v-card>
+        <v-card-title class="headline"> 태그 유형도 골라주세요. </v-card-title>
+        <v-card-text>
+          <div
+            class="mb-3"
+            style="display: flex; justify-content: space-around"
+          >
+            <p class="mt-5">
+              파일명에 "{{ dialogRecData }}" 단어가 포함된 경우만 정리합니다
+            </p>
+            <v-btn
+              color="#f5f1b6"
+              @click="useRecTag([dialogRecData, 'Title'])"
+              fab
+              x-large
+              dark
+              style="color: black; display: inline"
+            >
+              파일명
+            </v-btn>
+          </div>
+          <div style="display: flex; justify-content: space-around">
+            <p class="mt-5">
+              AI가 이미지에서 "{{ dialogRecData }}"을(를) 찾을 경우 정리합니다
+            </p>
+            <v-btn
+              color="#f1bebe"
+              @click="useRecTag([dialogRecData, 'AI'])"
+              fab
+              x-large
+              dark
+              style="color: black; display: inline"
+            >
+              AI식별
+            </v-btn>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            color="red darken-1"
+            text
+            @click="
+              dialogRec = false;
+              dialogRecData = '';
+            "
+          >
+            취소
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -255,7 +338,7 @@ import { Vue, Component, Watch } from "vue-property-decorator";
 import { mapMutations, mapState } from "vuex";
 import Swal from "sweetalert2";
 import BtnCreateGoogleFolder from "@/components/googleDrive/BtnCreateGoogleFolder.vue";
-import fs from "fs";
+import fs, { watch } from "fs";
 let ssDir = "";
 const arr = process.argv[0].split("\\").join("/").split("/");
 
@@ -268,8 +351,9 @@ for (let index = 0; index < arr.length; index++) {
   }
 }
 
-import os from 'os';
-const username = os.userInfo().username
+import os from "os";
+import Axios from "axios";
+const username = os.userInfo().username;
 
 if (process.platform === "darwin") {
   ssDir = "/Users/" + username + "/Library/Application Support/sseukssak/";
@@ -312,7 +396,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
   totalTags: string[] = [];
   selectedTotalTags: string[] = [];
   libraryDirectories: ToLibraryDirectory[] = [];
-
+  recTags: string[][] = [];
   directoryDir: string = "";
   dialog: boolean = false;
   dialog2: boolean = false;
@@ -363,9 +447,49 @@ export default class ModalAddToLibraryDirectory extends Vue {
   toLibraryNameList!: string[];
   selectedToName!: string;
   dropToDir!: string;
+  dialogRecData: string = "";
+  dialogRec: boolean = false;
   changeDropToDir!: (dir: string) => void;
   changeToLibraryList!: (newList: ToLibrary[]) => void;
+  getChipColor(tagType) {
+    if (tagType == "Type") {
+      return "chips-type";
+    }
+    if (tagType == "Date") {
+      return "chips-date";
+    }
+    if (tagType == "Title / AI") {
+      return "chips-title";
+    }
+    if (tagType == "AI") {
+      return "chips-ai";
+    }
+    return "";
+  }
+  useRecTag(recTag) {
+    if (this.dupCheckFilter(recTag[0])) {
+      if (recTag[1] == "Type") {
+        this.selectedTypeTags.push(recTag[0]);
 
+        this.addInitialize();
+      } else if (recTag[1] == "Title") {
+        this.selectedTitleTags.push(recTag[0]);
+        this.dialogRecData = "";
+        this.dialogRec = false;
+
+        this.addInitialize();
+      } else if (recTag[1] == "AI") {
+        this.selectedAiTags.push(recTag[0]);
+        this.dialogRecData = "";
+
+        this.dialogRec = false;
+        this.addInitialize();
+      } else {
+        this.dialogRecData = recTag[0];
+        this.dialogRec = true;
+      }
+    }
+  }
   titleAdd() {
     if (this.titleAddName === "") {
       Swal.fire({
@@ -505,7 +629,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
     this.selectedTypeTags = [];
     this.selectedDateTags = [];
     this.selectedTitleTags = [];
-
+    this.recTags = [];
     this.selectedAiTags = [];
     this.readFromDirName = "";
     this.directoryDir = "";
@@ -575,6 +699,7 @@ export default class ModalAddToLibraryDirectory extends Vue {
         this.selectedDateTags = [];
         this.selectedTitleTags = [];
 
+        this.recTags = [];
         this.selectedAiTags = [];
         this.readFromDirName = "";
         this.directoryDir = "";
@@ -624,6 +749,57 @@ export default class ModalAddToLibraryDirectory extends Vue {
   get dateRangeText() {
     return this.dates.join(" ~ ");
   }
+
+  @Watch("directoryDir")
+  watchDirectoryDir() {
+    const typeAutoTagList = {
+      문서: "#Document",
+      파일: "#Document",
+      텍스트: "#Document",
+      프로젝트: "#Document",
+      발표: "#Document",
+      자료: "#Document",
+      사진: "#Image",
+      이미지: "#Image",
+      그림: "#Image",
+      동영상: "#Video",
+      영상: "#Video",
+      비디오: "#Video",
+      압축: "#Compressed",
+      압축파일: "#Compressed",
+      오디오: "#Audio",
+      음악: "#Audio",
+      소리: "#Audio",
+      뮤직: "#Audio",
+      노래: "#Audio",
+    };
+    if (this.directoryDir) {
+      const directoryName = this.directoryDir.split("\\").join("/").split("/");
+      console.log(directoryName);
+      const API_URL = "http://api.adams.ai/datamixiApi/tms";
+      const params = {
+        query: directoryName[directoryName.length - 1],
+        lang: "kor",
+        analysis: "pos",
+        key: "514823482977417164",
+      };
+      Axios.get(API_URL, { params: params }).then((res) => {
+        const resData = res.data.return_object.sentence[0].morp;
+        const data: string[][] = [];
+        for (let index = 0; index < resData.length; index++) {
+          const element = resData[index];
+          if (element.type == "NNG") {
+            if (typeAutoTagList[element.lemma]) {
+              data.push([typeAutoTagList[element.lemma], "Type"]);
+            }
+            data.push([element.lemma, "Title / AI"]);
+          }
+        }
+        this.recTags = data;
+      });
+    }
+  }
+
   @Watch("dropToDir")
   watchDropToDir() {
     if (this.dropToDir != "") {
@@ -744,5 +920,29 @@ header {
   height: 100%;
   padding: 0;
   color: var(--color-purple);
+}
+.chips-type {
+  /* background: #bdd5ff !important; */
+  border-style: solid;
+  border-color: #bdd5ff !important;
+  border-width: 1.5px;
+}
+.chips-date {
+  /* background: #bdd5ff !important; */
+  border-style: solid;
+  border-color: #c0f0c8 !important;
+  border-width: 1.5px;
+}
+.chips-title {
+  /* background: #bdd5ff !important; */
+  border-style: solid;
+  border-color: #f5f1b6 !important;
+  border-width: 1.5px;
+}
+.chips-ai {
+  /* background: #bdd5ff !important; */
+  border-style: solid;
+  border-color: #f1bebe !important;
+  border-width: 1.5px;
 }
 </style>
