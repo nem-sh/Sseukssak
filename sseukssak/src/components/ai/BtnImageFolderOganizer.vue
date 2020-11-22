@@ -66,10 +66,7 @@ export default class BtnImageFolderOganizer extends BtnImageFolderOganizerProps 
     Axios.post(URL, form, { headers: headers })
       .then((res) => {
         if (res.data.result.label_kr.length === 0) {
-          return Swal.fire({
-            icon: "info",
-            title: "이미지 분석 결과가 없습니다."
-          });
+          return
         }
         const label = res.data.result.label_kr
         for (let i=0; i<label.length; i++){
