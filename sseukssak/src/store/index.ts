@@ -14,7 +14,15 @@ for (let index = 0; index < arr.length; index++) {
   }
 }
 
-ssDir = ssDir + "AppData/Local/Programs/sseukssak/";
+import os from 'os';
+const username = os.userInfo().username
+
+if (process.platform === "darwin") {
+  ssDir = "/Users/" + username + "/Library/Application Support/sseukssak/";
+} else {
+  ssDir = ssDir + "AppData/Local/Programs/sseukssak/";
+}
+
 Vue.use(Vuex);
 
 interface DirState {

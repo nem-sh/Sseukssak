@@ -304,6 +304,10 @@ import ModalCreateToLibrary from "@/components/ModalCreateToLibrary.vue";
 import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.vue";
 import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
 import ListFromBreadcrumbs from "@/components/listFrom/ListFromBreadcrumbs.vue";
+
+import os from 'os';
+
+
 let ssDir = "";
 const arr = process.argv[0].split("\\").join("/").split("/");
 
@@ -316,8 +320,10 @@ for (let index = 0; index < arr.length; index++) {
   }
 }
 
+const username = os.userInfo().username
+
 if (process.platform === "darwin") {
-  ssDir = ssDir + "Library/Application Support/sseukssak/";
+  ssDir = "/Users/" + username + "/Library/Application Support/sseukssak/";
 } else {
   ssDir = ssDir + "AppData/Local/Programs/sseukssak/";
 }

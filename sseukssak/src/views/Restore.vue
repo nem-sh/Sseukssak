@@ -295,8 +295,11 @@ for (let index = 0; index < arr.length; index++) {
     break;
   }
 }
+import os from 'os';
+const username = os.userInfo().username
+
 if (process.platform === "darwin") {
-  ssDir = ssDir + "Library/Application Support/sseukssak/";
+  ssDir = "/Users/" + username + "/Library/Application Support/sseukssak/";
 } else {
   ssDir = ssDir + "AppData/Local/Programs/sseukssak/";
 }
