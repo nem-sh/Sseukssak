@@ -127,7 +127,6 @@ export default class BtnLoginGoogle extends Vue {
         });
 
       oAuth2Client.setCredentials(token);
-
       fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
         if (err)
           return Swal.fire({
