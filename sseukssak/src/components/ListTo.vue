@@ -305,8 +305,7 @@ import ModalAddToLibraryDirectory from "@/components/ModalAddToLibraryDirectory.
 import ModalModifyToLibraryDirectory from "@/components/ModalModifyToLibraryDirectory.vue";
 import ListFromBreadcrumbs from "@/components/listFrom/ListFromBreadcrumbs.vue";
 
-import os from 'os';
-
+import os from "os";
 
 let ssDir = "";
 const arr = process.argv[0].split("\\").join("/").split("/");
@@ -320,7 +319,7 @@ for (let index = 0; index < arr.length; index++) {
   }
 }
 
-const username = os.userInfo().username
+const username = os.userInfo().username;
 
 if (process.platform === "darwin") {
   ssDir = "/Users/" + username + "/Library/Application Support/sseukssak/";
@@ -417,6 +416,9 @@ export default class ListTo extends Vue {
     this.shown = false;
   }
   openDirectory(path: string) {
+    if (path.includes("%drive%")) {
+      this.openShell(path);
+    }
     let newPath = path;
     if (path.includes("%from%")) {
       if (this.fromDir) {

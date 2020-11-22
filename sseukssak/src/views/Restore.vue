@@ -36,11 +36,11 @@
         <v-card :class="{ 'modal-d': this.$vuetify.theme.dark }">
           <v-card-title>
             <div class="text-center">
-              <span class="headline text-center">History 기능</span>
+              <span class="headline text-center">History 도움말</span>
             </div>
           </v-card-title>
-          <v-card-text>
-            <span>
+          <v-card-text style="color: black; font-size: 1rem">
+            <span style="color: black; font-size: 1.25rem">
               1. 좌측의 박스 색상을 통해 어떤 작업인지 바로 알 수 있습니다.
               <hr />
             </span>
@@ -53,22 +53,25 @@
             <br />
 
             <div align="right">
-              <span>
+              <span style="color: black; font-size: 1.25rem">
                 2. 우측의 아이콘을 통해 해당 작업의 결과를 알 수 있습니다.
                 <hr /> </span
               ><br />
-              <span>해당 작업에 성공했습니다. </span>
-              <v-icon color="teal lighten-1" size="10">fas fa-circle</v-icon>
+              <div>
+                <span style="color: black">해당 작업에 성공했습니다. </span>
+                <v-icon color="teal lighten-1">fas fa-circle</v-icon>
+              </div>
               <br />
-              <span>해당 작업에 실패했습니다. </span>
-              <v-icon color="red darken-1" size="10"
-                >fas fa-exclamation-circle</v-icon
-              >
+
+              <div>
+                <span style="color: black">해당 작업에 실패했습니다. </span>
+                <v-icon color="red darken-1">fas fa-exclamation-circle</v-icon>
+              </div>
               <br />
-              <span>복구 작업을 진행하였습니다. </span>
-              <v-icon color="blue lighten-3" size="10">fas fa-undo-alt</v-icon>
-              <br />
-              <br />
+              <div>
+                <span style="color: black">복구 작업을 진행하였습니다. </span>
+                <v-icon color="blue lighten-3">fas fa-undo-alt</v-icon>
+              </div>
               <br />
             </div>
           </v-card-text>
@@ -81,7 +84,7 @@
       v-if="Object.keys(timesortedList).length < 1"
       style="text-align: center"
     >
-      <h1>파일 이동 내역이 없습니다.</h1>
+      <h1 style="margin-top: 150px">파일 이동 내역이 없습니다 :(</h1>
     </div>
 
     <div
@@ -107,7 +110,7 @@
               worktype1: chunk.workcode == 1,
               worktype2: chunk.workcode == 2,
               worktype3: chunk.workcode == 3,
-              worktype4: chunk.workcode == 4
+              worktype4: chunk.workcode == 4,
             }"
           >
             <!-- 성공 실패에 따른 카드 색상 변경 -->
@@ -282,10 +285,7 @@ import constants from "@/assets/constants.json";
 import { Watch } from "vue-property-decorator";
 // import Home from './Home.vue';
 let ssDir = "";
-const arr = process.argv[0]
-  .split("\\")
-  .join("/")
-  .split("/");
+const arr = process.argv[0].split("\\").join("/").split("/");
 
 for (let index = 0; index < arr.length; index++) {
   const element = arr[index];
@@ -295,8 +295,8 @@ for (let index = 0; index < arr.length; index++) {
     break;
   }
 }
-import os from 'os';
-const username = os.userInfo().username
+import os from "os";
+const username = os.userInfo().username;
 
 if (process.platform === "darwin") {
   ssDir = "/Users/" + username + "/Library/Application Support/sseukssak/";
@@ -314,7 +314,7 @@ if (process.platform === "darwin") {
     "fileList",
     "renameHistory2",
     "moveHistory",
-    "restoreRedoList"
+    "restoreRedoList",
   ]),
 
   methods: mapMutations([
@@ -324,8 +324,8 @@ if (process.platform === "darwin") {
     "changeDuplicatedList",
     "changeRenameHistory2",
     "changeMoveHistory",
-    "changerestoreRedoList"
-  ])
+    "changerestoreRedoList",
+  ]),
 })
 export default class Restore extends Vue {
   changeDuplicatedList!: (newList: [][]) => void;
@@ -410,7 +410,7 @@ export default class Restore extends Vue {
       showCancelButton: true,
       confirmButtonText: `예`,
       showConfirmButton: true,
-      cancelButtonText: "아니오"
+      cancelButtonText: "아니오",
     }).then((res) => {
       if (res.isConfirmed) {
         let sf = -1;
@@ -436,14 +436,14 @@ export default class Restore extends Vue {
             chunk.after,
             chunk.before,
             d,
-            chunk.workcode
+            chunk.workcode,
           ]);
           Swal.fire({
             position: "center",
             icon: "success",
             text: `해당 작업을 되돌렸습니다.`,
             showConfirmButton: false,
-            timer: 1000
+            timer: 1000,
           });
           setTimeout(() => {
             this.readHistory();
@@ -454,7 +454,7 @@ export default class Restore extends Vue {
             icon: "error",
             text: "오류가 발생했습니다.",
             showConfirmButton: false,
-            timer: 1000
+            timer: 1000,
           });
         } else if (sf == 0) {
           Swal.fire({
@@ -462,7 +462,7 @@ export default class Restore extends Vue {
             icon: "error",
             text: "해당 파일이 경로에 존재하지 않습니다.",
             showConfirmButton: false,
-            timer: 1000
+            timer: 1000,
           });
         }
       }
@@ -474,7 +474,7 @@ export default class Restore extends Vue {
     const mm = JSON.parse(changedHistory.toString());
 
     //arr에 담기
-    mm.forEach(function(chunk: any) {
+    mm.forEach(function (chunk: any) {
       // console.log(chunk);
       try {
         if (chunk.date != undefined) {
@@ -486,7 +486,7 @@ export default class Restore extends Vue {
     });
 
     // 날짜순으로 정렬
-    sortingarr.sort(function(a, b) {
+    sortingarr.sort(function (a, b) {
       return a.date > b.date ? -1 : a.date < b.date ? 1 : 0;
     });
     // console.log(sortingarr);
@@ -494,7 +494,7 @@ export default class Restore extends Vue {
     //historylist 변경
     this.historyList = sortingarr.slice(0, 100);
 
-    this.historyList.forEach(function(history: any) {
+    this.historyList.forEach(function (history: any) {
       // console.log(history);
       const d = new Date(history.date);
       history.date = d.toString();
@@ -507,7 +507,7 @@ export default class Restore extends Vue {
     let sortingarr: any = {};
     const mm = JSON.parse(changedHistory.toString());
     // console.log(mm);
-    mm.forEach(function(chunk: any) {
+    mm.forEach(function (chunk: any) {
       // console.log(chunk);
 
       if (chunk.date) {
@@ -528,7 +528,7 @@ export default class Restore extends Vue {
 
     let keys = Object.keys(sortingarr);
 
-    keys.sort(function(a, b) {
+    keys.sort(function (a, b) {
       return Number(b) - Number(a);
     });
     let sorted: any = {};
@@ -550,7 +550,7 @@ export default class Restore extends Vue {
       showCancelButton: true,
       confirmButtonText: `예`,
       showConfirmButton: true,
-      cancelButtonText: "아니오"
+      cancelButtonText: "아니오",
     }).then((res) => {
       if (res.isConfirmed) {
         // console.log("selected yes");
@@ -566,7 +566,7 @@ export default class Restore extends Vue {
           icon: "warning",
           text: `초기화되었습니다.`,
           showConfirmButton: false,
-          timer: 1000
+          timer: 1000,
         });
       }
       // } else {
