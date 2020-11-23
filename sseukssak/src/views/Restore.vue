@@ -8,13 +8,14 @@
         class="mt-4"
       />
     </div>
-    <div class="searchbar">
+    <div class="searchbar ml-8">
       <v-row>
         <v-col cols="12" sm="9">
           <v-text-field
             label="검색"
             placeholder="파일명을 입력하세요"
             v-model="searchKY"
+            @keypress.enter="readHistory()"
           ></v-text-field>
         </v-col>
         <v-col cols="12" sm="3">

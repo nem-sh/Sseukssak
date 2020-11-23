@@ -52,7 +52,7 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn text rounded v-bind="attrs" v-on="on">
-                        <i class="fas fa-folder-plus mr-2"></i>폴더 추가
+                        <i class="fas fa-folder-plus mr-2"></i>새 폴더 추가
                       </v-btn>
                     </template>
                     <v-card
