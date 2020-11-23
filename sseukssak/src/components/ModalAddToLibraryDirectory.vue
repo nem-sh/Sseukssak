@@ -65,6 +65,7 @@
                           v-model="readFromDirName"
                           :rules="[rules.required, rules.speical]"
                           label="새 폴더명 입력"
+                          @keypress.enter="readFromDir"
                         >
                         </v-text-field
                       ></v-card-text>
@@ -277,46 +278,49 @@
     </v-dialog>
 
     <v-dialog v-model="dialogRec" persistent max-width="520">
-      <v-card>
-        <v-card-title class="headline"> 태그 유형도 골라주세요. </v-card-title>
-        <v-card-text>
-          <div
-            class="mb-3"
-            style="display: flex; justify-content: space-around"
-          >
-            <p class="mt-5">
-              파일명에 "{{ dialogRecData }}" 단어가 포함된 경우만 정리합니다
-            </p>
-            <v-btn
-              color="#f5f1b6"
-              @click="useRecTag([dialogRecData, 'Title'])"
-              fab
-              x-large
-              dark
-              style="color: black; display: inline"
-            >
-              파일명
-            </v-btn>
-          </div>
-          <div style="display: flex; justify-content: space-around">
-            <p class="mt-5">
-              AI가 이미지에서 "{{ dialogRecData }}"을(를) 찾을 경우 정리합니다
-            </p>
-            <v-btn
-              color="#f1bebe"
-              @click="useRecTag([dialogRecData, 'AI'])"
-              fab
-              x-large
-              dark
-              style="color: black; display: inline"
-            >
-              AI식별
-            </v-btn>
-          </div>
+      <v-card :class="{ 'modal-d': this.$vuetify.theme.dark }">
+        <!-- <v-card-title class="headline"> 태그 유형도 골라주세요 </v-card-title> -->
+        <v-card-text class="text-center pt-5 pb-0">
+          <v-row>
+            <v-col cols="6">
+              <v-card :class="tagTypeMode" class="pt-10 pb-5" @click="useRecTag([dialogRecData, 'Title'])">
+                <h1>파일명</h1>
+                <!-- <v-btn
+                  class="mt-5"
+                  color="#f5f1b6"
+                  fab
+                  x-large
+                  dark
+                  style="color: black; display: inline"
+                >
+                  파일명
+                </v-btn> -->
+                <p class="mt-5 px-4">
+                  파일명에 "{{ dialogRecData }}" 단어가 포함된 경우만 정리합니다
+                </p>
+              </v-card>
+            </v-col>
+            <v-col cols="6">
+              <v-card :class="tagTypeMode" class="pt-10 pb-5" @click="useRecTag([dialogRecData, 'AI'])">
+                <h1>AI식별</h1>
+                <!-- <v-btn
+                  class="mt-5"
+                  fab
+                  x-large
+                  dark
+                  style="color: black; display: inline"
+                >
+                  AI식별
+                </v-btn> -->
+                <p class="mt-5 px-4">
+                  AI가 이미지에서 "{{ dialogRecData }}"을(를) 찾을 경우 정리합니다
+                </p>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-
           <v-btn
             color="red darken-1"
             text
@@ -907,6 +911,11 @@ export default class ModalAddToLibraryDirectory extends Vue {
       ? "file-scroller-d modal-d"
       : "file-scroller";
   }
+  get tagTypeMode() {
+    return this.$vuetify.theme.dark
+      ? "tag-type-select-d"
+      : "tag-type-select";  
+  }
 }
 </script>
 
@@ -944,5 +953,19 @@ header {
   border-style: solid;
   border-color: #f1bebe !important;
   border-width: 1.5px;
+}
+.tag-type-select {
+  background-color:#f6f8fa !important;
+}
+.tag-type-select:hover {
+  background-color:#e4e9ee !important;
+  transform:scale(1.05);
+}
+.tag-type-select-d {
+  background-color:#313e4b !important;
+}
+.tag-type-select-d:hover {
+  background-color:#2d363f !important;
+  transform:scale(1.05);
 }
 </style>

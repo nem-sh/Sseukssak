@@ -11,11 +11,11 @@
       />이미지 폴더 자동 정리
     </a>
     <v-dialog v-model="dialog" scrollable max-width="380px">
-      <v-card>
+      <v-card :class="{ 'modal-d': this.$vuetify.theme.dark }">
         <v-card-title>생성할 이미지 폴더를 선택해주세요</v-card-title>
         <v-divider></v-divider>
-
-        <v-card-text style="height: 300px">
+        
+        <v-card-text style="height: 300px" :class="scrollerBgMode">
           <v-checkbox
             v-for="labelName in labelNameList"
             :key="labelName"
@@ -25,9 +25,9 @@
           ></v-checkbox>
         </v-card-text>
         <v-divider></v-divider>
-        <v-card-actions>
+        <v-card-actions class="d-flex justify-end">
+          <v-btn rounded color="#7288da" dark @click="move()"> 완료 </v-btn>
           <v-btn
-            color="red darken-1"
             text
             @click="
               dialog = false;
@@ -38,7 +38,6 @@
           >
             취소
           </v-btn>
-          <v-btn color="green darken-1" text @click="move()"> 완료 </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -207,6 +206,10 @@ export default class BtnImageFolderOganizer extends BtnImageFolderOganizerProps 
     }
     this.selectedLabel = this.labelNameList;
     this.dialog = true;
+  }
+
+  get scrollerBgMode() {
+    return this.$vuetify.theme.dark ? "file-scroller-d" : "file-scroller";
   }
 }
 </script>
