@@ -40,6 +40,7 @@ export default {
 
 <style>
 .flip-card {
+  margin: auto;
   background-color: transparent;
   width: 15vw;
   height: 37vh;
