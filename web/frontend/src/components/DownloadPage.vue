@@ -5,6 +5,9 @@
     </video>
     <v-row class="content">
       <div class="mx-auto">
+        <v-row class="emptyrow">
+
+        </v-row>
         <v-row class="SecondRow">
           <!-- <v-col cols="4" class="LogoPart"> -->
           <div class="LogoPart d-flex">
@@ -34,11 +37,14 @@
               <i class="fab fa-windows fa-lg"></i> for Windows
               </button>
           </v-col>
-          <v-col cols="6" class="DC">
+          <v-col cols="6" class="DC text-center">
             <button class="DownloadButton" @click="downloadMac()">
               <i class="fab fa-apple fa-lg"></i> for Mac
               </button>
           </v-col>
+        </v-row>
+        <v-row class="FourthRow">
+          <i class="DownArrow fad fa-caret-circle-down fa-4x" @click="goDown"></i>
         </v-row>
       </div>
     </v-row>
@@ -53,6 +59,9 @@ export default {
       sliderValue: 95,
     };
   },
+  props: {
+    goDown: Function,
+  },
   methods: {
     downloadWin() {
       const link = document.createElement("a");
@@ -65,6 +74,13 @@ export default {
       const link = document.createElement("a");
       link.href = "http://k3b304.p.ssafy.io/static/sseukssak_mac.exe";
       link.setAttribute("download", "sseukssak_Mac.exe");
+      document.body.appendChild(link);
+      link.click();
+    },
+    downloadManual() {
+      const link = document.createElement("a");
+      link.href = "http://k3b304.p.ssafy.io/static/sseukssak_manual.pdf";
+      link.setAttribute("download", "sseukssak_설명서.pdf");
       document.body.appendChild(link);
       link.click();
     },
@@ -85,9 +101,14 @@ export default {
 }
 .DC {
   height: 100%;
+  outline: none;
+}
+.emptyrow {
+  height: 10%;
+  width: 100%;
 }
 .FirstRow {
-  height: 40%;
+  height: 15%;
   width: 100%;
   justify-content: center;
 }
@@ -100,9 +121,16 @@ export default {
   justify-content: center;
 }
 .ThirdRow {
-  height: 20%;
+  height: 15%;
   width: 100%;
   margin: 0 !important;
+}
+.FourthRow {
+  height: 15%;
+  width: 100%;
+  justify-content: center;
+  margin: 0 !important;
+  align-items: flex-end;
 }
 .LogoPart {
   height: 100%;
@@ -117,7 +145,7 @@ export default {
 }
 .LogoImage {
   width: 30%;
-  height: 80%;
+  height: 60%;
 }
 .DownloadButton {
   height: 100%;
@@ -129,6 +157,7 @@ export default {
   font-size: 1.5vw;
   padding-top: 0.5vh;
   color: black;
+  outline: none !important;
 }
 .OneClick {
   justify-content: center;
@@ -141,6 +170,7 @@ export default {
   height: 60%;
   width: 100%;
   font-size: 1.5vw;
+  align-items: center;
 }
 #myVideo {
   position: fixed;
@@ -164,24 +194,18 @@ export default {
 .content {
   position: fixed;
   color: #f1f1f1;
-  height: 60%;
+  height: 100%;
   width: 100%;
   /* padding: 20px; */
 }
-
 /* Style the button used to pause/play the video */
-#myBtn {
-  width: 200px;
-  font-size: 18px;
-  padding: 10px;
-  border: none;
-  background: #000;
-  color: #fff;
-  cursor: pointer;
-}
 
 .DownloadButton:hover {
   background: #ddd;
   color: black !important;
+  outline: none;
+}
+.DownArrow:hover {
+  cursor: pointer;
 }
 </style>
